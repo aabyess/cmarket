@@ -126,11 +126,12 @@ export class DatabaseStorage implements IStorage {
           deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
           targetCountry: 'korea',
           isUrgent: false,
-          status: 'active',
+          status: 'completed',
           attachments: null,
           createdBy: userId || 'demo-user-1',
           createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
           updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+          quotes: [{}, {}, {}, {}, {}], // 5 quotes
         },
         {
           id: 'mock-rfq-2',
@@ -145,11 +146,12 @@ export class DatabaseStorage implements IStorage {
           deadline: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000),
           targetCountry: 'egypt',
           isUrgent: true,
-          status: 'active',
+          status: 'pending',
           attachments: null,
           createdBy: userId || 'demo-user-1',
           createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
           updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+          quotes: [{}, {}, {}], // 3 quotes
         },
         {
           id: 'mock-rfq-3',
@@ -169,6 +171,7 @@ export class DatabaseStorage implements IStorage {
           createdBy: userId || 'demo-user-1',
           createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
           updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+          quotes: [{}, {}, {}, {}, {}, {}, {}], // 7 quotes
         },
         {
           id: 'mock-rfq-4',
@@ -188,6 +191,7 @@ export class DatabaseStorage implements IStorage {
           createdBy: userId || 'demo-user-1',
           createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
           updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+          quotes: [{}, {}], // 2 quotes
         },
         {
           id: 'mock-rfq-5',
@@ -202,11 +206,12 @@ export class DatabaseStorage implements IStorage {
           deadline: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000),
           targetCountry: 'both',
           isUrgent: false,
-          status: 'active',
+          status: 'completed',
           attachments: null,
           createdBy: userId || 'demo-user-1',
           createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
           updatedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+          quotes: [{}, {}, {}, {}], // 4 quotes
         },
         {
           id: 'mock-rfq-6',
@@ -226,6 +231,7 @@ export class DatabaseStorage implements IStorage {
           createdBy: userId || 'demo-user-1',
           createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
           updatedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
+          quotes: [{}, {}, {}, {}, {}, {}], // 6 quotes
         },
         {
           id: 'mock-rfq-7',
