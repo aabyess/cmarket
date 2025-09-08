@@ -87,7 +87,7 @@ export default function RfqDetail() {
                   <div className="flag-korea w-5 h-3 rounded-sm mr-2"></div>
                   <i className="fas fa-handshake text-lg text-primary mx-2"></i>
                   <div className="flag-egypt w-5 h-3 rounded-sm ml-2"></div>
-                  <h1 className="ml-3 text-xl font-bold">KoEgy Connect</h1>
+                  <h1 className="ml-3 text-xl font-bold">CMARKET Trade</h1>
                 </div>
               </Link>
               <Link href="/">
@@ -121,7 +121,7 @@ export default function RfqDetail() {
                 <div className="flag-korea w-5 h-3 rounded-sm mr-2"></div>
                 <i className="fas fa-handshake text-lg text-primary mx-2"></i>
                 <div className="flag-egypt w-5 h-3 rounded-sm ml-2"></div>
-                <h1 className="ml-3 text-xl font-bold">KoEgy Connect</h1>
+                <h1 className="ml-3 text-xl font-bold">CMARKET Trade</h1>
               </div>
             </Link>
             

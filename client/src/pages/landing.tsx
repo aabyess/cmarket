@@ -53,7 +53,7 @@ export default function Landing() {
               <i className="fas fa-handshake text-2xl text-primary mx-2"></i>
               <div className="flag-egypt w-6 h-4 rounded-sm ml-2"></div>
             </div>
-            <h1 className="text-2xl font-bold text-foreground">KoEgy Connect</h1>
+            <h1 className="text-2xl font-bold text-foreground">CMARKET Trade</h1>
             <p className="text-muted-foreground text-sm">
               {t('platform.title')}
             </p>
