@@ -72,8 +72,37 @@ export default function Dashboard() {
     );
   }
 
+  // Mock statistics data
+  const mockStats = {
+    totalRfqs: 15,
+    activeRfqs: 12,
+    completedOrders: 8,
+    totalValue: 1250000,
+    newQuotes: 24,
+    pendingDeliveries: 3
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      {/* Country Flags Banner */}
+      <div className="bg-gradient-to-r from-blue-600 via-white to-red-600 h-2"></div>
+      <div className="bg-card border-b border-border py-2">
+        <div className="container mx-auto px-4 flex items-center justify-center space-x-6">
+          <div className="flex items-center space-x-2">
+            <div className="flag-korea w-8 h-5 rounded-sm shadow-sm"></div>
+            <span className="text-sm font-medium text-muted-foreground">{language === 'en' ? 'Republic of Korea' : '대한민국'}</span>
+          </div>
+          <div className="flex items-center space-x-2 text-muted-foreground">
+            <i className="fas fa-exchange-alt"></i>
+            <span className="text-xs">{language === 'en' ? 'Trade Partnership' : '무역 파트너십'}</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="flag-egypt w-8 h-5 rounded-sm shadow-sm"></div>
+            <span className="text-sm font-medium text-muted-foreground">{language === 'en' ? 'Arab Republic of Egypt' : '이집트 아랍 공화국'}</span>
+          </div>
+        </div>
+      </div>
+
       {/* Header Navigation */}
       <header className="bg-card border-b border-border shadow-sm">
         <div className="container mx-auto px-4 py-3">
@@ -136,7 +165,7 @@ export default function Dashboard() {
               <button className="relative p-2 text-muted-foreground hover:text-foreground" data-testid="button-notifications">
                 <i className="fas fa-bell"></i>
                 <span className="absolute -top-1 -right-1 bg-destructive text-white text-xs rounded-full w-5 h-5 flex items-center justify-center" data-testid="notification-count">
-                  {orders.filter(o => o.status === 'delivered').length}
+                  {mockStats.pendingDeliveries}
                 </span>
               </button>
               
@@ -177,7 +206,7 @@ export default function Dashboard() {
                 </div>
                 <div className="ml-4">
                   <h3 className="text-2xl font-bold" data-testid="stat-active-rfqs">
-                    {rfqs.filter(r => r.status === 'active').length}
+                    {mockStats.activeRfqs}
                   </h3>
                   <p className="text-muted-foreground text-sm">{t('dashboard.activeRfqs')}</p>
                 </div>
@@ -193,7 +222,7 @@ export default function Dashboard() {
                 </div>
                 <div className="ml-4">
                   <h3 className="text-2xl font-bold" data-testid="stat-total-quotes">
-                    {rfqs.reduce((acc, rfq) => acc + (rfq.quotes?.length || 0), 0)}
+                    {mockStats.newQuotes}
                   </h3>
                   <p className="text-muted-foreground text-sm">{t('dashboard.receivedQuotes')}</p>
                 </div>
@@ -209,7 +238,7 @@ export default function Dashboard() {
                 </div>
                 <div className="ml-4">
                   <h3 className="text-2xl font-bold" data-testid="stat-completed-deals">
-                    {orders.filter(o => o.status === 'completed').length}
+                    {mockStats.completedOrders}
                   </h3>
                   <p className="text-muted-foreground text-sm">{t('dashboard.completedDeals')}</p>
                 </div>
@@ -225,9 +254,7 @@ export default function Dashboard() {
                 </div>
                 <div className="ml-4">
                   <h3 className="text-2xl font-bold" data-testid="stat-total-value">
-                    ${orders.filter(o => o.status === 'completed')
-                      .reduce((acc, o) => acc + Number(o.totalAmount), 0)
-                      .toLocaleString()}
+                    ${mockStats.totalValue.toLocaleString()}
                   </h3>
                   <p className="text-muted-foreground text-sm">{t('dashboard.totalValue')}</p>
                 </div>

@@ -410,7 +410,7 @@ export class DatabaseStorage implements IStorage {
     
     // If not found in database and it's a mock RFQ, return mock data
     if (!rfq && id.startsWith('mock-rfq-')) {
-      const mockRfqs = await this.getRfqsForUser('33507990'); // Get mock data
+      const mockRfqs = await this.getRfqs('33507990'); // Get mock data
       return mockRfqs.find(rfq => rfq.id === id);
     }
     
