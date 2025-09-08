@@ -13,20 +13,13 @@ import Checkout from "@/pages/checkout";
 import NotFound from "@/pages/not-found";
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
-
+  // For demo purposes, bypass authentication and always show authenticated routes
   return (
     <Switch>
-      {isLoading || !isAuthenticated ? (
-        <Route path="/" component={Landing} />
-      ) : (
-        <>
-          <Route path="/" component={Dashboard} />
-          <Route path="/create-rfq" component={RfqCreation} />
-          <Route path="/rfq/:id" component={RfqDetail} />
-          <Route path="/checkout/:orderId" component={Checkout} />
-        </>
-      )}
+      <Route path="/" component={Dashboard} />
+      <Route path="/create-rfq" component={RfqCreation} />
+      <Route path="/rfq/:id" component={RfqDetail} />
+      <Route path="/checkout/:orderId" component={Checkout} />
       <Route component={NotFound} />
     </Switch>
   );

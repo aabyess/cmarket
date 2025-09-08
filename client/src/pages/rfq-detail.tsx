@@ -19,30 +19,17 @@ export default function RfqDetail() {
   const [showQuoteModal, setShowQuoteModal] = useState(false);
   const [showChatModal, setShowChatModal] = useState(false);
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: t('toast.unauthorized'),
-        description: t('toast.unauthorizedDesc'),
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, toast]);
+  // Demo mode - no authentication needed
 
   const { data: rfq, isLoading: rfqLoading } = useQuery({
     queryKey: ["/api/rfqs", id],
-    enabled: isAuthenticated && !!id,
+    enabled: !!id,
     retry: false,
   });
 
   const { data: quotes = [] } = useQuery({
     queryKey: ["/api/rfqs", id, "quotes"],
-    enabled: isAuthenticated && !!id,
+    enabled: !!id,
     retry: false,
   });
 

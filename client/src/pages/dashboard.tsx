@@ -23,30 +23,17 @@ export default function Dashboard() {
   const [showChatModal, setShowChatModal] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: t('toast.unauthorized'),
-        description: t('toast.unauthorizedDesc'),
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, toast]);
+  // Demo mode - no authentication needed
 
   const { data: rfqs = [], isLoading: rfqsLoading } = useQuery({
     queryKey: ["/api/rfqs/my"],
-    enabled: isAuthenticated,
+    enabled: true,
     retry: false,
   });
 
   const { data: orders = [] } = useQuery({
     queryKey: ["/api/orders"],
-    enabled: isAuthenticated,
+    enabled: true,
     retry: false,
   });
 
