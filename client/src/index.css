@@ -79,11 +79,33 @@
 }
 
 .flag-korea {
-  background: linear-gradient(to bottom, #CD2E3A 33%, #ffffff 33%, #ffffff 66%, #0047A0 66%);
+  background: #ffffff;
+  position: relative;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flag-korea::before {
+  content: '🇰🇷';
+  font-size: 12px;
+  line-height: 1;
 }
 
 .flag-egypt {
-  background: linear-gradient(to bottom, #CE1126 33%, #ffffff 33%, #ffffff 66%, #000000 66%);
+  background: #ffffff;
+  position: relative;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flag-egypt::before {
+  content: '🇪🇬';
+  font-size: 12px;
+  line-height: 1;
 }
 
 .status-active { 
