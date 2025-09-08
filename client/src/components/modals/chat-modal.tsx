@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect, useRef } from "react";
 import { apiRequest } from "@/lib/queryClient";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ChatModalProps {
   rfqId: string;
@@ -16,6 +17,7 @@ interface ChatModalProps {
 export function ChatModal({ rfqId, open, onOpenChange }: ChatModalProps) {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const queryClient = useQueryClient();
   const [message, setMessage] = useState("");
   const [ws, setWs] = useState<WebSocket | null>(null);
@@ -44,8 +46,8 @@ export function ChatModal({ rfqId, open, onOpenChange }: ChatModalProps) {
     },
     onError: (error) => {
       toast({
-        title: "Error",
-        description: "Failed to send message. Please try again.",
+        title: t('toast.error'),
+        description: t('toast.messageError'),
         variant: "destructive",
       });
     },
@@ -109,8 +111,8 @@ export function ChatModal({ rfqId, open, onOpenChange }: ChatModalProps) {
           <DialogTitle className="flex items-center">
             <div className="flag-egypt w-5 h-3 rounded-sm mr-2"></div>
             <div>
-              <h3 className="font-semibold">Chat - {rfq?.title}</h3>
-              <p className="text-xs text-muted-foreground">RFQ Discussion</p>
+              <h3 className="font-semibold">{t('modal.chat')} - {rfq?.title}</h3>
+              <p className="text-xs text-muted-foreground">{language === 'en' ? 'RFQ Discussion' : '견적요청 논의'}</p>
             </div>
           </DialogTitle>
         </DialogHeader>
@@ -122,7 +124,7 @@ export function ChatModal({ rfqId, open, onOpenChange }: ChatModalProps) {
             </div>
           ) : messages.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-muted-foreground">No messages yet. Start the conversation!</p>
+              <p className="text-muted-foreground">{language === 'en' ? 'No messages yet. Start the conversation!' : '아직 메시지가 없습니다. 대화를 시작해보세요!'}</p>
             </div>
           ) : (
             messages.map((msg: any) => {
@@ -162,7 +164,7 @@ export function ChatModal({ rfqId, open, onOpenChange }: ChatModalProps) {
             <Input
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Type your message..."
+              placeholder={t('modal.typeMessage')}
               className="flex-1"
               data-testid="input-chat-message"
             />
@@ -180,10 +182,10 @@ export function ChatModal({ rfqId, open, onOpenChange }: ChatModalProps) {
           </form>
           <div className="flex items-center mt-2 text-xs text-muted-foreground">
             <i className="fas fa-paperclip mr-1"></i>
-            <span>Attach files</span>
+            <span>{language === 'en' ? 'Attach files' : '파일 첨부'}</span>
             <span className="mx-2">•</span>
             <i className="fas fa-smile mr-1"></i>
-            <span>Emoji</span>
+            <span>{language === 'en' ? 'Emoji' : '이모지'}</span>
           </div>
         </div>
       </DialogContent>

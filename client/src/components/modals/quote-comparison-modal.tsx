@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface QuoteComparisonModalProps {
   rfqId: string;
@@ -14,6 +15,7 @@ interface QuoteComparisonModalProps {
 
 export function QuoteComparisonModal({ rfqId, open, onOpenChange }: QuoteComparisonModalProps) {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [acceptingQuoteId, setAcceptingQuoteId] = useState<string | null>(null);
 
   const { data: quotes = [], isLoading } = useQuery<any[]>({
@@ -31,15 +33,15 @@ export function QuoteComparisonModal({ rfqId, open, onOpenChange }: QuoteCompari
     try {
       // This would trigger the payment flow
       toast({
-        title: "Quote Accepted",
-        description: "Redirecting to payment...",
+        title: t('modal.quoteAccepted'),
+        description: t('modal.redirectingPayment'),
       });
       // Navigate to checkout
       window.location.href = `/checkout/${quoteId}`;
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to accept quote. Please try again.",
+        title: t('toast.error'),
+        description: t('toast.quoteAcceptError'),
         variant: "destructive",
       });
     } finally {
@@ -52,7 +54,7 @@ export function QuoteComparisonModal({ rfqId, open, onOpenChange }: QuoteCompari
       <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            Quote Comparison - {rfq?.title}
+            {t('modal.quoteComparison')} - {rfq?.title}
           </DialogTitle>
           <p className="text-muted-foreground text-sm">
             {rfq?.description} ({rfq?.quantity} {rfq?.unit})
@@ -66,7 +68,7 @@ export function QuoteComparisonModal({ rfqId, open, onOpenChange }: QuoteCompari
             </div>
           ) : quotes.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-muted-foreground">No quotes received yet.</p>
+              <p className="text-muted-foreground">{t('modal.noQuotes')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

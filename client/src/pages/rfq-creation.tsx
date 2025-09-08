@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Link, useLocation } from "wouter";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const rfqFormSchema = insertRfqSchema.extend({
   deadline: z.string(),
@@ -28,6 +29,7 @@ type RfqFormData = z.infer<typeof rfqFormSchema>;
 export default function RfqCreation() {
   const { isAuthenticated, isLoading } = useAuth();
   const { toast } = useToast();
+  const { language, setLanguage, t } = useLanguage();
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
 
@@ -35,8 +37,8 @@ export default function RfqCreation() {
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
+        title: t('toast.unauthorized'),
+        description: t('toast.unauthorizedDesc'),
         variant: "destructive",
       });
       setTimeout(() => {
@@ -75,8 +77,8 @@ export default function RfqCreation() {
     },
     onSuccess: () => {
       toast({
-        title: "RFQ Created",
-        description: "Your RFQ has been published successfully!",
+        title: t('toast.rfqCreated'),
+        description: t('toast.rfqCreatedDesc'),
       });
       queryClient.invalidateQueries({ queryKey: ["/api/rfqs/my"] });
       setLocation("/");
@@ -84,8 +86,8 @@ export default function RfqCreation() {
     onError: (error: Error) => {
       if (isUnauthorizedError(error)) {
         toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
+          title: t('toast.unauthorized'),
+          description: t('toast.unauthorizedDesc'),
           variant: "destructive",
         });
         setTimeout(() => {
@@ -94,8 +96,8 @@ export default function RfqCreation() {
         return;
       }
       toast({
-        title: "Error",
-        description: "Failed to create RFQ. Please try again.",
+        title: t('toast.error'),
+        description: t('toast.rfqCreateError'),
         variant: "destructive",
       });
     },
@@ -127,11 +129,39 @@ export default function RfqCreation() {
                 <h1 className="ml-3 text-xl font-bold">KoEgy Connect</h1>
               </div>
             </Link>
-            <Link href="/">
-              <Button variant="ghost" data-testid="button-back-to-dashboard">
-                <i className="fas fa-arrow-left mr-2"></i>Back to Dashboard
-              </Button>
-            </Link>
+            <div className="flex items-center space-x-4">
+              {/* Language Toggle */}
+              <div className="bg-muted p-1 rounded-lg flex">
+                <button 
+                  onClick={() => setLanguage('en')}
+                  className={`px-2 py-1 rounded-sm text-xs ${
+                    language === 'en' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'text-muted-foreground hover:bg-accent'
+                  }`}
+                  data-testid="button-language-en"
+                >
+                  EN
+                </button>
+                <button 
+                  onClick={() => setLanguage('ko')}
+                  className={`px-2 py-1 rounded-sm text-xs ${
+                    language === 'ko' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'text-muted-foreground hover:bg-accent'
+                  }`}
+                  data-testid="button-language-ko"
+                >
+                  한국어
+                </button>
+              </div>
+              
+              <Link href="/">
+                <Button variant="ghost" data-testid="button-back-to-dashboard">
+                  <i className="fas fa-arrow-left mr-2"></i>{t('nav.dashboard')}
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </header>
@@ -140,9 +170,9 @@ export default function RfqCreation() {
       <main className="container mx-auto px-4 py-6">
         <Card className="max-w-2xl mx-auto">
           <CardHeader>
-            <CardTitle className="text-xl font-semibold">Create New RFQ</CardTitle>
+            <CardTitle className="text-xl font-semibold">{t('rfq.create')}</CardTitle>
             <p className="text-muted-foreground text-sm">
-              Request for quotations from Korean and Egyptian companies
+              {language === 'en' ? 'Request for quotations from Korean and Egyptian companies' : '한국 및 이집트 기업에서 견적을 요청하세요'}
             </p>
           </CardHeader>
           <CardContent>
@@ -154,20 +184,20 @@ export default function RfqCreation() {
                     name="category"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Product/Service Category</FormLabel>
+                        <FormLabel>{t('form.category')}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger data-testid="select-category">
-                              <SelectValue placeholder="Select category" />
+                              <SelectValue placeholder={language === 'en' ? 'Select category' : '카테고리 선택'} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="industrial-equipment">Industrial Equipment</SelectItem>
-                            <SelectItem value="textiles-apparel">Textiles & Apparel</SelectItem>
-                            <SelectItem value="construction-materials">Construction Materials</SelectItem>
-                            <SelectItem value="logistics-services">Logistics Services</SelectItem>
-                            <SelectItem value="electronics">Electronics</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
+                            <SelectItem value="industrial-equipment">{language === 'en' ? 'Industrial Equipment' : '산업 장비'}</SelectItem>
+                            <SelectItem value="textiles-apparel">{language === 'en' ? 'Textiles & Apparel' : '섬유 및 의류'}</SelectItem>
+                            <SelectItem value="construction-materials">{language === 'en' ? 'Construction Materials' : '건설 자재'}</SelectItem>
+                            <SelectItem value="logistics-services">{language === 'en' ? 'Logistics Services' : '물류 서비스'}</SelectItem>
+                            <SelectItem value="electronics">{t('category.electronics')}</SelectItem>
+                            <SelectItem value="other">{t('category.other')}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -179,17 +209,17 @@ export default function RfqCreation() {
                     name="targetCountry"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Target Country</FormLabel>
+                        <FormLabel>{t('form.targetCountry')}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger data-testid="select-target-country">
-                              <SelectValue placeholder="Select target country" />
+                              <SelectValue placeholder={language === 'en' ? 'Select target country' : '대상 국가 선택'} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="egypt">🇪🇬 Egypt</SelectItem>
-                            <SelectItem value="korea">🇰🇷 Korea</SelectItem>
-                            <SelectItem value="both">Both Countries</SelectItem>
+                            <SelectItem value="egypt">🇪🇬 {t('country.egypt')}</SelectItem>
+                            <SelectItem value="korea">🇰🇷 {t('country.korea')}</SelectItem>
+                            <SelectItem value="both">{language === 'en' ? 'Both Countries' : '두 국가 모두'}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -203,10 +233,10 @@ export default function RfqCreation() {
                   name="title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Product/Service Title</FormLabel>
+                      <FormLabel>{t('form.title')}</FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="Enter product or service title" 
+                          placeholder={language === 'en' ? 'Enter product or service title' : '제품 또는 서비스 제목 입력'} 
                           {...field} 
                           data-testid="input-title"
                         />
@@ -221,11 +251,11 @@ export default function RfqCreation() {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Detailed Description</FormLabel>
+                      <FormLabel>{t('form.description')}</FormLabel>
                       <FormControl>
                         <Textarea
                           rows={4}
-                          placeholder="Provide detailed specifications, requirements, and any special conditions..."
+                          placeholder={language === 'en' ? 'Provide detailed specifications, requirements, and any special conditions...' : '상세 사양, 요구사항 및 특별 조건을 제공하세요...'}
                           {...field}
                           data-testid="textarea-description"
                         />
@@ -241,7 +271,7 @@ export default function RfqCreation() {
                     name="quantity"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Quantity</FormLabel>
+                        <FormLabel>{t('form.quantity')}</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -260,19 +290,19 @@ export default function RfqCreation() {
                     name="unit"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Unit</FormLabel>
+                        <FormLabel>{t('form.unit')}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger data-testid="select-unit">
-                              <SelectValue placeholder="Select unit" />
+                              <SelectValue placeholder={language === 'en' ? 'Select unit' : '단위 선택'} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="pieces">Pieces</SelectItem>
-                            <SelectItem value="tons">Tons</SelectItem>
-                            <SelectItem value="meters">Meters</SelectItem>
-                            <SelectItem value="hours">Service Hours</SelectItem>
-                            <SelectItem value="containers">Containers</SelectItem>
+                            <SelectItem value="pieces">{t('unit.pieces')}</SelectItem>
+                            <SelectItem value="tons">{t('unit.ton')}</SelectItem>
+                            <SelectItem value="meters">{t('unit.meter')}</SelectItem>
+                            <SelectItem value="hours">{language === 'en' ? 'Service Hours' : '서비스 시간'}</SelectItem>
+                            <SelectItem value="containers">{t('unit.container')}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -280,7 +310,7 @@ export default function RfqCreation() {
                     )}
                   />
                   <div className="space-y-2">
-                    <FormLabel>Budget Range (USD)</FormLabel>
+                    <FormLabel>{language === 'en' ? 'Budget Range (USD)' : '예산 범위 (USD)'}</FormLabel>
                     <div className="flex space-x-2">
                       <FormField
                         control={form.control}
@@ -289,7 +319,7 @@ export default function RfqCreation() {
                           <FormItem className="flex-1">
                             <FormControl>
                               <Input
-                                placeholder="Min"
+                                placeholder={language === 'en' ? 'Min' : '최소'}
                                 {...field}
                                 data-testid="input-budget-min"
                               />
@@ -305,7 +335,7 @@ export default function RfqCreation() {
                           <FormItem className="flex-1">
                             <FormControl>
                               <Input
-                                placeholder="Max"
+                                placeholder={language === 'en' ? 'Max' : '최대'}
                                 {...field}
                                 data-testid="input-budget-max"
                               />
@@ -324,10 +354,10 @@ export default function RfqCreation() {
                     name="deliveryLocation"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Delivery Location</FormLabel>
+                        <FormLabel>{t('form.deliveryLocation')}</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Seoul, Korea"
+                            placeholder={language === 'en' ? 'Seoul, Korea' : '서울, 대한민국'}
                             {...field}
                             data-testid="input-delivery-location"
                           />
@@ -341,7 +371,7 @@ export default function RfqCreation() {
                     name="deadline"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Quote Deadline</FormLabel>
+                        <FormLabel>{t('form.deadline')}</FormLabel>
                         <FormControl>
                           <Input
                             type="date"
@@ -368,7 +398,7 @@ export default function RfqCreation() {
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none">
-                        <FormLabel>Mark as urgent (additional fees may apply)</FormLabel>
+                        <FormLabel>{t('rfq.urgent')}</FormLabel>
                       </div>
                     </FormItem>
                   )}
@@ -377,7 +407,7 @@ export default function RfqCreation() {
                 <div className="flex justify-end space-x-3 pt-4 border-t border-border">
                   <Link href="/">
                     <Button type="button" variant="ghost" data-testid="button-cancel">
-                      Cancel
+                      {t('form.cancel')}
                     </Button>
                   </Link>
                   <Button
@@ -388,12 +418,12 @@ export default function RfqCreation() {
                     {createRfqMutation.isPending ? (
                       <>
                         <div className="animate-spin w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full mr-2" />
-                        Publishing...
+                        {language === 'en' ? 'Publishing...' : '게시 중...'}
                       </>
                     ) : (
                       <>
                         <i className="fas fa-paper-plane mr-2"></i>
-                        Publish RFQ
+                        {t('rfq.publish')}
                       </>
                     )}
                   </Button>
