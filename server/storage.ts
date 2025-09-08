@@ -246,11 +246,12 @@ export class DatabaseStorage implements IStorage {
           deadline: new Date(Date.now() + 50 * 24 * 60 * 60 * 1000),
           targetCountry: 'korea',
           isUrgent: true,
-          status: 'active',
+          status: 'pending',
           attachments: null,
           createdBy: userId || 'demo-user-1',
           createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
           updatedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          quotes: [{}], // 1 quote
         },
         {
           id: 'mock-rfq-8',
@@ -270,6 +271,7 @@ export class DatabaseStorage implements IStorage {
           createdBy: userId || 'demo-user-1',
           createdAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000),
           updatedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000),
+          quotes: [{}, {}, {}, {}, {}, {}, {}, {}], // 8 quotes
         },
         {
           id: 'mock-rfq-9',
@@ -289,6 +291,7 @@ export class DatabaseStorage implements IStorage {
           createdBy: userId || 'demo-user-1',
           createdAt: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
           updatedAt: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
+          quotes: [{}, {}, {}, {}, {}], // 5 quotes
         },
         {
           id: 'mock-rfq-10',
