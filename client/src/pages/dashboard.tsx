@@ -326,17 +326,6 @@ export default function Dashboard() {
                           size="sm"
                           onClick={() => {
                             setSelectedRfqId(rfq.id);
-                            setShowQuoteModal(true);
-                          }}
-                          data-testid={`button-view-quotes-${rfq.id}`}
-                        >
-                          {t('buttons.viewQuotes')}
-                        </Button>
-                        <Button
-                          variant="link"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedRfqId(rfq.id);
                             setShowChatModal(true);
                           }}
                           data-testid={`button-chat-${rfq.id}`}

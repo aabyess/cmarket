@@ -407,6 +407,13 @@ export class DatabaseStorage implements IStorage {
 
   async getRfq(id: string): Promise<Rfq | undefined> {
     const [rfq] = await db.select().from(rfqs).where(eq(rfqs.id, id));
+    
+    // If not found in database and it's a mock RFQ, return mock data
+    if (!rfq && id.startsWith('mock-rfq-')) {
+      const mockRfqs = await this.getRfqsForUser('33507990'); // Get mock data
+      return mockRfqs.find(rfq => rfq.id === id);
+    }
+    
     return rfq;
   }
 
@@ -427,11 +434,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getQuotesByRfq(rfqId: string): Promise<Quote[]> {
-    return await db
+    const results = await db
       .select()
       .from(quotes)
       .where(eq(quotes.rfqId, rfqId))
       .orderBy(desc(quotes.createdAt));
+    
+    // If no quotes found and it's a mock RFQ, return empty array for now
+    // (Could add mock quotes here in the future if needed)
+    return results;
   }
 
   async getQuote(id: string): Promise<Quote | undefined> {
