@@ -18,11 +18,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
 
   // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  app.get('/api/auth/user', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
+      // For demo purposes, return mock user
+      const mockUser = {
+        id: "demo-user-1",
+        email: "demo@koegyconnect.com",
+        companyName: "Korea-Egypt Trade Corp",
+        companyType: "korean",
+        firstName: "Demo",
+        lastName: "User"
+      };
+      res.json(mockUser);
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
@@ -40,10 +47,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/rfqs/my', isAuthenticated, async (req: any, res) => {
+  app.get('/api/rfqs/my', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const rfqs = await storage.getRfqs(userId);
+      // For demo purposes, return all RFQs
+      const rfqs = await storage.getRfqs();
       res.json(rfqs);
     } catch (error) {
       console.error("Error fetching user RFQs:", error);
@@ -180,10 +187,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Order routes
-  app.get('/api/orders', isAuthenticated, async (req: any, res) => {
+  app.get('/api/orders', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const orders = await storage.getOrdersByUser(userId);
+      // For demo purposes, return empty orders array
+      const orders: any[] = [];
       res.json(orders);
     } catch (error) {
       console.error("Error fetching orders:", error);
