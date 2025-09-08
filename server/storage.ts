@@ -103,10 +103,59 @@ export class DatabaseStorage implements IStorage {
 
   async getRfqs(userId?: string): Promise<Rfq[]> {
     const query = db.select().from(rfqs);
+    let results;
     if (userId) {
-      return await query.where(eq(rfqs.createdBy, userId)).orderBy(desc(rfqs.createdAt));
+      results = await query.where(eq(rfqs.createdBy, userId)).orderBy(desc(rfqs.createdAt));
+    } else {
+      results = await query.orderBy(desc(rfqs.createdAt));
     }
-    return await query.orderBy(desc(rfqs.createdAt));
+
+    // If user has no RFQs, add mock data for demonstration
+    if (userId && results.length === 0) {
+      const mockRfqs: Rfq[] = [
+        {
+          id: 'mock-rfq-1',
+          title: 'Industrial Manufacturing Equipment',
+          description: 'Looking for high-quality manufacturing equipment for our textile factory. Need reliable Korean suppliers with international shipping experience.',
+          category: 'industrial-equipment',
+          quantity: 5,
+          unit: 'pieces',
+          budgetMin: '50000',
+          budgetMax: '100000',
+          deliveryLocation: 'Cairo, Egypt',
+          deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+          targetCountry: 'korea',
+          isUrgent: false,
+          status: 'active',
+          attachments: null,
+          createdBy: userId,
+          createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+          updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        },
+        {
+          id: 'mock-rfq-2',
+          title: 'Organic Cotton Fabric Supply',
+          description: 'Seeking Egyptian organic cotton suppliers for our fashion brand in Seoul. Looking for sustainable and certified organic materials.',
+          category: 'textiles-apparel',
+          quantity: 1000,
+          unit: 'meters',
+          budgetMin: '15000',
+          budgetMax: '25000',
+          deliveryLocation: 'Seoul, Korea',
+          deadline: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000), // 45 days from now
+          targetCountry: 'egypt',
+          isUrgent: true,
+          status: 'active',
+          attachments: null,
+          createdBy: userId,
+          createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+          updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        }
+      ];
+      return mockRfqs;
+    }
+
+    return results;
   }
 
   async getRfq(id: string): Promise<Rfq | undefined> {

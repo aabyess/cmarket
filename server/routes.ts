@@ -54,7 +54,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/rfqs', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const rfqData = insertRfqSchema.parse(req.body);
+      // Convert date string to Date object before validation
+      const requestBody = {
+        ...req.body,
+        deadline: new Date(req.body.deadline + 'T23:59:59')
+      };
+      const rfqData = insertRfqSchema.parse(requestBody);
       const rfq = await storage.createRfq(rfqData, userId);
       res.json(rfq);
     } catch (error) {
