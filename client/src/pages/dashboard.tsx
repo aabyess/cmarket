@@ -27,8 +27,8 @@ export default function Dashboard() {
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
+        title: t('toast.unauthorized'),
+        description: t('toast.unauthorizedDesc'),
         variant: "destructive",
       });
       setTimeout(() => {

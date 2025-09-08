@@ -218,11 +218,56 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getMessagesByRfq(rfqId: string): Promise<Message[]> {
-    return await db
+    const realMessages = await db
       .select()
       .from(messages)
       .where(eq(messages.rfqId, rfqId))
       .orderBy(messages.createdAt);
+
+    // If no real messages exist, return mock messages for demonstration
+    if (realMessages.length === 0) {
+      const mockMessages: Message[] = [
+        {
+          id: 'mock-1',
+          rfqId,
+          senderId: 'supplier-demo-1',
+          receiverId: 'buyer-demo-1',
+          content: 'Hello! I am interested in your RFQ for industrial equipment. We can provide high-quality machinery from Korea.',
+          attachments: null,
+          createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+        },
+        {
+          id: 'mock-2',
+          rfqId,
+          senderId: 'buyer-demo-1',
+          receiverId: 'supplier-demo-1',
+          content: 'Thank you for your interest! Could you please send detailed specifications and delivery timeline?',
+          attachments: null,
+          createdAt: new Date(Date.now() - 1.5 * 60 * 60 * 1000), // 1.5 hours ago
+        },
+        {
+          id: 'mock-3',
+          rfqId,
+          senderId: 'supplier-demo-1',
+          receiverId: 'buyer-demo-1',
+          content: 'Certainly! Our machines meet international standards and we can deliver within 4-6 weeks. I will prepare a detailed quote for you.',
+          attachments: null,
+          createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour ago
+        },
+        {
+          id: 'mock-4',
+          rfqId,
+          senderId: 'buyer-demo-1',
+          receiverId: 'supplier-demo-1',
+          content: 'That sounds promising! We are looking for a reliable supplier for long-term partnership.',
+          attachments: null,
+          createdAt: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
+        }
+      ];
+      return mockMessages;
+    }
+
+    return realMessages;
   }
 
   // Rating operations
