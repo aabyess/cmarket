@@ -17,7 +17,7 @@ interface ChatModalProps {
 export function ChatModal({ rfqId, open, onOpenChange }: ChatModalProps) {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const queryClient = useQueryClient();
   const [message, setMessage] = useState("");
   const [ws, setWs] = useState<WebSocket | null>(null);

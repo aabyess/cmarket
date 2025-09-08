@@ -312,6 +312,15 @@ export default function Dashboard() {
                         </Badge>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
+                        <Link href={`/rfq/${rfq.id}`}>
+                          <Button
+                            variant="link"
+                            size="sm"
+                            data-testid={`button-view-detail-${rfq.id}`}
+                          >
+                            {language === 'en' ? 'View Detail' : '견적 보기'}
+                          </Button>
+                        </Link>
                         <Button
                           variant="link"
                           size="sm"

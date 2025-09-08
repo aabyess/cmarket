@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import RfqCreation from "@/pages/rfq-creation";
+import RfqDetail from "@/pages/rfq-detail";
 import Checkout from "@/pages/checkout";
 import NotFound from "@/pages/not-found";
 
@@ -22,6 +23,7 @@ function Router() {
         <>
           <Route path="/" component={Dashboard} />
           <Route path="/create-rfq" component={RfqCreation} />
+          <Route path="/rfq/:id" component={RfqDetail} />
           <Route path="/checkout/:orderId" component={Checkout} />
         </>
       )}

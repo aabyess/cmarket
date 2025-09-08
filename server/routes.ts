@@ -57,7 +57,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Convert date string to Date object before validation
       const requestBody = {
         ...req.body,
-        deadline: new Date(req.body.deadline + 'T23:59:59')
+        deadline: req.body.deadline ? new Date(req.body.deadline + 'T23:59:59') : new Date()
       };
       const rfqData = insertRfqSchema.parse(requestBody);
       const rfq = await storage.createRfq(rfqData, userId);
