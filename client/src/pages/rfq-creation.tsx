@@ -19,7 +19,7 @@ import { Link, useLocation } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const rfqFormSchema = insertRfqSchema.extend({
-  deadline: z.string(),
+  deadline: z.string().min(1, 'Deadline is required'),
   budgetMin: z.string().optional(),
   budgetMax: z.string().optional(),
 });
@@ -59,7 +59,7 @@ export default function RfqCreation() {
       budgetMin: "",
       budgetMax: "",
       deliveryLocation: "",
-      deadline: "",
+      deadline: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
       targetCountry: "",
       isUrgent: false,
     },
@@ -69,7 +69,7 @@ export default function RfqCreation() {
     mutationFn: async (data: RfqFormData) => {
       const rfqData = {
         ...data,
-        deadline: new Date(data.deadline),
+        deadline: new Date(data.deadline + 'T23:59:59'), // Set to end of day
         budgetMin: data.budgetMin ? data.budgetMin : null,
         budgetMax: data.budgetMax ? data.budgetMax : null,
       };
