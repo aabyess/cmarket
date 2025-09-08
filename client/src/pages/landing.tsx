@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Landing() {
   const { isAuthenticated, isLoading } = useAuth();
   const { toast } = useToast();
   const [selectedCompanyType, setSelectedCompanyType] = useState<'korean' | 'egyptian' | null>(null);
-  const [language, setLanguage] = useState<'en' | 'ko'>('en');
+  const { language, setLanguage, t } = useLanguage();
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
@@ -54,7 +55,7 @@ export default function Landing() {
             </div>
             <h1 className="text-2xl font-bold text-foreground">KoEgy Connect</h1>
             <p className="text-muted-foreground text-sm">
-              {language === 'en' ? 'Korea-Egypt B2B RFQ Platform' : '한국-이집트 B2B 견적 플랫폼'}
+              {t('platform.title')}
             </p>
           </div>
 
@@ -89,7 +90,7 @@ export default function Landing() {
           {/* Company Type Selection */}
           <div className="space-y-4 mb-6">
             <Label className="text-sm font-medium text-foreground">
-              {language === 'en' ? 'Select Company Type' : '회사 유형 선택'}
+              {t('auth.selectCompanyType')}
             </Label>
             <div className="grid grid-cols-2 gap-3">
               <button
@@ -103,7 +104,7 @@ export default function Landing() {
               >
                 <div className="flag-korea w-8 h-5 rounded-sm mx-auto mb-2"></div>
                 <div className="text-sm font-medium">
-                  {language === 'en' ? 'Korean Company' : '한국 기업'}
+                  {t('auth.koreanCompany')}
                 </div>
                 <div className="text-xs opacity-90">
                   {language === 'en' ? '한국 기업' : 'Korean Company'}
@@ -120,7 +121,7 @@ export default function Landing() {
               >
                 <div className="flag-egypt w-8 h-5 rounded-sm mx-auto mb-2"></div>
                 <div className="text-sm font-medium">
-                  {language === 'en' ? 'Egyptian Company' : '이집트 기업'}
+                  {t('auth.egyptianCompany')}
                 </div>
                 <div className="text-xs opacity-90">شركة مصرية</div>
               </button>
@@ -133,12 +134,12 @@ export default function Landing() {
             className="w-full bg-primary text-primary-foreground p-3 rounded-lg font-medium hover:opacity-90 transition-opacity"
             data-testid="button-sign-in"
           >
-            {language === 'en' ? 'Sign In' : '로그인'}
+            {t('auth.signIn')}
           </Button>
 
           <div className="text-center mt-4">
             <a href="#" className="text-primary text-sm hover:underline" data-testid="link-create-account">
-              {language === 'en' ? 'Create New Account' : '새 계정 만들기'}
+              {t('auth.createAccount')}
             </a>
           </div>
         </CardContent>

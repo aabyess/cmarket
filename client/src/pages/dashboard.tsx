@@ -12,10 +12,12 @@ import { ChatModal } from "@/components/modals/chat-modal";
 import { DeliveryConfirmationModal } from "@/components/modals/delivery-confirmation-modal";
 import { useState } from "react";
 import { Link } from "wouter";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Dashboard() {
   const { user, isLoading, isAuthenticated } = useAuth();
   const { toast } = useToast();
+  const { language, setLanguage, t } = useLanguage();
   const [selectedRfqId, setSelectedRfqId] = useState<string | null>(null);
   const [showQuoteModal, setShowQuoteModal] = useState(false);
   const [showChatModal, setShowChatModal] = useState(false);
@@ -85,18 +87,18 @@ export default function Dashboard() {
               </div>
               <nav className="hidden md:flex space-x-1">
                 <Button variant="default" size="sm" data-testid="nav-dashboard">
-                  Dashboard
+                  {t('nav.dashboard')}
                 </Button>
                 <Link href="/create-rfq">
                   <Button variant="ghost" size="sm" data-testid="nav-create-rfq">
-                    Create RFQ
+                    {t('rfq.create')}
                   </Button>
                 </Link>
                 <Button variant="ghost" size="sm" data-testid="nav-my-rfqs">
-                  My RFQs
+                  {t('nav.myRfqs')}
                 </Button>
                 <Button variant="ghost" size="sm" data-testid="nav-messages">
-                  Messages
+                  {t('nav.messages')}
                 </Button>
               </nav>
             </div>
@@ -106,8 +108,28 @@ export default function Dashboard() {
               
               {/* Language Toggle */}
               <div className="bg-muted p-1 rounded-lg flex">
-                <button className="px-2 py-1 rounded-sm bg-primary text-primary-foreground text-xs">EN</button>
-                <button className="px-2 py-1 rounded-sm text-muted-foreground text-xs hover:bg-accent">한국어</button>
+                <button 
+                  onClick={() => setLanguage('en')}
+                  className={`px-2 py-1 rounded-sm text-xs ${
+                    language === 'en' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'text-muted-foreground hover:bg-accent'
+                  }`}
+                  data-testid="button-language-en"
+                >
+                  EN
+                </button>
+                <button 
+                  onClick={() => setLanguage('ko')}
+                  className={`px-2 py-1 rounded-sm text-xs ${
+                    language === 'ko' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'text-muted-foreground hover:bg-accent'
+                  }`}
+                  data-testid="button-language-ko"
+                >
+                  한국어
+                </button>
               </div>
               
               {/* Notifications */}
@@ -126,7 +148,7 @@ export default function Dashboard() {
                 <div className="hidden md:block">
                   <div className="text-sm font-medium" data-testid="company-name">{user.companyName}</div>
                   <div className="text-xs text-muted-foreground" data-testid="company-type">
-                    {user.companyType === 'korean' ? 'Korean Company' : 'Egyptian Company'}
+                    {user.companyType === 'korean' ? t('auth.koreanCompany') : t('auth.egyptianCompany')}
                   </div>
                 </div>
                 <Button
@@ -135,7 +157,7 @@ export default function Dashboard() {
                   onClick={() => window.location.href = "/api/logout"}
                   data-testid="button-logout"
                 >
-                  Logout
+                  {t('nav.logout')}
                 </Button>
               </div>
             </div>
@@ -157,7 +179,7 @@ export default function Dashboard() {
                   <h3 className="text-2xl font-bold" data-testid="stat-active-rfqs">
                     {rfqs.filter(r => r.status === 'active').length}
                   </h3>
-                  <p className="text-muted-foreground text-sm">Active RFQs</p>
+                  <p className="text-muted-foreground text-sm">{t('dashboard.activeRfqs')}</p>
                 </div>
               </div>
             </CardContent>
@@ -173,7 +195,7 @@ export default function Dashboard() {
                   <h3 className="text-2xl font-bold" data-testid="stat-total-quotes">
                     {rfqs.reduce((acc, rfq) => acc + (rfq.quotes?.length || 0), 0)}
                   </h3>
-                  <p className="text-muted-foreground text-sm">Received Quotes</p>
+                  <p className="text-muted-foreground text-sm">{t('dashboard.receivedQuotes')}</p>
                 </div>
               </div>
             </CardContent>
@@ -189,7 +211,7 @@ export default function Dashboard() {
                   <h3 className="text-2xl font-bold" data-testid="stat-completed-deals">
                     {orders.filter(o => o.status === 'completed').length}
                   </h3>
-                  <p className="text-muted-foreground text-sm">Completed Deals</p>
+                  <p className="text-muted-foreground text-sm">{t('dashboard.completedDeals')}</p>
                 </div>
               </div>
             </CardContent>
@@ -207,7 +229,7 @@ export default function Dashboard() {
                       .reduce((acc, o) => acc + Number(o.totalAmount), 0)
                       .toLocaleString()}
                   </h3>
-                  <p className="text-muted-foreground text-sm">Total Value</p>
+                  <p className="text-muted-foreground text-sm">{t('dashboard.totalValue')}</p>
                 </div>
               </div>
             </CardContent>
@@ -219,12 +241,12 @@ export default function Dashboard() {
           <CardHeader className="p-6 border-b border-border">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold">Recent RFQs</h2>
-                <p className="text-muted-foreground text-sm">Manage your request for quotations</p>
+                <h2 className="text-lg font-semibold">{t('stats.recentRfqs')}</h2>
+                <p className="text-muted-foreground text-sm">{t('messages.manageRfqs')}</p>
               </div>
               <Link href="/create-rfq">
                 <Button data-testid="button-create-new-rfq">
-                  <i className="fas fa-plus mr-2"></i>Create New RFQ
+                  <i className="fas fa-plus mr-2"></i>{t('rfq.create')}
                 </Button>
               </Link>
             </div>
@@ -237,32 +259,32 @@ export default function Dashboard() {
               </div>
             ) : rfqs.length === 0 ? (
               <div className="p-8 text-center">
-                <p className="text-muted-foreground">No RFQs found. Create your first RFQ to get started.</p>
+                <p className="text-muted-foreground">{t('messages.noRfqsFound')}</p>
               </div>
             ) : (
               <table className="w-full">
                 <thead className="bg-muted">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      RFQ ID
+                      {t('table.rfqId')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Product/Service
+                      {t('table.productService')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Quantity
+                      {t('table.quantity')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Deadline
+                      {t('table.deadline')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Status
+                      {t('table.status')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Quotes
+                      {t('table.quotes')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Actions
+                      {t('table.actions')}
                     </th>
                   </tr>
                 </thead>
@@ -286,7 +308,7 @@ export default function Dashboard() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm" data-testid={`text-quotes-count-${rfq.id}`}>
                         <Badge variant="secondary">
-                          {rfq.quotes?.length || 0} quotes
+                          {rfq.quotes?.length || 0} {t('messages.quotesCount')}
                         </Badge>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
@@ -299,7 +321,7 @@ export default function Dashboard() {
                           }}
                           data-testid={`button-view-quotes-${rfq.id}`}
                         >
-                          View Quotes
+                          {t('buttons.viewQuotes')}
                         </Button>
                         <Button
                           variant="link"
@@ -310,7 +332,7 @@ export default function Dashboard() {
                           }}
                           data-testid={`button-chat-${rfq.id}`}
                         >
-                          Chat
+                          {t('buttons.chat')}
                         </Button>
                       </td>
                     </tr>
