@@ -22,6 +22,7 @@ export function ChatModal({ rfqId, open, onOpenChange }: ChatModalProps) {
   const [message, setMessage] = useState("");
   const [ws, setWs] = useState<WebSocket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [translatedMessages, setTranslatedMessages] = useState<{[key: string]: string}>({});
 
   const { data: messages = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/rfqs", rfqId, "messages"],
@@ -104,6 +105,43 @@ export function ChatModal({ rfqId, open, onOpenChange }: ChatModalProps) {
     });
   };
 
+  // Simple translation function for demo purposes
+  const translateMessage = (text: string, toLanguage: 'ko' | 'en') => {
+    const translations: {[key: string]: {ko: string, en: string}} = {
+      "Hello! I'm interested in your Industrial Manufacturing Equipment RFQ. Could you provide more details about the specifications?": {
+        ko: "안녕하세요! 귀하의 산업용 제조 장비 견적 요청에 관심이 있습니다. 사양에 대한 자세한 정보를 제공해 주실 수 있나요?",
+        en: "Hello! I'm interested in your Industrial Manufacturing Equipment RFQ. Could you provide more details about the specifications?"
+      },
+      "Hi! Thanks for your interest. We need equipment for textile manufacturing with specific quality certifications. Are you able to provide ISO certifications?": {
+        ko: "안녕하세요! 관심을 가져주셔서 감사합니다. 특정 품질 인증을 받은 섬유 제조용 장비가 필요합니다. ISO 인증을 제공할 수 있나요?",
+        en: "Hi! Thanks for your interest. We need equipment for textile manufacturing with specific quality certifications. Are you able to provide ISO certifications?"
+      },
+      "Yes, we can provide ISO 9001 and ISO 14001 certifications. Our equipment is manufactured in Korea with the highest quality standards.": {
+        ko: "네, ISO 9001 및 ISO 14001 인증을 제공할 수 있습니다. 저희 장비는 최고 품질 기준으로 한국에서 제조됩니다.",
+        en: "Yes, we can provide ISO 9001 and ISO 14001 certifications. Our equipment is manufactured in Korea with the highest quality standards."
+      },
+      "Perfect! What's your estimated delivery time to Cairo, Egypt?": {
+        ko: "완벽합니다! 이집트 카이로까지의 예상 배송 시간은 어떻게 되나요?",
+        en: "Perfect! What's your estimated delivery time to Cairo, Egypt?"
+      },
+      "Delivery to Cairo typically takes 4-6 weeks including customs clearance. We handle all shipping documentation.": {
+        ko: "카이로까지의 배송은 통관을 포함하여 일반적으로 4-6주가 소요됩니다. 모든 배송 서류를 저희가 처리합니다.",
+        en: "Delivery to Cairo typically takes 4-6 weeks including customs clearance. We handle all shipping documentation."
+      }
+    };
+
+    return translations[text]?.[toLanguage] || `[${toLanguage === 'ko' ? '번역됨' : 'Translated'}] ${text}`;
+  };
+
+  const handleTranslate = (messageId: string, content: string) => {
+    const targetLanguage = language === 'en' ? 'ko' : 'en';
+    const translated = translateMessage(content, targetLanguage);
+    setTranslatedMessages(prev => ({
+      ...prev,
+      [messageId]: translated
+    }));
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl h-[80vh] flex flex-col">
@@ -146,11 +184,30 @@ export function ChatModal({ rfqId, open, onOpenChange }: ChatModalProps) {
                           : 'chat-bubble-received'
                       }`}
                     >
-                      <p className="text-sm" data-testid={`message-content-${msg.id}`}>{msg.content}</p>
+                      <p className="text-sm" data-testid={`message-content-${msg.id}`}>
+                        {translatedMessages[msg.id] || msg.content}
+                      </p>
+                      {translatedMessages[msg.id] && (
+                        <p className="text-xs opacity-70 mt-1 italic">
+                          {language === 'en' ? 'Translated from Korean' : '영어에서 번역됨'}
+                        </p>
+                      )}
                     </div>
-                    <p className={`text-xs text-muted-foreground mt-1 ${isOwnMessage ? 'text-right' : ''}`}>
-                      {formatTime(msg.createdAt)}
-                    </p>
+                    <div className={`flex items-center mt-1 space-x-2 ${isOwnMessage ? 'justify-end' : ''}`}>
+                      <p className="text-xs text-muted-foreground">
+                        {formatTime(msg.createdAt)}
+                      </p>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleTranslate(msg.id, msg.content)}
+                        className="h-6 px-2 text-xs"
+                        data-testid={`button-translate-${msg.id}`}
+                      >
+                        <i className="fas fa-language mr-1"></i>
+                        {language === 'en' ? '한국어' : 'EN'}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               );
