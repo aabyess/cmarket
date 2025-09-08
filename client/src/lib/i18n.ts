@@ -1,6 +1,6 @@
 export const translations = {
   en: {
-    'platform.title': 'Korea-Egypt B2B RFQ Platform',
+    'platform.title': 'Korea-Egypt B2B Trade Platform',
     'auth.selectCompanyType': 'Select Company Type',
     'auth.koreanCompany': 'Korean Company',
     'auth.egyptianCompany': 'Egyptian Company',
@@ -134,7 +134,7 @@ export const translations = {
     'payment.refundProtection': 'Full refund protection for non-delivery',
   },
   ko: {
-    'platform.title': '한국-이집트 B2B 견적 플랫폼',
+    'platform.title': '한국-이집트 B2B 무역 플랫폼',
     'auth.selectCompanyType': '회사 유형 선택',
     'auth.koreanCompany': '한국 기업',
     'auth.egyptianCompany': '이집트 기업',
