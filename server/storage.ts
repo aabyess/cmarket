@@ -455,8 +455,103 @@ export class DatabaseStorage implements IStorage {
       .where(eq(quotes.rfqId, rfqId))
       .orderBy(desc(quotes.createdAt));
     
-    // If no quotes found and it's a mock RFQ, return empty array for now
-    // (Could add mock quotes here in the future if needed)
+    // If no quotes found and it's a mock RFQ, return mock quotes
+    if (results.length === 0 && rfqId.startsWith('mock-rfq-')) {
+      const mockQuotes: any[] = [
+        {
+          id: `quote-${rfqId}-1`,
+          rfqId: rfqId,
+          supplierId: 'supplier-1',
+          supplierName: 'PT Jakarta Manufacturing',
+          supplierLocation: 'Jakarta, Indonesia',
+          unitPrice: '450',
+          totalAmount: '22500',
+          deliveryTime: '3-4 weeks',
+          validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          notes: 'ISO certified manufacturer with 15 years experience',
+          status: 'pending',
+          createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+          updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+        },
+        {
+          id: `quote-${rfqId}-2`,
+          rfqId: rfqId,
+          supplierId: 'supplier-2',
+          supplierName: 'Surabaya Industrial Co.',
+          supplierLocation: 'Surabaya, Indonesia',
+          unitPrice: '420',
+          totalAmount: '21000',
+          deliveryTime: '4-5 weeks',
+          validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          notes: 'Competitive pricing with quality assurance',
+          status: 'pending',
+          createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+          updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        },
+        {
+          id: `quote-${rfqId}-3`,
+          rfqId: rfqId,
+          supplierId: 'supplier-3',
+          supplierName: 'Bali Export Solutions',
+          supplierLocation: 'Bali, Indonesia',
+          unitPrice: '480',
+          totalAmount: '24000',
+          deliveryTime: '2-3 weeks',
+          validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          notes: 'Fast delivery and premium quality',
+          status: 'accepted',
+          createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+          updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+        },
+        {
+          id: `quote-${rfqId}-4`,
+          rfqId: rfqId,
+          supplierId: 'supplier-4',
+          supplierName: 'Medan Trading Corp',
+          supplierLocation: 'Medan, Indonesia',
+          unitPrice: '410',
+          totalAmount: '20500',
+          deliveryTime: '5-6 weeks',
+          validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          notes: 'Best value for bulk orders',
+          status: 'pending',
+          createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+          updatedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+        },
+        {
+          id: `quote-${rfqId}-5`,
+          rfqId: rfqId,
+          supplierId: 'supplier-5',
+          supplierName: 'Bandung Supply Partners',
+          supplierLocation: 'Bandung, Indonesia',
+          unitPrice: '465',
+          totalAmount: '23250',
+          deliveryTime: '3-4 weeks',
+          validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          notes: 'Reliable logistics network across Asia',
+          status: 'pending',
+          createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+          updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        },
+        {
+          id: `quote-${rfqId}-6`,
+          rfqId: rfqId,
+          supplierId: 'supplier-6',
+          supplierName: 'Semarang Industries Ltd',
+          supplierLocation: 'Semarang, Indonesia',
+          unitPrice: '445',
+          totalAmount: '22250',
+          deliveryTime: '4-5 weeks',
+          validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          notes: 'Certified supplier with global reach',
+          status: 'pending',
+          createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
+          updatedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
+        },
+      ];
+      return mockQuotes;
+    }
+    
     return results;
   }
 

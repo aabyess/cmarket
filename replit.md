@@ -1,4 +1,4 @@
-# Korea-Egypt B2B RFQ Platform
+# Korea-Indonesia B2B RFQ Platform
 
 ## Overview
 

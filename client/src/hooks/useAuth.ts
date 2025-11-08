@@ -5,7 +5,7 @@ export function useAuth() {
   const mockUser = {
     id: "demo-user-1",
     email: "demo@koegyconnect.com",
-    companyName: "Korea-Egypt Trade Corp",
+    companyName: "Korea-Indonesia Trade Corp",
     companyType: "korean",
     firstName: "Demo",
     lastName: "User"

@@ -231,74 +231,99 @@ export default function RfqDetail() {
             </CardContent>
           </Card>
 
-          {/* Actions */}
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-4">
-                <Button 
-                  onClick={() => setShowChatModal(true)}
-                  data-testid="button-open-chat"
-                >
-                  <i className="fas fa-comments mr-2"></i>
-                  {t('buttons.chat')}
-                </Button>
-                
-                {quotes.length > 0 && (
+          {/* Participating Companies / Quotes */}
+          {quotes.length > 0 ? (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>
+                    {language === 'en' ? 'Participating Companies' : language === 'ko' ? '참여 업체' : 'Syarikat yang Mengambil Bahagian'} ({quotes.length})
+                  </CardTitle>
                   <Button 
                     onClick={() => setShowQuoteModal(true)}
                     variant="outline"
+                    size="sm"
                     data-testid="button-compare-quotes"
                   >
                     <i className="fas fa-chart-bar mr-2"></i>
-                    {t('buttons.compareQuotes')} ({quotes.length})
+                    {t('buttons.compareQuotes')}
                   </Button>
-                )}
-                
-                <div className="text-sm text-muted-foreground">
-                  {language === 'en' 
-                    ? `Posted ${new Date(rfq.createdAt).toLocaleDateString()}`
-                    : `${new Date(rfq.createdAt).toLocaleDateString()} 게시됨`
-                  }
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quotes Section */}
-          {quotes.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('quotes.received')} ({quotes.length})</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {quotes.slice(0, 3).map((quote: any) => (
-                    <div key={quote.id} className="border rounded-lg p-4">
+                <div className="space-y-3">
+                  {quotes.map((quote: any, index: number) => (
+                    <div 
+                      key={quote.id} 
+                      className="border rounded-lg p-4 hover:border-primary transition-colors"
+                      data-testid={`quote-card-${index}`}
+                    >
                       <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-semibold">${Number(quote.totalAmount).toLocaleString()}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {language === 'en' ? 'Unit price' : '단가'}: ${Number(quote.unitPrice).toLocaleString()} / {rfq.unit}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {language === 'en' ? 'Delivery' : '배송'}: {quote.deliveryTime}
-                          </p>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-semibold">
+                              {quote.supplierName?.charAt(0) || 'C'}
+                            </div>
+                            <div>
+                              <p className="font-semibold text-base">{quote.supplierName}</p>
+                              <p className="text-xs text-muted-foreground">
+                                <i className="fas fa-map-marker-alt mr-1"></i>
+                                {quote.supplierLocation}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-3 gap-4 mt-3 pl-13">
+                            <div>
+                              <p className="text-xs text-muted-foreground">
+                                {language === 'en' ? 'Total Amount' : language === 'ko' ? '총 금액' : 'Jumlah Keseluruhan'}
+                              </p>
+                              <p className="font-semibold text-primary">${Number(quote.totalAmount).toLocaleString()}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-muted-foreground">
+                                {language === 'en' ? 'Unit Price' : language === 'ko' ? '단가' : 'Harga Seunit'}
+                              </p>
+                              <p className="font-medium">${Number(quote.unitPrice).toLocaleString()}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-muted-foreground">
+                                {language === 'en' ? 'Delivery Time' : language === 'ko' ? '배송 기간' : 'Masa Penghantaran'}
+                              </p>
+                              <p className="font-medium">{quote.deliveryTime}</p>
+                            </div>
+                          </div>
+                          {quote.notes && (
+                            <p className="text-sm text-muted-foreground mt-2 pl-13">
+                              <i className="fas fa-info-circle mr-1"></i>
+                              {quote.notes}
+                            </p>
+                          )}
                         </div>
-                        <Badge variant={quote.status === 'pending' ? 'secondary' : 'default'}>
-                          {quote.status}
-                        </Badge>
+                        <div className="flex flex-col items-end gap-2 ml-4">
+                          <Badge variant={quote.status === 'accepted' ? 'default' : 'secondary'}>
+                            {quote.status}
+                          </Badge>
+                          <Button 
+                            onClick={() => setShowChatModal(true)}
+                            size="sm"
+                            data-testid={`button-chat-${index}`}
+                          >
+                            <i className="fas fa-comments mr-2"></i>
+                            {language === 'en' ? 'Chat' : language === 'ko' ? '채팅' : 'Sembang'}
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   ))}
-                  {quotes.length > 3 && (
-                    <Button variant="outline" onClick={() => setShowQuoteModal(true)}>
-                      {language === 'en' 
-                        ? `View all ${quotes.length} quotes` 
-                        : `모든 견적 ${quotes.length}개 보기`
-                      }
-                    </Button>
-                  )}
                 </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardContent className="p-8 text-center">
+                <p className="text-muted-foreground">
+                  {language === 'en' ? 'No quotes received yet' : language === 'ko' ? '아직 받은 견적이 없습니다' : 'Tiada sebut harga diterima lagi'}
+                </p>
               </CardContent>
             </Card>
           )}
