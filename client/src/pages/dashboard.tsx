@@ -190,8 +190,8 @@ export default function Dashboard() {
           <Card className="hover-lift">
             <CardContent className="p-6">
               <div className="flex items-center">
-                <div className="p-3 bg-primary/10 rounded-lg">
-                  <i className="fas fa-file-alt text-primary text-xl"></i>
+                <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                  <i className="fas fa-file-alt text-blue-600 dark:text-blue-400 text-xl"></i>
                 </div>
                 <div className="ml-4">
                   <h3 className="text-2xl font-bold" data-testid="stat-active-rfqs">
@@ -206,8 +206,8 @@ export default function Dashboard() {
           <Card className="hover-lift">
             <CardContent className="p-6">
               <div className="flex items-center">
-                <div className="p-3 bg-secondary/10 rounded-lg">
-                  <i className="fas fa-calculator text-secondary text-xl"></i>
+                <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+                  <i className="fas fa-calculator text-yellow-600 dark:text-yellow-400 text-xl"></i>
                 </div>
                 <div className="ml-4">
                   <h3 className="text-2xl font-bold" data-testid="stat-total-quotes">
@@ -222,8 +222,8 @@ export default function Dashboard() {
           <Card className="hover-lift">
             <CardContent className="p-6">
               <div className="flex items-center">
-                <div className="p-3 bg-green-100 rounded-lg">
-                  <i className="fas fa-handshake text-green-600 text-xl"></i>
+                <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                  <i className="fas fa-handshake text-green-600 dark:text-green-400 text-xl"></i>
                 </div>
                 <div className="ml-4">
                   <h3 className="text-2xl font-bold" data-testid="stat-completed-deals">
@@ -238,8 +238,8 @@ export default function Dashboard() {
           <Card className="hover-lift">
             <CardContent className="p-6">
               <div className="flex items-center">
-                <div className="p-3 bg-blue-100 rounded-lg">
-                  <i className="fas fa-dollar-sign text-blue-600 text-xl"></i>
+                <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                  <i className="fas fa-dollar-sign text-purple-600 dark:text-purple-400 text-xl"></i>
                 </div>
                 <div className="ml-4">
                   <h3 className="text-2xl font-bold" data-testid="stat-total-value">
