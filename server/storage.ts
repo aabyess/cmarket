@@ -112,7 +112,7 @@ export class DatabaseStorage implements IStorage {
 
     // For demo purposes, always return mock data if no RFQs exist
     if (results.length === 0) {
-      const mockRfqs: Rfq[] = [
+      const mockRfqs: any[] = [
         {
           id: 'mock-rfq-1',
           title: 'Industrial Manufacturing Equipment',
