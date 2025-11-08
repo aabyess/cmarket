@@ -170,6 +170,17 @@
   z-index: 50;
 }
 
+/* SelectTrigger (button) background */
+[data-radix-select-trigger] {
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--input));
+}
+
+.dark [data-radix-select-trigger] {
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--input));
+}
+
 /* SelectContent background for proper visibility */
 [role="listbox"],
 [data-radix-select-content] {
