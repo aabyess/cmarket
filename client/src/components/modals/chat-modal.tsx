@@ -256,9 +256,15 @@ export function ChatModal({ rfqId, open, onOpenChange }: ChatModalProps) {
               data-testid="button-send-message"
             >
               {sendMessageMutation.isPending ? (
-                <div className="animate-spin w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full" />
+                <>
+                  <div className="animate-spin w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full mr-2" />
+                  {t('payment.processing')}
+                </>
               ) : (
-                <i className="fas fa-paper-plane"></i>
+                <>
+                  <i className="fas fa-paper-plane mr-2"></i>
+                  {t('buttons.send')}
+                </>
               )}
             </Button>
           </form>
