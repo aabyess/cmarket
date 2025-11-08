@@ -135,31 +135,13 @@
   opacity: 0.7;
 }
 
-.flag-egypt {
+.flag-indonesia {
   background: linear-gradient(to bottom, 
-    #CE1126 0%, #CE1126 33.33%, 
-    #ffffff 33.33%, #ffffff 66.66%, 
-    #000000 66.66%, #000000 100%
+    #FF0000 0%, #FF0000 50%, 
+    #FFFFFF 50%, #FFFFFF 100%
   );
   border: 1px solid #e5e7eb;
   position: relative;
-}
-
-.flag-egypt::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 8px;
-  height: 6px;
-  background: 
-    radial-gradient(circle at center, #FFD700 30%, transparent 30%),
-    linear-gradient(45deg, #FFD700 25%, transparent 25%),
-    linear-gradient(-45deg, #FFD700 25%, transparent 25%);
-  background-size: 8px 6px, 4px 3px, 4px 3px;
-  background-position: center, center, center;
-  opacity: 0.8;
 }
 
 .status-active { 
@@ -189,7 +171,7 @@
   border: 1px solid hsl(var(--border));
 }
 
-.dark .flag-egypt {
-  background: linear-gradient(to bottom, #CE1126 33%, #ffffff 33%, #ffffff 66%, #000000 66%);
+.dark .flag-indonesia {
+  background: linear-gradient(to bottom, #FF0000 50%, #FFFFFF 50%);
   border: 1px solid hsl(var(--border));
 }

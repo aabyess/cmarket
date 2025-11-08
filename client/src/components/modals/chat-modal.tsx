@@ -147,7 +147,7 @@ export function ChatModal({ rfqId, open, onOpenChange }: ChatModalProps) {
       <DialogContent className="max-w-2xl h-[80vh] flex flex-col">
         <DialogHeader className="border-b border-border pb-4">
           <DialogTitle className="flex items-center">
-            <div className="flag-egypt w-5 h-3 rounded-sm mr-2"></div>
+            <div className="flag-indonesia w-5 h-3 rounded-sm mr-2"></div>
             <div>
               <h3 className="font-semibold">{t('modal.chat')} - {rfq?.title}</h3>
               <p className="text-xs text-muted-foreground">{language === 'en' ? 'RFQ Discussion' : '견적요청 논의'}</p>

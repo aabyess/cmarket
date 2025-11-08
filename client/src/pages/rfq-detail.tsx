@@ -60,10 +60,10 @@ export default function RfqDetail() {
   };
 
   const getCountryName = (country: string) => {
-    const countries: { [key: string]: { en: string; ko: string } } = {
-      'korea': { en: 'Korea', ko: '한국' },
-      'egypt': { en: 'Egypt', ko: '이집트' },
-      'both': { en: 'Korea & Egypt', ko: '한국 & 이집트' }
+    const countries: { [key: string]: { en: string; ko: string; ms: string } } = {
+      'korea': { en: 'Korea', ko: '한국', ms: 'Korea' },
+      'indonesia': { en: 'Indonesia', ko: '인도네시아', ms: 'Indonesia' },
+      'both': { en: 'Korea & Indonesia', ko: '한국 & 인도네시아', ms: 'Korea & Indonesia' }
     };
     return countries[country]?.[language] || country;
   };
@@ -86,7 +86,7 @@ export default function RfqDetail() {
                 <div className="flex items-center cursor-pointer">
                   <div className="flag-korea w-5 h-3 rounded-sm mr-2"></div>
                   <i className="fas fa-handshake text-lg text-primary mx-2"></i>
-                  <div className="flag-egypt w-5 h-3 rounded-sm ml-2"></div>
+                  <div className="flag-indonesia w-5 h-3 rounded-sm ml-2"></div>
                   <h1 className="ml-3 text-xl font-bold">CMARKET Trade</h1>
                 </div>
               </Link>
@@ -120,7 +120,7 @@ export default function RfqDetail() {
               <div className="flex items-center cursor-pointer">
                 <div className="flag-korea w-5 h-3 rounded-sm mr-2"></div>
                 <i className="fas fa-handshake text-lg text-primary mx-2"></i>
-                <div className="flag-egypt w-5 h-3 rounded-sm ml-2"></div>
+                <div className="flag-indonesia w-5 h-3 rounded-sm ml-2"></div>
                 <h1 className="ml-3 text-xl font-bold">CMARKET Trade</h1>
               </div>
             </Link>

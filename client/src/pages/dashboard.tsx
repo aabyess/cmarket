@@ -84,8 +84,8 @@ export default function Dashboard() {
             <span className="text-xs">{language === 'en' ? 'Trade Partnership' : '무역 파트너십'}</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="flag-egypt w-8 h-5 rounded-sm shadow-sm"></div>
-            <span className="text-sm font-medium text-muted-foreground">{language === 'en' ? 'Arab Republic of Egypt' : '이집트 아랍 공화국'}</span>
+            <div className="flag-indonesia w-8 h-5 rounded-sm shadow-sm"></div>
+            <span className="text-sm font-medium text-muted-foreground">{language === 'en' ? 'Republic of Indonesia' : language === 'ko' ? '인도네시아 공화국' : 'Republik Indonesia'}</span>
           </div>
         </div>
       </div>
@@ -98,7 +98,7 @@ export default function Dashboard() {
               <div className="flex items-center">
                 <div className="flag-korea w-5 h-3 rounded-sm mr-2"></div>
                 <i className="fas fa-handshake text-lg text-primary mx-2"></i>
-                <div className="flag-egypt w-5 h-3 rounded-sm ml-2"></div>
+                <div className="flag-indonesia w-5 h-3 rounded-sm ml-2"></div>
                 <h1 className="ml-3 text-xl font-bold">CMARKET Trade</h1>
               </div>
               <nav className="hidden md:flex space-x-1">

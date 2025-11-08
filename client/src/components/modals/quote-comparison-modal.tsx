@@ -78,7 +78,7 @@ export function QuoteComparisonModal({ rfqId, open, onOpenChange }: QuoteCompari
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center">
                         <div className={`w-6 h-4 rounded-sm mr-2 ${
-                          quote.supplier?.companyType === 'egyptian' ? 'flag-egypt' : 'flag-korea'
+                          quote.supplier?.companyType === 'indonesian' ? 'flag-indonesia' : 'flag-korea'
                         }`}></div>
                         <div>
                           <h3 className="font-semibold" data-testid={`quote-supplier-${quote.id}`}>

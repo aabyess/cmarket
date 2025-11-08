@@ -15,15 +15,15 @@ export function TimeDisplay() {
         hour12: false
       }).format(now);
       
-      const eet = new Intl.DateTimeFormat('en-US', {
-        timeZone: 'Africa/Cairo',
+      const wib = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Asia/Jakarta',
         hour: '2-digit',
         minute: '2-digit',
         hour12: false
       }).format(now);
       
       setKstTime(`${kst} KST`);
-      setEetTime(`${eet} EET`);
+      setEetTime(`${wib} WIB`);
     };
     
     updateTime();
@@ -39,8 +39,8 @@ export function TimeDisplay() {
         <span data-testid="kst-time">{kstTime}</span>
       </div>
       <div className="flex items-center">
-        <div className="flag-egypt w-4 h-3 rounded-sm mr-1"></div>
-        <span data-testid="eet-time">{eetTime}</span>
+        <div className="flag-indonesia w-4 h-3 rounded-sm mr-1"></div>
+        <span data-testid="wib-time">{eetTime}</span>
       </div>
     </div>
   );

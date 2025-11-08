@@ -125,7 +125,7 @@ export default function RfqCreation() {
               <div className="flex items-center cursor-pointer">
                 <div className="flag-korea w-5 h-3 rounded-sm mr-2"></div>
                 <i className="fas fa-handshake text-lg text-primary mx-2"></i>
-                <div className="flag-egypt w-5 h-3 rounded-sm ml-2"></div>
+                <div className="flag-indonesia w-5 h-3 rounded-sm ml-2"></div>
                 <h1 className="ml-3 text-xl font-bold">CMARKET Trade</h1>
               </div>
             </Link>

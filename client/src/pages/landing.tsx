@@ -51,7 +51,7 @@ export default function Landing() {
             <div className="flex justify-center items-center mb-4">
               <div className="flag-korea w-6 h-4 rounded-sm mr-2"></div>
               <i className="fas fa-handshake text-2xl text-primary mx-2"></i>
-              <div className="flag-egypt w-6 h-4 rounded-sm ml-2"></div>
+              <div className="flag-indonesia w-6 h-4 rounded-sm ml-2"></div>
             </div>
             <h1 className="text-2xl font-bold text-foreground">CMARKET Trade</h1>
             <p className="text-muted-foreground text-sm">
@@ -111,19 +111,19 @@ export default function Landing() {
                 </div>
               </button>
               <button
-                onClick={() => setSelectedCompanyType('egyptian')}
+                onClick={() => setSelectedCompanyType('indonesian')}
                 className={`border-2 p-4 rounded-lg text-center hover-lift transition-all ${
-                  selectedCompanyType === 'egyptian'
+                  selectedCompanyType === 'indonesian'
                     ? 'border-primary bg-primary text-primary-foreground'
                     : 'border-border hover:border-secondary'
                 }`}
-                data-testid="button-company-egyptian"
+                data-testid="button-company-indonesian"
               >
-                <div className="flag-egypt w-8 h-5 rounded-sm mx-auto mb-2"></div>
+                <div className="flag-indonesia w-8 h-5 rounded-sm mx-auto mb-2"></div>
                 <div className="text-sm font-medium">
-                  {t('auth.egyptianCompany')}
+                  {t('auth.indonesianCompany')}
                 </div>
-                <div className="text-xs opacity-90">شركة مصرية</div>
+                <div className="text-xs opacity-90">Perusahaan Indonesia</div>
               </button>
             </div>
           </div>
