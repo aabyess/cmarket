@@ -150,6 +150,17 @@ export default function RfqDetail() {
                 >
                   한국어
                 </button>
+                <button 
+                  onClick={() => setLanguage('ms')}
+                  className={`px-2 py-1 rounded-sm text-xs ${
+                    language === 'ms' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'text-muted-foreground hover:bg-accent'
+                  }`}
+                  data-testid="button-language-ms"
+                >
+                  Bahasa
+                </button>
               </div>
               
               <Link href="/">

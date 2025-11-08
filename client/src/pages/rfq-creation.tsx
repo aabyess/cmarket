@@ -154,6 +154,17 @@ export default function RfqCreation() {
                 >
                   한국어
                 </button>
+                <button 
+                  onClick={() => setLanguage('ms')}
+                  className={`px-2 py-1 rounded-sm text-xs ${
+                    language === 'ms' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'text-muted-foreground hover:bg-accent'
+                  }`}
+                  data-testid="button-language-ms"
+                >
+                  Bahasa
+                </button>
               </div>
               
               <Link href="/">
@@ -172,7 +183,7 @@ export default function RfqCreation() {
           <CardHeader>
             <CardTitle className="text-xl font-semibold">{t('rfq.create')}</CardTitle>
             <p className="text-muted-foreground text-sm">
-              {language === 'en' ? 'Request for quotations from Korean and Egyptian companies' : '한국 및 이집트 기업에서 견적을 요청하세요'}
+              {language === 'en' ? 'Request for quotations from Korean and Indonesian companies' : language === 'ko' ? '한국 및 인도네시아 기업에서 견적을 요청하세요' : 'Minta sebut harga dari syarikat Korea dan Indonesia'}
             </p>
           </CardHeader>
           <CardContent>

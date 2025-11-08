@@ -84,6 +84,17 @@ export default function Landing() {
               >
                 한국어
               </button>
+              <button 
+                onClick={() => setLanguage('ms')}
+                className={`px-3 py-1 rounded-md text-sm ${
+                  language === 'ms' 
+                    ? 'bg-primary text-primary-foreground' 
+                    : 'text-muted-foreground hover:bg-accent'
+                }`}
+                data-testid="button-language-ms"
+              >
+                Bahasa
+              </button>
             </div>
           </div>
 
