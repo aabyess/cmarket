@@ -171,12 +171,22 @@
 }
 
 /* SelectTrigger (button) background - force visible background */
-button[role="combobox"] {
+button[role="combobox"],
+button[data-radix-select-trigger] {
   background-color: hsl(var(--background)) !important;
+  background: hsl(var(--background)) !important;
 }
 
-.dark button[role="combobox"] {
+.dark button[role="combobox"],
+.dark button[data-radix-select-trigger] {
   background-color: hsl(var(--background)) !important;
+  background: hsl(var(--background)) !important;
+}
+
+/* Extra specificity for form selects */
+form button[role="combobox"] {
+  background-color: hsl(var(--background)) !important;
+  background: hsl(var(--background)) !important;
 }
 
 /* SelectContent background for proper visibility */
