@@ -1,5 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -9,14 +9,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { insertRfqSchema } from "@shared/schema";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Card, CardContent } from "@/components/ui/card";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
 import { Link, useLocation } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { FileText, Package, DollarSign, Truck, CheckCircle2 } from "lucide-react";
 
 const rfqFormSchema = insertRfqSchema.extend({
   deadline: z.string().min(1, 'Deadline is required'),
@@ -33,7 +35,6 @@ export default function RfqCreation() {
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
 
-  // Redirect to login if not authenticated
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       toast({
@@ -59,7 +60,7 @@ export default function RfqCreation() {
       budgetMin: "",
       budgetMax: "",
       deliveryLocation: "",
-      deadline: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
+      deadline: new Date().toISOString().split('T')[0],
       targetCountry: "",
       isUrgent: false,
     },
@@ -69,7 +70,7 @@ export default function RfqCreation() {
     mutationFn: async (data: RfqFormData) => {
       const rfqData = {
         ...data,
-        deadline: new Date(data.deadline + 'T23:59:59'), // Set to end of day
+        deadline: new Date(data.deadline + 'T23:59:59'),
         budgetMin: data.budgetMin ? data.budgetMin : null,
         budgetMax: data.budgetMax ? data.budgetMax : null,
       };
@@ -109,16 +110,20 @@ export default function RfqCreation() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
       </div>
     );
   }
 
+  const getTextByLanguage = (en: string, ko: string, ms: string) => {
+    return language === 'en' ? en : language === 'ko' ? ko : ms;
+  };
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-muted/30">
       {/* Header */}
-      <header className="bg-card border-b border-border shadow-sm">
+      <header className="bg-card border-b border-border shadow-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <Link href="/">
@@ -168,7 +173,7 @@ export default function RfqCreation() {
               </div>
               
               <Link href="/">
-                <Button variant="ghost" data-testid="button-back-to-dashboard">
+                <Button variant="ghost" size="sm" data-testid="button-back-to-dashboard">
                   <i className="fas fa-arrow-left mr-2"></i>{t('nav.dashboard')}
                 </Button>
               </Link>
@@ -177,272 +182,454 @@ export default function RfqCreation() {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-6">
-        <Card className="max-w-2xl mx-auto">
-          <CardHeader>
-            <CardTitle className="text-xl font-semibold">{t('rfq.create')}</CardTitle>
-            <p className="text-muted-foreground text-sm">
-              {language === 'en' ? 'Request for quotations from Korean and Indonesian companies' : language === 'ko' ? '한국 및 인도네시아 기업에서 견적을 요청하세요' : 'Minta sebut harga dari syarikat Korea dan Indonesia'}
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 border-b border-border">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-3xl md:text-4xl font-bold mb-3">
+              {getTextByLanguage(
+                'Create New Request for Quotation',
+                '새로운 견적 요청 만들기',
+                'Buat Permintaan Sebut Harga Baru'
+              )}
+            </h1>
+            <p className="text-muted-foreground text-sm md:text-base">
+              {getTextByLanguage(
+                'Fill in the details below to receive competitive quotes from verified Korean and Indonesian suppliers',
+                '한국 및 인도네시아 검증된 공급업체로부터 경쟁력 있는 견적을 받으려면 아래 세부 정보를 작성하세요',
+                'Isi butiran di bawah untuk menerima sebut harga kompetitif daripada pembekal Korea dan Indonesia yang disahkan'
+              )}
             </p>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="category"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('form.category')}</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger data-testid="select-category">
-                              <SelectValue placeholder={language === 'en' ? 'Select category' : '카테고리 선택'} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="industrial-equipment">{language === 'en' ? 'Industrial Equipment' : '산업 장비'}</SelectItem>
-                            <SelectItem value="textiles-apparel">{language === 'en' ? 'Textiles & Apparel' : '섬유 및 의류'}</SelectItem>
-                            <SelectItem value="construction-materials">{language === 'en' ? 'Construction Materials' : '건설 자재'}</SelectItem>
-                            <SelectItem value="logistics-services">{language === 'en' ? 'Logistics Services' : '물류 서비스'}</SelectItem>
-                            <SelectItem value="electronics">{t('category.electronics')}</SelectItem>
-                            <SelectItem value="other">{t('category.other')}</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="targetCountry"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('form.targetCountry')}</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger data-testid="select-target-country">
-                              <SelectValue placeholder={language === 'en' ? 'Select target country' : '대상 국가 선택'} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="egypt">🇪🇬 {t('country.egypt')}</SelectItem>
-                            <SelectItem value="korea">🇰🇷 {t('country.korea')}</SelectItem>
-                            <SelectItem value="both">{language === 'en' ? 'Both Countries' : '두 국가 모두'}</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+          </div>
+        </div>
+      </div>
 
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('form.title')}</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder={language === 'en' ? 'Enter product or service title' : '제품 또는 서비스 제목 입력'} 
-                          {...field} 
-                          data-testid="input-title"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <Card className="shadow-lg">
+            <CardContent className="p-6 md:p-8">
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                  
+                  {/* Section 1: Basic Information */}
+                  <div className="space-y-6">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold">
+                        1
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold flex items-center">
+                          <FileText className="w-5 h-5 mr-2" />
+                          {getTextByLanguage('Basic Information', '기본 정보', 'Maklumat Asas')}
+                        </h2>
+                        <p className="text-sm text-muted-foreground">
+                          {getTextByLanguage(
+                            'Category and target market for your request',
+                            '요청의 카테고리 및 타겟 시장',
+                            'Kategori dan pasaran sasaran untuk permintaan anda'
+                          )}
+                        </p>
+                      </div>
+                    </div>
 
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('form.description')}</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          rows={4}
-                          placeholder={language === 'en' ? 'Provide detailed specifications, requirements, and any special conditions...' : '상세 사양, 요구사항 및 특별 조건을 제공하세요...'}
-                          {...field}
-                          data-testid="textarea-description"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="quantity"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('form.quantity')}</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="1000"
-                            {...field}
-                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                            data-testid="input-quantity"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="unit"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('form.unit')}</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger data-testid="select-unit">
-                              <SelectValue placeholder={language === 'en' ? 'Select unit' : '단위 선택'} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="pieces">{t('unit.pieces')}</SelectItem>
-                            <SelectItem value="tons">{t('unit.ton')}</SelectItem>
-                            <SelectItem value="meters">{t('unit.meter')}</SelectItem>
-                            <SelectItem value="hours">{language === 'en' ? 'Service Hours' : '서비스 시간'}</SelectItem>
-                            <SelectItem value="containers">{t('unit.container')}</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="space-y-2">
-                    <FormLabel>{language === 'en' ? 'Budget Range (USD)' : '예산 범위 (USD)'}</FormLabel>
-                    <div className="flex space-x-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pl-11">
                       <FormField
                         control={form.control}
-                        name="budgetMin"
+                        name="category"
                         render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormControl>
-                              <Input
-                                placeholder={language === 'en' ? 'Min' : '최소'}
-                                {...field}
-                                data-testid="input-budget-min"
-                              />
-                            </FormControl>
+                          <FormItem>
+                            <FormLabel className="text-sm font-medium">{t('form.category')}</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger data-testid="select-category" className="h-11">
+                                  <SelectValue placeholder={getTextByLanguage('Select category', '카테고리 선택', 'Pilih kategori')} />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="industrial-equipment">{getTextByLanguage('Industrial Equipment', '산업 장비', 'Peralatan Perindustrian')}</SelectItem>
+                                <SelectItem value="textiles-apparel">{getTextByLanguage('Textiles & Apparel', '섬유 및 의류', 'Tekstil & Pakaian')}</SelectItem>
+                                <SelectItem value="construction-materials">{getTextByLanguage('Construction Materials', '건설 자재', 'Bahan Binaan')}</SelectItem>
+                                <SelectItem value="logistics-services">{getTextByLanguage('Logistics Services', '물류 서비스', 'Perkhidmatan Logistik')}</SelectItem>
+                                <SelectItem value="electronics">{t('category.electronics')}</SelectItem>
+                                <SelectItem value="other">{t('category.other')}</SelectItem>
+                              </SelectContent>
+                            </Select>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
+                      
                       <FormField
                         control={form.control}
-                        name="budgetMax"
+                        name="targetCountry"
                         render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormControl>
-                              <Input
-                                placeholder={language === 'en' ? 'Max' : '최대'}
-                                {...field}
-                                data-testid="input-budget-max"
-                              />
-                            </FormControl>
+                          <FormItem>
+                            <FormLabel className="text-sm font-medium">{t('form.targetCountry')}</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger data-testid="select-target-country" className="h-11">
+                                  <SelectValue placeholder={getTextByLanguage('Select target country', '대상 국가 선택', 'Pilih negara sasaran')} />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="indonesia">🇮🇩 {t('country.indonesia')}</SelectItem>
+                                <SelectItem value="korea">🇰🇷 {t('country.korea')}</SelectItem>
+                                <SelectItem value="both">{getTextByLanguage('Both Countries', '두 국가 모두', 'Kedua-dua Negara')}</SelectItem>
+                              </SelectContent>
+                            </Select>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
                     </div>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="deliveryLocation"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('form.deliveryLocation')}</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder={language === 'en' ? 'Seoul, Korea' : '서울, 대한민국'}
-                            {...field}
-                            data-testid="input-delivery-location"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="deadline"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('form.deadline')}</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="date"
-                            {...field}
-                            data-testid="input-deadline"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                  <Separator />
 
-                <FormField
-                  control={form.control}
-                  name="isUrgent"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value || false}
-                          onCheckedChange={field.onChange}
-                          data-testid="checkbox-urgent"
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>{t('rfq.urgent')}</FormLabel>
+                  {/* Section 2: Product Details */}
+                  <div className="space-y-6">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold">
+                        2
                       </div>
-                    </FormItem>
-                  )}
-                />
+                      <div>
+                        <h2 className="text-lg font-semibold flex items-center">
+                          <Package className="w-5 h-5 mr-2" />
+                          {getTextByLanguage('Product Details', '제품 세부정보', 'Butiran Produk')}
+                        </h2>
+                        <p className="text-sm text-muted-foreground">
+                          {getTextByLanguage(
+                            'Describe what you need in detail',
+                            '필요한 항목을 자세히 설명하세요',
+                            'Terangkan apa yang anda perlukan dengan terperinci'
+                          )}
+                        </p>
+                      </div>
+                    </div>
 
-                <div className="flex justify-end space-x-3 pt-4 border-t border-border">
-                  <Link href="/">
-                    <Button type="button" variant="ghost" data-testid="button-cancel">
-                      {t('form.cancel')}
+                    <div className="space-y-6 pl-11">
+                      <FormField
+                        control={form.control}
+                        name="title"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-sm font-medium">{t('form.title')}</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder={getTextByLanguage(
+                                  'e.g., Industrial CNC Machine',
+                                  '예: 산업용 CNC 기계',
+                                  'cth: Mesin CNC Perindustrian'
+                                )} 
+                                {...field} 
+                                data-testid="input-title"
+                                className="h-11"
+                              />
+                            </FormControl>
+                            <FormDescription className="text-xs">
+                              {getTextByLanguage(
+                                'A clear, concise title for your product or service request',
+                                '제품 또는 서비스 요청에 대한 명확하고 간결한 제목',
+                                'Tajuk yang jelas dan ringkas untuk permintaan produk atau perkhidmatan anda'
+                              )}
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-sm font-medium">{t('form.description')}</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                rows={5}
+                                placeholder={getTextByLanguage(
+                                  'Include specifications, dimensions, materials, quality requirements, certifications needed, etc.',
+                                  '사양, 치수, 재료, 품질 요구사항, 필요한 인증 등을 포함하세요',
+                                  'Sertakan spesifikasi, dimensi, bahan, keperluan kualiti, pensijilan yang diperlukan, dll.'
+                                )}
+                                {...field}
+                                data-testid="textarea-description"
+                                className="resize-none"
+                              />
+                            </FormControl>
+                            <FormDescription className="text-xs">
+                              {getTextByLanguage(
+                                'The more detail you provide, the more accurate quotes you will receive',
+                                '더 자세한 정보를 제공할수록 더 정확한 견적을 받으실 수 있습니다',
+                                'Semakin terperinci maklumat yang anda berikan, semakin tepat sebut harga yang anda terima'
+                              )}
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                          control={form.control}
+                          name="quantity"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-sm font-medium">{t('form.quantity')}</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  placeholder="1000"
+                                  {...field}
+                                  onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                                  data-testid="input-quantity"
+                                  className="h-11"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="unit"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-sm font-medium">{t('form.unit')}</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger data-testid="select-unit" className="h-11">
+                                    <SelectValue placeholder={getTextByLanguage('Select unit', '단위 선택', 'Pilih unit')} />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="pieces">{t('unit.pieces')}</SelectItem>
+                                  <SelectItem value="tons">{t('unit.ton')}</SelectItem>
+                                  <SelectItem value="meters">{t('unit.meter')}</SelectItem>
+                                  <SelectItem value="hours">{getTextByLanguage('Service Hours', '서비스 시간', 'Jam Perkhidmatan')}</SelectItem>
+                                  <SelectItem value="containers">{t('unit.container')}</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  {/* Section 3: Budget & Logistics */}
+                  <div className="space-y-6">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold">
+                        3
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold flex items-center">
+                          <DollarSign className="w-5 h-5 mr-2" />
+                          {getTextByLanguage('Budget & Logistics', '예산 및 물류', 'Bajet & Logistik')}
+                        </h2>
+                        <p className="text-sm text-muted-foreground">
+                          {getTextByLanguage(
+                            'Budget expectations and delivery requirements',
+                            '예산 기대치 및 배송 요구사항',
+                            'Jangkaan bajet dan keperluan penghantaran'
+                          )}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-6 pl-11">
+                      <div>
+                        <FormLabel className="text-sm font-medium mb-3 block">
+                          {getTextByLanguage('Budget Range (USD)', '예산 범위 (USD)', 'Julat Bajet (USD)')}
+                        </FormLabel>
+                        <div className="grid grid-cols-2 gap-4">
+                          <FormField
+                            control={form.control}
+                            name="budgetMin"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    placeholder={getTextByLanguage('Min', '최소', 'Min')}
+                                    {...field}
+                                    data-testid="input-budget-min"
+                                    className="h-11"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="budgetMax"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    placeholder={getTextByLanguage('Max', '최대', 'Maks')}
+                                    {...field}
+                                    data-testid="input-budget-max"
+                                    className="h-11"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          {getTextByLanguage(
+                            'Optional: Providing a budget range helps suppliers submit relevant quotes',
+                            '선택사항: 예산 범위를 제공하면 공급업체가 관련 견적을 제출하는 데 도움이 됩니다',
+                            'Pilihan: Menyediakan julat bajet membantu pembekal menghantar sebut harga yang relevan'
+                          )}
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                          control={form.control}
+                          name="deliveryLocation"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-sm font-medium flex items-center">
+                                <Truck className="w-4 h-4 mr-1.5" />
+                                {t('form.deliveryLocation')}
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder={getTextByLanguage('Seoul, Korea', '서울, 대한민국', 'Jakarta, Indonesia')}
+                                  {...field}
+                                  data-testid="input-delivery-location"
+                                  className="h-11"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="deadline"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-sm font-medium">{t('form.deadline')}</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="date"
+                                  {...field}
+                                  data-testid="input-deadline"
+                                  className="h-11"
+                                />
+                              </FormControl>
+                              <FormDescription className="text-xs">
+                                {getTextByLanguage(
+                                  'Last date to receive quotes',
+                                  '견적 접수 마감일',
+                                  'Tarikh akhir menerima sebut harga'
+                                )}
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  {/* Section 4: Final Options */}
+                  <div className="space-y-6">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold">
+                        4
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold flex items-center">
+                          <CheckCircle2 className="w-5 h-5 mr-2" />
+                          {getTextByLanguage('Additional Options', '추가 옵션', 'Pilihan Tambahan')}
+                        </h2>
+                        <p className="text-sm text-muted-foreground">
+                          {getTextByLanguage(
+                            'Mark special requirements for your request',
+                            '요청에 대한 특별 요구사항 표시',
+                            'Tandakan keperluan khas untuk permintaan anda'
+                          )}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="pl-11">
+                      <FormField
+                        control={form.control}
+                        name="isUrgent"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-lg border border-border p-4 bg-muted/30">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value || false}
+                                onCheckedChange={field.onChange}
+                                data-testid="checkbox-urgent"
+                              />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel className="text-sm font-medium">
+                                {t('rfq.urgent')}
+                              </FormLabel>
+                              <FormDescription className="text-xs">
+                                {getTextByLanguage(
+                                  'Urgent requests are prioritized and highlighted to suppliers',
+                                  '긴급 요청은 우선순위가 지정되고 공급업체에 강조 표시됩니다',
+                                  'Permintaan mendesak diberi keutamaan dan ditonjolkan kepada pembekal'
+                                )}
+                              </FormDescription>
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-border">
+                    <Link href="/">
+                      <Button type="button" variant="outline" className="w-full sm:w-auto" data-testid="button-cancel">
+                        {t('form.cancel')}
+                      </Button>
+                    </Link>
+                    <Button
+                      type="submit"
+                      disabled={createRfqMutation.isPending}
+                      className="w-full sm:w-auto min-w-[180px]"
+                      data-testid="button-publish-rfq"
+                    >
+                      {createRfqMutation.isPending ? (
+                        <>
+                          <div className="animate-spin w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full mr-2" />
+                          {getTextByLanguage('Publishing...', '게시 중...', 'Menerbitkan...')}
+                        </>
+                      ) : (
+                        <>
+                          <i className="fas fa-paper-plane mr-2"></i>
+                          {t('rfq.publish')}
+                        </>
+                      )}
                     </Button>
-                  </Link>
-                  <Button
-                    type="submit"
-                    disabled={createRfqMutation.isPending}
-                    data-testid="button-publish-rfq"
-                  >
-                    {createRfqMutation.isPending ? (
-                      <>
-                        <div className="animate-spin w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full mr-2" />
-                        {language === 'en' ? 'Publishing...' : '게시 중...'}
-                      </>
-                    ) : (
-                      <>
-                        <i className="fas fa-paper-plane mr-2"></i>
-                        {t('rfq.publish')}
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
+                  </div>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
+        </div>
       </main>
     </div>
   );
