@@ -102,20 +102,11 @@ export default function Dashboard() {
                 <h1 className="ml-3 text-xl font-bold">CMARKET Trade</h1>
               </div>
               <nav className="hidden md:flex space-x-1">
-                <Button variant="default" size="sm" data-testid="nav-dashboard">
-                  {t('nav.dashboard')}
-                </Button>
                 <Link href="/create-rfq">
                   <Button variant="ghost" size="sm" data-testid="nav-create-rfq">
                     {t('rfq.create')}
                   </Button>
                 </Link>
-                <Button variant="ghost" size="sm" data-testid="nav-my-rfqs">
-                  {t('nav.myRfqs')}
-                </Button>
-                <Button variant="ghost" size="sm" data-testid="nav-messages">
-                  {t('nav.messages')}
-                </Button>
               </nav>
             </div>
             
