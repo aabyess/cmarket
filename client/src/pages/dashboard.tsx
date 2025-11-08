@@ -45,9 +45,15 @@ export default function Dashboard() {
       completed: "status-completed text-white",
     };
     
+    const statusLabels: Record<string, string> = {
+      active: t('status.active'),
+      pending: t('status.pending'),
+      completed: t('status.completed'),
+    };
+    
     return (
       <Badge className={statusStyles[status as keyof typeof statusStyles] || "bg-gray-500 text-white"}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
+        {statusLabels[status] || status}
       </Badge>
     );
   };
