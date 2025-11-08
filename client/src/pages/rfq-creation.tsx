@@ -250,9 +250,23 @@ export default function RfqCreation() {
                                 <SelectItem value="industrial-equipment">{getTextByLanguage('Industrial Equipment', '산업 장비', 'Peralatan Perindustrian')}</SelectItem>
                                 <SelectItem value="textiles-apparel">{getTextByLanguage('Textiles & Apparel', '섬유 및 의류', 'Tekstil & Pakaian')}</SelectItem>
                                 <SelectItem value="construction-materials">{getTextByLanguage('Construction Materials', '건설 자재', 'Bahan Binaan')}</SelectItem>
+                                <SelectItem value="electronics">{getTextByLanguage('Electronics & IT', '전자 및 IT', 'Elektronik & IT')}</SelectItem>
+                                <SelectItem value="food-beverages">{getTextByLanguage('Food & Beverages', '식품 및 음료', 'Makanan & Minuman')}</SelectItem>
+                                <SelectItem value="automotive-parts">{getTextByLanguage('Automotive Parts', '자동차 부품', 'Alat Ganti Automotif')}</SelectItem>
+                                <SelectItem value="chemicals-raw-materials">{getTextByLanguage('Chemicals & Raw Materials', '화학 및 원자재', 'Bahan Kimia & Mentah')}</SelectItem>
+                                <SelectItem value="machinery-equipment">{getTextByLanguage('Machinery & Equipment', '기계 및 장비', 'Mesin & Peralatan')}</SelectItem>
+                                <SelectItem value="agricultural-products">{getTextByLanguage('Agricultural Products', '농산물', 'Produk Pertanian')}</SelectItem>
+                                <SelectItem value="packaging-materials">{getTextByLanguage('Packaging Materials', '포장재', 'Bahan Pembungkusan')}</SelectItem>
+                                <SelectItem value="medical-supplies">{getTextByLanguage('Medical Supplies', '의료용품', 'Bekalan Perubatan')}</SelectItem>
+                                <SelectItem value="furniture-home-decor">{getTextByLanguage('Furniture & Home Decor', '가구 및 홈데코', 'Perabot & Hiasan Rumah')}</SelectItem>
+                                <SelectItem value="beauty-cosmetics">{getTextByLanguage('Beauty & Cosmetics', '미용 및 화장품', 'Kecantikan & Kosmetik')}</SelectItem>
+                                <SelectItem value="toys-games">{getTextByLanguage('Toys & Games', '완구 및 게임', 'Mainan & Permainan')}</SelectItem>
+                                <SelectItem value="sporting-goods">{getTextByLanguage('Sporting Goods', '스포츠용품', 'Barangan Sukan')}</SelectItem>
+                                <SelectItem value="office-supplies">{getTextByLanguage('Office Supplies', '사무용품', 'Bekalan Pejabat')}</SelectItem>
+                                <SelectItem value="safety-equipment">{getTextByLanguage('Safety Equipment', '안전장비', 'Peralatan Keselamatan')}</SelectItem>
+                                <SelectItem value="energy-power">{getTextByLanguage('Energy & Power', '에너지 및 전력', 'Tenaga & Kuasa')}</SelectItem>
                                 <SelectItem value="logistics-services">{getTextByLanguage('Logistics Services', '물류 서비스', 'Perkhidmatan Logistik')}</SelectItem>
-                                <SelectItem value="electronics">{t('category.electronics')}</SelectItem>
-                                <SelectItem value="other">{t('category.other')}</SelectItem>
+                                <SelectItem value="other">{getTextByLanguage('Other', '기타', 'Lain-lain')}</SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />
