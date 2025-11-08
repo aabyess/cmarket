@@ -13,6 +13,7 @@ import { DeliveryConfirmationModal } from "@/components/modals/delivery-confirma
 import { useState } from "react";
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { Rfq, Order } from "@shared/schema";
 
 export default function Dashboard() {
   const { user, isLoading, isAuthenticated } = useAuth();
@@ -25,13 +26,13 @@ export default function Dashboard() {
 
   // Demo mode - no authentication needed
 
-  const { data: rfqs = [], isLoading: rfqsLoading } = useQuery({
+  const { data: rfqs = [], isLoading: rfqsLoading } = useQuery<Rfq[]>({
     queryKey: ["/api/rfqs/my"],
     enabled: true,
     retry: false,
   });
 
-  const { data: orders = [] } = useQuery({
+  const { data: orders = [] } = useQuery<Order[]>({
     queryKey: ["/api/orders"],
     enabled: true,
     retry: false,
@@ -320,11 +321,11 @@ export default function Dashboard() {
                         {new Date(rfq.deadline).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap" data-testid={`status-rfq-${rfq.id}`}>
-                        {getStatusBadge(rfq.status)}
+                        {getStatusBadge(rfq.status || 'pending')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm" data-testid={`text-quotes-count-${rfq.id}`}>
                         <Badge variant="secondary">
-                          {rfq.quotes?.length || 0} {t('messages.quotesCount')}
+                          {(rfq as any).quotes?.length || 0} {t('messages.quotesCount')}
                         </Badge>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
