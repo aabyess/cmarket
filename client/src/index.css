@@ -170,15 +170,13 @@
   z-index: 50;
 }
 
-/* SelectTrigger (button) background */
-[data-radix-select-trigger] {
-  background: hsl(var(--background));
-  border: 1px solid hsl(var(--input));
+/* SelectTrigger (button) background - force visible background */
+button[role="combobox"] {
+  background-color: hsl(var(--background)) !important;
 }
 
-.dark [data-radix-select-trigger] {
-  background: hsl(var(--background));
-  border: 1px solid hsl(var(--input));
+.dark button[role="combobox"] {
+  background-color: hsl(var(--background)) !important;
 }
 
 /* SelectContent background for proper visibility */
