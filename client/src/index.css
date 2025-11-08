@@ -172,21 +172,34 @@
 
 /* SelectTrigger (button) background - force visible background */
 button[role="combobox"],
-button[data-radix-select-trigger] {
-  background-color: hsl(var(--background)) !important;
-  background: hsl(var(--background)) !important;
+button[data-radix-select-trigger],
+[data-radix-select-trigger] {
+  background-color: white !important;
+  background: white !important;
+  border: 1px solid hsl(var(--input)) !important;
 }
 
 .dark button[role="combobox"],
-.dark button[data-radix-select-trigger] {
-  background-color: hsl(var(--background)) !important;
-  background: hsl(var(--background)) !important;
+.dark button[data-radix-select-trigger],
+.dark [data-radix-select-trigger] {
+  background-color: hsl(224 71% 4%) !important;
+  background: hsl(224 71% 4%) !important;
+  border: 1px solid hsl(var(--input)) !important;
 }
 
-/* Extra specificity for form selects */
-form button[role="combobox"] {
-  background-color: hsl(var(--background)) !important;
-  background: hsl(var(--background)) !important;
+/* Hover state */
+button[role="combobox"]:hover,
+button[data-radix-select-trigger]:hover,
+[data-radix-select-trigger]:hover {
+  background-color: white !important;
+  background: white !important;
+}
+
+.dark button[role="combobox"]:hover,
+.dark button[data-radix-select-trigger]:hover,
+.dark [data-radix-select-trigger]:hover {
+  background-color: hsl(224 71% 4%) !important;
+  background: hsl(224 71% 4%) !important;
 }
 
 /* SelectContent background for proper visibility */
