@@ -338,7 +338,7 @@ export const translations = {
     'messages.noRfqsFound': 'Tiada RFQ dijumpai. Buat RFQ pertama anda untuk bermula.',
     'messages.manageRfqs': 'Kelola Permintaan Penawaran Harga',
     'messages.quotesCount': 'penawaran harga',
-    'form.title': 'Tajuk',
+    'form.title': 'Judul',
     'form.description': 'Penerangan',
     'form.category': 'Kategori',
     'form.quantity': 'Kuantiti',
