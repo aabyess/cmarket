@@ -79,67 +79,17 @@
 }
 
 .flag-korea {
-  background: #ffffff;
-  position: relative;
+  background-image: url('/attached_assets/stock_images/south_korea_flag_off_df9f04ad.jpg');
+  background-size: cover;
+  background-position: center;
   border: 1px solid #e5e7eb;
-  overflow: hidden;
-}
-
-.flag-korea::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 12px;
-  height: 8px;
-  background: 
-    radial-gradient(ellipse 6px 4px at 50% 30%, #C60C30 50%, transparent 50%),
-    radial-gradient(ellipse 6px 4px at 50% 70%, #003478 50%, transparent 50%);
-  border-radius: 50%;
-}
-
-.flag-korea::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-image:
-    /* 건 (왼쪽 위) */
-    repeating-linear-gradient(
-      30deg,
-      #000 0px, #000 1px,
-      transparent 1px, transparent 2px
-    ),
-    /* 곤 (오른쪽 아래) */
-    repeating-linear-gradient(
-      210deg,
-      #000 0px, #000 1px,
-      transparent 1px, transparent 2px
-    ),
-    /* 감 (오른쪽 위) */
-    repeating-linear-gradient(
-      -30deg,
-      #000 0px, #000 1px,
-      transparent 1px, transparent 2px
-    ),
-    /* 리 (왼쪽 아래) */
-    repeating-linear-gradient(
-      150deg,
-      #000 0px, #000 1px,
-      transparent 1px, transparent 2px
-    );
-  background-size: 8px 8px;
-  background-position: 20% 20%, 80% 80%, 80% 20%, 20% 80%;
-  background-repeat: no-repeat;
-  opacity: 0.7;
+  position: relative;
 }
 
 .flag-indonesia {
-  background: linear-gradient(to bottom, 
-    #FF0000 0%, #FF0000 50%, 
-    #FFFFFF 50%, #FFFFFF 100%
-  );
+  background-image: url('/attached_assets/stock_images/indonesia_flag_offic_63d81455.jpg');
+  background-size: cover;
+  background-position: center;
   border: 1px solid #e5e7eb;
   position: relative;
 }
@@ -172,11 +122,9 @@
 
 /* Dark mode adjustments */
 .dark .flag-korea {
-  background: linear-gradient(to bottom, #CD2E3A 33%, #ffffff 33%, #ffffff 66%, #0047A0 66%);
   border: 1px solid hsl(var(--border));
 }
 
 .dark .flag-indonesia {
-  background: linear-gradient(to bottom, #FF0000 50%, #FFFFFF 50%);
   border: 1px solid hsl(var(--border));
 }
