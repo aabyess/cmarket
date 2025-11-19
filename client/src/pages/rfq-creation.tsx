@@ -190,14 +190,14 @@ export default function RfqCreation() {
               {getTextByLanguage(
                 'Create New Request for Quotation',
                 '새로운 견적 요청 만들기',
-                'Buat Permintaan Sebut Harga Baru'
+                'Buat Permintaan Penawaran Harga Baru'
               )}
             </h1>
             <p className="text-muted-foreground text-sm md:text-base">
               {getTextByLanguage(
                 'Fill in the details below to receive competitive quotes from verified Korean and Indonesian suppliers',
                 '한국 및 인도네시아 검증된 공급업체로부터 경쟁력 있는 견적을 받으려면 아래 세부 정보를 작성하세요',
-                'Isi butiran di bawah untuk menerima sebut harga kompetitif daripada pembekal Korea dan Indonesia yang disahkan'
+                'Isi detail berikut untuk menerima penawaran kompetitif dari pemasok Korea dan Indonesia yang terverifikasi'
               )}
             </p>
           </div>
