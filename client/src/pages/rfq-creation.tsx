@@ -345,7 +345,7 @@ export default function RfqCreation() {
                               {getTextByLanguage(
                                 'A clear, concise title for your product or service request',
                                 '제품 또는 서비스 요청에 대한 명확하고 간결한 제목',
-                                'Tajuk yang jelas dan ringkas untuk permintaan produk atau perkhidmatan anda'
+                                'Judul yang jelas dan ringkas untuk permintaan produk atau layanan anda'
                               )}
                             </FormDescription>
                             <FormMessage />
@@ -365,7 +365,7 @@ export default function RfqCreation() {
                                 placeholder={getTextByLanguage(
                                   'Include specifications, dimensions, materials, quality requirements, certifications needed, etc.',
                                   '사양, 치수, 재료, 품질 요구사항, 필요한 인증 등을 포함하세요',
-                                  'Sertakan spesifikasi, dimensi, bahan, keperluan kualiti, pensijilan yang diperlukan, dll.'
+                                  'Sertakan spesifikasi, dimensi, bahan, persyaratan kualitas, sertifikasi yang diperlukan, dll.'
                                 )}
                                 {...field}
                                 data-testid="textarea-description"
@@ -376,7 +376,7 @@ export default function RfqCreation() {
                               {getTextByLanguage(
                                 'The more detail you provide, the more accurate quotes you will receive',
                                 '더 자세한 정보를 제공할수록 더 정확한 견적을 받으실 수 있습니다',
-                                'Semakin terperinci maklumat yang anda berikan, semakin tepat sebut harga yang anda terima'
+                                'Semakin lengkap rincian yang anda berikan, semakin tepat penawaran harga yang anda terima'
                               )}
                             </FormDescription>
                             <FormMessage />
@@ -445,13 +445,13 @@ export default function RfqCreation() {
                       <div>
                         <h2 className="text-lg font-semibold flex items-center">
                           <DollarSign className="w-5 h-5 mr-2" />
-                          {getTextByLanguage('Budget & Logistics', '예산 및 물류', 'Bajet & Logistik')}
+                          {getTextByLanguage('Budget & Logistics', '예산 및 물류', 'Anggaran Biaya & Logistik')}
                         </h2>
                         <p className="text-sm text-muted-foreground">
                           {getTextByLanguage(
                             'Budget expectations and delivery requirements',
                             '예산 기대치 및 배송 요구사항',
-                            'Jangkaan bajet dan keperluan penghantaran'
+                            'Ekspektasi anggaran biaya dan pengiriman'
                           )}
                         </p>
                       </div>
@@ -460,7 +460,7 @@ export default function RfqCreation() {
                     <div className="space-y-6 pl-11">
                       <div>
                         <FormLabel className="text-sm font-medium mb-3 block">
-                          {getTextByLanguage('Budget Range (USD)', '예산 범위 (USD)', 'Julat Bajet (USD)')}
+                          {getTextByLanguage('Budget Range (USD)', '예산 범위 (USD)', 'Kisaran Anggaran (USD)')}
                         </FormLabel>
                         <div className="grid grid-cols-2 gap-4">
                           <FormField
@@ -502,7 +502,7 @@ export default function RfqCreation() {
                           {getTextByLanguage(
                             'Optional: Providing a budget range helps suppliers submit relevant quotes',
                             '선택사항: 예산 범위를 제공하면 공급업체가 관련 견적을 제출하는 데 도움이 됩니다',
-                            'Pilihan: Menyediakan julat bajet membantu pembekal menghantar sebut harga yang relevan'
+                            'Opsional: Memberikan kisaran anggaran membantu pemasok mengajukan penawaran yang relevan'
                           )}
                         </p>
                       </div>
