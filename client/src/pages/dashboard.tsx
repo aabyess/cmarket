@@ -84,11 +84,11 @@ export default function Dashboard() {
         <div className="container mx-auto px-4 flex items-center justify-center space-x-6">
           <div className="flex items-center space-x-2">
             <div className="flag-korea w-8 h-5 rounded-sm shadow-sm"></div>
-            <span className="text-sm font-medium text-muted-foreground">{language === 'en' ? 'Republic of Korea' : '대한민국'}</span>
+            <span className="text-sm font-medium text-muted-foreground">{language === 'en' ? 'Republic of Korea' : language === 'ko' ? '대한민국' : 'Republik Korea'}</span>
           </div>
           <div className="flex items-center space-x-2 text-muted-foreground">
             <i className="fas fa-exchange-alt"></i>
-            <span className="text-xs">{language === 'en' ? 'Trade Partnership' : '무역 파트너십'}</span>
+            <span className="text-xs">{language === 'en' ? 'Trade Partnership' : language === 'ko' ? '무역 파트너십' : 'Kemitraan Perdagangan'}</span>
           </div>
           <div className="flex items-center space-x-2">
             <div className="flag-indonesia w-8 h-5 rounded-sm shadow-sm"></div>
