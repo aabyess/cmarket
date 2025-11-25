@@ -114,7 +114,7 @@ export class DatabaseStorage implements IStorage {
     if (results.length === 0) {
       const mockRfqs: any[] = [
         {
-          id: 'mock-rfq-1',
+          id: 'Cmarket-rfq-1',
           title: 'Industrial Manufacturing Equipment',
           description: 'Looking for high-quality manufacturing equipment for our textile factory. Need reliable Korean suppliers with international shipping experience.',
           category: 'industrial-equipment',
@@ -134,7 +134,7 @@ export class DatabaseStorage implements IStorage {
           quotes: [{}, {}, {}, {}, {}], // 5 quotes
         },
         {
-          id: 'mock-rfq-2',
+          id: 'Cmarket-rfq-2',
           title: 'Organic Cotton Fabric Supply',
           description: 'Seeking Indonesian organic cotton suppliers for our fashion brand in Seoul. Looking for sustainable and certified organic materials.',
           category: 'textiles-apparel',
@@ -154,7 +154,7 @@ export class DatabaseStorage implements IStorage {
           quotes: [{}, {}, {}, {}, {}, {}], // 6 quotes
         },
         {
-          id: 'mock-rfq-3',
+          id: 'Cmarket-rfq-3',
           title: 'Steel Construction Materials',
           description: 'Need high-grade steel beams and construction materials for infrastructure project in Surabaya. Require certified materials with quality guarantees.',
           category: 'construction-materials',
@@ -174,7 +174,7 @@ export class DatabaseStorage implements IStorage {
           quotes: [{}, {}, {}, {}, {}, {}, {}], // 7 quotes
         },
         {
-          id: 'mock-rfq-4',
+          id: 'Cmarket-rfq-4',
           title: 'Electronic Components Supply',
           description: 'Looking for reliable Indonesian suppliers of electronic components for our Korean electronics manufacturing company. Need competitive pricing.',
           category: 'electronics',
@@ -194,7 +194,7 @@ export class DatabaseStorage implements IStorage {
           quotes: [{}, {}, {}, {}, {}, {}, {}], // 7 quotes
         },
         {
-          id: 'mock-rfq-5',
+          id: 'Cmarket-rfq-5',
           title: 'Logistics and Shipping Services',
           description: 'Require comprehensive logistics services for regular shipments between Korea and Indonesia. Looking for reliable partners with competitive rates.',
           category: 'logistics-services',
@@ -214,7 +214,7 @@ export class DatabaseStorage implements IStorage {
           quotes: [{}, {}, {}, {}, {}, {}], // 6 quotes
         },
         {
-          id: 'mock-rfq-6',
+          id: 'Cmarket-rfq-6',
           title: 'Premium Coffee Bean Import',
           description: 'Korean coffee roasting company seeking high-quality Indonesian coffee beans. Need organic certification and consistent supply.',
           category: 'other',
@@ -234,7 +234,7 @@ export class DatabaseStorage implements IStorage {
           quotes: [{}, {}, {}, {}, {}, {}], // 6 quotes
         },
         {
-          id: 'mock-rfq-7',
+          id: 'Cmarket-rfq-7',
           title: 'Automotive Parts Manufacturing',
           description: 'Indonesian automotive company needs precision-manufactured parts from Korean suppliers. Require ISO certification and quality assurance.',
           category: 'industrial-equipment',
@@ -254,7 +254,7 @@ export class DatabaseStorage implements IStorage {
           quotes: [{}, {}, {}, {}, {}, {}], // 6 quotes
         },
         {
-          id: 'mock-rfq-8',
+          id: 'Cmarket-rfq-8',
           title: 'Pharmaceutical Ingredients',
           description: 'Korean pharmaceutical company seeking raw materials from certified Indonesian suppliers. Must comply with international standards.',
           category: 'other',
@@ -274,7 +274,7 @@ export class DatabaseStorage implements IStorage {
           quotes: [{}, {}, {}, {}, {}, {}, {}, {}], // 8 quotes
         },
         {
-          id: 'mock-rfq-9',
+          id: 'Cmarket-rfq-9',
           title: 'Solar Panel Installation Equipment',
           description: 'Large-scale solar energy project in Indonesia requires specialized Korean installation equipment and technical support.',
           category: 'industrial-equipment',
@@ -294,7 +294,7 @@ export class DatabaseStorage implements IStorage {
           quotes: [{}, {}, {}, {}, {}], // 5 quotes
         },
         {
-          id: 'mock-rfq-10',
+          id: 'Cmarket-rfq-10',
           title: 'Luxury Leather Goods Materials',
           description: 'Korean luxury brand seeking premium Indonesian leather materials for handbags and accessories. Need consistent quality and timely delivery.',
           category: 'textiles-apparel',
@@ -314,7 +314,7 @@ export class DatabaseStorage implements IStorage {
           quotes: [{}, {}, {}, {}, {}, {}, {}], // 7 quotes
         },
         {
-          id: 'mock-rfq-11',
+          id: 'Cmarket-rfq-11',
           title: 'Marine Construction Services',
           description: 'Indonesian port expansion project needs Korean marine construction expertise and specialized equipment. Long-term partnership opportunity.',
           category: 'construction-materials',
@@ -334,7 +334,7 @@ export class DatabaseStorage implements IStorage {
           quotes: [{}, {}, {}, {}, {}, {}], // 6 quotes
         },
         {
-          id: 'mock-rfq-12',
+          id: 'Cmarket-rfq-12',
           title: 'Smart City Technology Solutions',
           description: 'Indonesian smart city initiative requires Korean IoT sensors and smart infrastructure technology. Advanced technical specifications needed.',
           category: 'electronics',
@@ -354,7 +354,7 @@ export class DatabaseStorage implements IStorage {
           quotes: [{}, {}, {}, {}, {}, {}, {}, {}], // 8 quotes
         },
         {
-          id: 'mock-rfq-13',
+          id: 'Cmarket-rfq-13',
           title: 'Refrigerated Transport Services',
           description: 'Korean food import company needs refrigerated logistics services for Indonesian food products. Temperature-controlled shipping essential.',
           category: 'logistics-services',
@@ -374,7 +374,7 @@ export class DatabaseStorage implements IStorage {
           quotes: [{}, {}, {}, {}, {}, {}], // 6 quotes
         },
         {
-          id: 'mock-rfq-14',
+          id: 'Cmarket-rfq-14',
           title: 'Ceramic Tiles and Flooring',
           description: 'Korean construction company seeks Indonesian ceramic tiles and premium flooring materials for luxury hotel projects. Design flexibility important.',
           category: 'construction-materials',
@@ -394,7 +394,7 @@ export class DatabaseStorage implements IStorage {
           quotes: [{}, {}, {}, {}, {}, {}, {}], // 7 quotes
         },
         {
-          id: 'mock-rfq-15',
+          id: 'Cmarket-rfq-15',
           title: 'Medical Equipment Maintenance',
           description: 'Indonesian hospitals need Korean medical equipment maintenance services and spare parts. Certified technicians and warranty support required.',
           category: 'other',
@@ -424,7 +424,7 @@ export class DatabaseStorage implements IStorage {
     const [rfq] = await db.select().from(rfqs).where(eq(rfqs.id, id));
     
     // If not found in database and it's a mock RFQ, return mock data
-    if (!rfq && id.startsWith('mock-rfq-')) {
+    if (!rfq && id.startsWith('Cmarket-rfq-')) {
       const mockRfqs = await this.getRfqs('33507990'); // Get mock data
       return mockRfqs.find(rfq => rfq.id === id);
     }
@@ -456,7 +456,7 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(quotes.createdAt));
     
     // If no quotes found and it's a mock RFQ, return mock quotes
-    if (results.length === 0 && rfqId.startsWith('mock-rfq-')) {
+    if (results.length === 0 && rfqId.startsWith('Cmarket-rfq-')) {
       const mockQuotes: any[] = [
         {
           id: `quote-${rfqId}-1`,
