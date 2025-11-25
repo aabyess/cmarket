@@ -108,35 +108,62 @@ export function ChatModal({ rfqId, open, onOpenChange }: ChatModalProps) {
   // Simple translation function for demo purposes - tri-lingual support
   const translateMessage = (text: string, toLanguage: 'ko' | 'en' | 'ms') => {
     const translations: {[key: string]: {ko: string, en: string, ms: string}} = {
+      // Mock messages from storage.ts
+      "Hello! I am interested in your RFQ for industrial equipment. We can provide high-quality machinery from Korea.": {
+        ko: "안녕하세요! 산업용 장비에 대한 귀하의 견적 요청에 관심이 있습니다. 저희는 한국에서 고품질 기계를 제공할 수 있습니다.",
+        en: "Hello! I am interested in your RFQ for industrial equipment. We can provide high-quality machinery from Korea.",
+        ms: "Halo! Saya berminat dengan RFQ anda untuk peralatan industri. Kami dapat menyediakan mesin berkualitas tinggi dari Korea."
+      },
+      "Thank you for your interest! Could you please send detailed specifications and delivery timeline?": {
+        ko: "관심 가져주셔서 감사합니다! 상세한 사양과 배송 일정을 보내주실 수 있나요?",
+        en: "Thank you for your interest! Could you please send detailed specifications and delivery timeline?",
+        ms: "Terima kasih atas minat anda! Bisakah anda mengirimkan spesifikasi lengkap dan jadwal pengiriman?"
+      },
+      "Certainly! Our machines meet international standards and we can deliver within 4-6 weeks. I will prepare a detailed quote for you.": {
+        ko: "물론입니다! 저희 기계는 국제 표준을 충족하며 4-6주 내에 배송할 수 있습니다. 상세한 견적을 준비해 드리겠습니다.",
+        en: "Certainly! Our machines meet international standards and we can deliver within 4-6 weeks. I will prepare a detailed quote for you.",
+        ms: "Tentu saja! Mesin kami memenuhi standar internasional dan kami dapat mengirimkan dalam 4-6 minggu. Saya akan menyiapkan penawaran lengkap untuk anda."
+      },
+      "That sounds great! Please include warranty information and after-sales support details in the quote.": {
+        ko: "좋습니다! 견적에 보증 정보와 애프터서비스 지원 세부 사항을 포함해 주세요.",
+        en: "That sounds great! Please include warranty information and after-sales support details in the quote.",
+        ms: "Kedengarannya bagus! Mohon sertakan informasi garansi dan detail dukungan purna jual dalam penawaran."
+      },
+      "That sounds promising! We are looking for a reliable supplier for long-term partnership.": {
+        ko: "좋아 보입니다! 저희는 장기적인 파트너십을 위한 신뢰할 수 있는 공급업체를 찾고 있습니다.",
+        en: "That sounds promising! We are looking for a reliable supplier for long-term partnership.",
+        ms: "Terdengar menjanjikan! Kami mencari pemasok yang dapat diandalkan untuk kemitraan jangka panjang."
+      },
+      // Additional common chat messages
       "Hello! I'm interested in your Industrial Manufacturing Equipment RFQ. Could you provide more details about the specifications?": {
         ko: "안녕하세요! 귀하의 산업용 제조 장비 견적 요청에 관심이 있습니다. 사양에 대한 자세한 정보를 제공해 주실 수 있나요?",
         en: "Hello! I'm interested in your Industrial Manufacturing Equipment RFQ. Could you provide more details about the specifications?",
-        ms: "Halo! Saya berminat dengan RFQ Peralatan Pembuatan Perindustrian anda. Bolehkah anda memberikan maklumat lanjut mengenai spesifikasinya?"
+        ms: "Halo! Saya berminat dengan RFQ Peralatan Manufaktur Industri anda. Bisakah anda memberikan informasi lebih lanjut mengenai spesifikasinya?"
       },
       "Hi! Thanks for your interest. We need equipment for textile manufacturing with specific quality certifications. Are you able to provide ISO certifications?": {
         ko: "안녕하세요! 관심을 가져주셔서 감사합니다. 특정 품질 인증을 받은 섬유 제조용 장비가 필요합니다. ISO 인증을 제공할 수 있나요?",
         en: "Hi! Thanks for your interest. We need equipment for textile manufacturing with specific quality certifications. Are you able to provide ISO certifications?",
-        ms: "Hai! Terima kasih atas minat anda. Kami memerlukan peralatan untuk pembuatan tekstil dengan pensijilan kualiti tertentu. Adakah anda dapat menyediakan pensijilan ISO?"
+        ms: "Hai! Terima kasih atas minat anda. Kami memerlukan peralatan untuk manufaktur tekstil dengan sertifikasi kualitas tertentu. Apakah anda dapat menyediakan sertifikasi ISO?"
       },
       "Yes, we can provide ISO 9001 and ISO 14001 certifications. Our equipment is manufactured in Korea with the highest quality standards.": {
         ko: "네, ISO 9001 및 ISO 14001 인증을 제공할 수 있습니다. 저희 장비는 최고 품질 기준으로 한국에서 제조됩니다.",
         en: "Yes, we can provide ISO 9001 and ISO 14001 certifications. Our equipment is manufactured in Korea with the highest quality standards.",
-        ms: "Ya, kami boleh menyediakan pensijilan ISO 9001 dan ISO 14001. Peralatan kami dikilangkan di Korea dengan piawaian kualiti tertinggi."
+        ms: "Ya, kami dapat menyediakan sertifikasi ISO 9001 dan ISO 14001. Peralatan kami diproduksi di Korea dengan standar kualitas tertinggi."
       },
       "Perfect! What's your estimated delivery time to Jakarta, Indonesia?": {
         ko: "완벽합니다! 인도네시아 자카르타까지의 예상 배송 시간은 어떻게 되나요?",
         en: "Perfect! What's your estimated delivery time to Jakarta, Indonesia?",
-        ms: "Sempurna! Berapa anggaran masa penghantaran ke Jakarta, Indonesia?"
+        ms: "Sempurna! Berapa perkiraan waktu pengiriman ke Jakarta, Indonesia?"
       },
       "Delivery to Jakarta typically takes 4-6 weeks including customs clearance. We handle all shipping documentation.": {
         ko: "자카르타까지의 배송은 통관을 포함하여 일반적으로 4-6주가 소요됩니다. 모든 배송 서류를 저희가 처리합니다.",
         en: "Delivery to Jakarta typically takes 4-6 weeks including customs clearance. We handle all shipping documentation.",
-        ms: "Penghantaran ke Jakarta biasanya mengambil masa 4-6 minggu termasuk pelepasan kastam. Kami mengendalikan semua dokumentasi penghantaran."
+        ms: "Pengiriman ke Jakarta biasanya memakan waktu 4-6 minggu termasuk pengurusan bea cukai. Kami menangani semua dokumentasi pengiriman."
       }
     };
 
-    const langLabels = { ko: '한국어', en: 'English', ms: 'Bahasa' };
-    return translations[text]?.[toLanguage] || `[${langLabels[toLanguage]}로 번역됨] ${text}`;
+    const langLabels = { ko: '한국어', en: 'English', ms: 'Bahasa Indonesia' };
+    return translations[text]?.[toLanguage] || `[${langLabels[toLanguage]}] ${text}`;
   };
 
   const handleTranslate = (messageId: string, content: string, targetLang: 'ko' | 'en' | 'ms') => {
