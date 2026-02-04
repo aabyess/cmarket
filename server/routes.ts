@@ -2,9 +2,13 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import Stripe from "stripe";
+import bcrypt from "bcryptjs";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertRfqSchema, insertQuoteSchema, insertMessageSchema, insertRatingSchema } from "@shared/schema";
+import { db } from "./db";
+import { users } from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 let stripe: Stripe | null = null;
 if (process.env.STRIPE_SECRET_KEY) {
@@ -17,19 +21,109 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
 
-  // Auth routes
+  // Simple Auth routes
+  app.post('/api/auth/register', async (req: any, res) => {
+    try {
+      const { email, password, companyName, companyType, firstName, lastName } = req.body;
+      
+      if (!email || !password || !companyName || !companyType) {
+        return res.status(400).json({ message: "Email, password, company name and company type are required" });
+      }
+
+      const existingUser = await db.select().from(users).where(eq(users.email, email)).limit(1);
+      if (existingUser.length > 0) {
+        return res.status(400).json({ message: "Email already registered" });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const [newUser] = await db.insert(users).values({
+        email,
+        password: hashedPassword,
+        companyName,
+        companyType,
+        firstName: firstName || '',
+        lastName: lastName || '',
+      }).returning();
+
+      req.session.userId = newUser.id;
+      
+      res.json({ 
+        id: newUser.id,
+        email: newUser.email,
+        companyName: newUser.companyName,
+        companyType: newUser.companyType,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+      });
+    } catch (error) {
+      console.error("Error registering user:", error);
+      res.status(500).json({ message: "Failed to register user" });
+    }
+  });
+
+  app.post('/api/auth/login', async (req: any, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
+      }
+
+      const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+      if (!user) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+
+      const isValid = await bcrypt.compare(password, user.password);
+      if (!isValid) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+
+      req.session.userId = user.id;
+      
+      res.json({ 
+        id: user.id,
+        email: user.email,
+        companyName: user.companyName,
+        companyType: user.companyType,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      });
+    } catch (error) {
+      console.error("Error logging in:", error);
+      res.status(500).json({ message: "Failed to login" });
+    }
+  });
+
+  app.post('/api/auth/logout', async (req: any, res) => {
+    req.session.destroy((err: any) => {
+      if (err) {
+        return res.status(500).json({ message: "Failed to logout" });
+      }
+      res.json({ message: "Logged out successfully" });
+    });
+  });
+
   app.get('/api/auth/user', async (req: any, res) => {
     try {
-      // For demo purposes, return mock user
-      const mockUser = {
-        id: "demo-user-1",
-        email: "demo@koegyconnect.com",
-        companyName: "Korea-Indonesia Trade Corp",
-        companyType: "korean",
-        firstName: "Demo",
-        lastName: "User"
-      };
-      res.json(mockUser);
+      const userId = req.session?.userId;
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+      if (!user) {
+        return res.status(401).json({ message: "User not found" });
+      }
+
+      res.json({ 
+        id: user.id,
+        email: user.email,
+        companyName: user.companyName,
+        companyType: user.companyType,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      });
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
