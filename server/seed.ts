@@ -1,39 +1,49 @@
 import { db } from "./db";
 import { users, rfqs, quotes, messages } from "@shared/schema";
 import { eq } from "drizzle-orm";
+import bcrypt from "bcryptjs";
 
 export async function seedDatabase() {
   console.log("Checking if database needs seeding...");
 
-  // Check if RFQs exist
-  const existingRfqs = await db.select().from(rfqs).limit(1);
-  if (existingRfqs.length > 0) {
-    console.log("Database already has RFQ data, skipping seed.");
+  // Check if test accounts exist
+  const existingTestUser = await db.select().from(users).where(eq(users.email, 'korea@test.com')).limit(1);
+  if (existingTestUser.length > 0) {
+    console.log("Test accounts already exist, skipping seed.");
     return;
   }
 
-  console.log("Seeding database with sample data...");
+  console.log("Seeding database with sample data and test accounts...");
 
-  // Create demo users
-  const [koreanUser] = await db.insert(users).values({
-    id: 'demo-korean-company',
-    email: 'korean@demo.cmarket.com',
-    firstName: 'Demo',
-    lastName: 'Korean',
-    companyName: 'Korean Manufacturing Co.',
+  // Hash password for test accounts
+  const hashedPassword = await bcrypt.hash("test123", 10);
+
+  // Create test accounts
+  const [koreanTestUser] = await db.insert(users).values({
+    email: 'korea@test.com',
+    password: hashedPassword,
+    firstName: 'Test',
+    lastName: 'Korea',
+    companyName: 'Korea Test Corp.',
     companyType: 'korean',
-    businessRegistration: 'KR-123456789',
+    businessRegistration: 'KR-TEST-001',
   }).returning();
 
-  const [indonesianUser] = await db.insert(users).values({
-    id: 'demo-indonesian-company',
-    email: 'indonesian@demo.cmarket.com',
-    firstName: 'Demo',
-    lastName: 'Indonesian',
-    companyName: 'Indonesian Trading Corp.',
+  const [indonesianTestUser] = await db.insert(users).values({
+    email: 'indonesia@test.com',
+    password: hashedPassword,
+    firstName: 'Test',
+    lastName: 'Indonesia',
+    companyName: 'Indonesia Test Corp.',
     companyType: 'indonesian',
-    businessRegistration: 'ID-987654321',
+    businessRegistration: 'ID-TEST-001',
   }).returning();
+
+  console.log("Created test accounts: korea@test.com and indonesia@test.com (password: test123)");
+
+  // Use test users as demo users
+  const koreanUser = koreanTestUser;
+  const indonesianUser = indonesianTestUser;
 
   // Create sample RFQs
   const sampleRfqs = [
@@ -130,8 +140,8 @@ export async function seedDatabase() {
   for (let i = 0; i < supplierCompanies.length; i++) {
     const company = supplierCompanies[i];
     const [supplier] = await db.insert(users).values({
-      id: `supplier-${i + 1}`,
       email: company.email,
+      password: hashedPassword,
       firstName: 'Supplier',
       lastName: `${i + 1}`,
       companyName: company.name,

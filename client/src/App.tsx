@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
-import Landing from "@/pages/landing";
+import Auth from "@/pages/auth";
 import Dashboard from "@/pages/dashboard";
 import RfqCreation from "@/pages/rfq-creation";
 import RfqDetail from "@/pages/rfq-detail";
@@ -13,7 +13,20 @@ import Checkout from "@/pages/checkout";
 import NotFound from "@/pages/not-found";
 
 function Router() {
-  // For demo purposes, bypass authentication and always show authenticated routes
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Auth />;
+  }
+
   return (
     <Switch>
       <Route path="/" component={Dashboard} />
