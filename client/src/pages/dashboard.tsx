@@ -191,178 +191,179 @@ export default function Dashboard() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6">
+      <main className="container mx-auto px-4 py-8">
         {/* Dashboard Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="hover-lift">
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                  <i className="fas fa-file-alt text-blue-600 dark:text-blue-400 text-xl"></i>
-                </div>
-                <div className="ml-4">
-                  <h3 className="text-2xl font-bold" data-testid="stat-active-rfqs">
-                    {mockStats.activeRfqs}
-                  </h3>
-                  <p className="text-muted-foreground text-sm">{t('dashboard.activeRfqs')}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="hover-lift">
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
-                  <i className="fas fa-calculator text-yellow-600 dark:text-yellow-400 text-xl"></i>
-                </div>
-                <div className="ml-4">
-                  <h3 className="text-2xl font-bold" data-testid="stat-total-quotes">
-                    {mockStats.newQuotes}
-                  </h3>
-                  <p className="text-muted-foreground text-sm">{t('dashboard.receivedQuotes')}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="hover-lift">
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                  <i className="fas fa-handshake text-green-600 dark:text-green-400 text-xl"></i>
-                </div>
-                <div className="ml-4">
-                  <h3 className="text-2xl font-bold" data-testid="stat-completed-deals">
-                    {mockStats.completedOrders}
-                  </h3>
-                  <p className="text-muted-foreground text-sm">{t('dashboard.completedDeals')}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="hover-lift">
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                  <i className="fas fa-dollar-sign text-purple-600 dark:text-purple-400 text-xl"></i>
-                </div>
-                <div className="ml-4">
-                  <h3 className="text-2xl font-bold" data-testid="stat-total-value">
-                    ${mockStats.totalValue.toLocaleString()}
-                  </h3>
-                  <p className="text-muted-foreground text-sm">{t('dashboard.totalValue')}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Recent RFQs Table */}
-        <Card className="shadow-sm">
-          <CardHeader className="p-6 border-b border-border">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          <div className="card-modern stats-card-blue hover-lift p-6 rounded-xl">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold">{t('stats.recentRfqs')}</h2>
-                <p className="text-muted-foreground text-sm">{t('messages.manageRfqs')}</p>
+                <p className="text-sm font-medium text-muted-foreground mb-1">{t('dashboard.activeRfqs')}</p>
+                <h3 className="text-3xl font-bold text-blue-600" data-testid="stat-active-rfqs">
+                  {rfqs.filter(r => r.status === 'active').length || mockStats.activeRfqs}
+                </h3>
+                <p className="text-xs text-muted-foreground mt-2">
+                  <span className="text-green-500">↑ 12%</span> {language === 'en' ? 'vs last month' : language === 'ko' ? '지난 달 대비' : 'vs bulan lalu'}
+                </p>
+              </div>
+              <div className="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center">
+                <i className="fas fa-file-alt text-blue-600 text-2xl"></i>
+              </div>
+            </div>
+          </div>
+
+          <div className="card-modern stats-card-orange hover-lift p-6 rounded-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-1">{t('dashboard.receivedQuotes')}</p>
+                <h3 className="text-3xl font-bold text-orange-500" data-testid="stat-total-quotes">
+                  {mockStats.newQuotes}
+                </h3>
+                <p className="text-xs text-muted-foreground mt-2">
+                  <span className="text-green-500">↑ 8%</span> {language === 'en' ? 'vs last month' : language === 'ko' ? '지난 달 대비' : 'vs bulan lalu'}
+                </p>
+              </div>
+              <div className="w-14 h-14 bg-orange-500/10 rounded-2xl flex items-center justify-center">
+                <i className="fas fa-calculator text-orange-500 text-2xl"></i>
+              </div>
+            </div>
+          </div>
+
+          <div className="card-modern stats-card-green hover-lift p-6 rounded-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-1">{t('dashboard.completedDeals')}</p>
+                <h3 className="text-3xl font-bold text-emerald-500" data-testid="stat-completed-deals">
+                  {orders.length || mockStats.completedOrders}
+                </h3>
+                <p className="text-xs text-muted-foreground mt-2">
+                  <span className="text-green-500">↑ 24%</span> {language === 'en' ? 'vs last month' : language === 'ko' ? '지난 달 대비' : 'vs bulan lalu'}
+                </p>
+              </div>
+              <div className="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center">
+                <i className="fas fa-handshake text-emerald-500 text-2xl"></i>
+              </div>
+            </div>
+          </div>
+
+          <div className="card-modern stats-card-purple hover-lift p-6 rounded-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-1">{t('dashboard.totalValue')}</p>
+                <h3 className="text-3xl font-bold text-purple-600" data-testid="stat-total-value">
+                  ${mockStats.totalValue.toLocaleString()}
+                </h3>
+                <p className="text-xs text-muted-foreground mt-2">
+                  <span className="text-green-500">↑ 18%</span> {language === 'en' ? 'vs last month' : language === 'ko' ? '지난 달 대비' : 'vs bulan lalu'}
+                </p>
+              </div>
+              <div className="w-14 h-14 bg-purple-500/10 rounded-2xl flex items-center justify-center">
+                <i className="fas fa-dollar-sign text-purple-600 text-2xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Recent RFQs Section */}
+        <div className="card-modern rounded-2xl overflow-hidden">
+          <div className="p-6 border-b border-border bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold">{t('stats.recentRfqs')}</h2>
+                <p className="text-muted-foreground text-sm mt-1">{t('messages.manageRfqs')}</p>
               </div>
               <Link href="/create-rfq">
-                <Button data-testid="button-create-new-rfq">
+                <Button className="btn-modern text-white" data-testid="button-create-new-rfq">
                   <i className="fas fa-plus mr-2"></i>{t('rfq.create')}
                 </Button>
               </Link>
             </div>
-          </CardHeader>
+          </div>
 
-          <div className="overflow-x-auto">
+          <div className="p-6">
             {rfqsLoading ? (
-              <div className="p-8 text-center">
-                <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="shimmer h-48 rounded-xl"></div>
+                ))}
               </div>
             ) : rfqs.length === 0 ? (
-              <div className="p-8 text-center">
-                <p className="text-muted-foreground">{t('messages.noRfqsFound')}</p>
+              <div className="py-16 text-center">
+                <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                  <i className="fas fa-file-alt text-3xl text-muted-foreground"></i>
+                </div>
+                <p className="text-muted-foreground text-lg">{t('messages.noRfqsFound')}</p>
+                <Link href="/create-rfq">
+                  <Button className="mt-4 btn-modern text-white">
+                    <i className="fas fa-plus mr-2"></i>{t('rfq.create')}
+                  </Button>
+                </Link>
               </div>
             ) : (
-              <table className="w-full">
-                <thead className="bg-muted">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      {t('table.rfqId')}
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      {t('table.productService')}
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      {t('table.quantity')}
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      {t('table.deadline')}
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      {t('table.status')}
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      {t('table.quotes')}
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      {t('table.actions')}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-card divide-y divide-border">
-                  {rfqs.map((rfq) => (
-                    <tr key={rfq.id} className="hover:bg-accent transition-colors" data-testid={`row-rfq-${rfq.id}`}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary" data-testid={`text-rfq-id-${rfq.id}`}>
-                        {rfq.id.slice(0, 8)}...
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm" data-testid={`text-rfq-title-${rfq.id}`}>
-                        {rfq.title}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground" data-testid={`text-rfq-quantity-${rfq.id}`}>
-                        {rfq.quantity} {rfq.unit}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground" data-testid={`text-rfq-deadline-${rfq.id}`}>
-                        {new Date(rfq.deadline).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap" data-testid={`status-rfq-${rfq.id}`}>
-                        {getStatusBadge(rfq.status || 'pending')}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm" data-testid={`text-quotes-count-${rfq.id}`}>
-                        <Badge variant="secondary">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {rfqs.map((rfq) => (
+                  <div 
+                    key={rfq.id} 
+                    className="card-modern hover-lift p-5 rounded-xl border border-border/50"
+                    data-testid={`row-rfq-${rfq.id}`}
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-xs font-mono text-primary bg-primary/10 px-2 py-1 rounded" data-testid={`text-rfq-id-${rfq.id}`}>
+                            {rfq.id.slice(0, 12)}
+                          </span>
+                          {getStatusBadge(rfq.status || 'pending')}
+                        </div>
+                        <h3 className="font-semibold text-lg line-clamp-2" data-testid={`text-rfq-title-${rfq.id}`}>
+                          {rfq.title}
+                        </h3>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 mb-4">
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <i className="fas fa-cube w-5"></i>
+                        <span data-testid={`text-rfq-quantity-${rfq.id}`}>{rfq.quantity} {rfq.unit}</span>
+                      </div>
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <i className="fas fa-calendar w-5"></i>
+                        <span data-testid={`text-rfq-deadline-${rfq.id}`}>{new Date(rfq.deadline).toLocaleDateString()}</span>
+                      </div>
+                      <div className="flex items-center text-sm">
+                        <i className="fas fa-comments w-5 text-muted-foreground"></i>
+                        <Badge variant="secondary" className="text-xs" data-testid={`text-quotes-count-${rfq.id}`}>
                           {(rfq as any).quotes?.length || 0} {t('messages.quotesCount')}
                         </Badge>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
-                        <Link href={`/rfq/${rfq.id}`}>
-                          <Button
-                            variant="link"
-                            size="sm"
-                            data-testid={`button-view-detail-${rfq.id}`}
-                          >
-                            {language === 'en' ? 'View Detail' : '견적 보기'}
-                          </Button>
-                        </Link>
-                        <Button
-                          variant="link"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedRfqId(rfq.id);
-                            setShowChatModal(true);
-                          }}
-                          data-testid={`button-chat-${rfq.id}`}
-                        >
-                          {t('buttons.chat')}
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2 pt-4 border-t border-border">
+                      <Link href={`/rfq/${rfq.id}`} className="flex-1">
+                        <Button variant="outline" size="sm" className="w-full" data-testid={`button-view-detail-${rfq.id}`}>
+                          <i className="fas fa-eye mr-2"></i>
+                          {language === 'en' ? 'View' : language === 'ko' ? '상세보기' : 'Lihat'}
                         </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </Link>
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => {
+                          setSelectedRfqId(rfq.id);
+                          setShowChatModal(true);
+                        }}
+                        data-testid={`button-chat-${rfq.id}`}
+                      >
+                        <i className="fas fa-comment mr-2"></i>
+                        {t('buttons.chat')}
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
-        </Card>
+        </div>
       </main>
 
       {/* Modals */}

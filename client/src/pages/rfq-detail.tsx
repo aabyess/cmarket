@@ -10,6 +10,7 @@ import { QuoteComparisonModal } from "@/components/modals/quote-comparison-modal
 import { ChatModal } from "@/components/modals/chat-modal";
 import { Link, useParams } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { Rfq, Quote } from "@shared/schema";
 
 export default function RfqDetail() {
   const { id } = useParams();
@@ -21,13 +22,13 @@ export default function RfqDetail() {
 
   // Demo mode - no authentication needed
 
-  const { data: rfq, isLoading: rfqLoading } = useQuery({
+  const { data: rfq, isLoading: rfqLoading } = useQuery<Rfq>({
     queryKey: ["/api/rfqs", id],
     enabled: !!id,
     retry: false,
   });
 
-  const { data: quotes = [] } = useQuery({
+  const { data: quotes = [] } = useQuery<Quote[]>({
     queryKey: ["/api/rfqs", id, "quotes"],
     enabled: !!id,
     retry: false,
@@ -48,13 +49,13 @@ export default function RfqDetail() {
   };
 
   const getCategoryName = (category: string) => {
-    const categories: { [key: string]: { en: string; ko: string } } = {
-      'industrial-equipment': { en: 'Industrial Equipment', ko: '산업 장비' },
-      'textiles-apparel': { en: 'Textiles & Apparel', ko: '섬유 및 의류' },
-      'construction-materials': { en: 'Construction Materials', ko: '건설 자재' },
-      'logistics-services': { en: 'Logistics Services', ko: '물류 서비스' },
-      'electronics': { en: 'Electronics', ko: '전자제품' },
-      'other': { en: 'Other', ko: '기타' }
+    const categories: { [key: string]: { en: string; ko: string; ms: string } } = {
+      'industrial-equipment': { en: 'Industrial Equipment', ko: '산업 장비', ms: 'Peralatan Industri' },
+      'textiles-apparel': { en: 'Textiles & Apparel', ko: '섬유 및 의류', ms: 'Tekstil & Pakaian' },
+      'construction-materials': { en: 'Construction Materials', ko: '건설 자재', ms: 'Bahan Konstruksi' },
+      'logistics-services': { en: 'Logistics Services', ko: '물류 서비스', ms: 'Layanan Logistik' },
+      'electronics': { en: 'Electronics', ko: '전자제품', ms: 'Elektronik' },
+      'other': { en: 'Other', ko: '기타', ms: 'Lainnya' }
     };
     return categories[category]?.[language] || category;
   };
