@@ -114,6 +114,18 @@ export default function Dashboard() {
                     {t('rfq.create')}
                   </Button>
                 </Link>
+                <Link href="/partners">
+                  <Button variant="ghost" size="sm">
+                    <i className="fas fa-building mr-2"></i>
+                    {language === 'ko' ? '파트너 찾기' : language === 'ms' ? 'Cari Mitra' : 'Find Partners'}
+                  </Button>
+                </Link>
+                <Link href="/messages">
+                  <Button variant="ghost" size="sm">
+                    <i className="fas fa-comments mr-2"></i>
+                    {language === 'ko' ? '메시지' : language === 'ms' ? 'Pesan' : 'Messages'}
+                  </Button>
+                </Link>
               </nav>
             </div>
             

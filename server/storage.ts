@@ -5,6 +5,7 @@ import {
   orders,
   messages,
   ratings,
+  conversations,
   type User,
   type UpsertUser,
   type InsertRfq,
@@ -17,9 +18,10 @@ import {
   type Message,
   type InsertRating,
   type Rating,
+  type Conversation,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, or, and, like, ilike, sql } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
@@ -49,6 +51,17 @@ export interface IStorage {
   
   createRating(rating: InsertRating, raterId: string): Promise<Rating>;
   getRatingsByUser(userId: string): Promise<Rating[]>;
+  
+  // Partner search
+  searchCompanies(query?: string, country?: string, category?: string): Promise<User[]>;
+  getCompanyWithRatings(id: string): Promise<{ user: User; avgRating: number; ratingCount: number } | undefined>;
+  
+  // Conversations
+  getConversations(userId: string): Promise<any[]>;
+  getOrCreateConversation(participant1Id: string, participant2Id: string, rfqId?: string): Promise<Conversation>;
+  getMessagesByConversation(conversationId: string): Promise<Message[]>;
+  createConversationMessage(conversationId: string, senderId: string, receiverId: string, content: string): Promise<Message>;
+  markMessagesAsRead(conversationId: string, userId: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -224,6 +237,164 @@ export class DatabaseStorage implements IStorage {
       .from(ratings)
       .where(eq(ratings.ratedId, userId))
       .orderBy(desc(ratings.createdAt));
+  }
+
+  async searchCompanies(query?: string, country?: string, category?: string): Promise<User[]> {
+    let conditions: any[] = [];
+    
+    if (country && country !== 'all') {
+      conditions.push(eq(users.companyType, country));
+    }
+    
+    if (category && category !== 'all') {
+      conditions.push(eq(users.companyCategory, category));
+    }
+    
+    if (query) {
+      conditions.push(
+        or(
+          ilike(users.companyName, `%${query}%`),
+          ilike(users.companyDescription, `%${query}%`)
+        )
+      );
+    }
+    
+    if (conditions.length > 0) {
+      return await db.select().from(users).where(and(...conditions)).orderBy(desc(users.createdAt));
+    }
+    
+    return await db.select().from(users).orderBy(desc(users.createdAt));
+  }
+
+  async getCompanyWithRatings(id: string): Promise<{ user: User; avgRating: number; ratingCount: number } | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    if (!user) return undefined;
+    
+    const userRatings = await db.select().from(ratings).where(eq(ratings.ratedId, id));
+    const ratingCount = userRatings.length;
+    const avgRating = ratingCount > 0 
+      ? userRatings.reduce((sum, r) => sum + r.rating, 0) / ratingCount 
+      : 0;
+    
+    return { user, avgRating, ratingCount };
+  }
+
+  async getConversations(userId: string): Promise<any[]> {
+    const convs = await db
+      .select()
+      .from(conversations)
+      .where(
+        or(
+          eq(conversations.participant1Id, userId),
+          eq(conversations.participant2Id, userId)
+        )
+      )
+      .orderBy(desc(conversations.lastMessageAt));
+    
+    const result = await Promise.all(convs.map(async (conv) => {
+      const otherUserId = conv.participant1Id === userId ? conv.participant2Id : conv.participant1Id;
+      const [otherUser] = await db.select().from(users).where(eq(users.id, otherUserId));
+      
+      const lastMessages = await db
+        .select()
+        .from(messages)
+        .where(eq(messages.conversationId, conv.id))
+        .orderBy(desc(messages.createdAt))
+        .limit(1);
+      
+      const unreadCount = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(messages)
+        .where(
+          and(
+            eq(messages.conversationId, conv.id),
+            eq(messages.receiverId, userId),
+            eq(messages.isRead, false)
+          )
+        );
+      
+      return {
+        ...conv,
+        otherUser,
+        lastMessage: lastMessages[0] || null,
+        unreadCount: Number(unreadCount[0]?.count || 0),
+      };
+    }));
+    
+    return result;
+  }
+
+  async getOrCreateConversation(participant1Id: string, participant2Id: string, rfqId?: string): Promise<Conversation> {
+    const existing = await db
+      .select()
+      .from(conversations)
+      .where(
+        or(
+          and(
+            eq(conversations.participant1Id, participant1Id),
+            eq(conversations.participant2Id, participant2Id)
+          ),
+          and(
+            eq(conversations.participant1Id, participant2Id),
+            eq(conversations.participant2Id, participant1Id)
+          )
+        )
+      )
+      .limit(1);
+    
+    if (existing.length > 0) {
+      return existing[0];
+    }
+    
+    const [newConv] = await db
+      .insert(conversations)
+      .values({
+        participant1Id,
+        participant2Id,
+        rfqId,
+      })
+      .returning();
+    
+    return newConv;
+  }
+
+  async getMessagesByConversation(conversationId: string): Promise<Message[]> {
+    return await db
+      .select()
+      .from(messages)
+      .where(eq(messages.conversationId, conversationId))
+      .orderBy(messages.createdAt);
+  }
+
+  async createConversationMessage(conversationId: string, senderId: string, receiverId: string, content: string): Promise<Message> {
+    const [newMessage] = await db
+      .insert(messages)
+      .values({
+        conversationId,
+        senderId,
+        receiverId,
+        content,
+      })
+      .returning();
+    
+    await db
+      .update(conversations)
+      .set({ lastMessageAt: new Date() })
+      .where(eq(conversations.id, conversationId));
+    
+    return newMessage;
+  }
+
+  async markMessagesAsRead(conversationId: string, userId: string): Promise<void> {
+    await db
+      .update(messages)
+      .set({ isRead: true })
+      .where(
+        and(
+          eq(messages.conversationId, conversationId),
+          eq(messages.receiverId, userId)
+        )
+      );
   }
 }
 

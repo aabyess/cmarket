@@ -332,6 +332,118 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Partner search routes
+  app.get('/api/companies', async (req, res) => {
+    try {
+      const { query, country, category } = req.query;
+      const companies = await storage.searchCompanies(
+        query as string | undefined,
+        country as string | undefined,
+        category as string | undefined
+      );
+      
+      // Get ratings for each company
+      const companiesWithRatings = await Promise.all(
+        companies.map(async (company) => {
+          const data = await storage.getCompanyWithRatings(company.id);
+          return {
+            ...company,
+            password: undefined, // Don't expose password
+            avgRating: data?.avgRating || 0,
+            ratingCount: data?.ratingCount || 0,
+          };
+        })
+      );
+      
+      res.json(companiesWithRatings);
+    } catch (error) {
+      console.error("Error searching companies:", error);
+      res.status(500).json({ message: "Failed to search companies" });
+    }
+  });
+
+  app.get('/api/companies/:id', async (req, res) => {
+    try {
+      const data = await storage.getCompanyWithRatings(req.params.id);
+      if (!data) {
+        return res.status(404).json({ message: "Company not found" });
+      }
+      res.json({
+        ...data.user,
+        password: undefined,
+        avgRating: data.avgRating,
+        ratingCount: data.ratingCount,
+      });
+    } catch (error) {
+      console.error("Error fetching company:", error);
+      res.status(500).json({ message: "Failed to fetch company" });
+    }
+  });
+
+  // Conversation routes
+  app.get('/api/conversations', requireAuth, async (req: any, res) => {
+    try {
+      const userId = req.session.userId;
+      const conversations = await storage.getConversations(userId);
+      res.json(conversations);
+    } catch (error) {
+      console.error("Error fetching conversations:", error);
+      res.status(500).json({ message: "Failed to fetch conversations" });
+    }
+  });
+
+  app.post('/api/conversations', requireAuth, async (req: any, res) => {
+    try {
+      const userId = req.session.userId;
+      const { participantId, rfqId } = req.body;
+      const conversation = await storage.getOrCreateConversation(userId, participantId, rfqId);
+      res.json(conversation);
+    } catch (error) {
+      console.error("Error creating conversation:", error);
+      res.status(500).json({ message: "Failed to create conversation" });
+    }
+  });
+
+  app.get('/api/conversations/:id/messages', requireAuth, async (req: any, res) => {
+    try {
+      const userId = req.session.userId;
+      await storage.markMessagesAsRead(req.params.id, userId);
+      const messages = await storage.getMessagesByConversation(req.params.id);
+      res.json(messages);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      res.status(500).json({ message: "Failed to fetch messages" });
+    }
+  });
+
+  app.post('/api/conversations/:id/messages', requireAuth, async (req: any, res) => {
+    try {
+      const senderId = req.session.userId;
+      const { receiverId, content } = req.body;
+      const message = await storage.createConversationMessage(
+        req.params.id,
+        senderId,
+        receiverId,
+        content
+      );
+      
+      // Broadcast message via WebSocket
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify({
+            type: 'new_message',
+            data: message
+          }));
+        }
+      });
+
+      res.json(message);
+    } catch (error) {
+      console.error("Error creating message:", error);
+      res.status(500).json({ message: "Failed to create message" });
+    }
+  });
+
   // Stripe payment routes
   app.post("/api/create-payment-intent", requireAuth, async (req: any, res) => {
     try {

@@ -10,6 +10,8 @@ import Dashboard from "@/pages/dashboard";
 import RfqCreation from "@/pages/rfq-creation";
 import RfqDetail from "@/pages/rfq-detail";
 import Checkout from "@/pages/checkout";
+import Partners from "@/pages/partners";
+import Messages from "@/pages/messages";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -33,6 +35,8 @@ function Router() {
       <Route path="/create-rfq" component={RfqCreation} />
       <Route path="/rfq/:id" component={RfqDetail} />
       <Route path="/checkout/:orderId" component={Checkout} />
+      <Route path="/partners" component={Partners} />
+      <Route path="/messages" component={Messages} />
       <Route component={NotFound} />
     </Switch>
   );

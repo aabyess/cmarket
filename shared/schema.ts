@@ -34,6 +34,11 @@ export const users = pgTable("users", {
   profileImageUrl: varchar("profile_image_url"),
   companyName: varchar("company_name").notNull(),
   companyType: varchar("company_type").notNull(), // 'korean' or 'indonesian'
+  companyCategory: varchar("company_category"), // 'manufacturing', 'services', 'logistics', etc.
+  companyLocation: varchar("company_location"), // city, country
+  companyDescription: text("company_description"),
+  companyTags: text("company_tags").array(), // ['#기계', '#품질비', '#ISO 인증']
+  isVerified: boolean("is_verified").default(false),
   businessRegistration: varchar("business_registration"),
   stripeCustomerId: varchar("stripe_customer_id"),
   stripeSubscriptionId: varchar("stripe_subscription_id"),
@@ -91,12 +96,23 @@ export const orders = pgTable("orders", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const conversations = pgTable("conversations", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  participant1Id: varchar("participant1_id").notNull().references(() => users.id),
+  participant2Id: varchar("participant2_id").notNull().references(() => users.id),
+  rfqId: varchar("rfq_id").references(() => rfqs.id), // optional - can be general chat
+  lastMessageAt: timestamp("last_message_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const messages = pgTable("messages", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  rfqId: varchar("rfq_id").notNull().references(() => rfqs.id),
+  conversationId: varchar("conversation_id").references(() => conversations.id),
+  rfqId: varchar("rfq_id").references(() => rfqs.id),
   senderId: varchar("sender_id").notNull().references(() => users.id),
   receiverId: varchar("receiver_id").notNull().references(() => users.id),
   content: text("content").notNull(),
+  isRead: boolean("is_read").default(false),
   attachments: text("attachments").array(),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -138,6 +154,12 @@ export const insertOrderSchema = createInsertSchema(orders).omit({
   updatedAt: true,
 });
 
+export const insertConversationSchema = createInsertSchema(conversations).omit({
+  id: true,
+  createdAt: true,
+  lastMessageAt: true,
+});
+
 export const insertMessageSchema = createInsertSchema(messages).omit({
   id: true,
   createdAt: true,
@@ -159,6 +181,8 @@ export type InsertQuote = z.infer<typeof insertQuoteSchema>;
 export type Quote = typeof quotes.$inferSelect;
 export type InsertOrder = z.infer<typeof insertOrderSchema>;
 export type Order = typeof orders.$inferSelect;
+export type InsertConversation = z.infer<typeof insertConversationSchema>;
+export type Conversation = typeof conversations.$inferSelect;
 export type InsertMessage = z.infer<typeof insertMessageSchema>;
 export type Message = typeof messages.$inferSelect;
 export type InsertRating = z.infer<typeof insertRatingSchema>;
