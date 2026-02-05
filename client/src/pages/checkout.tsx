@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "wouter";
+import { useParams, Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -84,7 +84,7 @@ export default function Checkout() {
   const { orderId } = useParams();
   const { isAuthenticated, isLoading } = useAuth();
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const [clientSecret, setClientSecret] = useState("");
 
   // Redirect to login if not authenticated
@@ -102,7 +102,7 @@ export default function Checkout() {
     }
   }, [isAuthenticated, isLoading, toast]);
 
-  const { data: order, isLoading: orderLoading } = useQuery({
+  const { data: order, isLoading: orderLoading } = useQuery<any>({
     queryKey: ["/api/orders", orderId],
     enabled: isAuthenticated && !!orderId,
     retry: false,
@@ -193,8 +193,70 @@ export default function Checkout() {
   }
 
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-background">
+      {/* Country Flags Banner */}
+      <div className="bg-gradient-to-r from-blue-600 via-white to-red-600 h-2"></div>
+      
+      {/* Header Navigation */}
+      <header className="bg-card border-b border-border shadow-sm">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <Link href="/">
+              <div className="flex items-center cursor-pointer">
+                <div className="flag-korea w-5 h-3 rounded-sm mr-2"></div>
+                <i className="fas fa-handshake text-lg text-primary mx-2"></i>
+                <div className="flag-indonesia w-5 h-3 rounded-sm ml-2"></div>
+                <h1 className="ml-3 text-xl font-bold">CMARKET Trade</h1>
+              </div>
+            </Link>
+            
+            <div className="flex items-center space-x-4">
+              {/* Language Toggle */}
+              <div className="bg-muted p-1 rounded-lg flex">
+                <button 
+                  className={`px-2 py-1 rounded-sm text-xs ${
+                    language === 'en' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'text-muted-foreground hover:bg-accent'
+                  }`}
+                  onClick={() => setLanguage('en')}
+                >
+                  EN
+                </button>
+                <button 
+                  className={`px-2 py-1 rounded-sm text-xs ${
+                    language === 'ko' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'text-muted-foreground hover:bg-accent'
+                  }`}
+                  onClick={() => setLanguage('ko')}
+                >
+                  한국어
+                </button>
+                <button 
+                  className={`px-2 py-1 rounded-sm text-xs ${
+                    language === 'ms' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'text-muted-foreground hover:bg-accent'
+                  }`}
+                  onClick={() => setLanguage('ms')}
+                >
+                  Bahasa
+                </button>
+              </div>
+              
+              <Link href="/">
+                <Button variant="ghost" size="sm">
+                  <i className="fas fa-arrow-left mr-2"></i>
+                  {t('nav.dashboard')}
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           <Card className="shadow-2xl">
             <CardHeader className="border-b border-border">
