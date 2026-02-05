@@ -20,7 +20,6 @@ export function ChatModal({ rfqId, open, onOpenChange }: ChatModalProps) {
   const { language, t } = useLanguage();
   const queryClient = useQueryClient();
   const [message, setMessage] = useState("");
-  const [ws, setWs] = useState<WebSocket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [translatedMessages, setTranslatedMessages] = useState<{[key: string]: {text: string, lang: 'ko' | 'en' | 'ms'}}>({});
 
@@ -85,34 +84,59 @@ export function ChatModal({ rfqId, open, onOpenChange }: ChatModalProps) {
   });
 
   // WebSocket connection for real-time messaging
+  const wsRef = useRef<WebSocket | null>(null);
+  
   useEffect(() => {
-    if (open && !ws) {
-      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-      const wsUrl = `${protocol}//${window.location.host}/ws`;
-      const socket = new WebSocket(wsUrl);
+    if (!open) {
+      // Clean up when modal closes
+      if (wsRef.current) {
+        wsRef.current.close();
+        wsRef.current = null;
+      }
+      return;
+    }
+    
+    // Don't create new connection if one exists
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      return;
+    }
+    
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    const socket = new WebSocket(wsUrl);
+    wsRef.current = socket;
 
-      socket.onopen = () => {
-        console.log("WebSocket connected");
-        setWs(socket);
-      };
+    socket.onopen = () => {
+      console.log("WebSocket connected for chat");
+    };
 
-      socket.onmessage = (event) => {
+    socket.onmessage = (event) => {
+      try {
         const data = JSON.parse(event.data);
         if (data.type === 'new_message' && data.data.rfqId === rfqId) {
           queryClient.invalidateQueries({ queryKey: ["/api/rfqs", rfqId, "messages"] });
         }
-      };
+      } catch (e) {
+        // Ignore parse errors
+      }
+    };
 
-      socket.onclose = () => {
-        console.log("WebSocket disconnected");
-        setWs(null);
-      };
+    socket.onclose = () => {
+      console.log("WebSocket disconnected");
+      wsRef.current = null;
+    };
 
-      return () => {
+    socket.onerror = () => {
+      console.log("WebSocket error");
+    };
+
+    return () => {
+      if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
         socket.close();
-      };
-    }
-  }, [open, ws, rfqId, queryClient]);
+      }
+      wsRef.current = null;
+    };
+  }, [open, rfqId, queryClient]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
