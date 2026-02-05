@@ -34,11 +34,41 @@ export function ChatModal({ rfqId, open, onOpenChange }: ChatModalProps) {
     enabled: open && !!rfqId,
   });
 
+  const { data: quotes = [] } = useQuery<any[]>({
+    queryKey: ["/api/rfqs", rfqId, "quotes"],
+    enabled: open && !!rfqId,
+  });
+
+  const getReceiverId = () => {
+    if (!rfq || !user) return null;
+    
+    // If user is RFQ creator, find receiver from quotes or existing messages
+    if (rfq.createdBy === user.id) {
+      // First try to get from quotes
+      const latestQuote = quotes[0];
+      if (latestQuote?.supplierId) return latestQuote.supplierId;
+      
+      // Then try to find from existing messages
+      const otherParty = messages.find((m: any) => m.senderId !== user.id);
+      if (otherParty) return otherParty.senderId;
+      
+      return null;
+    }
+    
+    return rfq.createdBy;
+  };
+  
+  const canSendMessage = getReceiverId() !== null;
+
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
+      const receiverId = getReceiverId();
+      if (!receiverId) {
+        throw new Error("Cannot determine message recipient");
+      }
       return await apiRequest("POST", `/api/rfqs/${rfqId}/messages`, {
         content,
-        receiverId: "placeholder", // This would be determined by the RFQ context
+        receiverId,
       });
     },
     onSuccess: () => {
@@ -269,32 +299,42 @@ export function ChatModal({ rfqId, open, onOpenChange }: ChatModalProps) {
         </div>
 
         <div className="p-4 border-t border-border">
-          <form onSubmit={handleSendMessage} className="flex space-x-2">
-            <Input
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder={t('modal.typeMessage')}
-              className="flex-1"
-              data-testid="input-chat-message"
-            />
-            <Button
-              type="submit"
-              disabled={!message.trim() || sendMessageMutation.isPending}
-              data-testid="button-send-message"
-            >
-              {sendMessageMutation.isPending ? (
-                <>
-                  <div className="animate-spin w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full mr-2" />
-                  {t('payment.processing')}
-                </>
-              ) : (
-                <>
-                  <i className="fas fa-paper-plane mr-2"></i>
-                  {t('buttons.send')}
-                </>
-              )}
-            </Button>
-          </form>
+          {!canSendMessage && rfq?.createdBy === user?.id ? (
+            <div className="text-center py-2 text-muted-foreground text-sm">
+              {language === 'en' 
+                ? 'Waiting for suppliers to submit quotes before starting conversation.' 
+                : language === 'ko' 
+                  ? '공급업체가 견적을 제출하면 대화를 시작할 수 있습니다.' 
+                  : 'Menunggu pemasok mengajukan penawaran sebelum memulai percakapan.'}
+            </div>
+          ) : (
+            <form onSubmit={handleSendMessage} className="flex space-x-2">
+              <Input
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder={t('modal.typeMessage')}
+                className="flex-1"
+                data-testid="input-chat-message"
+              />
+              <Button
+                type="submit"
+                disabled={!message.trim() || sendMessageMutation.isPending || !canSendMessage}
+                data-testid="button-send-message"
+              >
+                {sendMessageMutation.isPending ? (
+                  <>
+                    <div className="animate-spin w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full mr-2" />
+                    {t('payment.processing')}
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-paper-plane mr-2"></i>
+                    {t('buttons.send')}
+                  </>
+                )}
+              </Button>
+            </form>
+          )}
           <div className="flex items-center mt-2 text-xs text-muted-foreground">
             <i className="fas fa-paperclip mr-1"></i>
             <span>{language === 'en' ? 'Attach files' : '파일 첨부'}</span>

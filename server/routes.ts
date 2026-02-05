@@ -1,10 +1,10 @@
-import type { Express } from "express";
+import type { Express, RequestHandler } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import Stripe from "stripe";
 import bcrypt from "bcryptjs";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { getSession } from "./replitAuth";
 import { insertRfqSchema, insertQuoteSchema, insertMessageSchema, insertRatingSchema } from "@shared/schema";
 import { db } from "./db";
 import { users } from "@shared/schema";
@@ -17,9 +17,18 @@ if (process.env.STRIPE_SECRET_KEY) {
   });
 }
 
+// Simple session-based authentication middleware
+const requireAuth: RequestHandler = (req: any, res, next) => {
+  if (!req.session?.userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  next();
+};
+
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
+  // Session middleware (without full OIDC setup)
+  app.set("trust proxy", 1);
+  app.use(getSession());
 
   // Simple Auth routes
   app.post('/api/auth/register', async (req: any, res) => {
@@ -152,9 +161,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/rfqs', isAuthenticated, async (req: any, res) => {
+  app.post('/api/rfqs', requireAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.session.userId;
       // Convert date string to Date object before validation
       const requestBody = {
         ...req.body,
@@ -193,9 +202,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/rfqs/:rfqId/quotes', isAuthenticated, async (req: any, res) => {
+  app.post('/api/rfqs/:rfqId/quotes', requireAuth, async (req: any, res) => {
     try {
-      const supplierId = req.user.claims.sub;
+      const supplierId = req.session.userId;
       const quoteData = insertQuoteSchema.parse({
         ...req.body,
         rfqId: req.params.rfqId
@@ -208,7 +217,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/quotes/:id/accept', isAuthenticated, async (req: any, res) => {
+  app.post('/api/quotes/:id/accept', requireAuth, async (req: any, res) => {
     try {
       const quote = await storage.getQuote(req.params.id);
       if (!quote) {
@@ -220,7 +229,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "RFQ not found" });
       }
 
-      const buyerId = req.user.claims.sub;
+      const buyerId = req.session.userId;
       const platformFeeRate = 0.02; // 2%
       const platformFee = Number(quote.totalAmount) * platformFeeRate;
 
@@ -254,9 +263,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/rfqs/:rfqId/messages', isAuthenticated, async (req: any, res) => {
+  app.post('/api/rfqs/:rfqId/messages', requireAuth, async (req: any, res) => {
     try {
-      const senderId = req.user.claims.sub;
+      const senderId = req.session.userId;
       const messageData = insertMessageSchema.parse({
         ...req.body,
         rfqId: req.params.rfqId
@@ -292,7 +301,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/orders/:id/delivered', isAuthenticated, async (req: any, res) => {
+  app.post('/api/orders/:id/delivered', requireAuth, async (req: any, res) => {
     try {
       await storage.markOrderDelivered(req.params.id);
       res.json({ success: true });
@@ -302,10 +311,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/orders/:id/complete', isAuthenticated, async (req: any, res) => {
+  app.post('/api/orders/:id/complete', requireAuth, async (req: any, res) => {
     try {
       const { rating } = req.body;
-      const raterId = req.user.claims.sub;
+      const raterId = req.session.userId;
       
       if (rating) {
         const ratingData = insertRatingSchema.parse({
@@ -324,7 +333,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Stripe payment routes
-  app.post("/api/create-payment-intent", isAuthenticated, async (req: any, res) => {
+  app.post("/api/create-payment-intent", requireAuth, async (req: any, res) => {
     try {
       if (!stripe) {
         return res.status(503).json({ message: "Payment service not available. Please configure Stripe keys." });
