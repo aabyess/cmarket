@@ -4,30 +4,30 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(220 20% 97%);
-  --foreground: hsl(222 12% 15%);
+  --background: hsl(210 20% 98%);
+  --foreground: hsl(220 10% 20%);
   --card: hsl(0 0% 100%);
-  --card-foreground: hsl(222 12% 15%);
-  --primary: hsl(217 91% 50%);
+  --card-foreground: hsl(220 10% 20%);
+  --primary: hsl(220 60% 50%);
   --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(160 84% 39%);
+  --secondary: hsl(165 45% 45%);
   --secondary-foreground: hsl(0 0% 100%);
   --muted: hsl(220 14% 96%);
-  --muted-foreground: hsl(220 9% 46%);
+  --muted-foreground: hsl(220 10% 50%);
   --accent: hsl(220 14% 96%);
-  --accent-foreground: hsl(222 12% 15%);
-  --destructive: hsl(0 84% 60%);
+  --accent-foreground: hsl(220 10% 20%);
+  --destructive: hsl(0 65% 55%);
   --destructive-foreground: hsl(0 0% 100%);
-  --border: hsl(220 13% 91%);
-  --input: hsl(220 13% 91%);
-  --ring: hsl(217 91% 50%);
-  --radius: 12px;
+  --border: hsl(220 13% 90%);
+  --input: hsl(220 13% 90%);
+  --ring: hsl(220 60% 50%);
+  --radius: 10px;
   --font-sans: 'Inter', sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: 'Fira Code', monospace;
-  --success: hsl(160 84% 39%);
-  --warning: hsl(38 92% 50%);
-  --info: hsl(217 91% 60%);
+  --success: hsl(165 45% 45%);
+  --warning: hsl(40 75% 50%);
+  --info: hsl(220 55% 55%);
 }
 
 .dark {
@@ -100,15 +100,15 @@
 }
 
 .status-active { 
-  background: hsl(142 71% 45%); 
+  background: hsl(165 45% 45%); 
 }
 
 .status-pending { 
-  background: hsl(38 95% 50%); 
+  background: hsl(40 65% 50%); 
 }
 
 .status-completed { 
-  background: hsl(217 91% 60%); 
+  background: hsl(220 50% 55%); 
 }
 
 .hover-lift {
@@ -150,33 +150,33 @@
 
 /* Modern header gradient */
 .header-gradient {
-  background: linear-gradient(135deg, hsl(217 91% 50%) 0%, hsl(217 91% 40%) 100%);
+  background: linear-gradient(135deg, hsl(220 55% 50%) 0%, hsl(220 55% 42%) 100%);
 }
 
 /* Stats card gradients */
 .stats-card-blue {
-  background: linear-gradient(135deg, hsl(217 91% 50% / 0.1) 0%, hsl(217 91% 60% / 0.05) 100%);
-  border-left: 4px solid hsl(217 91% 50%);
+  background: linear-gradient(135deg, hsl(220 55% 55% / 0.08) 0%, hsl(220 55% 55% / 0.03) 100%);
+  border-left: 3px solid hsl(220 55% 55%);
 }
 
 .stats-card-green {
-  background: linear-gradient(135deg, hsl(160 84% 39% / 0.1) 0%, hsl(160 84% 39% / 0.05) 100%);
-  border-left: 4px solid hsl(160 84% 39%);
+  background: linear-gradient(135deg, hsl(165 45% 45% / 0.08) 0%, hsl(165 45% 45% / 0.03) 100%);
+  border-left: 3px solid hsl(165 45% 45%);
 }
 
 .stats-card-orange {
-  background: linear-gradient(135deg, hsl(38 92% 50% / 0.1) 0%, hsl(38 92% 50% / 0.05) 100%);
-  border-left: 4px solid hsl(38 92% 50%);
+  background: linear-gradient(135deg, hsl(40 65% 50% / 0.08) 0%, hsl(40 65% 50% / 0.03) 100%);
+  border-left: 3px solid hsl(40 65% 50%);
 }
 
 .stats-card-purple {
-  background: linear-gradient(135deg, hsl(280 68% 60% / 0.1) 0%, hsl(280 68% 60% / 0.05) 100%);
-  border-left: 4px solid hsl(280 68% 60%);
+  background: linear-gradient(135deg, hsl(260 45% 55% / 0.08) 0%, hsl(260 45% 55% / 0.03) 100%);
+  border-left: 3px solid hsl(260 45% 55%);
 }
 
 /* Animated gradient background */
 .animated-gradient {
-  background: linear-gradient(-45deg, hsl(217 91% 50%), hsl(160 84% 39%), hsl(217 91% 60%), hsl(280 68% 60%));
+  background: linear-gradient(-45deg, hsl(220 55% 55%), hsl(165 45% 50%), hsl(220 50% 60%), hsl(260 40% 55%));
   background-size: 400% 400%;
   animation: gradient 15s ease infinite;
 }
@@ -194,14 +194,14 @@ html {
 
 /* Modern button styles */
 .btn-modern {
-  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(217 91% 40%) 100%);
-  box-shadow: 0 4px 14px 0 hsl(var(--primary) / 0.39);
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(220 55% 42%) 100%);
+  box-shadow: 0 3px 10px 0 hsl(var(--primary) / 0.25);
   transition: all 0.3s ease;
 }
 
 .btn-modern:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px 0 hsl(var(--primary) / 0.45);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px 0 hsl(var(--primary) / 0.3);
 }
 
 /* Pulse animation for notifications */

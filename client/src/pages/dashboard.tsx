@@ -79,7 +79,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-background">
       {/* Country Flags Banner */}
-      <div className="bg-gradient-to-r from-blue-600 via-white to-red-600 h-2"></div>
+      <div className="bg-gradient-to-r from-blue-400/70 via-slate-100 to-red-400/70 h-1.5"></div>
       <div className="bg-card border-b border-border py-2">
         <div className="container mx-auto px-4 flex items-center justify-center space-x-6">
           <div className="flex items-center space-x-2">
