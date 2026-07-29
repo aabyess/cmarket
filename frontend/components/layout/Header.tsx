@@ -1,19 +1,30 @@
 "use client";
 
 import { Bell, MessageSquare, User, LogOut, Settings, Globe } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { postLogout } from "@/features/auth/mutations";
+import { createClient } from "@/libs/supabase";
 
 export function Header() {
 	const router = useRouter();
 	const [showUserMenu, setShowUserMenu] = useState(false);
 	const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+	const [userEmail, setUserEmail] = useState<string | null>(null);
+
+	useEffect(() => {
+		const supabase = createClient();
+		supabase.auth.getUser().then(({ data }) => {
+			setUserEmail(data.user?.email ?? null);
+		});
+	}, []);
 
 	const handleLogout = async () => {
 		await postLogout();
 		router.push("/login");
 	};
+
+	const emailPrefix = userEmail?.split("@")[0] ?? "";
 
 	return (
 		<header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-[#E5E7EB] flex items-center justify-between px-8 z-30 lg:left-64">
@@ -35,9 +46,7 @@ export function Header() {
 					{showLanguageMenu && (
 						<div className="absolute right-0 mt-2 w-40 bg-white border border-[#E5E7EB] rounded-lg shadow-lg overflow-hidden z-50">
 							{["한국어", "English", "Bahasa Indonesia"].map((lang) => (
-								<button
-									key={lang}
-									className="w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-gray-50 transition-colors">
+								<button key={lang} className="w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-gray-50 transition-colors">
 									{lang}
 								</button>
 							))}
@@ -59,14 +68,14 @@ export function Header() {
 						onClick={() => setShowUserMenu(!showUserMenu)}
 						className="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
 						<div className="w-8 h-8 bg-linear-to-br from-indigo-400 to-indigo-600 rounded-full flex items-center justify-center text-xs font-bold text-white">
-							KS
+							{emailPrefix.slice(0, 2).toUpperCase()}
 						</div>
 					</button>
 					{showUserMenu && (
 						<div className="absolute right-0 mt-2 w-56 bg-white border border-[#E5E7EB] rounded-lg shadow-lg overflow-hidden z-50">
 							<div className="px-4 py-3 border-b border-[#E5E7EB] bg-gray-50">
-								<p className="text-sm font-semibold text-[#1F2937]">Kim Soon</p>
-								<p className="text-xs text-[#6B7280]">ks@cmarket.id</p>
+								<p className="text-sm font-semibold text-[#1F2937]">{emailPrefix}</p>
+								<p className="text-xs text-[#6B7280]">{userEmail}</p>
 							</div>
 							<div className="px-2 py-2 space-y-1">
 								<button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-[#374151] hover:bg-gray-50 rounded-lg transition-colors">

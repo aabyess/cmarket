@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { postLogin } from "@/features/auth/mutations";
+import { SecurityModal } from "@/features/auth/components/SecurityModal";
 import { cn } from "@/utils/cn";
 
 export default function LoginPage() {
@@ -12,15 +13,23 @@ export default function LoginPage() {
 	const [password, setPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const [securityStep, setSecurityStep] = useState<"connecting" | "verifying" | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
 	const handleSubmit = async () => {
 		setIsLoading(true);
 		setError(null);
+		setSecurityStep("connecting");
+
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+		setSecurityStep("verifying");
+
 		try {
 			await postLogin({ email, password });
+			await new Promise((resolve) => setTimeout(resolve, 800));
 			router.push("/buyer/dashboard");
 		} catch (err) {
+			setSecurityStep(null);
 			setError("이메일 또는 비밀번호가 올바르지 않습니다.");
 		} finally {
 			setIsLoading(false);
@@ -33,8 +42,9 @@ export default function LoginPage() {
 
 	return (
 		<div className="min-h-screen bg-[#f5f5f5] flex items-center justify-center px-4">
+			{securityStep && <SecurityModal step={securityStep} />}
+
 			<div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-[#E5E7EB] p-10">
-				{/* Logo */}
 				<div className="flex justify-center mb-8">
 					<div className="flex items-center gap-2">
 						<div className="w-8 h-8 bg-linear-to-br from-indigo-400 to-indigo-600 rounded-lg flex items-center justify-center">
@@ -47,7 +57,6 @@ export default function LoginPage() {
 				<h1 className="text-2xl font-bold text-center text-[#1F2937] mb-8">로그인</h1>
 
 				<div className="space-y-5">
-					{/* Email */}
 					<div className="space-y-1.5">
 						<label className="text-sm font-medium text-[#374151]">이메일</label>
 						<input
@@ -60,7 +69,6 @@ export default function LoginPage() {
 						/>
 					</div>
 
-					{/* Password */}
 					<div className="space-y-1.5">
 						<label className="text-sm font-medium text-[#374151]">비밀번호</label>
 						<div className="relative">
@@ -80,10 +88,8 @@ export default function LoginPage() {
 						</div>
 					</div>
 
-					{/* Error */}
 					{error && <p className="text-sm text-red-500">{error}</p>}
 
-					{/* Submit */}
 					<button
 						onClick={handleSubmit}
 						disabled={isLoading || !email || !password}
@@ -95,14 +101,12 @@ export default function LoginPage() {
 						{isLoading ? "로그인 중..." : "로그인"}
 					</button>
 
-					{/* Divider */}
 					<div className="flex items-center gap-3 py-1">
 						<div className="flex-1 h-px bg-[#E5E7EB]"></div>
 						<span className="text-xs text-[#9CA3AF]">계정이 없으신가요?</span>
 						<div className="flex-1 h-px bg-[#E5E7EB]"></div>
 					</div>
 
-					{/* Sign up */}
 					<button
 						onClick={() => router.push("/signup")}
 						className="w-full py-3 border border-[#E5E7EB] rounded-lg font-medium text-sm text-[#374151] hover:bg-gray-50 transition-colors">
@@ -110,7 +114,6 @@ export default function LoginPage() {
 					</button>
 				</div>
 
-				{/* Footer */}
 				<p className="text-center text-xs text-[#9CA3AF] mt-8">
 					솔루션 문의는 전문 컨설턴트가 도와드립니다.{" "}
 					<span className="text-[#1B3A6B] font-medium">고객센터 02-742-9217</span>
