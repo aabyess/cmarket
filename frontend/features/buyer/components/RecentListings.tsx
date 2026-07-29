@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 type ListingStatus = "active" | "pending" | "closed";
 
@@ -88,9 +89,7 @@ export function RecentListings() {
 
 			<div className="px-7 py-5 border-t border-border bg-muted/30 flex items-center justify-between">
 				<p className="text-sm font-medium text-muted-foreground">총 {mockListings.length}개의 공고</p>
-				<a href="#" className="flex items-center gap-2 text-indigo-600 font-semibold hover:text-indigo-700 transition-colors text-sm">
-					모든 공고 보기 <ArrowRight size={16} />
-				</a>
+				<Link href="/buyer/order-list" className="...">모든 공고 보기 <ArrowRight size={16} /></Link>
 			</div>
 		</div>
 	);
