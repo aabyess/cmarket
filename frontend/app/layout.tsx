@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { QueryProvider } from "@/libs/QueryProvider";
 import "./globals.css";
 import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -18,7 +18,7 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps): React.JSX.Element {
 	return (
-		<html lang="ko" className={cn("font-sans", geist.variable)}>
+		<html lang="ko" className={cn("font-sans", geist.variable)} suppressHydrationWarning>
 			<body>
 				<QueryProvider>{children}</QueryProvider>
 			</body>
