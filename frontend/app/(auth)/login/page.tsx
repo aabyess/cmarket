@@ -6,6 +6,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { postLogin } from "@/features/auth/mutations";
 import { SecurityModal } from "@/features/auth/components/SecurityModal";
 import { cn } from "@/utils/cn";
+import Image from "next/image";
 
 export default function LoginPage() {
 	const router = useRouter();
