@@ -1,4 +1,3 @@
-// app/layout.tsx
 import type { Metadata } from "next";
 import { QueryProvider } from "@/libs/QueryProvider";
 import "./globals.css";
@@ -8,10 +7,13 @@ import { cn } from "@/utils/cn";
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
-	title: "C-Market | 한국-인도네시아 B2B 거래 플랫폼",
-	description: "신뢰할 수 있는 파트너와 함께하는 글로벌 조달 플랫폼",
-};
-
+	title: "K-NUSA | Korea × Indonesia B2B Marketplace",
+	description: "한국-인도네시아 기업 간 신뢰할 수 있는 글로벌 조달 플랫폼",
+	icons: {
+	  icon: "/favicon.png",
+	  apple: "/favicon.png",
+	},
+  };
 type RootLayoutProps = {
 	children: React.ReactNode;
 };
