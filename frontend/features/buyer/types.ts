@@ -24,3 +24,40 @@ export type ListingFormData = {
 	contactPhone: string;
 	contactEmail: string;
 };
+
+export type BuyerTodoHighlight = {
+	label: string;
+	value: string;
+};
+
+export type BuyerTodo = {
+	id: string;
+	listingId: string;
+	title: string;
+	description: string;
+	deadlineText: string | null;
+	actionLabel: string;
+	highlights: BuyerTodoHighlight[];
+};
+export type BuyerSavings = {
+	totalAmount: number;
+	completedCount: number;
+};
+
+export type BuyerDashboardData = {
+	listingCount: number;
+	todos: BuyerTodo[];
+	savings: BuyerSavings;
+	badges: { quotes: number; chats: number };
+	activities: BuyerActivity[];
+};
+
+export type BuyerActivityType = "quote" | "document" | "completed";
+
+export type BuyerActivity = {
+	id: string;
+	type: BuyerActivityType;
+	title: string;
+	description: string;
+	timeText: string;
+};
