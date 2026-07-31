@@ -51,16 +51,16 @@ export function Sidebar({ collapsed = false, onCollapse }: SidebarProps) {
 			</button>
 
 			<aside className="fixed left-0 top-0 h-screen bg-white border-r border-[#E5E7EB] z-40 w-64 hidden lg:flex flex-col">
-				<nav className="flex flex-col h-full p-5">
+				<nav className="flex flex-col h-full">
 					{/* 로고 영역 */}
-					<div className="mb-8 flex flex-col items-center gap-1 py-2">
-						<Image
-							src="/images/kNusa.png"
-							alt="K-NUSA 로고"
-							width={72}
-							height={72}
-							priority
-						/>
+					<div className="mb-4 flex flex-col items-center gap-1">
+					<Image
+						src="/images/MitraPay.png"
+						alt="SantaraPay 로고"
+						width={180}
+						height={80}
+						priority
+					/>
 						<span className="text-xs text-[#9CA3AF] font-medium tracking-widest uppercase">
 							Korea × Indonesia
 						</span>

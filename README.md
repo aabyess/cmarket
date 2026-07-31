@@ -1,4 +1,4 @@
-# K-NUSA — Korea × Indonesia B2B Marketplace
+# MitraPay — Korea × Indonesia B2B Marketplace
 
 > 인도네시아 발주기관(Buyer)과 한국 공급기업(Seller)을 연결하는 단방향 B2B 조달 플랫폼
 
@@ -8,7 +8,7 @@
 
 | 항목 | 내용 |
 |------|------|
-| 플랫폼명 | K-NUSA |
+| 플랫폼명 | MitraPay |
 | 서비스 형태 | B2B 웹 플랫폼 |
 | 거래 구조 | 단방향 (인도네시아 Buyer → 한국 Seller) |
 | 주요 품목 | 사무용품, 연구장비, 산업기계, 화학약품 |

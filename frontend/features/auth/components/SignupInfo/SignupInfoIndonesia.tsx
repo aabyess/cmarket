@@ -286,6 +286,7 @@ export function SignupInfoIndonesia() {
                 <div className="flex gap-2">
                   <input
                     type="text"
+                    autoComplete="off"
                     value={form.username}
                     onChange={(e) => handleChange("username", e.target.value)}
                     placeholder="영문 소문자, 숫자 조합 6~20자"
@@ -303,6 +304,7 @@ export function SignupInfoIndonesia() {
                   <div className="relative">
                     <input
                       type={showPassword ? "text" : "password"}
+                      autoComplete="new-password"
                       value={form.password}
                       onChange={(e) => handleChange("password", e.target.value)}
                       placeholder="비밀번호 입력"
@@ -360,6 +362,7 @@ export function SignupInfoIndonesia() {
                   <div className="relative">
                     <input
                       type={showPasswordConfirm ? "text" : "password"}
+                      autoComplete="new-password"
                       value={form.passwordConfirm}
                       onChange={(e) => handleChange("passwordConfirm", e.target.value)}
                       placeholder="비밀번호 재입력"

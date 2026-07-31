@@ -1,4 +1,3 @@
-// app/(auth)/login/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -49,13 +48,13 @@ export default function LoginPage() {
 			<div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-[#E5E7EB] p-10">
 				{/* 로고 */}
 				<div className="flex justify-center mb-4">
-					<Image
-						src="/images/imgLogoKNusa.png"
-						alt="K-NUSA 로고"
-						width={140}
-						height={140}
-						priority
-					/>
+				<Image
+					src="/images/MitraPay.png"
+					alt="SantaraPay 로고"
+					width={140}
+					height={140}
+					priority
+				/>
 				</div>
 
 				<h1 className="text-2xl font-bold text-center text-[#1F2937] mb-6">로그인</h1>
