@@ -12,7 +12,7 @@ type QuickMenuItem = {
 
 const QUICK_MENU_ITEMS: QuickMenuItem[] = [
 	{ key: "quotes", label: "받은 견적", icon: Mail, href: "/buyer/quote-review" },
-	{ key: "chats", label: "채팅", icon: MessageSquare, href: "/buyer/contract" },
+	{ key: "chats", label: "채팅", icon: MessageSquare, href: "/buyer/chat" },
 ];
 
 type DashboardHomeQuickMenuProps = {
