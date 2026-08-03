@@ -5,23 +5,28 @@ import { useRouter } from "next/navigation";
 import Lottie from "lottie-react";
 import checkmarkAnimation from "@/public/animations/checkmark.json";
 
-export function SignupComplete() {
+type SignupCompleteProps = {
+	role: "buyer" | "seller";
+};
+
+export function SignupComplete({ role }: SignupCompleteProps) {
 	const router = useRouter();
 	const [countdown, setCountdown] = useState(3);
+	const homePath = role === "seller" ? "/seller/dashboard" : "/buyer/dashboard";
 
 	useEffect(() => {
-        const interval = setInterval(() => {
-            setCountdown((prev) => prev - 1);
-        }, 1000);
-    
-        return () => clearInterval(interval);
-    }, []);
-    
-    useEffect(() => {
-        if (countdown <= 0) {
-            router.push("/login");
-        }
-    }, [countdown, router]);
+		const interval = setInterval(() => {
+			setCountdown((prev) => (prev <= 0 ? 0 : prev - 1));
+		}, 1000);
+	
+		return () => clearInterval(interval);
+	}, []);
+	
+	useEffect(() => {
+		if (countdown === 0) {
+			router.push("/login");
+		}
+	}, [countdown, router]);
 
 	return (
 		<main
@@ -41,14 +46,15 @@ export function SignupComplete() {
 				</div>
 
 				<p className="text-sm text-[#9CA3AF]">
-					{countdown}초 후 로그인 페이지로 이동합니다.
+					{countdown}초 후 대시보드로 이동합니다.
 				</p>
 
+
 				<button
-					onClick={() => router.push("/login")}
+					onClick={() => router.push(homePath)}
 					className="w-full h-12 rounded-xl font-semibold text-base bg-[#3B82F6] hover:bg-[#2563EB] text-white transition-colors"
 				>
-					지금 로그인하기
+					바로 시작하기
 				</button>
 			</div>
 		</main>

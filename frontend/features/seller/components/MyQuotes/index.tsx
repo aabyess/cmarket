@@ -82,7 +82,7 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 							key={quote.id}
 							quote={quote}
 							onViewListing={() => router.push(`/seller/listing-browse/${quote.listingId}`)}
-							onGoToChat={() => router.push("/seller/chat")}
+							onGoToChat={() => router.push(`/seller/chat/${quote.id}`)}
 						/>
 					))}
 				</div>

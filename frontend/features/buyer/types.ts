@@ -73,3 +73,34 @@ export type ListingSummary = {
 	createdAt: string;
 	quoteCount: number;
 };
+
+export type QuoteStatus = "pending" | "awarded" | "rejected";
+
+export type SellerInfo = {
+	companyName: string;
+	representative: string;
+	businessNumber: string;
+	address: string;
+	businessType: string;
+	businessItem: string;
+};
+
+export type ReceivedQuote = {
+	id: string;
+	listingId: string;
+	price: number;
+	currency: Currency;
+	deliveryDays: number;
+	note: string;
+	status: QuoteStatus;
+	createdAt: string;
+	seller: SellerInfo;
+};
+
+export type ListingWithQuotes = {
+	id: string;
+	title: string;
+	endDate: string;
+	status: ListingStatus;
+	quoteCount: number;
+};

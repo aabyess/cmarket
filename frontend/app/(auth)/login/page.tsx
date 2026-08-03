@@ -11,7 +11,7 @@ import { getUserRole } from "@/features/auth/apis";
 
 export default function LoginPage() {
 	const router = useRouter();
-	const [email, setEmail] = useState("");
+	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -28,13 +28,13 @@ export default function LoginPage() {
 		setSecurityStep("verifying");
 	
 		try {
-			await login({ email, password });
+			await login({ username, password });
 			const role = await getUserRole();
 			await new Promise((resolve) => setTimeout(resolve, 800));
 			router.push(role === "seller" ? "/seller/dashboard" : "/buyer/dashboard");
 		} catch {
 			setSecurityStep(null);
-			setError("이메일 또는 비밀번호가 올바르지 않습니다.");
+			setError("아이디 또는 비밀번호가 올바르지 않습니다.");
 		} finally {
 			setIsLoading(false);
 		}
@@ -64,13 +64,14 @@ export default function LoginPage() {
 
 				<div className="space-y-5">
 					<div className="space-y-1.5">
-						<label className="text-sm font-medium text-[#374151]">이메일</label>
+						<label className="text-sm font-medium text-[#374151]">아이디</label>
 						<input
-							type="email"
-							value={email}
-							onChange={(e) => setEmail(e.target.value)}
+							type="text"
+							autoComplete="username"
+							value={username}
+							onChange={(e) => setUsername(e.target.value)}
 							onKeyDown={handleKeyDown}
-							placeholder="이메일을 입력하세요"
+							placeholder="아이디를 입력하세요"
 							className="w-full px-4 py-3 border border-[#E5E7EB] rounded-lg text-sm text-[#1F2937] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] transition-colors"
 						/>
 					</div>
@@ -99,7 +100,7 @@ export default function LoginPage() {
 
 					<button
 						onClick={handleSubmit}
-						disabled={isLoading || !email || !password}
+						disabled={isLoading || !username || !password}
 						className={cn(
 							"w-full py-3 rounded-lg font-semibold text-sm transition-all",
 							"bg-[#3B82F6] text-white hover:bg-[#2563EB]",

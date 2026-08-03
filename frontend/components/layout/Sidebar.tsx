@@ -8,11 +8,15 @@ import {
 	Menu, X, LayoutDashboard, ListTodo, Mail, MessageSquare,
 	FileCheck, HelpCircle, Search, Send, Building2,
 } from "lucide-react";
+import { UserBadge } from "@/components/layout/UserBadge";
 
 type UserRole = "buyer" | "seller";
+type UserCountry = "indonesia" | "korea";
 
 type SidebarProps = {
 	role: UserRole;
+	country: UserCountry;
+	companyName: string;
 	collapsed?: boolean;
 	onCollapse?: (collapsed: boolean) => void;
 };
@@ -36,8 +40,7 @@ const SELLER_MENU_ITEMS = [
 	{ label: "지원센터", key: "support", icon: HelpCircle, href: "#" },
 ];
 
-export function Sidebar({ role, collapsed = false, onCollapse }: SidebarProps) {
-	const [isCollapsed, setIsCollapsed] = useState(collapsed);
+export function Sidebar({ role, country, companyName, collapsed = false, onCollapse }: SidebarProps) {	const [isCollapsed, setIsCollapsed] = useState(collapsed);
 	const pathname = usePathname();
 	const menuItems = role === "seller" ? SELLER_MENU_ITEMS : BUYER_MENU_ITEMS;
 
@@ -58,7 +61,7 @@ export function Sidebar({ role, collapsed = false, onCollapse }: SidebarProps) {
 			<aside className="fixed left-0 top-0 h-screen bg-white border-r border-[#E5E7EB] z-40 w-64 hidden lg:flex flex-col">
 				<nav className="flex flex-col h-full">
 					{/* 로고 영역 */}
-					<div className="mb-4 flex flex-col items-center gap-1">
+					<div className="mb-4 flex flex-col items-center gap-2">
 						<Image
 							src="/images/MitraPay.png"
 							alt="MitraPay 로고"
@@ -66,9 +69,12 @@ export function Sidebar({ role, collapsed = false, onCollapse }: SidebarProps) {
 							height={80}
 							priority
 						/>
-						<span className="text-xs text-[#9CA3AF] font-medium tracking-widest uppercase">
-							Korea × Indonesia
-						</span>
+						<div className="flex flex-col items-center gap-1.5">
+							<p className="max-w-[200px] truncate text-[13px] font-medium text-[#374151]">
+								{companyName}
+							</p>
+							<UserBadge country={country} />
+						</div>
 					</div>
 
 					{/* 메뉴 */}

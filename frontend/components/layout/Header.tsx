@@ -5,8 +5,13 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLogout } from "@/features/auth/mutations";
 import { createClient } from "@/libs/supabase";
+import { UserBadge } from "@/components/layout/UserBadge";
 
-export function Header() {
+type HeaderProps = {
+	country: "indonesia" | "korea";
+};
+
+export function Header({ country }: HeaderProps) {
 	const router = useRouter();
 	const { mutateAsync: logout } = useLogout();
 	const [showUserMenu, setShowUserMenu] = useState(false);
@@ -63,7 +68,8 @@ export function Header() {
 					<Bell size={20} />
 					<span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
 				</button>
-
+				
+				<UserBadge country={country} className="mr-1" />
 				<div className="relative">
 					<button
 						onClick={() => setShowUserMenu(!showUserMenu)}

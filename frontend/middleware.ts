@@ -24,22 +24,42 @@ export async function middleware(request: NextRequest) {
 	);
 
 	const { data: { user } } = await supabase.auth.getUser();
-
 	const { pathname } = request.nextUrl;
 
-	// 로그인 안 한 유저가 보호된 페이지 접근 시 로그인으로 리다이렉트
-	if (!user && pathname.startsWith("/buyer")) {
+	const isProtectedPath = pathname.startsWith("/buyer") || pathname.startsWith("/seller");
+
+	if (!user && isProtectedPath) {
 		return NextResponse.redirect(new URL("/login", request.url));
 	}
 
-	// 로그인한 유저가 로그인 페이지 접근 시 대시보드로 리다이렉트
-	if (user && pathname === "/login") {
+	if (!user) {
+		return supabaseResponse;
+	}
+
+	const { data: profile } = await supabase
+		.from("profiles")
+		.select("role")
+		.eq("id", user.id)
+		.single();
+
+	const role = profile?.role ?? "buyer";
+	const homePath = role === "seller" ? "/seller/dashboard" : "/buyer/dashboard";
+
+	if (pathname === "/login") {
+		return NextResponse.redirect(new URL(homePath, request.url));
+	}
+
+	if (role === "buyer" && pathname.startsWith("/seller")) {
 		return NextResponse.redirect(new URL("/buyer/dashboard", request.url));
+	}
+
+	if (role === "seller" && pathname.startsWith("/buyer")) {
+		return NextResponse.redirect(new URL("/seller/dashboard", request.url));
 	}
 
 	return supabaseResponse;
 }
 
 export const config = {
-	matcher: ["/buyer/:path*", "/login"],
+	matcher: ["/buyer/:path*", "/seller/:path*", "/login"],
 };

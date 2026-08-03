@@ -1,6 +1,5 @@
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
-import type { BuyerDashboardData } from "@/features/buyer/types";
-import type { ListingSummary } from "@/features/buyer/types";
+import type { ListingWithQuotes, ReceivedQuote, ListingSummary,  BuyerDashboardData  } from "@/features/buyer/types";
 
 export async function getBuyerCompanyName(): Promise<string> {
 	const supabase = await createServerSupabaseClient();
@@ -69,4 +68,71 @@ export async function getBuyerListings(): Promise<ListingSummary[]> {
 		createdAt: row.created_at,
 		quoteCount: 0,
 	}));
+}
+
+export async function getListingsWithQuoteCount(): Promise<ListingWithQuotes[]> {
+	const supabase = await createServerSupabaseClient();
+	const { data: { user } } = await supabase.auth.getUser();
+	if (!user) return [];
+
+	const { data, error } = await supabase
+		.from("listings")
+		.select("id, title, end_date, status, quotes(id)")
+		.eq("user_id", user.id)
+		.order("created_at", { ascending: false });
+
+	if (error) throw new Error(error.message);
+
+	return (data ?? []).map((row) => ({
+		id: row.id,
+		title: row.title,
+		endDate: row.end_date,
+		status: row.status ?? "active",
+		quoteCount: (row.quotes as unknown as { id: string }[])?.length ?? 0,
+	}));
+}
+
+export async function getQuotesByListing(listingId: string): Promise<ReceivedQuote[]> {
+	const supabase = await createServerSupabaseClient();
+
+	const { data, error } = await supabase
+		.from("quotes")
+		.select("id, listing_id, seller_id, price, currency, delivery_days, note, status, created_at")
+		.eq("listing_id", listingId)
+		.order("price", { ascending: true });
+
+	if (error) throw new Error(error.message);
+	if (!data || data.length === 0) return [];
+
+	const sellerIds = data.map((row) => row.seller_id);
+
+	const { data: companies } = await supabase
+		.from("companies")
+		.select("profile_id, company_name, representative, business_number, address, business_type, business_item")
+		.in("profile_id", sellerIds);
+
+	const companyMap = new Map((companies ?? []).map((c) => [c.profile_id, c]));
+
+	return data.map((row) => {
+		const company = companyMap.get(row.seller_id);
+
+		return {
+			id: row.id,
+			listingId: row.listing_id,
+			price: Number(row.price),
+			currency: row.currency,
+			deliveryDays: row.delivery_days,
+			note: row.note ?? "",
+			status: row.status,
+			createdAt: row.created_at,
+			seller: {
+				companyName: company?.company_name ?? "",
+				representative: company?.representative ?? "",
+				businessNumber: company?.business_number ?? "",
+				address: company?.address ?? "",
+				businessType: company?.business_type ?? "",
+				businessItem: company?.business_item ?? "",
+			},
+		};
+	});
 }

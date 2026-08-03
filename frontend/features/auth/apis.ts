@@ -1,12 +1,22 @@
 import { createClient } from "@/libs/supabase";
 
-export async function postLogin({ email, password }: { email: string; password: string }) {
+export async function postLogin({ username, password }: { username: string; password: string }) {
 	const supabase = createClient();
-	const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+	const { data: email, error: rpcError } = await supabase.rpc("get_email_by_username", {
+		input_username: username,
+	});
+
+	if (rpcError) throw new Error(rpcError.message);
+	if (!email) throw new Error("아이디 또는 비밀번호가 올바르지 않습니다.");
+
+	const { data, error } = await supabase.auth.signInWithPassword({
+		email: email as string,
+		password,
+	});
 	if (error) throw error;
 	return data;
 }
-
 export async function postLogout() {
 	const supabase = createClient();
 	const { error } = await supabase.auth.signOut();

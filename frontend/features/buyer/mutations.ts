@@ -25,3 +25,29 @@ export async function postListing(data: ListingFormData) {
 
 	if (error) throw error;
 }
+
+export async function awardQuote(listingId: string, quoteId: string): Promise<void> {
+	const supabase = createClient();
+
+	const { error: awardError } = await supabase
+		.from("quotes")
+		.update({ status: "awarded" })
+		.eq("id", quoteId);
+
+	if (awardError) throw awardError;
+
+	const { error: rejectError } = await supabase
+		.from("quotes")
+		.update({ status: "rejected" })
+		.eq("listing_id", listingId)
+		.neq("id", quoteId);
+
+	if (rejectError) throw rejectError;
+
+	const { error: listingError } = await supabase
+		.from("listings")
+		.update({ status: "awarded" })
+		.eq("id", listingId);
+
+	if (listingError) throw listingError;
+}
