@@ -7,6 +7,7 @@ import { useLogin } from "@/features/auth/mutations";
 import { SecurityModal } from "@/features/auth/components/SecurityModal";
 import { cn } from "@/utils/cn";
 import Image from "next/image";
+import { getUserRole } from "@/features/auth/apis";
 
 export default function LoginPage() {
 	const router = useRouter();
@@ -28,8 +29,9 @@ export default function LoginPage() {
 	
 		try {
 			await login({ email, password });
+			const role = await getUserRole();
 			await new Promise((resolve) => setTimeout(resolve, 800));
-			router.push("/buyer/dashboard");
+			router.push(role === "seller" ? "/seller/dashboard" : "/buyer/dashboard");
 		} catch {
 			setSecurityStep(null);
 			setError("이메일 또는 비밀번호가 올바르지 않습니다.");
@@ -37,7 +39,7 @@ export default function LoginPage() {
 			setIsLoading(false);
 		}
 	}
-
+	
 	function handleKeyDown(e: React.KeyboardEvent) {
 		if (e.key === "Enter") handleSubmit();
 	}

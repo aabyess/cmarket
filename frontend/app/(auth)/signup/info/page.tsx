@@ -1,5 +1,10 @@
-import { SignupInfoIndonesia } from "@/features/auth/components/SignupInfo/SignupInfoIndonesia";
+import { Suspense } from "react";
+import { SignupInfoRouter } from "@/features/auth/components/SignupInfo/SignupInfoRouter";
 
 export default function SignupInfoPage() {
-  return <SignupInfoIndonesia />;
+	return (
+		<Suspense>
+			<SignupInfoRouter />
+		</Suspense>
+	);
 }

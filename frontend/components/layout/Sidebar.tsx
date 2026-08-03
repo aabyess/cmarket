@@ -1,4 +1,3 @@
-// components/layout/Sidebar.tsx
 "use client";
 
 import { useState } from "react";
@@ -6,35 +5,41 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
-	Menu, X, LayoutDashboard, FileText,
-	ListTodo, TrendingUp, HelpCircle, ChevronDown,
+	Menu, X, LayoutDashboard, ListTodo, Mail, MessageSquare,
+	FileCheck, HelpCircle, Search, Send, Building2,
 } from "lucide-react";
 
+type UserRole = "buyer" | "seller";
+
 type SidebarProps = {
+	role: UserRole;
 	collapsed?: boolean;
 	onCollapse?: (collapsed: boolean) => void;
 };
 
-const MENU_ITEMS = [
+const BUYER_MENU_ITEMS = [
 	{ label: "대시보드", key: "dashboard", icon: LayoutDashboard, href: "/buyer/dashboard" },
-	{ label: "견적 등록", key: "quotes", icon: FileText, href: "/seller/quote-submit" },
-	{ label: "공고 등록", key: "listings", icon: ListTodo, href: "/buyer/post-listing" },
-	{
-		label: "나의 거래 관리",
-		key: "transaction",
-		icon: TrendingUp,
-		subItems: [
-			{ label: "진행", key: "active", href: "#" },
-			{ label: "마감", key: "completed", href: "#" },
-		],
-	},
+	{ label: "내 공고", key: "listings", icon: ListTodo, href: "/buyer/order-list" },
+	{ label: "받은 견적", key: "quotes", icon: Mail, href: "/buyer/quote-review" },
+	{ label: "채팅", key: "chat", icon: MessageSquare, href: "/buyer/chat" },
+	{ label: "계약 관리", key: "contract", icon: FileCheck, href: "/buyer/contract" },
 	{ label: "지원센터", key: "support", icon: HelpCircle, href: "#" },
 ];
 
-export function Sidebar({ collapsed = false, onCollapse }: SidebarProps) {
+const SELLER_MENU_ITEMS = [
+	{ label: "대시보드", key: "dashboard", icon: LayoutDashboard, href: "/seller/dashboard" },
+	{ label: "공고 탐색", key: "browse", icon: Search, href: "/seller/listing-browse" },
+	{ label: "보낸 견적", key: "quotes", icon: Send, href: "/seller/quote-submit" },
+	{ label: "채팅", key: "chat", icon: MessageSquare, href: "/seller/chat" },
+	{ label: "계약 관리", key: "contract", icon: FileCheck, href: "/seller/contract" },
+	{ label: "기업 프로필", key: "profile", icon: Building2, href: "/seller/profile/edit" },
+	{ label: "지원센터", key: "support", icon: HelpCircle, href: "#" },
+];
+
+export function Sidebar({ role, collapsed = false, onCollapse }: SidebarProps) {
 	const [isCollapsed, setIsCollapsed] = useState(collapsed);
-	const [expandedSubMenu, setExpandedSubMenu] = useState<number | null>(null);
 	const pathname = usePathname();
+	const menuItems = role === "seller" ? SELLER_MENU_ITEMS : BUYER_MENU_ITEMS;
 
 	function handleToggle() {
 		setIsCollapsed(!isCollapsed);
@@ -54,13 +59,13 @@ export function Sidebar({ collapsed = false, onCollapse }: SidebarProps) {
 				<nav className="flex flex-col h-full">
 					{/* 로고 영역 */}
 					<div className="mb-4 flex flex-col items-center gap-1">
-					<Image
-						src="/images/MitraPay.png"
-						alt="SantaraPay 로고"
-						width={180}
-						height={80}
-						priority
-					/>
+						<Image
+							src="/images/MitraPay.png"
+							alt="MitraPay 로고"
+							width={180}
+							height={80}
+							priority
+						/>
 						<span className="text-xs text-[#9CA3AF] font-medium tracking-widest uppercase">
 							Korea × Indonesia
 						</span>
@@ -68,68 +73,25 @@ export function Sidebar({ collapsed = false, onCollapse }: SidebarProps) {
 
 					{/* 메뉴 */}
 					<div className="flex-1 space-y-1">
-						{MENU_ITEMS.map((item, idx) => {
-							const isActive = pathname === item.href;
-							const isExpanded = expandedSubMenu === idx;
+						{menuItems.map((item) => {
+							const isActive = item.href === "#" ? false : pathname.startsWith(item.href);
 
 							return (
-								<div key={item.key}>
-									{item.subItems ? (
-										<div>
-											<button
-												onClick={() => setExpandedSubMenu(isExpanded ? null : idx)}
-												className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg transition-all text-sm font-medium gap-3 ${
-													isExpanded
-														? "bg-[#EFF6FF] text-[#3B82F6]"
-														: "text-[#374151] hover:bg-gray-50"
-												}`}
-											>
-												<div className="flex items-center gap-3">
-													<item.icon
-														size={18}
-														className={isExpanded ? "text-[#3B82F6]" : "text-[#9CA3AF]"}
-													/>
-													{item.label}
-												</div>
-												<ChevronDown
-													size={16}
-													className={`transition-transform shrink-0 ${
-														isExpanded ? "rotate-180 text-[#3B82F6]" : "text-[#9CA3AF]"
-													}`}
-												/>
-											</button>
-											{isExpanded && (
-												<div className="pl-11 mt-1 space-y-1">
-													{item.subItems.map((subItem) => (
-														<Link
-															key={subItem.key}
-															href={subItem.href}
-															className="flex items-center gap-2 px-3 py-2 text-[#374151] hover:bg-gray-50 rounded-lg text-sm transition-colors"
-														>
-															<div className="w-1 h-1 bg-[#9CA3AF] rounded-full" />
-															{subItem.label}
-														</Link>
-													))}
-												</div>
-											)}
-										</div>
-									) : (
-										<Link
-											href={item.href}
-											className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-sm font-medium ${
-												isActive
-													? "bg-[#EFF6FF] text-[#3B82F6]"
-													: "text-[#374151] hover:bg-gray-50"
-											}`}
-										>
-											<item.icon
-												size={18}
-												className={isActive ? "text-[#3B82F6]" : "text-[#9CA3AF]"}
-											/>
-											{item.label}
-										</Link>
-									)}
-								</div>
+								<Link
+									key={item.key}
+									href={item.href}
+									className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-sm font-medium ${
+										isActive
+											? "bg-[#EFF6FF] text-[#3B82F6]"
+											: "text-[#374151] hover:bg-gray-50"
+									}`}
+								>
+									<item.icon
+										size={18}
+										className={isActive ? "text-[#3B82F6]" : "text-[#9CA3AF]"}
+									/>
+									{item.label}
+								</Link>
 							);
 						})}
 					</div>
