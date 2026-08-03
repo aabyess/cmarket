@@ -3,11 +3,12 @@
 import { Bell, MessageSquare, User, LogOut, Settings, Globe } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { postLogout } from "@/features/auth/mutations";
+import { useLogout } from "@/features/auth/mutations";
 import { createClient } from "@/libs/supabase";
 
 export function Header() {
 	const router = useRouter();
+	const { mutateAsync: logout } = useLogout();
 	const [showUserMenu, setShowUserMenu] = useState(false);
 	const [showLanguageMenu, setShowLanguageMenu] = useState(false);
 	const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -20,7 +21,7 @@ export function Header() {
 	}, []);
 
 	const handleLogout = async () => {
-		await postLogout();
+		await logout();
 		router.push("/login");
 	};
 

@@ -1,5 +1,10 @@
+import { Suspense } from "react";
 import { SignupTerms } from "@/features/auth/components/SignupTerms";
 
 export default function SignupTermsPage() {
-  return <SignupTerms />;
+  return (
+    <Suspense>
+      <SignupTerms />
+    </Suspense>
+  );
 }

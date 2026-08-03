@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
-import { postLogin } from "@/features/auth/mutations";
+import { useLogin } from "@/features/auth/mutations";
 import { SecurityModal } from "@/features/auth/components/SecurityModal";
 import { cn } from "@/utils/cn";
 import Image from "next/image";
@@ -14,6 +14,7 @@ export default function LoginPage() {
 	const [password, setPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const { mutateAsync: login } = useLogin();
 	const [securityStep, setSecurityStep] = useState<"connecting" | "verifying" | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
@@ -21,12 +22,12 @@ export default function LoginPage() {
 		setIsLoading(true);
 		setError(null);
 		setSecurityStep("connecting");
-
+	
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 		setSecurityStep("verifying");
-
+	
 		try {
-			await postLogin({ email, password });
+			await login({ email, password });
 			await new Promise((resolve) => setTimeout(resolve, 800));
 			router.push("/buyer/dashboard");
 		} catch {

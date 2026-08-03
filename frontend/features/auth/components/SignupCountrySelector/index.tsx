@@ -18,7 +18,7 @@ export function SignupCountrySelector() {
 
   function handleNext() {
     if (!selectedCountry) return;
-    router.push("/signup/terms");
+    router.push(`/signup/terms?country=${selectedCountry}`);
   }
 
   function handleSelect(country: Country) {

@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight, Eye, EyeOff, MapPin } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { useEffect } from "react";
+import { checkUsernameAvailable } from "@/features/auth/apis";
+import { useSignupIndonesia } from "@/features/auth/mutations";
 
 const PROVINSI_LIST = [
   "Aceh", "Sumatera Utara", "Sumatera Barat", "Riau", "Kepulauan Riau",
@@ -207,6 +210,8 @@ function PhoneRow({ label, required, code, num1, num2, onCodeChange, onNum1Chang
 
 export function SignupInfoIndonesia() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const country = searchParams.get("country");
   const [form, setForm] = useState<FormData>({
     username: "", password: "", passwordConfirm: "",
     managerName: "", managerTitle: "", managerDept: "",
@@ -218,23 +223,47 @@ export function SignupInfoIndonesia() {
     provinsi: "", city: "", addressBase: "", addressDetail: "",
     businessCategory: "", businessItem: "",
   });
+  const { mutate: signup, isPending } = useSignupIndonesia();
   const [errors, setErrors] = useState<FieldError>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
 
   const passwordMatch = form.passwordConfirm.length > 0 && form.password === form.passwordConfirm;
   const passwordMismatch = form.passwordConfirm.length > 0 && form.password !== form.passwordConfirm;
   const passwordStrength = getPasswordStrength(form.password);
   const isCustomDomain = form.emailDomain === "직접 입력";
 
+  useEffect(() => {
+    if (country !== "indonesia") {
+      router.replace("/not-found");
+    }
+  }, [country, router]);
+
   function handleChange(field: keyof FormData, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
+    if (field === "username") setUsernameStatus("idle");
+  }
+
+  async function handleCheckUsername() {
+    if (form.username.length < 4) {
+      setErrors((prev) => ({ ...prev, username: "아이디는 4자 이상 입력해주세요." }));
+      return;
+    }
+    setUsernameStatus("checking");
+    try {
+      const available = await checkUsernameAvailable(form.username);
+      setUsernameStatus(available ? "available" : "taken");
+    } catch {
+      setUsernameStatus("idle");
+    }
   }
 
   function validate(): boolean {
     const newErrors: FieldError = {};
-    if (!form.username || form.username.length < 6) newErrors.username = "아이디는 6자 이상 입력해주세요.";
+    if (!form.username || form.username.length < 4) newErrors.username = "아이디는 6자 이상 입력해주세요.";
+    else if (usernameStatus !== "available") newErrors.username = "아이디 중복확인을 해주세요.";
     if (!form.password || form.password.length < 8) newErrors.password = "비밀번호는 8자 이상 입력해주세요.";
     if (passwordMismatch || !form.passwordConfirm) newErrors.passwordConfirm = "비밀번호가 일치하지 않습니다.";
     if (!form.managerName) newErrors.managerName = "담당자 성명을 입력해주세요.";
@@ -248,13 +277,59 @@ export function SignupInfoIndonesia() {
     if (!form.city) newErrors.city = "시/군을 입력해주세요.";
     if (!form.addressBase) newErrors.addressBase = "기본 주소를 입력해주세요.";
     if (!form.businessCategory) newErrors.businessCategory = "사업 분야를 선택해주세요.";
+    console.log("validation errors:", newErrors);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
 
   function handleNext() {
-    if (!validate()) return;
-    router.push("/signup/complete");
+    console.log("handleNext 실행됨", form);
+    const isValid = validate();
+	  console.log("validate 결과:", isValid);
+    if (!isValid) return;
+  
+    const domain = isCustomDomain ? form.emailDomainCustom : form.emailDomain;
+    const email = `${form.emailId}@${domain}`;
+    const mobile =
+      form.mobileCode !== "없음" && form.mobile1 && form.mobile2
+        ? `${form.mobileCode}-${form.mobile1}-${form.mobile2}`
+        : "";
+    const phone =
+      form.phoneCode !== "없음" && form.phone1 && form.phone2
+        ? `${form.phoneCode}-${form.phone1}-${form.phone2}`
+        : "";
+    const fax =
+      form.faxCode !== "없음" && form.fax1 && form.fax2
+        ? `${form.faxCode}-${form.fax1}-${form.fax2}`
+        : "";
+  
+    signup(
+      {
+        username: form.username,
+        password: form.password,
+        email,
+        managerName: form.managerName,
+        managerTitle: form.managerTitle,
+        managerDept: form.managerDept,
+        mobile,
+        phone,
+        fax,
+        npwp: form.npwp,
+        nib: form.nib,
+        companyName: form.companyName,
+        representativeName: form.representativeName,
+        provinsi: form.provinsi,
+        city: form.city,
+        addressBase: form.addressBase,
+        addressDetail: form.addressDetail,
+        businessCategory: form.businessCategory,
+        businessItem: form.businessItem,
+      },
+      {
+        onSuccess: () => router.push("/signup/complete"),
+        onError: (err) => alert(err.message),
+      },
+    );
   }
 
   return (
@@ -282,21 +357,32 @@ export function SignupInfoIndonesia() {
           {/* 계정 생성 */}
           <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 space-y-5">
             <Section title="계정 생성" description="로그인 정보를 입력해 주세요.">
-              <Field label="아이디" required error={errors.username}>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    autoComplete="off"
-                    value={form.username}
-                    onChange={(e) => handleChange("username", e.target.value)}
-                    placeholder="영문 소문자, 숫자 조합 6~20자"
-                    className={cn(inputCn(!!errors.username), "flex-1")}
-                  />
-                  <button className="px-4 py-3 rounded-lg bg-[#EFF6FF] text-[#3B82F6] text-sm font-medium border border-[#BFDBFE] hover:bg-[#DBEAFE] transition-colors whitespace-nowrap">
-                    중복 확인
-                  </button>
-                </div>
-              </Field>
+            <Field label="아이디" required error={errors.username}>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  autoComplete="off"
+                  value={form.username}
+                  onChange={(e) => handleChange("username", e.target.value)}
+                  placeholder="4자 이상 영문/숫자"
+                  className={cn(inputCn(!!errors.username), "flex-1")}
+                />
+                <button
+                  type="button"
+                  onClick={handleCheckUsername}
+                  disabled={usernameStatus === "checking" || form.username.length < 4}
+                  className="px-4 py-3 rounded-lg border text-sm font-medium whitespace-nowrap transition-colors disabled:opacity-50 disabled:cursor-not-allowed border-[#3B82F6] text-[#3B82F6] hover:bg-[#EFF6FF]"
+                >
+                  {usernameStatus === "checking" ? "확인 중..." : "중복확인"}
+                </button>
+              </div>
+              {usernameStatus === "available" && (
+                <p className="text-xs text-green-500">사용 가능한 아이디입니다.</p>
+              )}
+              {usernameStatus === "taken" && (
+                <p className="text-xs text-red-500">이미 사용 중인 아이디입니다.</p>
+              )}
+            </Field>
 
               <div className="grid grid-cols-2 gap-3">
                 {/* 비밀번호 */}
@@ -618,10 +704,11 @@ export function SignupInfoIndonesia() {
 
           <button
             onClick={handleNext}
-            className="w-full h-12 rounded-xl font-semibold text-base flex items-center justify-center gap-2 bg-[#3B82F6] hover:bg-[#2563EB] text-white transition-colors"
+            disabled={isPending}
+            className="w-full h-12 rounded-xl font-semibold text-base flex items-center justify-center gap-2 bg-[#3B82F6] hover:bg-[#2563EB] text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            회원가입 완료
-            <ChevronRight className="w-4 h-4" />
+            {isPending ? "처리 중..." : "회원가입 완료"}
+            {!isPending && <ChevronRight className="w-4 h-4" />}
           </button>
 
           <footer className="py-2 text-center text-xs text-[#9CA3AF]">

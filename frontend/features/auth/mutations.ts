@@ -1,14 +1,16 @@
-import { createClient } from "@/libs/supabase";
+"use client";
 
-export async function postLogin({ email, password }: { email: string; password: string }) {
-	const supabase = createClient();
-	const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-	if (error) throw error;
-	return data;
+import { useMutation } from "@tanstack/react-query";
+import { postLogin, postLogout, signupIndonesia } from "@/features/auth/apis";
+
+export function useLogin() {
+	return useMutation({ mutationFn: postLogin });
 }
 
-export async function postLogout() {
-	const supabase = createClient();
-	const { error } = await supabase.auth.signOut();
-	if (error) throw error;
+export function useLogout() {
+	return useMutation({ mutationFn: postLogout });
+}
+
+export function useSignupIndonesia() {
+	return useMutation({ mutationFn: signupIndonesia });
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation"
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/utils/cn";
 
@@ -20,6 +20,8 @@ const TERMS: Term[] = [
 
 export function SignupTerms() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const country = searchParams.get("country") ?? "indonesia";
   const [checked, setChecked] = useState<Record<string, boolean>>({});
 
   const isAllChecked = TERMS.every((t) => checked[t.id]);
@@ -45,7 +47,7 @@ export function SignupTerms() {
 
   function handleNext() {
     if (!isRequiredChecked) return;
-    router.push("/signup/info");
+    router.push(`/signup/info?country=${country}`);
   }
 
   return (

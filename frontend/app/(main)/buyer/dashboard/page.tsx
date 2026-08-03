@@ -1,10 +1,15 @@
 import { DashboardHome } from "@/features/buyer/components/DashboardHome";
-import { MOCK_DASHBOARD_DATA } from "@/features/buyer/mocks";
+import { getBuyerCompanyName, getBuyerDashboardData } from "@/features/buyer/apis";
 
-export default function BuyerDashboardPage() {
+export default async function BuyerDashboardPage() {
+	const [companyName, data] = await Promise.all([
+		getBuyerCompanyName(),
+		getBuyerDashboardData(),
+	]);
+
 	return (
 		<div className="px-8 py-6 xl:px-12">
-			<DashboardHome companyName="PT Maju Jaya" data={MOCK_DASHBOARD_DATA} />
+			<DashboardHome companyName={companyName} data={data} />
 		</div>
 	);
 }
