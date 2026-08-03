@@ -10,14 +10,21 @@ const COUNTRY_CONFIG = {
 
 type UserBadgeProps = {
 	country: "indonesia" | "korea";
-	size?: "sm" | "md";
+	size?: "sm" | "md" | "lg" | "xl";
 	className?: string;
 };
 
 export function UserBadge({ country, size = "sm", className }: UserBadgeProps) {
 	const { flagUrl, label } = COUNTRY_CONFIG[country];
-	const width = size === "sm" ? 24 : 32;
-	const height = size === "sm" ? 18 : 24;
+
+	const SIZE_MAP = {
+		sm: { width: 24, height: 18 },
+		md: { width: 32, height: 24 },
+		lg: { width: 48, height: 36 },
+		xl: { width: 72, height: 54 },
+	} as const;
+
+	const { width, height } = SIZE_MAP[size];
 
 	return (
 		<Image
@@ -26,7 +33,7 @@ export function UserBadge({ country, size = "sm", className }: UserBadgeProps) {
 			title={label}
 			width={width}
 			height={height}
-			className={cn("rounded-[3px] border border-[#D1D5DB] object-cover", className)}
+			className={cn("rounded-[4px] border border-[#D1D5DB] object-cover", className)}
 			unoptimized
 		/>
 	);

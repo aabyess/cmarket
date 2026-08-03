@@ -2,7 +2,7 @@
 
 import { Truck, Award, CheckCircle2 } from "lucide-react";
 import type { Currency } from "@/features/buyer/types";
-import type { ChatRoomDetail } from "@/features/chat/types";
+import type { ChatRole, ChatRoom } from "@/features/chat/types";
 
 const CURRENCY_SYMBOL: Record<Currency, string> = {
 	USD: "$",
@@ -11,14 +11,14 @@ const CURRENCY_SYMBOL: Record<Currency, string> = {
 };
 
 type ChatRoomHeaderProps = {
-	room: ChatRoomDetail;
+	room: ChatRoom;
+	myRole: ChatRole;
 	onAward: () => void;
 };
 
-export function ChatRoomHeader({ room, onAward }: ChatRoomHeaderProps) {
+export function ChatRoomHeader({ room, myRole, onAward }: ChatRoomHeaderProps) {
 	const symbol = CURRENCY_SYMBOL[room.currency];
-	const canAward = room.myRole === "buyer" && room.quoteStatus === "pending";
-
+	const canAward = myRole === "buyer" && room.quoteStatus === "pending";
 	return (
 		<div className="border-b border-[#E5E7EB] bg-white px-5 py-4">
 			<div className="flex items-start justify-between gap-4">

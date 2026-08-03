@@ -1,8 +1,23 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Mail, ChevronRight } from "lucide-react";
-import type { ListingWithQuotes } from "@/features/buyer/types";
+import { Mail, Clock, TrendingDown, Truck, CheckCircle2, ChevronRight } from "lucide-react";
+import { cn } from "@/utils/cn";
+import type { Currency, ListingWithQuotes } from "@/features/buyer/types";
+
+const CURRENCY_SYMBOL: Record<Currency, string> = {
+	USD: "$",
+	IDR: "Rp",
+	KRW: "₩",
+};
+
+function getRemaining(endDate: string): { text: string; isUrgent: boolean; isClosed: boolean } {
+	const diff = new Date(endDate).getTime() - Date.now();
+	if (diff <= 0) return { text: "마감", isUrgent: false, isClosed: true };
+
+	const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+	return { text: `D-${days}`, isUrgent: days <= 3, isClosed: false };
+}
 
 type QuoteReviewListingPickerProps = {
 	listings: ListingWithQuotes[];
@@ -32,32 +47,86 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 	}
 
 	return (
-		<div className="space-y-3">
-			{listings.map((listing) => (
-				<button
-					key={listing.id}
-					onClick={() => router.push(`/buyer/quote-review?listingId=${listing.id}`)}
-					className="flex w-full items-center justify-between gap-4 rounded-2xl border border-[#E5E7EB] bg-white p-5 text-left transition-colors hover:bg-[#F9FAFB]"
-				>
-					<div className="min-w-0">
-						<p className="truncate text-[15px] font-medium text-[#1F2937]">{listing.title}</p>
-						<p className="mt-1 text-[13px] text-[#6B7280]">
-							{listing.quoteCount > 0
-								? `견적 ${listing.quoteCount}건 도착`
-								: "아직 견적이 없어요"}
-						</p>
-					</div>
+		<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+			{listings.map((listing) => {
+				const remaining = getRemaining(listing.endDate);
+				const symbol = CURRENCY_SYMBOL[listing.currency];
+				const hasQuotes = listing.quoteCount > 0;
+				const isAwarded = listing.status === "awarded";
 
-					<div className="flex shrink-0 items-center gap-2">
-						{listing.quoteCount > 0 && (
-							<span className="rounded-full bg-[#EF4444] px-2 py-0.5 text-xs font-medium text-white">
-								{listing.quoteCount}
-							</span>
+				return (
+					<button
+						key={listing.id}
+						onClick={() => router.push(`/buyer/quote-review?listingId=${listing.id}`)}
+						className={cn(
+							"flex flex-col rounded-2xl border bg-white p-4 text-left transition-all",
+							hasQuotes
+								? "border-[#E5E7EB] hover:border-[#BFDBFE] hover:shadow-sm"
+								: "border-[#F3F4F6] opacity-60 hover:opacity-100",
 						)}
-						<ChevronRight size={18} className="text-[#D1D5DB]" />
-					</div>
-				</button>
-			))}
+					>
+						<div className="mb-2 flex items-start justify-between gap-2">
+							{isAwarded ? (
+								<span className="flex items-center gap-1 rounded-full bg-[#ECFDF5] px-2 py-0.5 text-[11px] font-medium text-[#059669]">
+									<CheckCircle2 size={11} />
+									거래 확정
+								</span>
+							) : (
+								<span
+									className={cn(
+										"flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium",
+										remaining.isClosed
+											? "bg-[#F3F4F6] text-[#6B7280]"
+											: remaining.isUrgent
+												? "bg-[#FEF2F2] text-[#DC2626]"
+												: "bg-[#EFF6FF] text-[#3B82F6]",
+									)}
+								>
+									<Clock size={11} />
+									{remaining.text}
+								</span>
+							)}
+
+							{hasQuotes && (
+								<span className="shrink-0 text-[13px] font-semibold text-[#3B82F6]">
+									견적 {listing.quoteCount}
+								</span>
+							)}
+						</div>
+
+						<p className="line-clamp-2 min-h-[42px] text-[15px] font-medium leading-snug text-[#1F2937]">
+							{listing.title}
+						</p>
+
+						{hasQuotes ? (
+							<div className="mt-3 grid grid-cols-2 gap-2 border-t border-[#F3F4F6] pt-3">
+								<div>
+									<p className="flex items-center gap-1 text-[11px] text-[#9CA3AF]">
+										<TrendingDown size={11} className="text-[#D97706]" />
+										최저가
+									</p>
+									<p className="mt-0.5 truncate text-[14px] font-medium text-[#1F2937]">
+										{symbol} {listing.lowestPrice?.toLocaleString()}
+									</p>
+								</div>
+								<div>
+									<p className="flex items-center gap-1 text-[11px] text-[#9CA3AF]">
+										<Truck size={11} className="text-[#16A34A]" />
+										최속납기
+									</p>
+									<p className="mt-0.5 text-[14px] font-medium text-[#1F2937]">
+										{listing.fastestDays}일
+									</p>
+								</div>
+							</div>
+						) : (
+							<div className="mt-3 border-t border-[#F3F4F6] pt-3">
+								<p className="text-[13px] text-[#9CA3AF]">아직 견적이 없어요</p>
+							</div>
+						)}
+					</button>
+				);
+			})}
 		</div>
 	);
 }

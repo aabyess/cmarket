@@ -30,7 +30,8 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
 				<ListingDetailQuoteForm
 					listingId={listing.id}
 					defaultCurrency={listing.currency}
-					hasSubmittedQuote={listing.hasSubmittedQuote}
+					myQuote={listing.myQuote}
+					isClosed={new Date(listing.endDate).getTime() <= Date.now()}
 				/>
 			</div>
 		</div>

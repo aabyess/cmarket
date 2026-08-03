@@ -76,7 +76,7 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 					<p className="text-sm text-[#6B7280]">해당하는 견적이 없어요.</p>
 				</div>
 			) : (
-				<div className="space-y-3">
+				<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
 					{filteredQuotes.map((quote) => (
 						<MyQuotesCard
 							key={quote.id}

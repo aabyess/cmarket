@@ -6,6 +6,7 @@ export type ChatRoom = {
 	quoteId: string;
 	listingId: string;
 	listingTitle: string;
+	partnerId: string;
 	partnerName: string;
 	price: number;
 	currency: Currency;
@@ -29,4 +30,10 @@ export type ChatRoomDetail = ChatRoom & {
 	myId: string;
 	myRole: ChatRole;
 	messages: ChatMessage[];
+};
+
+export type ChatContext = {
+	myId: string;
+	myRole: ChatRole;
+	rooms: ChatRoom[];
 };

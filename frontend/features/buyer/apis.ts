@@ -77,19 +77,26 @@ export async function getListingsWithQuoteCount(): Promise<ListingWithQuotes[]> 
 
 	const { data, error } = await supabase
 		.from("listings")
-		.select("id, title, end_date, status, quotes(id)")
+		.select("id, title, end_date, status, currency, quotes(price, delivery_days)")
 		.eq("user_id", user.id)
-		.order("created_at", { ascending: false });
+		.order("end_date", { ascending: true });
 
 	if (error) throw new Error(error.message);
 
-	return (data ?? []).map((row) => ({
-		id: row.id,
-		title: row.title,
-		endDate: row.end_date,
-		status: row.status ?? "active",
-		quoteCount: (row.quotes as unknown as { id: string }[])?.length ?? 0,
-	}));
+	return (data ?? []).map((row) => {
+		const quotes = (row.quotes as unknown as { price: number; delivery_days: number }[]) ?? [];
+
+		return {
+			id: row.id,
+			title: row.title,
+			endDate: row.end_date,
+			status: row.status ?? "active",
+			currency: row.currency,
+			quoteCount: quotes.length,
+			lowestPrice: quotes.length > 0 ? Math.min(...quotes.map((q) => Number(q.price))) : null,
+			fastestDays: quotes.length > 0 ? Math.min(...quotes.map((q) => q.delivery_days)) : null,
+		};
+	});
 }
 
 export async function getQuotesByListing(listingId: string): Promise<ReceivedQuote[]> {
@@ -97,8 +104,7 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 
 	const { data, error } = await supabase
 		.from("quotes")
-		.select("id, listing_id, seller_id, price, currency, delivery_days, note, status, created_at")
-		.eq("listing_id", listingId)
+		.select("id, listing_id, seller_id, price, currency, delivery_days, note, status, created_at, previous_price, previous_delivery_days, revised_at")		.eq("listing_id", listingId)
 		.order("price", { ascending: true });
 
 	if (error) throw new Error(error.message);
@@ -125,6 +131,9 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 			note: row.note ?? "",
 			status: row.status,
 			createdAt: row.created_at,
+			previousPrice: row.previous_price !== null ? Number(row.previous_price) : null,
+			previousDeliveryDays: row.previous_delivery_days,
+			revisedAt: row.revised_at,
 			seller: {
 				companyName: company?.company_name ?? "",
 				representative: company?.representative ?? "",

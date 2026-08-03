@@ -70,10 +70,10 @@ export function Sidebar({ role, country, companyName, collapsed = false, onColla
 							priority
 						/>
 						<div className="flex flex-col items-center gap-1.5">
+							<UserBadge country={country} size="lg" />
 							<p className="max-w-[200px] truncate text-[13px] font-medium text-[#374151]">
 								{companyName}
 							</p>
-							<UserBadge country={country} />
 						</div>
 					</div>
 

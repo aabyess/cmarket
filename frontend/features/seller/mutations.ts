@@ -18,3 +18,30 @@ export async function postQuote(listingId: string, data: QuoteFormData): Promise
 
 	if (error) throw error;
 }
+
+export async function updateQuote(quoteId: string, data: QuoteFormData): Promise<void> {
+	const supabase = createClient();
+
+	const { data: current, error: fetchError } = await supabase
+		.from("quotes")
+		.select("price, delivery_days")
+		.eq("id", quoteId)
+		.single();
+
+	if (fetchError) throw fetchError;
+
+	const { error } = await supabase
+		.from("quotes")
+		.update({
+			price: data.price,
+			currency: data.currency,
+			delivery_days: data.deliveryDays,
+			note: data.note,
+			previous_price: current.price,
+			previous_delivery_days: current.delivery_days,
+			revised_at: new Date().toISOString(),
+		})
+		.eq("id", quoteId);
+
+	if (error) throw error;
+}

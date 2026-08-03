@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { MessageSquare } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { ChatRoom } from "@/features/chat/types";
@@ -19,12 +18,11 @@ function formatTime(iso: string | null): string {
 
 type ChatRoomListProps = {
 	rooms: ChatRoom[];
-	basePath: string;
 	activeQuoteId?: string;
+	onSelect: (quoteId: string) => void;
 };
 
-export function ChatRoomList({ rooms, basePath, activeQuoteId }: ChatRoomListProps) {
-	const router = useRouter();
+export function ChatRoomList({ rooms, activeQuoteId, onSelect }: ChatRoomListProps) {
 
 	if (rooms.length === 0) {
 		return (
@@ -45,7 +43,7 @@ export function ChatRoomList({ rooms, basePath, activeQuoteId }: ChatRoomListPro
 			{rooms.map((room) => (
 				<button
 					key={room.quoteId}
-					onClick={() => router.push(`${basePath}/${room.quoteId}`)}
+					onClick={() => onSelect(room.quoteId)}
 					className={cn(
 						"flex w-full gap-3 p-4 text-left transition-colors",
 						activeQuoteId === room.quoteId ? "bg-[#EFF6FF]" : "hover:bg-[#F9FAFB]",

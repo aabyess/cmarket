@@ -1,8 +1,8 @@
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
 import type { SellerDashboardData } from "@/features/seller/types";
-import type { OpenListing } from "@/features/seller/types";
-import type { ListingDetail } from "@/features/seller/types";
 import type { MyQuote } from "@/features/seller/types";
+import type { ListingDetail, MyQuoteSummary, OpenListing } from "@/features/seller/types";
+import type { Currency } from "@/features/buyer/types";
 
 export async function getSellerCompanyName(): Promise<string> {
 	const supabase = await createServerSupabaseClient();
@@ -37,6 +37,7 @@ export async function getSellerDashboardData(): Promise<SellerDashboardData> {
 
 export async function getOpenListings(): Promise<OpenListing[]> {
 	const supabase = await createServerSupabaseClient();
+	const { data: { user } } = await supabase.auth.getUser();
 
 	const { data, error } = await supabase
 		.from("listings")
@@ -44,11 +45,21 @@ export async function getOpenListings(): Promise<OpenListing[]> {
 			"id, title, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, created_at",
 		)
 		.eq("status", "active")
-		.order("created_at", { ascending: false });
+		.order("end_date", { ascending: true });
 
 	if (error) throw new Error(error.message);
+	if (!data) return [];
 
-	return (data ?? []).map((row) => ({
+	let myQuoteListingIds = new Set<string>();
+	if (user) {
+		const { data: myQuotes } = await supabase
+			.from("quotes")
+			.select("listing_id")
+			.eq("seller_id", user.id);
+		myQuoteListingIds = new Set((myQuotes ?? []).map((q) => q.listing_id));
+	}
+
+	return data.map((row) => ({
 		id: row.id,
 		title: row.title,
 		description: row.description ?? "",
@@ -60,6 +71,7 @@ export async function getOpenListings(): Promise<OpenListing[]> {
 		deliveryProvinsi: row.delivery_provinsi ?? "",
 		deliveryCity: row.delivery_city ?? "",
 		createdAt: row.created_at,
+		hasMyQuote: myQuoteListingIds.has(row.id),
 	}));
 }
 
@@ -83,15 +95,26 @@ export async function getListingDetail(listingId: string): Promise<ListingDetail
 		.eq("profile_id", data.user_id)
 		.single();
 
-	let hasSubmittedQuote = false;
-	if (user) {
-		const { count } = await supabase
-			.from("quotes")
-			.select("*", { count: "exact", head: true })
-			.eq("listing_id", listingId)
-			.eq("seller_id", user.id);
-		hasSubmittedQuote = (count ?? 0) > 0;
-	}
+		let myQuote: MyQuoteSummary | null = null;
+		if (user) {
+			const { data: quote } = await supabase
+				.from("quotes")
+				.select("id, price, currency, delivery_days, note, status")
+				.eq("listing_id", listingId)
+				.eq("seller_id", user.id)
+				.maybeSingle();
+	
+			if (quote) {
+				myQuote = {
+					id: quote.id,
+					price: Number(quote.price),
+					currency: quote.currency as Currency,
+					deliveryDays: quote.delivery_days,
+					note: quote.note ?? "",
+					status: quote.status,
+				};
+			}
+		}
 
 	return {
 		id: data.id,
@@ -108,7 +131,8 @@ export async function getListingDetail(listingId: string): Promise<ListingDetail
 		deliveryDays: data.delivery_days ?? 0,
 		createdAt: data.created_at,
 		companyName: company?.company_name ?? "",
-		hasSubmittedQuote,
+		myQuote,
+		hasMyQuote: myQuote !== null,
 	};
 }
 

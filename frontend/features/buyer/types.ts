@@ -94,13 +94,18 @@ export type ReceivedQuote = {
 	note: string;
 	status: QuoteStatus;
 	createdAt: string;
+	previousPrice: number | null;
+	previousDeliveryDays: number | null;
+	revisedAt: string | null;
 	seller: SellerInfo;
 };
-
 export type ListingWithQuotes = {
 	id: string;
 	title: string;
 	endDate: string;
 	status: ListingStatus;
+	currency: Currency;
 	quoteCount: number;
+	lowestPrice: number | null;
+	fastestDays: number | null;
 };

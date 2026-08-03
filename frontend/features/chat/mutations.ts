@@ -1,4 +1,8 @@
+"use client";
 import { createClient } from "@/libs/supabase";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { CHAT_QUERY_KEYS } from "@/features/chat/queries";
+import type { ChatMessage } from "@/features/chat/types";
 
 export async function postMessage(quoteId: string, content: string): Promise<void> {
 	const supabase = createClient();
@@ -87,4 +91,40 @@ export async function awardAndCreateContract(
 		seller_id: sellerId,
 	});
 	if (contractError) throw contractError;
+}
+
+export function useSendMessage(quoteId: string, myId: string) {
+	const queryClient = useQueryClient();
+	const queryKey = CHAT_QUERY_KEYS.messages(quoteId);
+
+	return useMutation({
+		mutationFn: (content: string) => postMessage(quoteId, content),
+
+		onMutate: async (content: string) => {
+			await queryClient.cancelQueries({ queryKey });
+			const previous = queryClient.getQueryData<ChatMessage[]>(queryKey);
+
+			const optimistic: ChatMessage = {
+				id: `temp-${Date.now()}`,
+				senderId: myId,
+				content,
+				isRead: false,
+				createdAt: new Date().toISOString(),
+			};
+
+			queryClient.setQueryData<ChatMessage[]>(queryKey, (old) => [...(old ?? []), optimistic]);
+
+			return { previous };
+		},
+
+		onError: (_err, _content, context) => {
+			if (context?.previous) {
+				queryClient.setQueryData(queryKey, context.previous);
+			}
+		},
+
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey });
+		},
+	});
 }

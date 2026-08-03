@@ -17,13 +17,13 @@ export type OpenListing = {
 	deliveryProvinsi: string;
 	deliveryCity: string;
 	createdAt: string;
+	hasMyQuote: boolean;
 };
-
 export type ListingDetail = OpenListing & {
 	deliveryAddress: string;
 	deliveryDays: number;
 	companyName: string;
-	hasSubmittedQuote: boolean;
+	myQuote: MyQuoteSummary | null;
 };
 
 export type QuoteFormData = {
@@ -47,4 +47,13 @@ export type MyQuote = {
 	status: QuoteStatus;
 	createdAt: string;
 	listingEndDate: string;
+};
+
+export type MyQuoteSummary = {
+	id: string;
+	price: number;
+	currency: Currency;
+	deliveryDays: number;
+	note: string;
+	status: "pending" | "awarded" | "rejected";
 };

@@ -1,5 +1,5 @@
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
-import type { ChatRole, ChatRoom, ChatRoomDetail } from "@/features/chat/types";
+import type { ChatContext, ChatRole, ChatRoom } from "@/features/chat/types";
 
 type QuoteRow = {
 	id: string;
@@ -84,6 +84,7 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 				quoteId: quote.id,
 				listingId: quote.listing_id,
 				listingTitle: quote.listings?.title ?? "",
+				partnerId,
 				partnerName: companyMap.get(partnerId) ?? "",
 				price: Number(quote.price),
 				currency: quote.currency as ChatRoom["currency"],
@@ -98,78 +99,12 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 		.sort((a, b) => (b.lastMessageAt ?? "").localeCompare(a.lastMessageAt ?? ""));
 }
 
-export async function getChatRoomDetail(quoteId: string): Promise<ChatRoomDetail | null> {
+export async function getChatContext(role: ChatRole): Promise<ChatContext | null> {
 	const supabase = await createServerSupabaseClient();
 	const { data: { user } } = await supabase.auth.getUser();
 	if (!user) return null;
 
-	const [quoteResult, messagesResult] = await Promise.all([
-		supabase
-			.from("quotes")
-			.select(
-				"id, listing_id, seller_id, price, currency, delivery_days, status, listings(title, user_id), contracts(id)",
-			)
-			.eq("id", quoteId)
-			.single(),
-		supabase
-			.from("messages")
-			.select("id, sender_id, content, is_read, created_at")
-			.eq("quote_id", quoteId)
-			.order("created_at", { ascending: true }),
-	]);
+	const rooms = await getChatRooms(role);
 
-	if (!quoteResult.data) return null;
-
-	const quoteRow = quoteResult.data as unknown as QuoteRow & {
-		contracts: { id: string }[] | null;
-	};
-
-	const buyerId = quoteRow.listings?.user_id ?? "";
-	const myRole: ChatRole = user.id === quoteRow.seller_id ? "seller" : "buyer";
-	const partnerId = myRole === "seller" ? buyerId : quoteRow.seller_id;
-
-	const { data: company } = await supabase
-		.from("companies")
-		.select("company_name")
-		.eq("profile_id", partnerId)
-		.single();
-
-	const messageList = messagesResult.data ?? [];
-	const latest = messageList[messageList.length - 1];
-
-	return {
-		quoteId: quoteRow.id,
-		listingId: quoteRow.listing_id,
-		listingTitle: quoteRow.listings?.title ?? "",
-		partnerName: company?.company_name ?? "",
-		price: Number(quoteRow.price),
-		currency: quoteRow.currency as ChatRoomDetail["currency"],
-		deliveryDays: quoteRow.delivery_days,
-		quoteStatus: quoteRow.status,
-		hasContract: (quoteRow.contracts?.length ?? 0) > 0,
-		lastMessage: latest?.content ?? "",
-		lastMessageAt: latest?.created_at ?? null,
-		unreadCount: 0,
-		myId: user.id,
-		myRole,
-		messages: messageList.map((m) => ({
-			id: m.id,
-			senderId: m.sender_id,
-			content: m.content,
-			isRead: m.is_read,
-			createdAt: m.created_at,
-		})),
-	};
-}
-
-export async function getQuoteSellerId(quoteId: string): Promise<string | null> {
-	const supabase = await createServerSupabaseClient();
-
-	const { data } = await supabase
-		.from("quotes")
-		.select("seller_id")
-		.eq("id", quoteId)
-		.single();
-
-	return data?.seller_id ?? null;
+	return { myId: user.id, myRole: role, rooms };
 }
