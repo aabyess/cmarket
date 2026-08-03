@@ -9,19 +9,18 @@ export async function postListing(data: ListingFormData) {
 
 	const { error } = await supabase.from("listings").insert({
 		user_id: user.id,
-		type: data.type,
 		title: data.title,
 		description: data.description,
 		items: data.items,
+		currency: data.currency,
 		budget_public: data.budgetPublic,
 		total_budget: data.totalBudget,
-		start_date: data.startDate,
 		end_date: data.endDate,
-		winner_selection: data.winnerSelection,
 		delivery_days: data.deliveryDays,
-		contact_name: data.contactName,
-		contact_phone: data.contactPhone,
-		contact_email: data.contactEmail,
+		delivery_provinsi: data.deliveryProvinsi,
+		delivery_city: data.deliveryCity,
+		delivery_address: data.deliveryAddress,
+		status: "active",
 	});
 
 	if (error) throw error;

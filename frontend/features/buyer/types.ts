@@ -1,4 +1,4 @@
-export type ListingType = "물품" | "공사" | "용역" | "매각";
+export type Currency = "USD" | "IDR" | "KRW";
 
 export type ListingItem = {
 	id: string;
@@ -10,21 +10,18 @@ export type ListingItem = {
 };
 
 export type ListingFormData = {
-	type: ListingType;
 	title: string;
 	description: string;
 	items: ListingItem[];
+	currency: Currency;
 	budgetPublic: boolean;
 	totalBudget: number;
-	startDate: string;
 	endDate: string;
-	winnerSelection: string;
 	deliveryDays: number;
-	contactName: string;
-	contactPhone: string;
-	contactEmail: string;
+	deliveryProvinsi: string;
+	deliveryCity: string;
+	deliveryAddress: string;
 };
-
 export type BuyerTodoHighlight = {
 	label: string;
 	value: string;
@@ -60,4 +57,19 @@ export type BuyerActivity = {
 	title: string;
 	description: string;
 	timeText: string;
+};
+
+export type ListingStatus = "active" | "closed" | "awarded";
+
+export type ListingSummary = {
+	id: string;
+	title: string;
+	items: ListingItem[];
+	currency: Currency;
+	totalBudget: number;
+	budgetPublic: boolean;
+	endDate: string;
+	status: ListingStatus;
+	createdAt: string;
+	quoteCount: number;
 };
