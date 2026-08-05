@@ -77,12 +77,13 @@ export type ListingSummary = {
 export type QuoteStatus = "pending" | "awarded" | "rejected";
 
 export type SellerInfo = {
+	profileId: string;
 	companyName: string;
 	representative: string;
-	businessNumber: string;
 	address: string;
 	businessType: string;
 	businessItem: string;
+	logoUrl: string | null;
 };
 
 export type ReceivedQuote = {

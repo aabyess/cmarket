@@ -101,26 +101,40 @@ export async function getListingsWithQuoteCount(): Promise<ListingWithQuotes[]> 
 
 export async function getQuotesByListing(listingId: string): Promise<ReceivedQuote[]> {
 	const supabase = await createServerSupabaseClient();
+	const { createServerAdminClient } = await import("@/libs/supabaseServer");
+	const admin = await createServerAdminClient();
 
 	const { data, error } = await supabase
 		.from("quotes")
-		.select("id, listing_id, seller_id, price, currency, delivery_days, note, status, created_at, previous_price, previous_delivery_days, revised_at")		.eq("listing_id", listingId)
+		.select("id, listing_id, seller_id, price, currency, delivery_days, note, status, created_at, previous_price, previous_delivery_days, revised_at")
+		.eq("listing_id", listingId)
 		.order("price", { ascending: true });
 
 	if (error) throw new Error(error.message);
 	if (!data || data.length === 0) return [];
 
 	const sellerIds = data.map((row) => row.seller_id);
+	console.log("sellerIds:", sellerIds);
 
-	const { data: companies } = await supabase
+	const { data: companies, error: companiesError } = await admin
 		.from("companies")
-		.select("profile_id, company_name, representative, business_number, address, business_type, business_item")
+		.select("profile_id, company_name, representative, address, business_type, business_item")
 		.in("profile_id", sellerIds);
+	console.log("companiesError:", companiesError);
+	console.log("companies:", companies);
+
+	const { data: profiles } = await admin
+		.from("company_profiles")
+		.select("profile_id, logo_url")
+		.in("profile_id", sellerIds);
+	console.log("profiles:", profiles);
 
 	const companyMap = new Map((companies ?? []).map((c) => [c.profile_id, c]));
+	const profileMap = new Map((profiles ?? []).map((p) => [p.profile_id, p]));
 
 	return data.map((row) => {
 		const company = companyMap.get(row.seller_id);
+		const profile = profileMap.get(row.seller_id);
 
 		return {
 			id: row.id,
@@ -135,12 +149,13 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 			previousDeliveryDays: row.previous_delivery_days,
 			revisedAt: row.revised_at,
 			seller: {
+				profileId: row.seller_id,
 				companyName: company?.company_name ?? "",
 				representative: company?.representative ?? "",
-				businessNumber: company?.business_number ?? "",
 				address: company?.address ?? "",
 				businessType: company?.business_type ?? "",
 				businessItem: company?.business_item ?? "",
+				logoUrl: profile?.logo_url ?? null,
 			},
 		};
 	});

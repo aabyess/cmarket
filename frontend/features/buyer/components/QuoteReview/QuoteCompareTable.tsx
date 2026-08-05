@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { MessageSquare, Building2, CheckCircle2 } from "lucide-react";
+import { MessageSquare, Building2, CheckCircle2, ExternalLink } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { startChat } from "@/features/chat/mutations";
 import type { Currency, ReceivedQuote } from "@/features/buyer/types";
@@ -18,7 +18,6 @@ const ROW_LABELS = [
 	{ key: "delivery", label: "납품 소요" },
 	{ key: "businessType", label: "업태 / 종목" },
 	{ key: "representative", label: "대표자" },
-	{ key: "businessNumber", label: "사업자등록번호" },
 	{ key: "address", label: "소재지" },
 	{ key: "note", label: "제안 메모" },
 ] as const;
@@ -45,7 +44,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 			setStartingId(null);
 		}
 	}
-	
+
 	async function handleAward(quoteId: string) {
 		if (!confirm("낙찰 확정하시겠습니까? 이후 취소가 어렵습니다.")) return;
 		setAwardingId(quoteId);
@@ -104,8 +103,6 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 				);
 			case "representative":
 				return <span className="text-[#374151]">{quote.seller.representative || "-"}</span>;
-			case "businessNumber":
-				return <span className="text-[#374151]">{quote.seller.businessNumber || "-"}</span>;
 			case "address":
 				return <span className="text-[#374151]">{quote.seller.address || "-"}</span>;
 			case "note":
@@ -130,11 +127,11 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 								<th
 									key={quote.id}
 									className={cn(
-										"min-w-[200px] border-l border-[#E5E7EB] px-4 py-4 text-left align-top",
+										"min-w-[220px] border-l border-[#E5E7EB] px-4 py-4 text-left align-top",
 										quote.status === "awarded" && "bg-[#ECFDF5]",
 									)}
 								>
-									<div className="mb-1.5 flex flex-wrap gap-1">
+									<div className="mb-2 flex flex-wrap gap-1">
 										{quote.price === lowestPrice && (
 											<span className="rounded-full bg-[#FEF3C7] px-2 py-0.5 text-[11px] font-medium text-[#D97706]">
 												최저가
@@ -152,10 +149,27 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 											</span>
 										)}
 									</div>
-									<p className="flex items-center gap-1.5 text-[14px] font-semibold text-[#1F2937]">
-										<Building2 size={14} className="shrink-0 text-[#6B7280]" />
-										{quote.seller.companyName || "이름 없음"}
-									</p>
+
+									<div className="flex items-center gap-2">
+										{quote.seller.logoUrl ? (
+											<img
+												src={quote.seller.logoUrl}
+												alt={quote.seller.companyName}
+												className="size-8 rounded-lg object-cover"
+											/>
+										) : (
+											<div className="flex size-8 items-center justify-center rounded-lg bg-[#F3F4F6]">
+												<Building2 size={14} className="text-[#9CA3AF]" />
+											</div>
+										)}
+										<button
+											onClick={() => router.push(`/companies/${quote.seller.profileId}`)}
+											className="flex items-center gap-1 text-[14px] font-semibold text-[#1F2937] hover:text-[#3B82F6] hover:underline"
+										>
+											{quote.seller.companyName || "이름 없음"}
+											<ExternalLink size={12} className="text-[#9CA3AF]" />
+										</button>
+									</div>
 								</th>
 							))}
 						</tr>
