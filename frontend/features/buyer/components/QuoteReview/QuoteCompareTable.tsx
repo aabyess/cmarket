@@ -30,6 +30,7 @@ type QuoteCompareTableProps = {
 export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 	const router = useRouter();
 	const [startingId, setStartingId] = useState<string | null>(null);
+	const [awardingId, setAwardingId] = useState<string | null>(null);
 
 	const lowestPrice = Math.min(...quotes.map((q) => q.price));
 	const fastestDays = Math.min(...quotes.map((q) => q.deliveryDays));
@@ -38,10 +39,32 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 		setStartingId(quoteId);
 		try {
 			await startChat(quoteId);
-			router.push(`/buyer/chat/${quoteId}`);
+			router.push("/buyer/chat");
 		} catch (err) {
 			console.error(err);
 			setStartingId(null);
+		}
+	}
+	
+	async function handleAward(quoteId: string) {
+		if (!confirm("낙찰 확정하시겠습니까? 이후 취소가 어렵습니다.")) return;
+		setAwardingId(quoteId);
+		try {
+			const res = await fetch("/api/buyer/award", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ quoteId }),
+			});
+			if (!res.ok) {
+				const { error } = await res.json();
+				throw new Error(error);
+			}
+			router.push("/buyer/chat");
+		} catch (err) {
+			console.error(err);
+			alert("낙찰 처리 중 오류가 발생했습니다.");
+		} finally {
+			setAwardingId(null);
 		}
 	}
 
@@ -129,7 +152,6 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 											</span>
 										)}
 									</div>
-
 									<p className="flex items-center gap-1.5 text-[14px] font-semibold text-[#1F2937]">
 										<Building2 size={14} className="shrink-0 text-[#6B7280]" />
 										{quote.seller.companyName || "이름 없음"}
@@ -169,14 +191,33 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 										quote.status === "awarded" && "bg-[#F0FDF4]",
 									)}
 								>
-									<button
-										onClick={() => handleStartChat(quote.id)}
-										disabled={startingId === quote.id}
-										className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#3B82F6] py-2.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
-									>
-										<MessageSquare size={14} />
-										{startingId === quote.id ? "이동 중..." : "문의하기"}
-									</button>
+									<div className="flex gap-2">
+										<button
+											onClick={() => handleAward(quote.id)}
+											disabled={awardingId === quote.id || quote.status === "awarded"}
+											className={cn(
+												"flex w-full items-center justify-center gap-1.5 rounded-lg py-2.5 text-[13px] font-semibold transition-colors",
+												quote.status === "awarded"
+													? "bg-[#059669] text-white"
+													: "bg-[#8B5CF6] text-white hover:bg-[#7C3AED] disabled:opacity-60",
+											)}
+										>
+											<CheckCircle2 size={14} />
+											{quote.status === "awarded"
+												? "낙찰 확정됨"
+												: awardingId === quote.id
+													? "처리 중..."
+													: "낙찰 확정"}
+										</button>
+										<button
+											onClick={() => handleStartChat(quote.id)}
+											disabled={startingId === quote.id}
+											className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#3B82F6] py-2.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
+										>
+											<MessageSquare size={14} />
+											{startingId === quote.id ? "이동 중..." : "문의하기"}
+										</button>
+									</div>
 								</td>
 							))}
 						</tr>

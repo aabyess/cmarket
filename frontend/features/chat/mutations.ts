@@ -60,37 +60,16 @@ export async function awardAndCreateContract(
 	quoteId: string,
 	sellerId: string,
 ): Promise<void> {
-	const supabase = createClient();
-
-	const { data: { user }, error: userError } = await supabase.auth.getUser();
-	if (userError || !user) throw new Error("로그인이 필요합니다.");
-
-	const { error: awardError } = await supabase
-		.from("quotes")
-		.update({ status: "awarded" })
-		.eq("id", quoteId);
-	if (awardError) throw awardError;
-
-	const { error: rejectError } = await supabase
-		.from("quotes")
-		.update({ status: "rejected" })
-		.eq("listing_id", listingId)
-		.neq("id", quoteId);
-	if (rejectError) throw rejectError;
-
-	const { error: listingError } = await supabase
-		.from("listings")
-		.update({ status: "awarded" })
-		.eq("id", listingId);
-	if (listingError) throw listingError;
-
-	const { error: contractError } = await supabase.from("contracts").insert({
-		listing_id: listingId,
-		quote_id: quoteId,
-		buyer_id: user.id,
-		seller_id: sellerId,
+	const res = await fetch("/api/buyer/award", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ quoteId }),
 	});
-	if (contractError) throw contractError;
+
+	if (!res.ok) {
+		const { error } = await res.json();
+		throw new Error(error ?? "낙찰 처리 실패");
+	}
 }
 
 export function useSendMessage(quoteId: string, myId: string) {
