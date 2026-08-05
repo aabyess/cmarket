@@ -125,7 +125,7 @@ export function ChatRoomView({ room, sellerId }: ChatRoomViewProps) {
 
 	return (
 		<div className="flex h-full flex-col">
-			<ChatRoomHeader room={room} onAward={() => setIsAwardModalOpen(true)} />
+			<ChatRoomHeader room={room} myRole={room.myRole} onAward={() => setIsAwardModalOpen(true)} />
 
 			<ChatMessageList messages={messages} myId={room.myId} />
 

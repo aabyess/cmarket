@@ -105,10 +105,6 @@ export function QuoteReviewCard({
 						<span className="text-right text-[#1F2937]">{quote.seller.representative || "-"}</span>
 					</div>
 					<div className="flex justify-between gap-4">
-						<span className="shrink-0 text-[#6B7280]">사업자등록번호</span>
-						<span className="text-right text-[#1F2937]">{quote.seller.businessNumber || "-"}</span>
-					</div>
-					<div className="flex justify-between gap-4">
 						<span className="shrink-0 text-[#6B7280]">업태 / 종목</span>
 						<span className="text-right text-[#1F2937]">
 							{[quote.seller.businessType, quote.seller.businessItem].filter(Boolean).join(" / ") || "-"}

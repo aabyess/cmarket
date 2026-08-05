@@ -114,20 +114,16 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 	if (!data || data.length === 0) return [];
 
 	const sellerIds = data.map((row) => row.seller_id);
-	console.log("sellerIds:", sellerIds);
 
-	const { data: companies, error: companiesError } = await admin
+	const { data: companies } = await admin
 		.from("companies")
 		.select("profile_id, company_name, representative, address, business_type, business_item")
 		.in("profile_id", sellerIds);
-	console.log("companiesError:", companiesError);
-	console.log("companies:", companies);
 
 	const { data: profiles } = await admin
 		.from("company_profiles")
 		.select("profile_id, logo_url")
 		.in("profile_id", sellerIds);
-	console.log("profiles:", profiles);
 
 	const companyMap = new Map((companies ?? []).map((c) => [c.profile_id, c]));
 	const profileMap = new Map((profiles ?? []).map((p) => [p.profile_id, p]));
