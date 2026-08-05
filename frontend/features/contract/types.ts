@@ -1,0 +1,20 @@
+export type ContractStatus = "ongoing" | "completed" | "cancelled";
+
+export type Contract = {
+	id: string;
+	listingId: string;
+	quoteId: string;
+	buyerId: string;
+	sellerId: string;
+	status: ContractStatus;
+	createdAt: string;
+	listing: {
+		title: string;
+	};
+	quote: {
+		price: number;
+		currency: string;
+		deliveryDays: number;
+	};
+	partnerCompanyName: string;
+};
