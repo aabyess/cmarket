@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus, X, Building2, FileText, Globe, Award, ImageIcon, Loader2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { uploadImage } from "@/features/sellerProfile/utils";
+import { CATEGORY_LABELS, CATEGORY_OPTIONS } from "@/features/buyer/constants";
 import type { SellerProfileData } from "@/features/sellerProfile/types";
 
 type ProfileEditFormProps = {
@@ -34,6 +35,7 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 	const [logoUrl, setLogoUrl] = useState(data.profile?.logoUrl ?? "");
 	const [logoUploading, setLogoUploading] = useState(false);
 	const [description, setDescription] = useState(data.profile?.description ?? "");
+	const [categories, setCategories] = useState<string[]>(data.profile?.categories ?? []);
 	const [establishedYear, setEstablishedYear] = useState(
 		data.profile?.establishedYear?.toString() ?? "",
 	);
@@ -84,15 +86,18 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 		));
 	}
 
+	function handleToggleCategory(cat: string) {
+		setCategories((prev) =>
+			prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
+		);
+	}
+
 	function handleAddCert() {
-        const val = certInput.trim();
-        if (!val || certifications.includes(val)) {
-            setCertInput("");
-            return;
-        }
-        setCertifications((prev) => [...prev, val]);
-        setCertInput("");
-    }
+		const val = certInput.trim();
+		setCertInput("");
+		if (!val || certifications.includes(val)) return;
+		setCertifications((prev) => [...prev, val]);
+	}
 
 	function handleRemoveCert(cert: string) {
 		setCertifications(certifications.filter((c) => c !== cert));
@@ -134,6 +139,7 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 					employeeCount,
 					websiteUrl,
 					certifications,
+					categories,
 					products: products.map((p) => ({
 						id: p.isNew ? null : p.id,
 						name: p.name,
@@ -144,12 +150,12 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 					})),
 				}),
 			});
-	
+
 			if (!res.ok) {
 				const { error } = await res.json();
 				throw new Error(error);
 			}
-	
+
 			setIsSaved(true);
 			setTimeout(() => setIsSaved(false), 3000);
 			router.refresh();
@@ -170,13 +176,10 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 					기본 정보
 				</h2>
 
-				{/* 로고 업로드 */}
 				<div className="mb-5 flex items-center gap-4">
 					<div
 						onClick={() => logoInputRef.current?.click()}
-						className={cn(
-							"flex size-20 cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-[#E5E7EB] bg-[#F9FAFB] transition-colors hover:border-[#3B82F6]",
-						)}
+						className="flex size-20 cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-[#E5E7EB] bg-[#F9FAFB] transition-colors hover:border-[#3B82F6]"
 					>
 						{logoUploading ? (
 							<Loader2 size={20} className="animate-spin text-[#9CA3AF]" />
@@ -235,6 +238,28 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 					rows={4}
 					className="w-full resize-none rounded-lg border border-[#E5E7EB] px-4 py-3 text-sm text-[#1F2937] placeholder:text-[#9CA3AF] focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
 				/>
+
+				<div className="mt-4">
+					<label className="mb-1.5 block text-xs font-medium text-[#374151]">취급 카테고리</label>
+					<div className="grid grid-cols-4 gap-2">
+						{CATEGORY_OPTIONS.map((cat) => (
+							<button
+								key={cat}
+								type="button"
+								onClick={() => handleToggleCategory(cat)}
+								className={cn(
+									"rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors",
+									categories.includes(cat)
+										? "border-[#3B82F6] bg-[#EFF6FF] text-[#3B82F6]"
+										: "border-[#E5E7EB] text-[#6B7280] hover:bg-gray-50",
+								)}
+							>
+								{CATEGORY_LABELS[cat]}
+							</button>
+						))}
+					</div>
+				</div>
+
 				<div className="mt-4 grid grid-cols-2 gap-4">
 					<div>
 						<label className="mb-1.5 block text-xs font-medium text-[#374151]">설립 연도</label>
@@ -287,15 +312,16 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 						value={certInput}
 						onChange={(e) => setCertInput(e.target.value)}
 						onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                                e.preventDefault();
-                                handleAddCert();
-                            }
-                        }}
+							if (e.key === "Enter") {
+								e.preventDefault();
+								handleAddCert();
+							}
+						}}
 						placeholder="예: ISO 9001, 이노비즈"
 						className="flex-1 rounded-lg border border-[#E5E7EB] px-4 py-2.5 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
 					/>
 					<button
+						type="button"
 						onClick={handleAddCert}
 						className="rounded-lg bg-[#3B82F6] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#2563EB]"
 					>
@@ -362,7 +388,6 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 								className="mb-3 w-full rounded-lg border border-[#E5E7EB] bg-white px-3 py-2 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
 							/>
 
-							{/* 제품 이미지 */}
 							<div className="flex flex-wrap gap-2">
 								{product.imageUrls.map((url) => (
 									<div key={url} className="group relative size-16 overflow-hidden rounded-lg">
@@ -396,7 +421,7 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 			{/* 저장 버튼 */}
 			<div className="space-y-3">
 				{isSaved && (
-					<div className="rounded-xl bg-[#F0FDF4] px-4 py-3 text-sm font-medium text-[#16A34A] border border-[#BBF7D0]">
+					<div className="rounded-xl border border-[#BBF7D0] bg-[#F0FDF4] px-4 py-3 text-sm font-medium text-[#16A34A]">
 						✓ 프로필이 저장되었습니다.
 					</div>
 				)}

@@ -7,6 +7,7 @@ export type CompanyProfile = {
 	employeeCount: string | null;
 	certifications: string[];
 	websiteUrl: string | null;
+	categories: string[];
 };
 
 export type Product = {

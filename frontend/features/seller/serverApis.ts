@@ -22,16 +22,43 @@ export async function getSellerDashboardData(): Promise<SellerDashboardData> {
 	const supabase = await createServerSupabaseClient();
 	const { data: { user } } = await supabase.auth.getUser();
 
-	if (!user) return { openListingCount: 0, quoteCount: 0 };
+	if (!user) {
+		return {
+			openListingCount: 0,
+			quoteCount: 0,
+			pendingQuoteCount: 0,
+			awardedQuoteCount: 0,
+			contractCount: 0,
+			activities: [],
+		};
+	}
 
-	const { count } = await supabase
+	const { count: openListingCount } = await supabase
 		.from("listings")
 		.select("*", { count: "exact", head: true })
 		.eq("status", "active");
 
+	const { data: quotes } = await supabase
+		.from("quotes")
+		.select("status")
+		.eq("seller_id", user.id);
+
+	const quoteCount = quotes?.length ?? 0;
+	const pendingQuoteCount = quotes?.filter((q) => q.status === "pending").length ?? 0;
+	const awardedQuoteCount = quotes?.filter((q) => q.status === "awarded").length ?? 0;
+
+	const { count: contractCount } = await supabase
+		.from("contracts")
+		.select("*", { count: "exact", head: true })
+		.eq("seller_id", user.id);
+
 	return {
-		openListingCount: count ?? 0,
-		quoteCount: 0,
+		openListingCount: openListingCount ?? 0,
+		quoteCount,
+		pendingQuoteCount,
+		awardedQuoteCount,
+		contractCount: contractCount ?? 0,
+		activities: [],
 	};
 }
 
@@ -188,3 +215,57 @@ export async function getMyQuotes(): Promise<MyQuote[]> {
 	});
 }
 
+export async function getRecommendedListings(): Promise<OpenListing[]> {
+	const supabase = await createServerSupabaseClient();
+	const { data: { user } } = await supabase.auth.getUser();
+	if (!user) return [];
+
+	const { data: profile } = await supabase
+		.from("company_profiles")
+		.select("categories")
+		.eq("profile_id", user.id)
+		.single();
+
+	const categories = profile?.categories ?? [];
+	if (categories.length === 0) return [];
+
+	const { data: myQuotes } = await supabase
+		.from("quotes")
+		.select("listing_id")
+		.eq("seller_id", user.id);
+
+	const quotedIds = (myQuotes ?? []).map((q) => q.listing_id);
+
+	let query = supabase
+		.from("listings")
+		.select(
+			"id, title, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, created_at",
+		)
+		.eq("status", "active")
+		.in("category", categories)
+		.order("end_date", { ascending: true })
+		.limit(5);
+
+	if (quotedIds.length > 0) {
+		query = query.not("id", "in", `(${quotedIds.join(",")})`);
+	}
+
+	const { data, error } = await query;
+	if (error) throw new Error(error.message);
+	if (!data) return [];
+
+	return data.map((row) => ({
+		id: row.id,
+		title: row.title,
+		description: row.description ?? "",
+		items: row.items,
+		currency: row.currency,
+		totalBudget: Number(row.total_budget ?? 0),
+		budgetPublic: row.budget_public ?? false,
+		endDate: row.end_date,
+		deliveryProvinsi: row.delivery_provinsi ?? "",
+		deliveryCity: row.delivery_city ?? "",
+		createdAt: row.created_at,
+		hasMyQuote: false,
+	}));
+}

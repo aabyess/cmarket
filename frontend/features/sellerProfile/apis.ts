@@ -43,6 +43,7 @@ export async function getSellerProfileData(): Promise<SellerProfileData | null> 
 					employeeCount: profile.employee_count,
 					certifications: profile.certifications ?? [],
 					websiteUrl: profile.website_url,
+					categories: profile.categories ?? [],
 				}
 			: null,
 		products: (products ?? []).map((p) => ({

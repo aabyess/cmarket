@@ -10,6 +10,7 @@ export async function postListing(data: ListingFormData) {
 	const { error } = await supabase.from("listings").insert({
 		user_id: user.id,
 		title: data.title,
+		category: data.category,
 		description: data.description,
 		items: data.items,
 		currency: data.currency,
@@ -25,7 +26,6 @@ export async function postListing(data: ListingFormData) {
 
 	if (error) throw error;
 }
-
 export async function awardQuote(listingId: string, quoteId: string): Promise<void> {
 	const supabase = createClient();
 

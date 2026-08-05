@@ -12,6 +12,7 @@ import type { ListingFormData } from "@/features/buyer/types";
 
 const INITIAL_FORM: ListingFormData = {
 	title: "",
+	category: "office",
 	description: "",
 	items: [{ id: "default", name: "", spec: "", quantity: 1, unit: "EA", price: 0 }],
 	currency: "USD",

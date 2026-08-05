@@ -3,6 +3,10 @@ import type { Currency, ListingItem } from "@/features/buyer/types";
 export type SellerDashboardData = {
 	openListingCount: number;
 	quoteCount: number;
+	pendingQuoteCount: number;
+	awardedQuoteCount: number;
+	contractCount: number;
+	activities: { title: string; timeText: string }[];
 };
 
 export type OpenListing = {

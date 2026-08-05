@@ -9,8 +9,11 @@ export type ListingItem = {
 	price: number;
 };
 
+export type ListingCategory = "office" | "lab" | "machinery" | "chemical";
+
 export type ListingFormData = {
 	title: string;
+	category: ListingCategory;
 	description: string;
 	items: ListingItem[];
 	currency: Currency;
@@ -22,6 +25,7 @@ export type ListingFormData = {
 	deliveryCity: string;
 	deliveryAddress: string;
 };
+
 export type BuyerTodoHighlight = {
 	label: string;
 	value: string;

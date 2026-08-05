@@ -9,6 +9,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		employeeCount,
 		websiteUrl,
 		certifications,
+		categories,
 		products,
 	} = await req.json();
 
@@ -30,6 +31,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 			employee_count: employeeCount || null,
 			website_url: websiteUrl || null,
 			certifications: certifications ?? [],
+			categories: categories ?? [],
 			updated_at: new Date().toISOString(),
 		}, { onConflict: "profile_id" });
 

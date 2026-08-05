@@ -2,6 +2,7 @@
 
 import SectionWrapper from "@/features/buyer/components/postListing/SectionWrapper";
 import type { ListingFormData, ListingItem } from "@/features/buyer/types";
+import { CATEGORY_LABELS, CATEGORY_OPTIONS } from "@/features/buyer/constants";
 
 const UNITS = ["EA", "BOX", "KG", "L", "SET", "M"];
 
@@ -39,6 +40,27 @@ export default function ListingBasicSection({ form, onChange }: ListingBasicSect
 				<div>
 					<label className="mb-2 block text-sm font-medium text-[#374151]">
 						공고 제목 <span className="text-[#3B82F6]">*</span>
+						<div>
+							<label className="mb-2 block text-sm font-medium text-[#374151]">
+								카테고리 <span className="text-[#3B82F6]">*</span>
+							</label>
+							<div className="grid grid-cols-4 gap-2">
+								{CATEGORY_OPTIONS.map((cat) => (
+									<button
+										key={cat}
+										type="button"
+										onClick={() => onChange({ category: cat })}
+										className={`rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors ${
+											form.category === cat
+												? "border-[#3B82F6] bg-[#EFF6FF] text-[#3B82F6]"
+												: "border-[#E2E8F0] text-[#6B7280] hover:bg-[#F9FAFB]"
+										}`}
+									>
+										{CATEGORY_LABELS[cat]}
+									</button>
+								))}
+							</div>
+						</div>
 					</label>
 					<input
 						type="text"
