@@ -6,7 +6,7 @@ export async function getMessages(quoteId: string): Promise<ChatMessage[]> {
 
 	const { data, error } = await supabase
 		.from("messages")
-		.select("id, sender_id, content, is_read, created_at")
+		.select("id, sender_id, content, is_read, created_at, translated_content, source_lang")
 		.eq("quote_id", quoteId)
 		.order("created_at", { ascending: true });
 
@@ -18,5 +18,7 @@ export async function getMessages(quoteId: string): Promise<ChatMessage[]> {
 		content: row.content,
 		isRead: row.is_read,
 		createdAt: row.created_at,
+		translatedContent: row.translated_content ?? null,
+		sourceLang: row.source_lang ?? null,
 	}));
 }

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useLogout } from "@/features/auth/mutations";
 import { createClient } from "@/libs/supabase";
 import { UserBadge } from "@/components/layout/UserBadge";
+import { NotificationBell } from "@/features/notifications/components/NotificationBell";
 
 type HeaderProps = {
 	country: "indonesia" | "korea";
@@ -64,10 +65,7 @@ export function Header({ country }: HeaderProps) {
 					<MessageSquare size={20} />
 				</button>
 
-				<button className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors text-[#6B7280] hover:text-[#4F46E5]">
-					<Bell size={20} />
-					<span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-				</button>
+				<NotificationBell country={country} />
 				
 				<UserBadge country={country} className="mr-1" />
 				<div className="relative">

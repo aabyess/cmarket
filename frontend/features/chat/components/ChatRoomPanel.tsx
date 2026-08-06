@@ -11,6 +11,7 @@ import { useMessages, CHAT_QUERY_KEYS } from "@/features/chat/queries";
 import { useSendMessage, markMessagesRead, awardAndCreateContract } from "@/features/chat/mutations";
 import { createClient } from "@/libs/supabase";
 import type { ChatRole, ChatRoom } from "@/features/chat/types";
+import { markNotificationsByQuoteRead } from "@/features/notifications/apis";
 
 type ChatRoomPanelProps = {
 	room: ChatRoom;
@@ -30,6 +31,7 @@ export function ChatRoomPanel({ room, myId, myRole }: ChatRoomPanelProps) {
 
 	useEffect(() => {
 		markMessagesRead(room.quoteId);
+		markNotificationsByQuoteRead(room.quoteId);
 	}, [room.quoteId]);
 
 	useEffect(() => {
@@ -46,8 +48,15 @@ export function ChatRoomPanel({ room, myId, myRole }: ChatRoomPanelProps) {
 					table: "messages",
 					filter: `quote_id=eq.${room.quoteId}`,
 				},
-				() => {
+				(payload) => {
 					queryClient.invalidateQueries({ queryKey });
+
+					if (
+						payload.eventType === "INSERT" &&
+						(payload.new as { sender_id: string }).sender_id !== myId
+					) {
+						markMessagesRead(room.quoteId);
+					}
 				},
 			)
 			.subscribe();
@@ -57,7 +66,7 @@ export function ChatRoomPanel({ room, myId, myRole }: ChatRoomPanelProps) {
 		};
 	}, [room.quoteId, queryClient]);
 
-	function handleSend() {
+	function handleSend(): void {
 		const content = input.trim();
 		if (!content) return;
 
@@ -65,21 +74,13 @@ export function ChatRoomPanel({ room, myId, myRole }: ChatRoomPanelProps) {
 		sendMessage(content);
 	}
 
-	function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-		if (e.key === "Enter" && !e.shiftKey) {
-			e.preventDefault();
-			handleSend();
-		}
-	}
-
-	async function handleConfirmAward() {
+	async function handleConfirmAward(): Promise<void> {
 		setIsAwarding(true);
 		try {
 			await awardAndCreateContract(room.listingId, room.quoteId, room.partnerId);
 			setIsAwardModalOpen(false);
 			router.refresh();
 		} catch (err) {
-			console.error(err);
 		} finally {
 			setIsAwarding(false);
 		}
@@ -104,7 +105,13 @@ export function ChatRoomPanel({ room, myId, myRole }: ChatRoomPanelProps) {
 					<textarea
 						value={input}
 						onChange={(e) => setInput(e.target.value)}
-						onKeyDown={handleKeyDown}
+						onKeyDown={(e) => {
+							if (e.key === "Enter" && !e.shiftKey) {
+								if (e.nativeEvent.isComposing || e.keyCode === 229) return;
+								e.preventDefault();
+								handleSend();
+							}
+						}}
 						placeholder="메시지를 입력하세요"
 						rows={1}
 						className="max-h-32 flex-1 resize-none rounded-xl border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"

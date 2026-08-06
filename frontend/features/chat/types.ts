@@ -24,6 +24,8 @@ export type ChatMessage = {
 	content: string;
 	isRead: boolean;
 	createdAt: string;
+	translatedContent: string | null;
+	sourceLang: string | null;
 };
 
 export type ChatRoomDetail = ChatRoom & {

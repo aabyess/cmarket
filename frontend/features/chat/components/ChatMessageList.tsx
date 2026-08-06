@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/utils/cn";
 import type { ChatMessage } from "@/features/chat/types";
 
@@ -12,6 +12,51 @@ function formatTime(iso: string): string {
 function formatDateLabel(iso: string): string {
 	const date = new Date(iso);
 	return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+}
+
+type MessageBubbleProps = {
+	message: ChatMessage;
+	isMine: boolean;
+	showRead: boolean;
+};
+
+function MessageBubble({ message, isMine, showRead }: MessageBubbleProps): React.ReactNode {
+	const hasTranslation = !isMine && Boolean(message.translatedContent);
+
+	return (
+		<div className={cn("flex items-end gap-1.5", isMine && "flex-row-reverse")}>
+			<div className="flex max-w-[70%] flex-col gap-1">
+				<div
+					className={cn(
+						"rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed",
+						isMine
+							? "rounded-br-sm bg-[#3B82F6] text-white"
+							: "rounded-bl-sm bg-white text-[#1F2937]",
+					)}
+				>
+					<p className="whitespace-pre-wrap break-words">{message.content}</p>
+
+					{hasTranslation && (
+						<>
+							<div className="my-2 border-t border-[#E5E7EB]" />
+							<p className="whitespace-pre-wrap break-words text-[#6B7280]">
+								{message.translatedContent}
+							</p>
+						</>
+					)}
+				</div>
+			</div>
+
+			<div className="flex shrink-0 flex-col items-end">
+				{showRead && (
+					<span className="text-[10px] text-[#3B82F6]">읽음</span>
+				)}
+				<span className="text-[10px] text-[#9CA3AF]">
+					{formatTime(message.createdAt)}
+				</span>
+			</div>
+		</div>
+	);
 }
 
 type ChatMessageListProps = {
@@ -49,28 +94,11 @@ export function ChatMessageList({ messages, myId }: ChatMessageListProps) {
 								</span>
 							</div>
 						)}
-
-						<div className={cn("flex items-end gap-1.5", isMine && "flex-row-reverse")}>
-							<div
-								className={cn(
-									"max-w-[70%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed",
-									isMine
-										? "rounded-br-sm bg-[#3B82F6] text-white"
-										: "rounded-bl-sm bg-white text-[#1F2937]",
-								)}
-							>
-								<p className="whitespace-pre-wrap break-words">{message.content}</p>
-							</div>
-
-							<div className="flex shrink-0 flex-col items-end">
-								{message.id === lastReadMineId && (
-									<span className="text-[10px] text-[#3B82F6]">읽음</span>
-								)}
-								<span className="text-[10px] text-[#9CA3AF]">
-									{formatTime(message.createdAt)}
-								</span>
-							</div>
-						</div>
+						<MessageBubble
+							message={message}
+							isMine={isMine}
+							showRead={message.id === lastReadMineId}
+						/>
 					</div>
 				);
 			})}

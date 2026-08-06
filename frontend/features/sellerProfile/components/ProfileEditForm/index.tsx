@@ -312,7 +312,7 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 						value={certInput}
 						onChange={(e) => setCertInput(e.target.value)}
 						onKeyDown={(e) => {
-							if (e.key === "Enter") {
+							if (e.key === "Enter" && !e.nativeEvent.isComposing) {
 								e.preventDefault();
 								handleAddCert();
 							}

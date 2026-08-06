@@ -4,7 +4,7 @@ import { useState } from "react";
 import { MessageSquare } from "lucide-react";
 import { ChatRoomList } from "@/features/chat/components/ChatRoomList";
 import { ChatRoomPanel } from "@/features/chat/components/ChatRoomPanel";
-import type { ChatContext } from "@/features/chat/types";
+import type { ChatContext, ChatRoom } from "@/features/chat/types";
 
 type ChatViewProps = {
 	context: ChatContext;
@@ -12,20 +12,30 @@ type ChatViewProps = {
 
 export function ChatView({ context }: ChatViewProps) {
 	const [activeQuoteId, setActiveQuoteId] = useState<string | null>(null);
+	const [rooms, setRooms] = useState<ChatRoom[]>(context.rooms);
 
-	const activeRoom = context.rooms.find((room) => room.quoteId === activeQuoteId) ?? null;
+	const activeRoom = rooms.find((room) => room.quoteId === activeQuoteId) ?? null;
+
+	function handleSelect(quoteId: string): void {
+		setActiveQuoteId(quoteId);
+		setRooms((prev) =>
+			prev.map((room) =>
+				room.quoteId === quoteId ? { ...room, unreadCount: 0 } : room,
+			),
+		);
+	}
 
 	return (
 		<div className="flex h-[calc(100vh-4rem)]">
 			<aside className="w-80 shrink-0 overflow-y-auto border-r border-[#E5E7EB] bg-white">
 				<div className="border-b border-[#E5E7EB] px-5 py-4">
 					<h1 className="text-lg font-bold text-[#1F2937]">채팅</h1>
-					<p className="text-xs text-[#6B7280]">대화 {context.rooms.length}건</p>
+					<p className="text-xs text-[#6B7280]">대화 {rooms.length}건</p>
 				</div>
 				<ChatRoomList
-					rooms={context.rooms}
+					rooms={rooms}
 					activeQuoteId={activeQuoteId ?? undefined}
-					onSelect={setActiveQuoteId}
+					onSelect={handleSelect}
 				/>
 			</aside>
 

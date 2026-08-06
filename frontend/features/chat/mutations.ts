@@ -10,10 +10,45 @@ export async function postMessage(quoteId: string, content: string): Promise<voi
 	const { data: { user }, error: userError } = await supabase.auth.getUser();
 	if (userError || !user) throw new Error("로그인이 필요합니다.");
 
+	// 번역 시도 (실패해도 메시지 전송은 진행)
+	let translatedContent: string | null = null;
+	let sourceLang: string | null = null;
+
+	try {
+		const res = await fetch("/api/translate", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ text: content, targetLang: "KO" }),
+		});
+		const data = await res.json();
+	
+		// 이미 한국어면 번역 저장 안 함
+		if (data.detectedLang !== "KO") {
+			translatedContent = data.translatedText;
+			sourceLang = data.detectedLang;
+		} else {
+			// 한국어면 인도네시아어로 번역
+			const res2 = await fetch("/api/translate", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ text: content, targetLang: "ID" }),
+			});
+			const data2 = await res2.json();
+			if (data2.translatedText) {
+				translatedContent = data2.translatedText;
+				sourceLang = "KO";
+			}
+		}
+	} catch {
+		// 번역 실패해도 메시지 전송은 계속
+	}
+
 	const { error } = await supabase.from("messages").insert({
 		quote_id: quoteId,
 		sender_id: user.id,
 		content,
+		translated_content: translatedContent,
+		source_lang: sourceLang,
 	});
 
 	if (error) throw error;
@@ -25,12 +60,14 @@ export async function markMessagesRead(quoteId: string): Promise<void> {
 	const { data: { user } } = await supabase.auth.getUser();
 	if (!user) return;
 
-	await supabase
+	const { error } = await supabase
 		.from("messages")
 		.update({ is_read: true })
 		.eq("quote_id", quoteId)
 		.neq("sender_id", user.id)
 		.eq("is_read", false);
+
+	if (error) console.error("markMessagesRead error:", error);
 }
 
 export async function startChat(quoteId: string): Promise<void> {
@@ -89,6 +126,8 @@ export function useSendMessage(quoteId: string, myId: string) {
 				content,
 				isRead: false,
 				createdAt: new Date().toISOString(),
+				translatedContent: null,
+				sourceLang: null,
 			};
 
 			queryClient.setQueryData<ChatMessage[]>(queryKey, (old) => [...(old ?? []), optimistic]);
