@@ -113,7 +113,6 @@ export function Sidebar({ role, country, companyName }: SidebarProps) {
 							{country === "indonesia" ? "Indonesia" : "Korea"} · {role === "buyer" ? "Buyer" : "Seller"}
 						</p>
 					</div>
-					<ChevronsUpDown size={14} className="shrink-0 text-[#94a3b8]" />
 				</button>
 			</div>
 		</aside>

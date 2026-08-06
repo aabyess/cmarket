@@ -2,7 +2,8 @@ import { createServerSupabaseClient } from "@/libs/supabaseServer";
 
 export async function getServerUserRole(): Promise<"buyer" | "seller" | null> {
 	const supabase = await createServerSupabaseClient();
-	const { data: { user } } = await supabase.auth.getUser();
+	const { data: { session } } = await supabase.auth.getSession();
+	const user = session?.user;
 	if (!user) return null;
 
 	const { data, error } = await supabase
@@ -24,7 +25,8 @@ export type UserSummary = {
 
 export async function getUserSummary(): Promise<UserSummary | null> {
 	const supabase = await createServerSupabaseClient();
-	const { data: { user } } = await supabase.auth.getUser();
+	const { data: { session } } = await supabase.auth.getSession();
+	const user = session?.user;
 	if (!user) return null;
 
 	const [profileResult, companyResult] = await Promise.all([

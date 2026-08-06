@@ -1,9 +1,14 @@
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
-import type { ListingWithQuotes, ReceivedQuote, ListingSummary,  BuyerDashboardData  } from "@/features/buyer/types";
+import type { ListingWithQuotes, ReceivedQuote, ListingSummary, BuyerDashboardData } from "@/features/buyer/types";
+
+async function getSessionUser() {
+	const supabase = await createServerSupabaseClient();
+	const { data: { session } } = await supabase.auth.getSession();
+	return { supabase, user: session?.user ?? null };
+}
 
 export async function getBuyerCompanyName(): Promise<string> {
-	const supabase = await createServerSupabaseClient();
-	const { data: { user } } = await supabase.auth.getUser();
+	const { supabase, user } = await getSessionUser();
 	if (!user) return "";
 
 	const { data } = await supabase
@@ -16,8 +21,7 @@ export async function getBuyerCompanyName(): Promise<string> {
 }
 
 export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
-	const supabase = await createServerSupabaseClient();
-	const { data: { user } } = await supabase.auth.getUser();
+	const { supabase, user } = await getSessionUser();
 
 	if (!user) {
 		return {
@@ -44,8 +48,7 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 }
 
 export async function getBuyerListings(): Promise<ListingSummary[]> {
-	const supabase = await createServerSupabaseClient();
-	const { data: { user } } = await supabase.auth.getUser();
+	const { supabase, user } = await getSessionUser();
 	if (!user) return [];
 
 	const { data, error } = await supabase
@@ -71,8 +74,7 @@ export async function getBuyerListings(): Promise<ListingSummary[]> {
 }
 
 export async function getListingsWithQuoteCount(): Promise<ListingWithQuotes[]> {
-	const supabase = await createServerSupabaseClient();
-	const { data: { user } } = await supabase.auth.getUser();
+	const { supabase, user } = await getSessionUser();
 	if (!user) return [];
 
 	const { data, error } = await supabase

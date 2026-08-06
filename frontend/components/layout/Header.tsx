@@ -43,13 +43,6 @@ export function Header({ country }: HeaderProps) {
 
 			<div className="flex items-center gap-2">
 				<div className="relative">
-					<button
-						onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-						className="flex items-center gap-1.5 px-3 py-1.5 border border-[#E5E7EB] rounded-lg transition-colors text-[#6B7280] hover:text-[#4F46E5] hover:border-[#4F46E5] text-sm">
-						<Globe size={16} />
-						<span>한국어</span>
-						<span className="text-xs">▾</span>
-					</button>
 					{showLanguageMenu && (
 						<div className="absolute right-0 mt-2 w-40 bg-white border border-[#E5E7EB] rounded-lg shadow-lg overflow-hidden z-50">
 							{["한국어", "English", "Bahasa Indonesia"].map((lang) => (

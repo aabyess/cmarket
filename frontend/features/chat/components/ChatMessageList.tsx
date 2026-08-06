@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { cn } from "@/utils/cn";
 import type { ChatMessage } from "@/features/chat/types";
 
@@ -14,57 +14,12 @@ function formatDateLabel(iso: string): string {
 	return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
 }
 
-type MessageBubbleProps = {
-	message: ChatMessage;
-	isMine: boolean;
-	showRead: boolean;
-};
-
-function MessageBubble({ message, isMine, showRead }: MessageBubbleProps): React.ReactNode {
-	const hasTranslation = !isMine && Boolean(message.translatedContent);
-
-	return (
-		<div className={cn("flex items-end gap-1.5", isMine && "flex-row-reverse")}>
-			<div className="flex max-w-[70%] flex-col gap-1">
-				<div
-					className={cn(
-						"rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed",
-						isMine
-							? "rounded-br-sm bg-[#3B82F6] text-white"
-							: "rounded-bl-sm bg-white text-[#1F2937]",
-					)}
-				>
-					<p className="whitespace-pre-wrap break-words">{message.content}</p>
-
-					{hasTranslation && (
-						<>
-							<div className="my-2 border-t border-[#E5E7EB]" />
-							<p className="whitespace-pre-wrap break-words text-[#6B7280]">
-								{message.translatedContent}
-							</p>
-						</>
-					)}
-				</div>
-			</div>
-
-			<div className="flex shrink-0 flex-col items-end">
-				{showRead && (
-					<span className="text-[10px] text-[#3B82F6]">읽음</span>
-				)}
-				<span className="text-[10px] text-[#9CA3AF]">
-					{formatTime(message.createdAt)}
-				</span>
-			</div>
-		</div>
-	);
-}
-
 type ChatMessageListProps = {
 	messages: ChatMessage[];
 	myId: string;
 };
 
-export function ChatMessageList({ messages, myId }: ChatMessageListProps) {
+export function ChatMessageList({ messages, myId }: ChatMessageListProps): React.ReactNode {
 	const bottomRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -73,36 +28,76 @@ export function ChatMessageList({ messages, myId }: ChatMessageListProps) {
 
 	const lastReadMineId = [...messages]
 		.reverse()
-		.find((message) => message.senderId === myId && message.isRead)?.id;
+		.find((m) => m.senderId === myId && m.isRead)?.id;
 
 	let lastDate = "";
 
 	return (
-		<div className="flex-1 space-y-2 overflow-y-auto bg-[#F0F5FF] px-5 py-4">
-			{messages.map((message) => {
-				const isMine = message.senderId === myId;
-				const dateLabel = formatDateLabel(message.createdAt);
-				const showDate = dateLabel !== lastDate;
-				lastDate = dateLabel;
+		<div className="flex-1 overflow-y-auto bg-imsg-surface px-4 py-4">
+			<div className="mx-auto flex max-w-2xl flex-col">
+				{messages.map((message, i) => {
+					const isMine = message.senderId === myId;
+					const dateLabel = formatDateLabel(message.createdAt);
+					const showDate = dateLabel !== lastDate;
+					lastDate = dateLabel;
 
-				return (
-					<div key={message.id}>
-						{showDate && (
-							<div className="my-4 flex justify-center">
-								<span className="rounded-full bg-white px-3 py-1 text-[11px] text-[#6B7280]">
-									{dateLabel}
-								</span>
+					const prev = messages[i - 1];
+					const next = messages[i + 1];
+					const sameAsPrev = prev?.senderId === message.senderId;
+					const sameAsNext = next?.senderId === message.senderId;
+					const showTime = !sameAsNext || next?.senderId !== message.senderId;
+					const isLastMine = isMine && message.id === lastReadMineId;
+					const hasTranslation = !isMine && Boolean(message.translatedContent);
+
+					return (
+						<div key={message.id} className={sameAsPrev ? "mt-0.5" : "mt-3"}>
+							{showDate && (
+								<div className="my-4 flex justify-center">
+									<span className="rounded-full bg-black/5 px-3 py-1 text-[11px] font-medium text-imsg-secondary">
+										{dateLabel}
+									</span>
+								</div>
+							)}
+
+							<div className={cn("flex", isMine ? "justify-end" : "justify-start")}>
+								<div className="flex max-w-[70%] flex-col">
+									<div
+										className={cn(
+											"w-fit rounded-[20px] px-3.5 py-2 text-[15px] leading-snug",
+											isMine
+												? "self-end bg-imsg-blue text-white"
+												: "self-start bg-[#E9E9EB] text-black",
+										)}
+									>
+										<p className="whitespace-pre-wrap break-words">{message.content}</p>
+									</div>
+
+									{hasTranslation && (
+										<p className="mt-1 self-start px-1 text-[13px] italic text-imsg-secondary">
+											{message.translatedContent}
+										</p>
+									)}
+								</div>
 							</div>
-						)}
-						<MessageBubble
-							message={message}
-							isMine={isMine}
-							showRead={message.id === lastReadMineId}
-						/>
-					</div>
-				);
-			})}
-			<div ref={bottomRef} />
+
+							{showTime && (
+								<div className="mt-1 flex justify-center">
+									<span className="text-[11px] text-imsg-secondary">
+										{formatTime(message.createdAt)}
+									</span>
+								</div>
+							)}
+
+							{isLastMine && (
+								<div className="flex justify-end pr-1">
+									<span className="text-[11px] font-medium text-imsg-blue">읽음</span>
+								</div>
+							)}
+						</div>
+					);
+				})}
+				<div ref={bottomRef} />
+			</div>
 		</div>
 	);
 }
