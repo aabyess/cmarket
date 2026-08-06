@@ -86,7 +86,7 @@ export function ChatRoomPanel({ room, myId, myRole }: ChatRoomPanelProps): React
 	}
 
 	return (
-		<section className="flex flex-1 flex-col bg-imsg-surface">
+		<section className="flex min-h-0 flex-1 flex-col bg-imsg-surface">
 			{/* 헤더 */}
 			<header className="flex items-center justify-between border-b border-[#E5E7EB]/60 bg-white/80 px-4 py-2.5 backdrop-blur-xl">
 				<button className="flex size-9 items-center justify-center rounded-full text-imsg-blue transition-colors hover:bg-imsg-surface">

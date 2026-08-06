@@ -10,9 +10,9 @@ export default async function MainLayout({ children }: { children: React.ReactNo
 	const companyName = summary?.companyName ?? "";
 
 	return (
-		<div className="flex min-h-screen">
+		<div className="flex min-h-screen bg-[#F2F2F7]">
 			<Sidebar role={role} country={country} companyName={companyName} />
-			<div className="flex min-h-screen bg-[#F2F2F7]">
+			<div className="flex-1 lg:ml-64">
 				<Header country={country} />
 				<main className="pt-16">{children}</main>
 			</div>

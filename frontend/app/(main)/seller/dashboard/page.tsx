@@ -9,8 +9,6 @@ export default async function SellerDashboardPage() {
 	]);
 
 	return (
-		<div className="px-8 py-6 xl:px-12">
-			<DashboardHome companyName={companyName} data={data} recommendedListings={recommendedListings} />
-		</div>
+		<DashboardHome companyName={companyName} data={data} recommendedListings={recommendedListings} />
 	);
 }

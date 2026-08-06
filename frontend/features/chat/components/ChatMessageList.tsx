@@ -21,9 +21,19 @@ type ChatMessageListProps = {
 
 export function ChatMessageList({ messages, myId }: ChatMessageListProps): React.ReactNode {
 	const bottomRef = useRef<HTMLDivElement>(null);
+	const prevLengthRef = useRef(0);
+	const isInitialRef = useRef(true);
 
 	useEffect(() => {
-		bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+		if (isInitialRef.current) {
+			// 최초 로드 시 즉시 맨 아래로
+			bottomRef.current?.scrollIntoView({ behavior: "instant" });
+			isInitialRef.current = false;
+		} else if (messages.length > prevLengthRef.current) {
+			// 새 메시지 수신 시만 스크롤
+			bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+		}
+		prevLengthRef.current = messages.length;
 	}, [messages.length]);
 
 	const lastReadMineId = [...messages]
@@ -33,7 +43,7 @@ export function ChatMessageList({ messages, myId }: ChatMessageListProps): React
 	let lastDate = "";
 
 	return (
-		<div className="flex-1 overflow-y-auto bg-imsg-surface px-4 py-4">
+		<div className="flex-1 overflow-y-auto bg-imsg-surface px-4 py-4" style={{ minHeight: 0 }}>
 			<div className="mx-auto flex max-w-2xl flex-col">
 				{messages.map((message, i) => {
 					const isMine = message.senderId === myId;
@@ -45,7 +55,7 @@ export function ChatMessageList({ messages, myId }: ChatMessageListProps): React
 					const next = messages[i + 1];
 					const sameAsPrev = prev?.senderId === message.senderId;
 					const sameAsNext = next?.senderId === message.senderId;
-					const showTime = !sameAsNext || next?.senderId !== message.senderId;
+					const showTime = !sameAsNext;
 					const isLastMine = isMine && message.id === lastReadMineId;
 					const hasTranslation = !isMine && Boolean(message.translatedContent);
 
@@ -59,40 +69,42 @@ export function ChatMessageList({ messages, myId }: ChatMessageListProps): React
 								</div>
 							)}
 
-							<div className={cn("flex", isMine ? "justify-end" : "justify-start")}>
-								<div className="flex max-w-[70%] flex-col">
-									<div
-										className={cn(
-											"w-fit rounded-[20px] px-3.5 py-2 text-[15px] leading-snug",
-											isMine
-												? "self-end bg-imsg-blue text-white"
-												: "self-start bg-[#E9E9EB] text-black",
-										)}
-									>
+							<div className={cn("flex items-end gap-1.5", isMine ? "flex-row-reverse" : "flex-row")}>
+								{/* 버블 + 번역 */}
+								<div
+									className={cn(
+										"w-fit rounded-[20px] px-3.5 py-2 text-[15px] leading-snug",
+										isMine
+											? "bg-imsg-blue text-white"
+											: "bg-[#E9E9EB] text-black",
+									)}
+								>
+									{/* 번역이 있으면 번역 먼저, 원문 나중 */}
+									{hasTranslation ? (
+										<>
+											<p className="whitespace-pre-wrap break-words">{message.translatedContent}</p>
+											<div className="my-1.5 border-t border-black/10" />
+											<p className="whitespace-pre-wrap break-words text-[13px] italic text-black/50">
+												{message.content}
+											</p>
+										</>
+									) : (
 										<p className="whitespace-pre-wrap break-words">{message.content}</p>
-									</div>
+									)}
+								</div>
 
-									{hasTranslation && (
-										<p className="mt-1 self-start px-1 text-[13px] italic text-imsg-secondary">
-											{message.translatedContent}
-										</p>
+								{/* 시간 + 읽음 */}
+								<div className="flex shrink-0 items-center gap-1 pb-0.5">
+									{isLastMine && (
+										<span className="text-[11px] font-medium text-imsg-blue">읽음</span>
+									)}
+									{showTime && (
+										<span className="text-[11px] text-imsg-secondary">
+											{formatTime(message.createdAt)}
+										</span>
 									)}
 								</div>
 							</div>
-
-							{showTime && (
-								<div className="mt-1 flex justify-center">
-									<span className="text-[11px] text-imsg-secondary">
-										{formatTime(message.createdAt)}
-									</span>
-								</div>
-							)}
-
-							{isLastMine && (
-								<div className="flex justify-end pr-1">
-									<span className="text-[11px] font-medium text-imsg-blue">읽음</span>
-								</div>
-							)}
 						</div>
 					);
 				})}
