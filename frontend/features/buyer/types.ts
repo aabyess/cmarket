@@ -105,6 +105,7 @@ export type ReceivedQuote = {
 	revisedAt: string | null;
 	seller: SellerInfo;
 };
+
 export type ListingWithQuotes = {
 	id: string;
 	title: string;
@@ -114,4 +115,5 @@ export type ListingWithQuotes = {
 	quoteCount: number;
 	lowestPrice: number | null;
 	fastestDays: number | null;
+	createdAt: string;
 };

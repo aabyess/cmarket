@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { cn } from "@/utils/cn";
+import { QuotePdfCard } from "@/features/chat/components/QuotePdfCard";
 import type { ChatMessage } from "@/features/chat/types";
 
 function formatTime(iso: string): string {
@@ -69,29 +70,37 @@ export function ChatMessageList({ messages, myId }: ChatMessageListProps): React
 								</div>
 							)}
 
-							<div className={cn("flex items-end gap-1.5", isMine ? "flex-row-reverse" : "flex-row")}>
+<div className={cn("flex items-end gap-1.5", isMine ? "flex-row-reverse" : "flex-row")}>
 								{/* 버블 + 번역 */}
-								<div
-									className={cn(
-										"w-fit rounded-[20px] px-3.5 py-2 text-[15px] leading-snug",
-										isMine
-											? "bg-imsg-blue text-white"
-											: "bg-[#E9E9EB] text-black",
-									)}
-								>
-									{/* 번역이 있으면 번역 먼저, 원문 나중 */}
-									{hasTranslation ? (
-										<>
-											<p className="whitespace-pre-wrap break-words">{message.translatedContent}</p>
-											<div className="my-1.5 border-t border-black/10" />
-											<p className="whitespace-pre-wrap break-words text-[13px] italic text-black/50">
-												{message.content}
-											</p>
-										</>
-									) : (
-										<p className="whitespace-pre-wrap break-words">{message.content}</p>
-									)}
-								</div>
+								{message.messageType === "quote_pdf" && message.attachmentUrl ? (
+									<QuotePdfCard
+										attachmentUrl={message.attachmentUrl}
+										attachmentName={message.attachmentName}
+										isMine={isMine}
+									/>
+								) : (
+									<div
+										className={cn(
+											"w-fit rounded-[20px] px-3.5 py-2 text-[15px] leading-snug",
+											isMine
+												? "bg-imsg-blue text-white"
+												: "bg-[#E9E9EB] text-black",
+										)}
+									>
+										{/* 번역이 있으면 번역 먼저, 원문 나중 */}
+										{hasTranslation ? (
+											<>
+												<p className="whitespace-pre-wrap break-words">{message.translatedContent}</p>
+												<div className="my-1.5 border-t border-black/10" />
+												<p className="whitespace-pre-wrap break-words text-[13px] italic text-black/50">
+													{message.content}
+												</p>
+											</>
+										) : (
+											<p className="whitespace-pre-wrap break-words">{message.content}</p>
+										)}
+									</div>
+								)}
 
 								{/* 시간 + 읽음 */}
 								<div className="flex shrink-0 items-center gap-1 pb-0.5">

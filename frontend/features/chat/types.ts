@@ -18,6 +18,8 @@ export type ChatRoom = {
 	unreadCount: number;
 };
 
+export type ChatMessageType = "text" | "quote_pdf";
+
 export type ChatMessage = {
 	id: string;
 	senderId: string;
@@ -26,6 +28,9 @@ export type ChatMessage = {
 	createdAt: string;
 	translatedContent: string | null;
 	sourceLang: string | null;
+	messageType: ChatMessageType;
+	attachmentUrl: string | null;
+	attachmentName: string | null;
 };
 
 export type ChatRoomDetail = ChatRoom & {

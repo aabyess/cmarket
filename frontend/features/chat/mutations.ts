@@ -70,7 +70,16 @@ export async function markMessagesRead(quoteId: string): Promise<void> {
 	if (error) console.error("markMessagesRead error:", error);
 }
 
-export async function startChat(quoteId: string): Promise<void> {
+type QuoteSummary = {
+	price: number;
+	currency: string;
+	deliveryDays: number;
+	sellerCompanyName: string;
+	previousPrice: number | null;
+	previousDeliveryDays: number | null;
+};
+
+export async function startChat(quoteId: string, summary: QuoteSummary): Promise<void> {
 	const supabase = createClient();
 
 	const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -79,17 +88,56 @@ export async function startChat(quoteId: string): Promise<void> {
 	const { count } = await supabase
 		.from("messages")
 		.select("*", { count: "exact", head: true })
-		.eq("quote_id", quoteId);
+		.eq("quote_id", quoteId)
+		.eq("message_type", "text");
 
 	if ((count ?? 0) > 0) return;
+	
+	if (summary.previousPrice !== null && summary.previousDeliveryDays !== null) {
+		const priceDiff = summary.price - summary.previousPrice;
+		const daysDiff = summary.deliveryDays - summary.previousDeliveryDays;
 
-	const { error } = await supabase.from("messages").insert({
+		const priceDiffText =
+			priceDiff === 0 ? "변동 없음" : `${priceDiff > 0 ? "+" : ""}${priceDiff.toLocaleString()}`;
+		const daysDiffText = daysDiff === 0 ? "변동 없음" : `${daysDiff > 0 ? "+" : ""}${daysDiff}일`;
+
+		const comparisonContent = [
+			"📊 견적 변경 내역",
+			`가격: ${summary.currency} ${summary.previousPrice.toLocaleString()} → ${summary.currency} ${summary.price.toLocaleString()} (${priceDiffText})`,
+			`납기: ${summary.previousDeliveryDays}일 → ${summary.deliveryDays}일 (${daysDiffText})`,
+		].join("\n");
+
+		const { error: comparisonError } = await supabase.from("messages").insert({
+			quote_id: quoteId,
+			sender_id: user.id,
+			content: comparisonContent,
+		});
+
+		if (comparisonError) throw comparisonError;
+	}
+
+	const summaryContent = [
+		"📋 견적 요약",
+		`가격: ${summary.currency} ${summary.price.toLocaleString()}`,
+		`납기: ${summary.deliveryDays}일`,
+		`업체명: ${summary.sellerCompanyName}`,
+	].join("\n");
+
+	const { error: summaryError } = await supabase.from("messages").insert({
+		quote_id: quoteId,
+		sender_id: user.id,
+		content: summaryContent,
+	});
+
+	if (summaryError) throw summaryError;
+
+	const { error: greetingError } = await supabase.from("messages").insert({
 		quote_id: quoteId,
 		sender_id: user.id,
 		content: "안녕하세요, 견적 관련해서 문의드립니다.",
 	});
 
-	if (error) throw error;
+	if (greetingError) throw greetingError;
 }
 
 export async function awardAndCreateContract(
@@ -128,6 +176,9 @@ export function useSendMessage(quoteId: string, myId: string) {
 				createdAt: new Date().toISOString(),
 				translatedContent: null,
 				sourceLang: null,
+				messageType: "text",
+				attachmentUrl: null,
+				attachmentName: null,
 			};
 
 			queryClient.setQueryData<ChatMessage[]>(queryKey, (old) => [...(old ?? []), optimistic]);

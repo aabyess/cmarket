@@ -49,7 +49,7 @@ export function ChatRoomList({ rooms, activeQuoteId, onSelect }: ChatRoomListPro
 	);
 
 	return (
-		<aside className="flex w-[300px] shrink-0 flex-col border-r border-[#E5E7EB]/60 bg-white">
+		<aside className="flex h-full w-[300px] shrink-0 flex-col border-r border-[#E5E7EB]/60 bg-white">
 			<div className="px-5 pb-2 pt-6">
 				<h1 className="text-3xl font-bold tracking-tight text-[#0f172a]">채팅</h1>
 			</div>
@@ -66,7 +66,7 @@ export function ChatRoomList({ rooms, activeQuoteId, onSelect }: ChatRoomListPro
 				</div>
 			</div>
 
-			<nav className="flex-1 overflow-y-auto px-2 pb-4">
+			<nav className="min-h-0 flex-1 overflow-y-auto px-2 pb-4">
 				{filtered.length === 0 ? (
 					<div className="flex flex-col items-center justify-center py-16 text-center">
 						<p className="text-sm font-medium text-[#1F2937]">대화가 없어요</p>

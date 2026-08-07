@@ -39,9 +39,22 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 
 	async function handleStartChat(quoteId: string) {
 		setStartingId(quoteId);
+		const quote = quotes.find((q) => q.id === quoteId);
 		try {
-			await startChat(quoteId);
-			router.push("/buyer/chat");
+			await fetch("/api/chat/generate-quote-pdf", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ quoteId }),
+			});
+			await startChat(quoteId, {
+				price: quote?.price ?? 0,
+				currency: quote?.currency ?? "USD",
+				deliveryDays: quote?.deliveryDays ?? 0,
+				sellerCompanyName: quote?.seller.companyName ?? "",
+				previousPrice: quote?.previousPrice ?? null,
+				previousDeliveryDays: quote?.previousDeliveryDays ?? null,
+			});
+			router.push(`/buyer/chat?quoteId=${quoteId}`);
 		} catch (err) {
 			console.error(err);
 			setStartingId(null);
@@ -60,7 +73,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 				const { error } = await res.json();
 				throw new Error(error);
 			}
-			router.push("/buyer/chat");
+			router.push(`/buyer/chat?quoteId=${quoteId}`);
 		} catch (err) {
 			console.error(err);
 			alert("낙찰 처리 중 오류가 발생했습니다.");

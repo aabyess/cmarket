@@ -8,10 +8,11 @@ import type { ChatContext, ChatRoom } from "@/features/chat/types";
 
 type ChatViewProps = {
 	context: ChatContext;
+	initialQuoteId?: string;
 };
 
-export function ChatView({ context }: ChatViewProps): React.ReactNode {
-	const [activeQuoteId, setActiveQuoteId] = useState<string | null>(null);
+export function ChatView({ context, initialQuoteId }: ChatViewProps): React.ReactNode {
+	const [activeQuoteId, setActiveQuoteId] = useState<string | null>(initialQuoteId ?? null);
 	const [rooms, setRooms] = useState<ChatRoom[]>(context.rooms);
 
 	const activeRoom = rooms.find((room) => room.quoteId === activeQuoteId) ?? null;
@@ -27,7 +28,6 @@ export function ChatView({ context }: ChatViewProps): React.ReactNode {
 
 	return (
 		<div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-white">
-			{/* 왼쪽 목록 — 고정 */}
 			<div className="flex h-full w-[300px] shrink-0 flex-col overflow-hidden border-r border-[#E5E7EB]/60">
 				<ChatRoomList
 					rooms={rooms}
@@ -36,7 +36,6 @@ export function ChatView({ context }: ChatViewProps): React.ReactNode {
 				/>
 			</div>
 
-			{/* 오른쪽 채팅방 — 고정 */}
 			<div className="flex h-full flex-1 flex-col overflow-hidden">
 				{activeRoom ? (
 					<ChatRoomPanel
