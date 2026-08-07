@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { MessageSquare, Building2, CheckCircle2, ExternalLink } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { startChat } from "@/features/chat/mutations";
+import { ConfirmModal } from "@/components/ui/confirm-modal";
 import type { Currency, ReceivedQuote } from "@/features/buyer/types";
 
 const CURRENCY_SYMBOL: Record<Currency, string> = {
@@ -30,9 +31,11 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 	const router = useRouter();
 	const [startingId, setStartingId] = useState<string | null>(null);
 	const [awardingId, setAwardingId] = useState<string | null>(null);
+	const [confirmQuoteId, setConfirmQuoteId] = useState<string | null>(null);
 
 	const lowestPrice = Math.min(...quotes.map((q) => q.price));
 	const fastestDays = Math.min(...quotes.map((q) => q.deliveryDays));
+	const hasAwardedQuote = quotes.some((q) => q.status === "awarded");
 
 	async function handleStartChat(quoteId: string) {
 		setStartingId(quoteId);
@@ -46,7 +49,6 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 	}
 
 	async function handleAward(quoteId: string) {
-		if (!confirm("낙찰 확정하시겠습니까? 이후 취소가 어렵습니다.")) return;
 		setAwardingId(quoteId);
 		try {
 			const res = await fetch("/api/buyer/award", {
@@ -64,6 +66,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 			alert("낙찰 처리 중 오류가 발생했습니다.");
 		} finally {
 			setAwardingId(null);
+			setConfirmQuoteId(null);
 		}
 	}
 
@@ -207,21 +210,23 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 								>
 									<div className="flex gap-2">
 										<button
-											onClick={() => handleAward(quote.id)}
-											disabled={awardingId === quote.id || quote.status === "awarded"}
+											onClick={() => setConfirmQuoteId(quote.id)}
+											disabled={awardingId === quote.id || hasAwardedQuote}
 											className={cn(
 												"flex w-full items-center justify-center gap-1.5 rounded-lg py-2.5 text-[13px] font-semibold transition-colors",
 												quote.status === "awarded"
-													? "bg-[#059669] text-white"
-													: "bg-[#8B5CF6] text-white hover:bg-[#7C3AED] disabled:opacity-60",
+													? "border border-[#D1FAE5] bg-[#F0FDF4] text-[#059669]"
+													: "border border-[#E5E7EB] bg-white text-[#374151] hover:border-[#8B5CF6] hover:text-[#8B5CF6] disabled:opacity-60",
 											)}
 										>
 											<CheckCircle2 size={14} />
 											{quote.status === "awarded"
-												? "낙찰 확정됨"
-												: awardingId === quote.id
-													? "처리 중..."
-													: "낙찰 확정"}
+												? "확정됨"
+												: hasAwardedQuote
+													? "낙찰 마감"
+													: awardingId === quote.id
+														? "처리 중..."
+														: "낙찰 확정"}
 										</button>
 										<button
 											onClick={() => handleStartChat(quote.id)}
@@ -238,6 +243,17 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 					</tbody>
 				</table>
 			</div>
+
+			<ConfirmModal
+				isOpen={confirmQuoteId !== null}
+				title="낙찰 확정하시겠습니까?"
+				description="이후 취소가 어렵습니다."
+				confirmLabel="확정"
+				variant="danger"
+				isLoading={awardingId === confirmQuoteId}
+				onConfirm={() => confirmQuoteId && handleAward(confirmQuoteId)}
+				onClose={() => setConfirmQuoteId(null)}
+			/>
 		</div>
 	);
 }

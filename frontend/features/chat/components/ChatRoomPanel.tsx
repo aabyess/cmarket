@@ -99,12 +99,22 @@ export function ChatRoomPanel({ room, myId, myRole }: ChatRoomPanelProps): React
 					<span className="text-[11px] text-imsg-secondary">{room.listingTitle}</span>
 				</div>
 				{myRole === "buyer" ? (
-					<button
-						onClick={() => setIsAwardModalOpen(true)}
-						className="rounded-full bg-imsg-blue px-3 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-blue-600"
-					>
-						확정
-					</button>
+					room.quoteStatus === "awarded" ? (
+						<span className="rounded-full bg-imsg-blue/10 px-3 py-1.5 text-[13px] font-semibold text-imsg-blue">
+							낙찰됨
+						</span>
+					) : room.quoteStatus === "rejected" ? (
+						<span className="rounded-full bg-[#F3F4F6] px-3 py-1.5 text-[13px] font-semibold text-[#9CA3AF]">
+							마감
+						</span>
+					) : (
+						<button
+							onClick={() => setIsAwardModalOpen(true)}
+							className="rounded-full bg-imsg-blue px-3 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-blue-600"
+						>
+							확정
+						</button>
+					)
 				) : (
 					<div className="size-9" />
 				)}
@@ -147,14 +157,13 @@ export function ChatRoomPanel({ room, myId, myRole }: ChatRoomPanelProps): React
 							className="max-h-32 w-full resize-none bg-transparent text-[15px] outline-none placeholder:text-imsg-secondary"
 						/>
 					</div>
-					{input.trim() && (
-						<button
-							onClick={handleSend}
-							className="flex size-9 shrink-0 items-center justify-center rounded-full bg-imsg-blue text-white transition-transform active:scale-90"
-						>
-							<ArrowUp className="size-5" strokeWidth={2.5} />
-						</button>
-					)}
+					<button
+						onClick={handleSend}
+						disabled={!input.trim()}
+						className="flex size-9 shrink-0 items-center justify-center rounded-full bg-imsg-blue text-white transition-all active:scale-90 disabled:bg-[#E5E7EB] disabled:text-[#9CA3AF]"
+					>
+						<ArrowUp className="size-5" strokeWidth={2.5} />
+					</button>
 				</div>
 			</div>
 

@@ -26,7 +26,7 @@ export function ChatView({ context }: ChatViewProps): React.ReactNode {
 	}
 
 	return (
-		<div className="flex h-[calc(100vh-4rem)] overflow-hidden">
+		<div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-white">
 			{/* 왼쪽 목록 — 고정 */}
 			<div className="flex h-full w-[300px] shrink-0 flex-col overflow-hidden border-r border-[#E5E7EB]/60">
 				<ChatRoomList
@@ -46,8 +46,8 @@ export function ChatView({ context }: ChatViewProps): React.ReactNode {
 						myRole={context.myRole}
 					/>
 				) : (
-					<div className="flex h-full flex-col items-center justify-center bg-imsg-surface">
-						<div className="mb-3 flex size-14 items-center justify-center rounded-full bg-white">
+					<div className="flex h-full flex-col items-center justify-center bg-white">
+						<div className="mb-3 flex size-14 items-center justify-center rounded-full bg-imsg-surface">
 							<MessageSquare size={26} className="text-[#9CA3AF]" />
 						</div>
 						<p className="text-[15px] font-medium text-[#1F2937]">대화를 선택하세요</p>

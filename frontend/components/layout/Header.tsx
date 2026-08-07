@@ -1,12 +1,14 @@
 "use client";
 
-import { Bell, MessageSquare, User, LogOut, Settings, Globe } from "lucide-react";
+import { Bell, MessageSquare, User, LogOut, Settings } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useLogout } from "@/features/auth/mutations";
 import { createClient } from "@/libs/supabase";
 import { UserBadge } from "@/components/layout/UserBadge";
 import { NotificationBell } from "@/features/notifications/components/NotificationBell";
+import { ProfileEditModal } from "@/features/buyerProfile/components/ProfileEditModal";
+import { getBreadcrumbLabel } from "@/constants/breadcrumb";
 
 type HeaderProps = {
 	country: "indonesia" | "korea";
@@ -14,9 +16,10 @@ type HeaderProps = {
 
 export function Header({ country }: HeaderProps) {
 	const router = useRouter();
+	const pathname = usePathname();
 	const { mutateAsync: logout } = useLogout();
 	const [showUserMenu, setShowUserMenu] = useState(false);
-	const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+	const [showProfileModal, setShowProfileModal] = useState(false);
 	const [userEmail, setUserEmail] = useState<string | null>(null);
 
 	useEffect(() => {
@@ -32,63 +35,82 @@ export function Header({ country }: HeaderProps) {
 	};
 
 	const emailPrefix = userEmail?.split("@")[0] ?? "";
+	const role = pathname.startsWith("/seller") ? "seller" : "buyer";
+	const currentLabel = getBreadcrumbLabel(pathname);
+	const isDashboard = currentLabel === "대시보드";
+
+	function handleProfileClick(): void {
+		setShowUserMenu(false);
+		if (role === "buyer") {
+			setShowProfileModal(true);
+		} else {
+			router.push("/seller/profile/edit");
+		}
+	}
 
 	return (
-		<header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-[#E5E7EB] flex items-center justify-between px-8 z-30 lg:left-64">
-			<div className="flex items-center gap-2 text-sm text-[#6B7280]">
-				<span className="font-medium">대시보드</span>
-				<span className="text-[#D1D5DB]">/</span>
-				<span>현재페이지</span>
+		<header className="fixed left-0 right-0 top-0 z-30 flex h-16 items-center justify-between border-b border-[#E5E7EB]/60 bg-white/80 px-8 backdrop-blur-xl lg:left-64">
+			<div className="flex items-center gap-1.5 text-[13px] text-imsg-secondary">
+				<button
+					onClick={() => router.push(`/${role}/dashboard`)}
+					className={isDashboard ? "font-medium text-[#374151]" : "transition-colors hover:text-[#374151]"}
+				>
+					대시보드
+				</button>
+				{!isDashboard && (
+					<>
+						<span className="text-[#D1D5DB]">/</span>
+						<span className="font-medium text-[#374151]">{currentLabel}</span>
+					</>
+				)}
 			</div>
 
-			<div className="flex items-center gap-2">
-				<div className="relative">
-					{showLanguageMenu && (
-						<div className="absolute right-0 mt-2 w-40 bg-white border border-[#E5E7EB] rounded-lg shadow-lg overflow-hidden z-50">
-							{["한국어", "English", "Bahasa Indonesia"].map((lang) => (
-								<button key={lang} className="w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-gray-50 transition-colors">
-									{lang}
-								</button>
-							))}
-						</div>
-					)}
-				</div>
-
-				<button className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-[#6B7280] hover:text-[#4F46E5]">
-					<MessageSquare size={20} />
+			<div className="flex items-center gap-1">
+				<button
+					onClick={() => router.push(`/${role}/chat`)}
+					className="flex size-9 items-center justify-center rounded-full text-imsg-secondary transition-colors hover:bg-imsg-surface hover:text-imsg-blue"
+				>
+					<MessageSquare size={19} strokeWidth={2} />
 				</button>
 
 				<NotificationBell country={country} />
-				
-				<UserBadge country={country} className="mr-1" />
+
+				<UserBadge country={country} className="mx-1" />
+
 				<div className="relative">
 					<button
 						onClick={() => setShowUserMenu(!showUserMenu)}
-						className="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
-						<div className="w-8 h-8 bg-linear-to-br from-indigo-400 to-indigo-600 rounded-full flex items-center justify-center text-xs font-bold text-white">
+						className="flex items-center rounded-full p-0.5 transition-transform active:scale-95"
+					>
+						<div className="flex size-8 items-center justify-center rounded-full bg-linear-to-br from-imsg-blue to-indigo-600 text-[11px] font-semibold text-white shadow-sm">
 							{emailPrefix.slice(0, 2).toUpperCase()}
 						</div>
 					</button>
+
 					{showUserMenu && (
-						<div className="absolute right-0 mt-2 w-56 bg-white border border-[#E5E7EB] rounded-lg shadow-lg overflow-hidden z-50">
-							<div className="px-4 py-3 border-b border-[#E5E7EB] bg-gray-50">
-								<p className="text-sm font-semibold text-[#1F2937]">{emailPrefix}</p>
-								<p className="text-xs text-[#6B7280]">{userEmail}</p>
+						<div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-2xl border border-[#E5E7EB]/60 bg-white/95 shadow-lg backdrop-blur-xl">
+							<div className="border-b border-[#F3F4F6] px-4 py-3">
+								<p className="text-[14px] font-semibold text-[#1F2937]">{emailPrefix}</p>
+								<p className="text-[12px] text-imsg-secondary">{userEmail}</p>
 							</div>
-							<div className="px-2 py-2 space-y-1">
-								<button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-[#374151] hover:bg-gray-50 rounded-lg transition-colors">
-									<User size={16} />
+							<div className="space-y-0.5 px-1.5 py-1.5">
+								<button
+									onClick={handleProfileClick}
+									className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] text-[#374151] transition-colors hover:bg-imsg-surface"
+								>
+									<User size={15} />
 									프로필
 								</button>
-								<button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-[#374151] hover:bg-gray-50 rounded-lg transition-colors">
-									<Settings size={16} />
+								<button className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] text-[#374151] transition-colors hover:bg-imsg-surface">
+									<Settings size={15} />
 									설정
 								</button>
-								<hr className="my-1 border-[#E5E7EB]" />
+								<div className="my-1 h-px bg-[#F3F4F6]" />
 								<button
 									onClick={handleLogout}
-									className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-									<LogOut size={16} />
+									className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] text-[#DC2626] transition-colors hover:bg-[#FEF2F2]"
+								>
+									<LogOut size={15} />
 									로그아웃
 								</button>
 							</div>
@@ -96,6 +118,8 @@ export function Header({ country }: HeaderProps) {
 					)}
 				</div>
 			</div>
+
+			<ProfileEditModal isOpen={showProfileModal} onClose={() => setShowProfileModal(false)} />
 		</header>
 	);
 }

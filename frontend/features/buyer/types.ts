@@ -75,6 +75,7 @@ export type ListingSummary = {
 	endDate: string;
 	status: ListingStatus;
 	createdAt: string;
+	category: ListingCategory;
 	quoteCount: number;
 };
 

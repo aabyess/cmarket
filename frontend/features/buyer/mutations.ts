@@ -51,3 +51,46 @@ export async function awardQuote(listingId: string, quoteId: string): Promise<vo
 
 	if (listingError) throw listingError;
 }
+
+export async function updateListing(id: string, data: ListingFormData): Promise<void> {
+	const supabase = createClient();
+
+	const { data: { user }, error: userError } = await supabase.auth.getUser();
+	if (userError || !user) throw new Error("로그인이 필요합니다.");
+
+	const { error } = await supabase
+		.from("listings")
+		.update({
+			title: data.title,
+			category: data.category,
+			description: data.description,
+			items: data.items,
+			currency: data.currency,
+			budget_public: data.budgetPublic,
+			total_budget: data.totalBudget,
+			end_date: data.endDate,
+			delivery_days: data.deliveryDays,
+			delivery_provinsi: data.deliveryProvinsi,
+			delivery_city: data.deliveryCity,
+			delivery_address: data.deliveryAddress,
+		})
+		.eq("id", id)
+		.eq("user_id", user.id);
+
+	if (error) throw error;
+}
+
+export async function deleteListing(id: string): Promise<void> {
+	const supabase = createClient();
+
+	const { data: { user }, error: userError } = await supabase.auth.getUser();
+	if (userError || !user) throw new Error("로그인이 필요합니다.");
+
+	const { error } = await supabase
+		.from("listings")
+		.delete()
+		.eq("id", id)
+		.eq("user_id", user.id);
+
+	if (error) throw error;
+}

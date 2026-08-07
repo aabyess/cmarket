@@ -44,7 +44,7 @@ export function ChatMessageList({ messages, myId }: ChatMessageListProps): React
 
 	return (
 		<div className="flex-1 overflow-y-auto bg-imsg-surface px-4 py-4" style={{ minHeight: 0 }}>
-			<div className="mx-auto flex max-w-2xl flex-col">
+			<div className="mx-auto flex min-h-full max-w-2xl flex-col justify-end">
 				{messages.map((message, i) => {
 					const isMine = message.senderId === myId;
 					const dateLabel = formatDateLabel(message.createdAt);

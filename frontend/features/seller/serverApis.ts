@@ -69,9 +69,8 @@ export async function getOpenListings(): Promise<OpenListing[]> {
 	const { data, error } = await supabase
 		.from("listings")
 		.select(
-			"id, title, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, created_at",
+			"id, title, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, created_at, status",
 		)
-		.eq("status", "active")
 		.order("end_date", { ascending: true });
 
 	if (error) throw new Error(error.message);
@@ -98,6 +97,7 @@ export async function getOpenListings(): Promise<OpenListing[]> {
 		deliveryProvinsi: row.delivery_provinsi ?? "",
 		deliveryCity: row.delivery_city ?? "",
 		createdAt: row.created_at,
+		status: row.status ?? "active",
 		hasMyQuote: myQuoteListingIds.has(row.id),
 	}));
 }
@@ -109,7 +109,7 @@ export async function getListingDetail(listingId: string): Promise<ListingDetail
 	const { data, error } = await supabase
 		.from("listings")
 		.select(
-			"id, title, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, delivery_address, delivery_days, created_at, user_id",
+			"id, title, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, delivery_address, delivery_days, created_at, user_id, status",
 		)
 		.eq("id", listingId)
 		.single();
@@ -143,24 +143,25 @@ export async function getListingDetail(listingId: string): Promise<ListingDetail
 			}
 		}
 
-	return {
-		id: data.id,
-		title: data.title,
-		description: data.description ?? "",
-		items: data.items,
-		currency: data.currency,
-		totalBudget: Number(data.total_budget ?? 0),
-		budgetPublic: data.budget_public ?? false,
-		endDate: data.end_date,
-		deliveryProvinsi: data.delivery_provinsi ?? "",
-		deliveryCity: data.delivery_city ?? "",
-		deliveryAddress: data.delivery_address ?? "",
-		deliveryDays: data.delivery_days ?? 0,
-		createdAt: data.created_at,
-		companyName: company?.company_name ?? "",
-		myQuote,
-		hasMyQuote: myQuote !== null,
-	};
+		return {
+			id: data.id,
+			title: data.title,
+			description: data.description ?? "",
+			items: data.items,
+			currency: data.currency,
+			totalBudget: Number(data.total_budget ?? 0),
+			budgetPublic: data.budget_public ?? false,
+			endDate: data.end_date,
+			deliveryProvinsi: data.delivery_provinsi ?? "",
+			deliveryCity: data.delivery_city ?? "",
+			deliveryAddress: data.delivery_address ?? "",
+			deliveryDays: data.delivery_days ?? 0,
+			createdAt: data.created_at,
+			status: data.status ?? "active",
+			companyName: company?.company_name ?? "",
+			myQuote,
+			hasMyQuote: myQuote !== null,
+		};
 }
 
 export async function getMyQuotes(): Promise<MyQuote[]> {
@@ -266,6 +267,7 @@ export async function getRecommendedListings(): Promise<OpenListing[]> {
 		deliveryProvinsi: row.delivery_provinsi ?? "",
 		deliveryCity: row.delivery_city ?? "",
 		createdAt: row.created_at,
+		status: "active" as const,
 		hasMyQuote: false,
 	}));
 }

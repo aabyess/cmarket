@@ -11,9 +11,14 @@ const CURRENCY_SYMBOL: Record<Currency, string> = {
 	KRW: "₩",
 };
 
-function getRemaining(endDate: string): { text: string; isUrgent: boolean; isClosed: boolean } {
+function getRemaining(
+	endDate: string,
+	status: OpenListing["status"],
+): { text: string; isUrgent: boolean; isClosed: boolean } {
 	const diff = new Date(endDate).getTime() - Date.now();
-	if (diff <= 0) return { text: "마감", isUrgent: false, isClosed: true };
+	const isClosed = status !== "active" || diff <= 0;
+
+	if (isClosed) return { text: "마감", isUrgent: false, isClosed: true };
 
 	const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
 	return { text: `D-${days}`, isUrgent: days <= 3, isClosed: false };
@@ -25,7 +30,7 @@ type ListingBrowseCardProps = {
 };
 
 export function ListingBrowseCard({ listing, onClick }: ListingBrowseCardProps) {
-	const remaining = getRemaining(listing.endDate);
+	const remaining = getRemaining(listing.endDate, listing.status);
 	const symbol = CURRENCY_SYMBOL[listing.currency];
 	const itemNames = listing.items.map((item) => item.name).filter(Boolean).join(", ");
 	const location = [listing.deliveryCity, listing.deliveryProvinsi].filter(Boolean).join(", ");

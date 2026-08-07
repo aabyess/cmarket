@@ -53,10 +53,11 @@ export function NotificationBell({ country }: NotificationBellProps): React.Reac
 
 	useEffect(() => {
 		const supabase = createClient();
+		let isCancelled = false;
 		let channel: ReturnType<typeof supabase.channel> | null = null;
 
 		supabase.auth.getUser().then(({ data: { user } }) => {
-			if (!user) return;
+			if (!user || isCancelled) return;
 
 			channel = supabase
 				.channel(`notifications:${user.id}`)
@@ -76,6 +77,7 @@ export function NotificationBell({ country }: NotificationBellProps): React.Reac
 		});
 
 		return () => {
+			isCancelled = true;
 			if (channel) supabase.removeChannel(channel);
 		};
 	}, [queryClient]);

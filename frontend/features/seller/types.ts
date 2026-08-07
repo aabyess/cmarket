@@ -22,6 +22,7 @@ export type OpenListing = {
 	deliveryCity: string;
 	createdAt: string;
 	hasMyQuote: boolean;
+	status: "active" | "closed" | "awarded";
 };
 export type ListingDetail = OpenListing & {
 	deliveryAddress: string;

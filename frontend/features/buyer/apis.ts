@@ -1,5 +1,5 @@
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
-import type { ListingWithQuotes, ReceivedQuote, ListingSummary, BuyerDashboardData } from "@/features/buyer/types";
+import type { ListingWithQuotes, ReceivedQuote, ListingSummary, BuyerDashboardData ,ListingFormData, ListingStatus } from "@/features/buyer/types";
 
 async function getSessionUser() {
 	const supabase = await createServerSupabaseClient();
@@ -53,24 +53,48 @@ export async function getBuyerListings(): Promise<ListingSummary[]> {
 
 	const { data, error } = await supabase
 		.from("listings")
-		.select("id, title, items, currency, total_budget, budget_public, end_date, status, created_at")
+		.select("id, title, items, currency, total_budget, budget_public, end_date, status, created_at, category")
 		.eq("user_id", user.id)
 		.order("created_at", { ascending: false });
 
 	if (error) throw new Error(error.message);
 
-	return (data ?? []).map((row) => ({
-		id: row.id,
-		title: row.title,
-		items: row.items,
-		currency: row.currency,
-		totalBudget: Number(row.total_budget ?? 0),
-		budgetPublic: row.budget_public ?? false,
-		endDate: row.end_date,
-		status: row.status ?? "active",
-		createdAt: row.created_at,
-		quoteCount: 0,
-	}));
+	const listingIds = (data ?? []).map((row) => row.id);
+
+	const { data: quoteRows, error: quoteError } = await supabase
+		.from("quotes")
+		.select("listing_id, status")
+		.in("listing_id", listingIds);
+
+	if (quoteError) throw new Error(quoteError.message);
+
+	const quoteCountMap = new Map<string, number>();
+	const awardedListingIds = new Set<string>();
+	for (const row of quoteRows ?? []) {
+		quoteCountMap.set(row.listing_id, (quoteCountMap.get(row.listing_id) ?? 0) + 1);
+		if (row.status === "awarded") {
+			awardedListingIds.add(row.listing_id);
+		}
+	}
+
+	return (data ?? []).map((row) => {
+		const rawStatus = row.status ?? "active";
+		const status = rawStatus === "closed" && awardedListingIds.has(row.id) ? "awarded" : rawStatus;
+
+		return {
+			id: row.id,
+			title: row.title,
+			items: row.items,
+			currency: row.currency,
+			totalBudget: Number(row.total_budget ?? 0),
+			budgetPublic: row.budget_public ?? false,
+			endDate: row.end_date,
+			status,
+			createdAt: row.created_at,
+			category: row.category,
+			quoteCount: quoteCountMap.get(row.id) ?? 0,
+		};
+	});
 }
 
 export async function getListingsWithQuoteCount(): Promise<ListingWithQuotes[]> {
@@ -157,4 +181,40 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 			},
 		};
 	});
+}
+
+export async function getListingDetail(
+	id: string,
+): Promise<(ListingFormData & { id: string; status: ListingStatus; createdAt: string }) | null> {
+	const { supabase, user } = await getSessionUser();
+	if (!user) return null;
+
+	const { data, error } = await supabase
+		.from("listings")
+		.select(
+			"id, title, category, description, items, currency, budget_public, total_budget, end_date, delivery_days, delivery_provinsi, delivery_city, delivery_address, status, created_at, user_id",
+		)
+		.eq("id", id)
+		.single();
+
+	if (error || !data) return null;
+	if (data.user_id !== user.id) return null;
+
+	return {
+		id: data.id,
+		title: data.title,
+		category: data.category,
+		description: data.description ?? "",
+		items: data.items ?? [],
+		currency: data.currency,
+		budgetPublic: data.budget_public ?? false,
+		totalBudget: Number(data.total_budget ?? 0),
+		endDate: data.end_date,
+		deliveryDays: data.delivery_days ?? 0,
+		deliveryProvinsi: data.delivery_provinsi ?? "",
+		deliveryCity: data.delivery_city ?? "",
+		deliveryAddress: data.delivery_address ?? "",
+		status: data.status ?? "active",
+		createdAt: data.created_at,
+	};
 }
