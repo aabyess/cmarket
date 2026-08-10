@@ -72,7 +72,7 @@ export function ChatMessageList({ messages, myId }: ChatMessageListProps): React
 
 <div className={cn("flex items-end gap-1.5", isMine ? "flex-row-reverse" : "flex-row")}>
 								{/* 버블 + 번역 */}
-								{message.messageType === "quote_pdf" && message.attachmentUrl ? (
+								{(message.messageType === "quote_pdf" || message.messageType === "invoice_pdf") && message.attachmentUrl ? (
 									<QuotePdfCard
 										attachmentUrl={message.attachmentUrl}
 										attachmentName={message.attachmentName}

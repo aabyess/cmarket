@@ -15,7 +15,12 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 		return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
 	}
 
-	const quoteId = path.split("/")[0];
+	const decodedPath = decodeURIComponent(path);
+	const parts = decodedPath.split("/");
+	// 견적서: quoteId/timestamp.pdf
+	// 인보이스: invoices/quoteId/timestamp.pdf
+	const quoteId = parts[0] === "invoices" ? parts[1] : parts[0];
+	
 	const admin = await createServerAdminClient();
 
 	const { data: quote } = await admin

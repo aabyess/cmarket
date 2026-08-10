@@ -21,6 +21,15 @@ export type Product = {
 	sortOrder: number;
 };
 
+export type BankAccount = {
+	id: string | null;
+	bankName: string;
+	accountNumber: string;
+	accountHolder: string;
+	swiftCode: string;
+	currency: string;
+};
+
 export type SellerProfileData = {
 	company: {
 		companyName: string;
@@ -32,4 +41,5 @@ export type SellerProfileData = {
 	};
 	profile: CompanyProfile | null;
 	products: Product[];
+	bankAccount: BankAccount | null;
 };

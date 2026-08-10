@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient, createServerAdminClient } from "@/libs/supabaseServer";
 
-export async function POST(req: NextRequest): Promise<NextResponse> {
-	const { quoteId } = await req.json();
-	if (!quoteId) {
-		return NextResponse.json({ error: "quoteId가 필요합니다." }, { status: 400 });
+export async function GET(req: NextRequest): Promise<NextResponse> {
+	const path = req.nextUrl.searchParams.get("path");
+	if (!path) {
+		return NextResponse.json({ error: "path가 필요합니다." }, { status: 400 });
 	}
 
 	const authClient = await createServerSupabaseClient();
@@ -13,31 +13,41 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
 	}
 
-	const supabase = await createServerAdminClient();
+	const decodedPath = decodeURIComponent(path);
+	const parts = decodedPath.split("/");
+	// 견적서: quoteId/timestamp.pdf
+	// 인보이스: invoices/quoteId/timestamp.pdf
+	const quoteId = parts[0] === "invoices" ? parts[1] : parts[0];
 
-	const { data: contractId, error } = await supabase.rpc("award_quote", {
-		p_quote_id: quoteId,
-		p_buyer_id: user.id,
-	});
+	const admin = await createServerAdminClient();
 
-	if (error) {
-		if (error.message.includes("QUOTE_NOT_FOUND")) {
-			return NextResponse.json({ error: "견적을 찾을 수 없습니다." }, { status: 404 });
-		}
-		if (error.message.includes("LISTING_NOT_FOUND")) {
-			return NextResponse.json({ error: "공고를 찾을 수 없습니다." }, { status: 404 });
-		}
-		if (error.message.includes("FORBIDDEN")) {
-			return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
-		}
-		if (error.message.includes("LISTING_ALREADY_AWARDED")) {
-			return NextResponse.json({ error: "이미 다른 견적이 낙찰된 공고입니다." }, { status: 409 });
-		}
-		if (error.message.includes("ALREADY_AWARDED")) {
-			return NextResponse.json({ error: "이미 낙찰된 견적입니다." }, { status: 409 });
-		}
-		return NextResponse.json({ error: error.message }, { status: 500 });
+	const { data: quote } = await admin
+		.from("quotes")
+		.select("listing_id, seller_id")
+		.eq("id", quoteId)
+		.single();
+
+	if (!quote) {
+		return NextResponse.json({ error: "견적을 찾을 수 없습니다." }, { status: 404 });
 	}
 
-	return NextResponse.json({ contractId });
+	const { data: listing } = await admin
+		.from("listings")
+		.select("user_id")
+		.eq("id", quote.listing_id)
+		.single();
+
+	if (!listing || (listing.user_id !== user.id && quote.seller_id !== user.id)) {
+		return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
+	}
+
+	const { data: signed, error } = await admin.storage
+		.from("quote-documents")
+		.createSignedUrl(decodedPath, 60 * 10);
+
+	if (error || !signed) {
+		return NextResponse.json({ error: error?.message ?? "URL 생성 실패" }, { status: 500 });
+	}
+
+	return NextResponse.json({ url: signed.signedUrl });
 }

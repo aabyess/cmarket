@@ -2,11 +2,11 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, X, Building2, FileText, Globe, Award, ImageIcon, Loader2 } from "lucide-react";
+import { Plus, X, Building2, FileText, Globe, Award, ImageIcon, Loader2, CreditCard } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { uploadImage } from "@/features/sellerProfile/utils";
 import { CATEGORY_LABELS, CATEGORY_OPTIONS } from "@/features/buyer/constants";
-import type { SellerProfileData } from "@/features/sellerProfile/types";
+import type { BankAccount, SellerProfileData } from "@/features/sellerProfile/types";
 
 type ProfileEditFormProps = {
 	data: SellerProfileData;
@@ -15,6 +15,8 @@ type ProfileEditFormProps = {
 const EMPLOYEE_COUNT_OPTIONS = [
 	"1-10명", "11-50명", "51-100명", "101-300명", "301-500명", "500명 이상",
 ];
+
+const CURRENCY_OPTIONS = ["KRW", "USD", "IDR"];
 
 type ProductDraft = {
 	id: string;
@@ -48,6 +50,14 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 	const [products, setProducts] = useState<ProductDraft[]>(
 		data.products.map((p) => ({ ...p, isNew: false })),
 	);
+	const [bankAccount, setBankAccount] = useState<BankAccount>({
+		id: data.bankAccount?.id ?? null,
+		bankName: data.bankAccount?.bankName ?? "",
+		accountNumber: data.bankAccount?.accountNumber ?? "",
+		accountHolder: data.bankAccount?.accountHolder ?? "",
+		swiftCode: data.bankAccount?.swiftCode ?? "",
+		currency: data.bankAccount?.currency ?? "KRW",
+	});
 
 	async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
 		const file = e.target.files?.[0];
@@ -126,6 +136,10 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 		setProducts(products.map((p) => (p.id === id ? { ...p, [field]: value } : p)));
 	}
 
+	function handleBankAccountChange(field: keyof BankAccount, value: string) {
+		setBankAccount((prev) => ({ ...prev, [field]: value }));
+	}
+
 	async function handleSubmit() {
 		setIsLoading(true);
 		try {
@@ -148,6 +162,7 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 						priceRange: p.priceRange,
 						sortOrder: p.sortOrder,
 					})),
+					bankAccount: bankAccount.bankName ? bankAccount : null,
 				}),
 			});
 
@@ -343,6 +358,73 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 				</div>
 			</div>
 
+			{/* 계좌 정보 */}
+			<div className="rounded-2xl border border-[#E5E7EB] bg-white p-6">
+				<h2 className="mb-1 flex items-center gap-2 text-[15px] font-semibold text-[#1F2937]">
+					<CreditCard size={16} className="text-[#6B7280]" />
+					계좌 정보
+				</h2>
+				<p className="mb-4 text-xs text-[#9CA3AF]">인보이스 발행 시 바이어에게 표시됩니다. 국제 송금(T/T) 기준으로 입력해주세요.</p>
+
+				<div className="grid grid-cols-2 gap-4">
+					<div>
+						<label className="mb-1.5 block text-xs font-medium text-[#374151]">은행명</label>
+						<input
+							type="text"
+							value={bankAccount.bankName}
+							onChange={(e) => handleBankAccountChange("bankName", e.target.value)}
+							placeholder="예: 국민은행"
+							className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+						/>
+					</div>
+					<div>
+						<label className="mb-1.5 block text-xs font-medium text-[#374151]">수취 통화</label>
+						<select
+							value={bankAccount.currency}
+							onChange={(e) => handleBankAccountChange("currency", e.target.value)}
+							className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+						>
+							{CURRENCY_OPTIONS.map((opt) => (
+								<option key={opt} value={opt}>{opt}</option>
+							))}
+						</select>
+					</div>
+					<div>
+						<label className="mb-1.5 block text-xs font-medium text-[#374151]">계좌번호</label>
+						<input
+							type="text"
+							value={bankAccount.accountNumber}
+							onChange={(e) => handleBankAccountChange("accountNumber", e.target.value)}
+							placeholder="예: 123-456-789012"
+							className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+						/>
+					</div>
+					<div>
+						<label className="mb-1.5 block text-xs font-medium text-[#374151]">예금주</label>
+						<input
+							type="text"
+							value={bankAccount.accountHolder}
+							onChange={(e) => handleBankAccountChange("accountHolder", e.target.value)}
+							placeholder="예: 대한축구협회"
+							className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+						/>
+					</div>
+					<div className="col-span-2">
+						<label className="mb-1.5 block text-xs font-medium text-[#374151]">
+							SWIFT 코드
+							<span className="ml-1 text-[#9CA3AF]">(국제 송금 시 필요)</span>
+						</label>
+						<input
+							type="text"
+							value={bankAccount.swiftCode}
+							onChange={(e) => handleBankAccountChange("swiftCode", e.target.value)}
+							placeholder="예: CZNBKRSE"
+							className="w-full rounded-lg border border-[#E5E7EB] px-4 py-2.5 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+						/>
+					</div>
+				</div>
+			</div>
+
 			{/* 주요 제품/서비스 */}
 			<div className="rounded-2xl border border-[#E5E7EB] bg-white p-6">
 				<div className="mb-4 flex items-center justify-between">
@@ -387,7 +469,6 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 								placeholder="가격대 (예: 100만원~500만원)"
 								className="mb-3 w-full rounded-lg border border-[#E5E7EB] bg-white px-3 py-2 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
 							/>
-
 							<div className="flex flex-wrap gap-2">
 								{product.imageUrls.map((url) => (
 									<div key={url} className="group relative size-16 overflow-hidden rounded-lg">

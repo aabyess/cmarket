@@ -11,6 +11,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		certifications,
 		categories,
 		products,
+		bankAccount,
 	} = await req.json();
 
 	const supabase = await createServerSupabaseClient();
@@ -38,6 +39,27 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 	if (profileError) {
 		console.error("profileError:", profileError);
 		return NextResponse.json({ error: profileError.message }, { status: 500 });
+	}
+
+	// 계좌 정보 저장
+	if (bankAccount) {
+		const { error: bankError } = await admin
+			.from("bank_accounts")
+			.upsert({
+				profile_id: user.id,
+				bank_name: bankAccount.bankName,
+				account_number: bankAccount.accountNumber,
+				account_holder: bankAccount.accountHolder,
+				swift_code: bankAccount.swiftCode || null,
+				currency: bankAccount.currency || "KRW",
+				is_primary: true,
+				updated_at: new Date().toISOString(),
+			}, { onConflict: "profile_id,is_primary" });
+
+		if (bankError) {
+			console.error("bankError:", bankError);
+			return NextResponse.json({ error: bankError.message }, { status: 500 });
+		}
 	}
 
 	const existingIds = products

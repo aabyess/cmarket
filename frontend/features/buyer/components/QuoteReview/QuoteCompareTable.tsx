@@ -76,6 +76,10 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 				const { error } = await res.json();
 				throw new Error(error);
 			}
+			const { invoiceWarning } = await res.json();
+			if (invoiceWarning) {
+				alert(invoiceWarning);
+			}
 			router.push(`/buyer/chat?quoteId=${quoteId}`);
 		} catch (err) {
 			console.error(err);
