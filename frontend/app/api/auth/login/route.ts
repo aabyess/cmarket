@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerAdminClient } from "@/libs/supabaseServer";
+import { createServerAdminClient, createServerSupabaseClient } from "@/libs/supabaseServer";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
 	const { username, password } = await req.json();
-
 	if (!username || !password) {
 		return NextResponse.json(
 			{ error: "아이디와 비밀번호를 입력해주세요." },
@@ -11,9 +10,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		);
 	}
 
-	const supabase = await createServerAdminClient();
-
-	const { data: email, error: rpcError } = await supabase.rpc("get_email_by_username", {
+	// get_email_by_username은 admin 클라이언트로 (RPC 권한 필요)
+	const admin = await createServerAdminClient();
+	const { data: email, error: rpcError } = await admin.rpc("get_email_by_username", {
 		input_username: username,
 	});
 
@@ -24,6 +23,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		);
 	}
 
+	// signInWithPassword는 일반 클라이언트로 (쿠키 세션 저장 필요)
+	const supabase = await createServerSupabaseClient();
 	const { data, error } = await supabase.auth.signInWithPassword({
 		email: email as string,
 		password,
