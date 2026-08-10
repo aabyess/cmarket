@@ -63,6 +63,9 @@ export type BuyerActivity = {
 	timeText: string;
 };
 
+// DB의 listings.status는 "active" | "closed"만 허용.
+// "awarded"는 DB에 없고, closed 상태인 공고 중 awarded 상태의 quote가 있을 때
+// 프론트에서 파생해서 표시하는 UI 전용 상태값.
 export type ListingStatus = "active" | "closed" | "awarded";
 
 export type ListingSummary = {
@@ -96,6 +99,7 @@ export type ReceivedQuote = {
 	listingId: string;
 	price: number;
 	currency: Currency;
+	priceInIdr: number | null;
 	deliveryDays: number;
 	note: string;
 	status: QuoteStatus;

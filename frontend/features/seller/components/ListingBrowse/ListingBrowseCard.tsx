@@ -77,11 +77,20 @@ export function ListingBrowseCard({ listing, onClick }: ListingBrowseCardProps) 
 			<div className="mt-3 grid grid-cols-2 gap-2 border-t border-[#F3F4F6] pt-3">
 				<div className="min-w-0">
 					<p className="text-[11px] text-[#9CA3AF]">예산</p>
-					<p className="mt-0.5 truncate text-[14px] font-medium text-[#1F2937]">
-						{listing.budgetPublic
-							? `${symbol} ${listing.totalBudget.toLocaleString()}`
-							: "비공개"}
-					</p>
+					{listing.budgetPublic ? (
+						<>
+							<p className="mt-0.5 truncate text-[14px] font-medium text-[#1F2937]">
+								{symbol} {listing.totalBudget.toLocaleString()}
+							</p>
+							{listing.currency !== "KRW" && listing.budgetInKrw !== null && (
+								<p className="truncate text-[11px] text-[#9CA3AF]">
+									약 ₩ {Math.round(listing.budgetInKrw).toLocaleString()}
+								</p>
+							)}
+						</>
+					) : (
+						<p className="mt-0.5 truncate text-[14px] font-medium text-[#1F2937]">비공개</p>
+					)}
 				</div>
 				<div className="min-w-0">
 					<p className="flex items-center gap-1 text-[11px] text-[#9CA3AF]">

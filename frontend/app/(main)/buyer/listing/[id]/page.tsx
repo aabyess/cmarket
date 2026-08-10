@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, MapPin, Package } from "lucide-react";
 import { QuoteReview } from "@/features/buyer/components/QuoteReview";
-import { ListingDetailActions } from "@/features/buyer/components/ListingDetail/ListingDetailActions";
+import { ListingDetailActions } from "@/features/buyer/components/ListingDetailActions";
 import { getListingDetail, getQuotesByListing } from "@/features/buyer/apis";
 
 const CATEGORY_LABEL: Record<string, string> = {

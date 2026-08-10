@@ -1,6 +1,6 @@
 "use client";
 
-import SectionWrapper from "@/features/buyer/components/postListing/SectionWrapper";
+import SectionWrapper from "@/features/buyer/components/PostListingForm/SectionWrapper";
 import type { ListingFormData } from "@/features/buyer/types";
 
 const PROVINSI_LIST = [

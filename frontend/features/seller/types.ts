@@ -16,6 +16,7 @@ export type OpenListing = {
 	items: ListingItem[];
 	currency: Currency;
 	totalBudget: number;
+	budgetInKrw: number | null;
 	budgetPublic: boolean;
 	endDate: string;
 	deliveryProvinsi: string;

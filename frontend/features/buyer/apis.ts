@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
 import type { ListingWithQuotes, ReceivedQuote, ListingSummary, BuyerDashboardData ,ListingFormData, ListingStatus } from "@/features/buyer/types";
+import { getExchangeRates, convertCurrency } from "@/libs/exchangeRate";
 
 async function getSessionUser() {
 	const supabase = await createServerSupabaseClient();
@@ -154,16 +155,19 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 
 	const companyMap = new Map((companies ?? []).map((c) => [c.profile_id, c]));
 	const profileMap = new Map((profiles ?? []).map((p) => [p.profile_id, p]));
+	const rates = await getExchangeRates();
 
 	return data.map((row) => {
 		const company = companyMap.get(row.seller_id);
 		const profile = profileMap.get(row.seller_id);
-
+		const price = Number(row.price);
+	
 		return {
 			id: row.id,
 			listingId: row.listing_id,
-			price: Number(row.price),
+			price,
 			currency: row.currency,
+			priceInIdr: convertCurrency(price, row.currency, "IDR", rates),
 			deliveryDays: row.delivery_days,
 			note: row.note ?? "",
 			status: row.status,

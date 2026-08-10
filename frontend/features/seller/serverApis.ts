@@ -3,6 +3,7 @@ import type { SellerDashboardData } from "@/features/seller/types";
 import type { MyQuote } from "@/features/seller/types";
 import type { ListingDetail, MyQuoteSummary, OpenListing } from "@/features/seller/types";
 import type { Currency } from "@/features/buyer/types";
+import { getExchangeRates, convertCurrency } from "@/libs/exchangeRate";
 
 export async function getSellerCompanyName(): Promise<string> {
 	const supabase = await createServerSupabaseClient();
@@ -76,6 +77,8 @@ export async function getOpenListings(): Promise<OpenListing[]> {
 	if (error) throw new Error(error.message);
 	if (!data) return [];
 
+	const rates = await getExchangeRates();
+
 	let myQuoteListingIds = new Set<string>();
 	if (user) {
 		const { data: myQuotes } = await supabase
@@ -85,26 +88,32 @@ export async function getOpenListings(): Promise<OpenListing[]> {
 		myQuoteListingIds = new Set((myQuotes ?? []).map((q) => q.listing_id));
 	}
 
-	return data.map((row) => ({
-		id: row.id,
-		title: row.title,
-		description: row.description ?? "",
-		items: row.items,
-		currency: row.currency,
-		totalBudget: Number(row.total_budget ?? 0),
-		budgetPublic: row.budget_public ?? false,
-		endDate: row.end_date,
-		deliveryProvinsi: row.delivery_provinsi ?? "",
-		deliveryCity: row.delivery_city ?? "",
-		createdAt: row.created_at,
-		status: row.status ?? "active",
-		hasMyQuote: myQuoteListingIds.has(row.id),
-	}));
+	return data.map((row) => {
+		const totalBudget = Number(row.total_budget ?? 0);
+
+		return {
+			id: row.id,
+			title: row.title,
+			description: row.description ?? "",
+			items: row.items,
+			currency: row.currency,
+			totalBudget,
+			budgetInKrw: convertCurrency(totalBudget, row.currency as Currency, "KRW", rates),
+			budgetPublic: row.budget_public ?? false,
+			endDate: row.end_date,
+			deliveryProvinsi: row.delivery_provinsi ?? "",
+			deliveryCity: row.delivery_city ?? "",
+			createdAt: row.created_at,
+			status: row.status ?? "active",
+			hasMyQuote: myQuoteListingIds.has(row.id),
+		};
+	});
 }
 
 export async function getListingDetail(listingId: string): Promise<ListingDetail | null> {
 	const supabase = await createServerSupabaseClient();
 	const { data: { user } } = await supabase.auth.getUser();
+	const rates = await getExchangeRates();
 
 	const { data, error } = await supabase
 		.from("listings")
@@ -122,46 +131,49 @@ export async function getListingDetail(listingId: string): Promise<ListingDetail
 		.eq("profile_id", data.user_id)
 		.single();
 
-		let myQuote: MyQuoteSummary | null = null;
-		if (user) {
-			const { data: quote } = await supabase
-				.from("quotes")
-				.select("id, price, currency, delivery_days, note, status")
-				.eq("listing_id", listingId)
-				.eq("seller_id", user.id)
-				.maybeSingle();
-	
-			if (quote) {
-				myQuote = {
-					id: quote.id,
-					price: Number(quote.price),
-					currency: quote.currency as Currency,
-					deliveryDays: quote.delivery_days,
-					note: quote.note ?? "",
-					status: quote.status,
-				};
-			}
-		}
+	let myQuote: MyQuoteSummary | null = null;
+	if (user) {
+		const { data: quote } = await supabase
+			.from("quotes")
+			.select("id, price, currency, delivery_days, note, status")
+			.eq("listing_id", listingId)
+			.eq("seller_id", user.id)
+			.maybeSingle();
 
-		return {
-			id: data.id,
-			title: data.title,
-			description: data.description ?? "",
-			items: data.items,
-			currency: data.currency,
-			totalBudget: Number(data.total_budget ?? 0),
-			budgetPublic: data.budget_public ?? false,
-			endDate: data.end_date,
-			deliveryProvinsi: data.delivery_provinsi ?? "",
-			deliveryCity: data.delivery_city ?? "",
-			deliveryAddress: data.delivery_address ?? "",
-			deliveryDays: data.delivery_days ?? 0,
-			createdAt: data.created_at,
-			status: data.status ?? "active",
-			companyName: company?.company_name ?? "",
-			myQuote,
-			hasMyQuote: myQuote !== null,
-		};
+		if (quote) {
+			myQuote = {
+				id: quote.id,
+				price: Number(quote.price),
+				currency: quote.currency as Currency,
+				deliveryDays: quote.delivery_days,
+				note: quote.note ?? "",
+				status: quote.status,
+			};
+		}
+	}
+
+	const totalBudget = Number(data.total_budget ?? 0);
+
+	return {
+		id: data.id,
+		title: data.title,
+		description: data.description ?? "",
+		items: data.items,
+		currency: data.currency,
+		totalBudget,
+		budgetInKrw: convertCurrency(totalBudget, data.currency as Currency, "KRW", rates),
+		budgetPublic: data.budget_public ?? false,
+		endDate: data.end_date,
+		deliveryProvinsi: data.delivery_provinsi ?? "",
+		deliveryCity: data.delivery_city ?? "",
+		deliveryAddress: data.delivery_address ?? "",
+		deliveryDays: data.delivery_days ?? 0,
+		createdAt: data.created_at,
+		status: data.status ?? "active",
+		companyName: company?.company_name ?? "",
+		myQuote,
+		hasMyQuote: myQuote !== null,
+	};
 }
 
 export async function getMyQuotes(): Promise<MyQuote[]> {
@@ -255,19 +267,26 @@ export async function getRecommendedListings(): Promise<OpenListing[]> {
 	if (error) throw new Error(error.message);
 	if (!data) return [];
 
-	return data.map((row) => ({
-		id: row.id,
-		title: row.title,
-		description: row.description ?? "",
-		items: row.items,
-		currency: row.currency,
-		totalBudget: Number(row.total_budget ?? 0),
-		budgetPublic: row.budget_public ?? false,
-		endDate: row.end_date,
-		deliveryProvinsi: row.delivery_provinsi ?? "",
-		deliveryCity: row.delivery_city ?? "",
-		createdAt: row.created_at,
-		status: "active" as const,
-		hasMyQuote: false,
-	}));
+	const rates = await getExchangeRates();
+
+	return data.map((row) => {
+		const totalBudget = Number(row.total_budget ?? 0);
+
+		return {
+			id: row.id,
+			title: row.title,
+			description: row.description ?? "",
+			items: row.items,
+			currency: row.currency,
+			totalBudget,
+			budgetInKrw: convertCurrency(totalBudget, row.currency as Currency, "KRW", rates),
+			budgetPublic: row.budget_public ?? false,
+			endDate: row.end_date,
+			deliveryProvinsi: row.delivery_provinsi ?? "",
+			deliveryCity: row.delivery_city ?? "",
+			createdAt: row.created_at,
+			status: "active" as const,
+			hasMyQuote: false,
+		};
+	});
 }

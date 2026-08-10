@@ -33,7 +33,10 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 	const [awardingId, setAwardingId] = useState<string | null>(null);
 	const [confirmQuoteId, setConfirmQuoteId] = useState<string | null>(null);
 
-	const lowestPrice = Math.min(...quotes.map((q) => q.price));
+	const comparablePrices = quotes
+		.map((q) => q.priceInIdr)
+		.filter((p): p is number => p !== null);
+	const lowestPriceInIdr = comparablePrices.length > 0 ? Math.min(...comparablePrices) : null;
 	const fastestDays = Math.min(...quotes.map((q) => q.deliveryDays));
 	const hasAwardedQuote = quotes.some((q) => q.status === "awarded");
 
@@ -85,18 +88,26 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 
 	function renderCell(quote: ReceivedQuote, key: (typeof ROW_LABELS)[number]["key"]) {
 		const symbol = CURRENCY_SYMBOL[quote.currency];
+		const isLowest = lowestPriceInIdr !== null && quote.priceInIdr === lowestPriceInIdr;
 
 		switch (key) {
 			case "price":
 				return (
-					<span
-						className={cn(
-							"text-[17px] font-semibold",
-							quote.price === lowestPrice ? "text-[#D97706]" : "text-[#1F2937]",
+					<div>
+						<span
+							className={cn(
+								"text-[17px] font-semibold",
+								isLowest ? "text-[#D97706]" : "text-[#1F2937]",
+							)}
+						>
+							{symbol} {quote.price.toLocaleString()}
+						</span>
+						{quote.currency !== "IDR" && quote.priceInIdr !== null && (
+							<p className="mt-0.5 text-xs text-[#9CA3AF]">
+								약 Rp {Math.round(quote.priceInIdr).toLocaleString()}
+							</p>
 						)}
-					>
-						{symbol} {quote.price.toLocaleString()}
-					</span>
+					</div>
 				);
 			case "delivery":
 				return (
@@ -139,58 +150,60 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 							<th className="sticky left-0 z-10 w-32 bg-[#F9FAFB] px-4 py-4 text-left text-xs font-medium text-[#9CA3AF]">
 								항목
 							</th>
-							{quotes.map((quote) => (
-								<th
-									key={quote.id}
-									className={cn(
-										"min-w-[220px] border-l border-[#E5E7EB] px-4 py-4 text-left align-top",
-										quote.status === "awarded" && "bg-[#ECFDF5]",
-									)}
-								>
-									<div className="mb-2 flex flex-wrap gap-1">
-										{quote.price === lowestPrice && (
-											<span className="rounded-full bg-[#FEF3C7] px-2 py-0.5 text-[11px] font-medium text-[#D97706]">
-												최저가
-											</span>
+							{quotes.map((quote) => {
+								const isLowest =
+									lowestPriceInIdr !== null && quote.priceInIdr === lowestPriceInIdr;
+								return (
+									<th
+										key={quote.id}
+										className={cn(
+											"min-w-[220px] border-l border-[#E5E7EB] px-4 py-4 text-left align-top",
+											quote.status === "awarded" && "bg-[#ECFDF5]",
 										)}
-										{quote.deliveryDays === fastestDays && (
-											<span className="rounded-full bg-[#F0FDF4] px-2 py-0.5 text-[11px] font-medium text-[#16A34A]">
-												최속납기
-											</span>
-										)}
-										{quote.status === "awarded" && (
-											<span className="flex items-center gap-0.5 rounded-full bg-[#059669] px-2 py-0.5 text-[11px] font-medium text-white">
-												<CheckCircle2 size={10} />
-												확정
-											</span>
-										)}
-									</div>
-
-									<div className="flex items-center gap-2">
-										{quote.seller.logoUrl ? (
-											<img
-												src={quote.seller.logoUrl}
-												alt={quote.seller.companyName}
-												className="size-8 rounded-lg object-cover"
-											/>
-										) : (
-											<div className="flex size-8 items-center justify-center rounded-lg bg-[#F3F4F6]">
-												<Building2 size={14} className="text-[#9CA3AF]" />
-											</div>
-										)}
-										<button
-											onClick={() => router.push(`/companies/${quote.seller.profileId}`)}
-											className="flex items-center gap-1 text-[14px] font-semibold text-[#1F2937] hover:text-[#3B82F6] hover:underline"
-										>
-											{quote.seller.companyName || "이름 없음"}
-											<ExternalLink size={12} className="text-[#9CA3AF]" />
-										</button>
-									</div>
-								</th>
-							))}
+									>
+										<div className="mb-2 flex flex-wrap gap-1">
+											{isLowest && (
+												<span className="rounded-full bg-[#FEF3C7] px-2 py-0.5 text-[11px] font-medium text-[#D97706]">
+													최저가
+												</span>
+											)}
+											{quote.deliveryDays === fastestDays && (
+												<span className="rounded-full bg-[#F0FDF4] px-2 py-0.5 text-[11px] font-medium text-[#16A34A]">
+													최속납기
+												</span>
+											)}
+											{quote.status === "awarded" && (
+												<span className="flex items-center gap-0.5 rounded-full bg-[#059669] px-2 py-0.5 text-[11px] font-medium text-white">
+													<CheckCircle2 size={10} />
+													확정
+												</span>
+											)}
+										</div>
+										<div className="flex items-center gap-2">
+											{quote.seller.logoUrl ? (
+												<img
+													src={quote.seller.logoUrl}
+													alt={quote.seller.companyName}
+													className="size-8 rounded-lg object-cover"
+												/>
+											) : (
+												<div className="flex size-8 items-center justify-center rounded-lg bg-[#F3F4F6]">
+													<Building2 size={14} className="text-[#9CA3AF]" />
+												</div>
+											)}
+											<button
+												onClick={() => router.push(`/companies/${quote.seller.profileId}`)}
+												className="flex items-center gap-1 text-[14px] font-semibold text-[#1F2937] hover:text-[#3B82F6] hover:underline"
+											>
+												{quote.seller.companyName || "이름 없음"}
+												<ExternalLink size={12} className="text-[#9CA3AF]" />
+											</button>
+										</div>
+									</th>
+								);
+							})}
 						</tr>
 					</thead>
-
 					<tbody className="divide-y divide-[#F3F4F6]">
 						{ROW_LABELS.map((row) => (
 							<tr key={row.key}>
@@ -210,7 +223,6 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 								))}
 							</tr>
 						))}
-
 						<tr className="border-t border-[#E5E7EB]">
 							<td className="sticky left-0 z-10 bg-white px-4 py-4" />
 							{quotes.map((quote) => (
@@ -256,7 +268,6 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 					</tbody>
 				</table>
 			</div>
-
 			<ConfirmModal
 				isOpen={confirmQuoteId !== null}
 				title="낙찰 확정하시겠습니까?"
