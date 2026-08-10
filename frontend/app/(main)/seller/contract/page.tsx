@@ -3,7 +3,6 @@ import { ContractList } from "@/features/contract/components/ContractList";
 
 export default async function SellerContractPage() {
 	const contracts = await getContracts("seller");
-
 	return (
 		<div className="px-8 py-6 xl:px-12">
 			<div className="mb-6">

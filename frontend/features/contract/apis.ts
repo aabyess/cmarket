@@ -10,7 +10,7 @@ export async function getContracts(role: "buyer" | "seller"): Promise<Contract[]
 
 	const { data, error } = await supabase
 		.from("contracts")
-		.select("id, listing_id, quote_id, buyer_id, seller_id, status, created_at, listings(title), quotes(price, currency, delivery_days)")
+		.select("id, listing_id, quote_id, buyer_id, seller_id, status, created_at, payment_receipt_url, payment_confirmed_at, listings(title), quotes(price, currency, delivery_days)")
 		.eq(filter, user.id)
 		.order("created_at", { ascending: false });
 
@@ -22,7 +22,6 @@ export async function getContracts(role: "buyer" | "seller"): Promise<Contract[]
 	);
 
 	const adminSupabase = await createServerAdminClient();
-
 	const { data: companies } = await adminSupabase
 		.from("companies")
 		.select("profile_id, company_name")
@@ -50,6 +49,8 @@ export async function getContracts(role: "buyer" | "seller"): Promise<Contract[]
 				deliveryDays: quote?.delivery_days ?? 0,
 			},
 			partnerCompanyName: companyMap.get(partnerId) ?? "",
+			paymentReceiptUrl: row.payment_receipt_url ?? null,
+			paymentConfirmedAt: row.payment_confirmed_at ?? null,
 		};
 	});
 }

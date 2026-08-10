@@ -17,4 +17,6 @@ export type Contract = {
 		deliveryDays: number;
 	};
 	partnerCompanyName: string;
+	paymentReceiptUrl: string | null;
+	paymentConfirmedAt: string | null;
 };
