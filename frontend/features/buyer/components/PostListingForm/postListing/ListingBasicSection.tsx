@@ -1,6 +1,6 @@
 "use client";
 
-import SectionWrapper from "@/features/buyer/components/PostListingForm/SectionWrapper";
+import SectionWrapper from "@/features/buyer/components/PostListingForm/postListing/SectionWrapper";
 import type { ListingFormData, ListingItem } from "@/features/buyer/types";
 import { CATEGORY_LABELS, CATEGORY_OPTIONS } from "@/features/buyer/constants";
 

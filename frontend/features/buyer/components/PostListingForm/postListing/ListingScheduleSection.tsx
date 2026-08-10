@@ -1,6 +1,6 @@
 "use client";
 
-import SectionWrapper from "@/features/buyer/components/PostListingForm/SectionWrapper";
+import SectionWrapper from "@/features/buyer/components/PostListingForm/postListing/SectionWrapper";
 import type { ListingFormData } from "@/features/buyer/types";
 
 const QUICK_DAYS = [3, 7, 14, 30];

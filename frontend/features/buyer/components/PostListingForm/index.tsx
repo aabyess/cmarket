@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import ListingBasicSection from "@/features/buyer/components/PostListingForm/ListingBasicSection";
-import ListingBudgetSection from "@/features/buyer/components/PostListingForm/ListingBudgetSection";
-import ListingScheduleSection from "@/features/buyer/components/PostListingForm/ListingScheduleSection";
-import ListingDeliverySection from "@/features/buyer/components/PostListingForm/ListingDeliverySection";
-import StickyActionBar from "@/features/buyer/components/PostListingForm/StickyActionBar";
+import ListingBasicSection from "@/features/buyer/components/PostListingForm/postListing/ListingBasicSection";
+import ListingBudgetSection from "@/features/buyer/components/PostListingForm/postListing/ListingBudgetSection";
+import ListingScheduleSection from "@/features/buyer/components/PostListingForm/postListing/ListingScheduleSection";
+import ListingDeliverySection from "@/features/buyer/components/PostListingForm/postListing/ListingDeliverySection";
+import StickyActionBar from "@/features/buyer/components/PostListingForm/postListing/StickyActionBar";
 import { postListing, updateListing } from "@/features/buyer/mutations";
 import type { ListingFormData } from "@/features/buyer/types";
 

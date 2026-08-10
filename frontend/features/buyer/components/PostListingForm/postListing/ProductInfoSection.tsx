@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import SectionWrapper from "@/features/buyer/components/PostListingForm/SectionWrapper";
+import SectionWrapper from "@/features/buyer/components/PostListingForm/postListing/SectionWrapper";
 
 interface Product {
 	id: string;
