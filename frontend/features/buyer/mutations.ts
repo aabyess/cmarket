@@ -1,6 +1,14 @@
 import { createClient } from "@/libs/supabase";
 import { ListingFormData } from "@/features/buyer/types";
 
+const DEFAULT_DEADLINE_DAYS = 7;
+
+function getAutoDeadline(): string {
+	const deadline = new Date();
+	deadline.setDate(deadline.getDate() + DEFAULT_DEADLINE_DAYS);
+	return deadline.toISOString();
+}
+
 export async function postListing(data: ListingFormData) {
 	const supabase = createClient();
 
@@ -16,7 +24,7 @@ export async function postListing(data: ListingFormData) {
 		currency: data.currency,
 		budget_public: data.budgetPublic,
 		total_budget: data.totalBudget,
-		end_date: data.endDate || null,
+		end_date: getAutoDeadline(),
 		delivery_days: data.deliveryDays,
 		delivery_method: data.deliveryMethod,
 		delivery_provinsi: data.deliveryProvinsi,
@@ -52,7 +60,6 @@ export async function updateListing(id: string, data: ListingFormData): Promise<
 			currency: data.currency,
 			budget_public: data.budgetPublic,
 			total_budget: data.totalBudget,
-			end_date: data.endDate || null,
 			delivery_days: data.deliveryDays,
 			delivery_method: data.deliveryMethod,
 			delivery_provinsi: data.deliveryProvinsi,
@@ -82,6 +89,27 @@ export async function deleteListing(id: string): Promise<void> {
 	const { error } = await supabase
 		.from("listings")
 		.delete()
+		.eq("id", id)
+		.eq("user_id", user.id);
+
+	if (error) throw error;
+}
+
+export async function extendListingDeadline(id: string, extendDays: number): Promise<void> {
+	const supabase = createClient();
+
+	const { data: { user }, error: userError } = await supabase.auth.getUser();
+	if (userError || !user) throw new Error("로그인이 필요합니다.");
+
+	const newDeadline = new Date();
+	newDeadline.setDate(newDeadline.getDate() + extendDays);
+
+	const { error } = await supabase
+		.from("listings")
+		.update({
+			end_date: newDeadline.toISOString(),
+			status: "active",
+		})
 		.eq("id", id)
 		.eq("user_id", user.id);
 
