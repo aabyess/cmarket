@@ -1,10 +1,8 @@
 "use client";
 
 import SectionWrapper from "@/features/buyer/components/PostListingForm/postListing/SectionWrapper";
+import UnitSelect from "@/features/buyer/components/PostListingForm/postListing/UnitSelect";
 import type { ListingFormData, ListingItem } from "@/features/buyer/types";
-import { CATEGORY_LABELS, CATEGORY_OPTIONS } from "@/features/buyer/constants";
-
-const UNITS = ["EA", "BOX", "KG", "L", "SET", "M"];
 
 type ListingBasicSectionProps = {
 	form: ListingFormData;
@@ -37,48 +35,24 @@ export default function ListingBasicSection({ form, onChange }: ListingBasicSect
 	return (
 		<SectionWrapper title="무엇이 필요하신가요?" subtitle="구매하려는 물품을 알려주세요">
 			<div className="space-y-5">
-				<div className="space-y-4">
-					<div>
-						<label className="mb-2 block text-sm font-medium text-[#374151]">
-							견적요청 제목 <span className="text-[#3B82F6]">*</span>
-						</label>
-						<input
-							type="text"
-							value={form.title}
-							onChange={(e) => onChange({ title: e.target.value })}
-							placeholder="예: 사무용 프린터 20대 구매"
-							className="w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
-						/>
-					</div>
-
-					<div>
-						<label className="mb-2 block text-sm font-medium text-[#374151]">
-							카테고리 <span className="text-[#3B82F6]">*</span>
-						</label>
-						<div className="grid grid-cols-4 gap-2">
-							{CATEGORY_OPTIONS.map((cat) => (
-								<button
-									key={cat}
-									type="button"
-									onClick={() => onChange({ category: cat })}
-									className={`rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors ${
-										form.category === cat
-											? "border-[#3B82F6] bg-[#EFF6FF] text-[#3B82F6]"
-											: "border-[#E2E8F0] text-[#6B7280] hover:bg-[#F9FAFB]"
-									}`}
-								>
-									{CATEGORY_LABELS[cat]}
-								</button>
-							))}
-						</div>
-					</div>
+				<div>
+					<label className="mb-2 block text-sm font-medium text-[#374151]">
+						견적요청 제목 <span className="text-[#3B82F6]">*</span>
+					</label>
+					<input
+						type="text"
+						value={form.title}
+						onChange={(e) => onChange({ title: e.target.value })}
+						placeholder="예: 사무용 프린터 20대 구매"
+						className="w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+					/>
 				</div>
 
 				<div>
 					<label className="mb-2 block text-sm font-medium text-[#374151]">
 						품목 <span className="text-[#3B82F6]">*</span>
 					</label>
-					<div className="overflow-hidden rounded-lg border border-[#E2E8F0]">
+					<div className="overflow-visible rounded-lg border border-[#E2E8F0]">
 						<table className="w-full text-sm">
 							<thead className="border-b border-[#E2E8F0] bg-[#F9FAFB]">
 								<tr>
@@ -138,15 +112,10 @@ export default function ListingBasicSection({ form, onChange }: ListingBasicSect
 												/>
 											</td>
 											<td className="px-3 py-3">
-												<select
+												<UnitSelect
 													value={item.unit}
-													onChange={(e) => handleUpdateItem(item.id, "unit", e.target.value)}
-													className="w-full rounded border border-[#E2E8F0] px-2 py-1.5 text-sm focus:border-[#3B82F6] focus:outline-none"
-												>
-													{UNITS.map((unit) => (
-														<option key={unit}>{unit}</option>
-													))}
-												</select>
+													onChange={(value) => handleUpdateItem(item.id, "unit", value)}
+												/>
 											</td>
 											<td className="px-3 py-3 text-center">
 												<button
@@ -169,17 +138,6 @@ export default function ListingBasicSection({ form, onChange }: ListingBasicSect
 							품목 추가
 						</button>
 					</div>
-				</div>
-
-				<div>
-					<label className="mb-2 block text-sm font-medium text-[#374151]">상세 설명</label>
-					<textarea
-						value={form.description}
-						onChange={(e) => onChange({ description: e.target.value })}
-						placeholder="용도, 품질 기준, 참고사항 등을 자유롭게 적어주세요"
-						rows={4}
-						className="w-full resize-none rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
-					/>
 				</div>
 			</div>
 		</SectionWrapper>

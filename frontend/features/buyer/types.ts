@@ -9,7 +9,7 @@ export type ListingItem = {
 	price: number;
 };
 
-export type ListingCategory = "office" | "lab" | "machinery" | "chemical";
+export type ListingCategory = "office" | "lab" | "machinery" | "chemical" | "other";
 
 export type ListingFormData = {
 	title: string;
@@ -21,9 +21,18 @@ export type ListingFormData = {
 	totalBudget: number;
 	endDate: string;
 	deliveryDays: number;
+	deliveryMethod: DeliveryMethod;
 	deliveryProvinsi: string;
 	deliveryCity: string;
 	deliveryAddress: string;
+	deliveryAddressDetail: string;
+	deliveryLat: number | null;
+	deliveryLng: number | null;
+	attachments: ListingAttachment[];
+	deliveryTimingMode: DeliveryTimingMode;
+	deliveryDeadlineDate: string | null;
+	contactName: string;
+	contactPhone: string;
 };
 
 export type BuyerTodoHighlight = {
@@ -133,3 +142,14 @@ export type BuyerTradeSummary = {
 	closed: BuyerTradeSummaryBlock;
 	contracts: BuyerTradeSummaryBlock;
 };
+
+export type ListingAttachment = {
+	id: string;
+	fileName: string;
+	storagePath: string;
+	fileSize: number;
+};
+
+export type DeliveryMethod = "sea_fob" | "sea_cif" | "air" | "negotiate";
+
+export type DeliveryTimingMode = "negotiate" | "specific";

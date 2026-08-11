@@ -269,7 +269,7 @@ export async function getListingDetail(
 	const { data, error } = await supabase
 		.from("listings")
 		.select(
-			"id, title, category, description, items, currency, budget_public, total_budget, end_date, delivery_days, delivery_provinsi, delivery_city, delivery_address, status, created_at, user_id",
+			"id, title, category, description, items, currency, budget_public, total_budget, end_date, delivery_days, delivery_method, delivery_provinsi, delivery_city, delivery_address, delivery_address_detail, delivery_lat, delivery_lng, delivery_timing_mode, delivery_deadline_date, attachments, contact_name, contact_phone, status, created_at, user_id",
 		)
 		.eq("id", id)
 		.single();
@@ -288,10 +288,35 @@ export async function getListingDetail(
 		totalBudget: Number(data.total_budget ?? 0),
 		endDate: data.end_date,
 		deliveryDays: data.delivery_days ?? 0,
+		deliveryMethod: data.delivery_method ?? "negotiate",
 		deliveryProvinsi: data.delivery_provinsi ?? "",
 		deliveryCity: data.delivery_city ?? "",
 		deliveryAddress: data.delivery_address ?? "",
+		deliveryAddressDetail: data.delivery_address_detail ?? "",
+		deliveryLat: data.delivery_lat !== null ? Number(data.delivery_lat) : null,
+		deliveryLng: data.delivery_lng !== null ? Number(data.delivery_lng) : null,
+		deliveryTimingMode: data.delivery_timing_mode ?? "negotiate",
+		deliveryDeadlineDate: data.delivery_deadline_date ?? null,
+		attachments: data.attachments ?? [],
+		contactName: data.contact_name ?? "",
+		contactPhone: data.contact_phone ?? "",
 		status: data.status ?? "active",
 		createdAt: data.created_at,
+	};
+}
+
+export async function getBuyerContactInfo(): Promise<{ name: string; phone: string }> {
+	const { supabase, user } = await getSessionUser();
+	if (!user) return { name: "", phone: "" };
+
+	const { data } = await supabase
+		.from("contacts")
+		.select("name, mobile")
+		.eq("profile_id", user.id)
+		.single();
+
+	return {
+		name: data?.name ?? "",
+		phone: data?.mobile ?? "",
 	};
 }
