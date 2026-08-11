@@ -42,7 +42,7 @@ export function PostListingForm({ listingId, initialData }: PostListingFormProps
 
 	async function handlePublish(): Promise<void> {
 		if (!form.title) {
-			alert("공고 제목을 입력해주세요.");
+			alert("견적요청 제목을 입력해주세요.");
 			return;
 		}
 		if (form.items.every((item) => !item.name)) {
@@ -69,7 +69,7 @@ export function PostListingForm({ listingId, initialData }: PostListingFormProps
 			}
 		} catch (err) {
 			console.error(err);
-			alert(isEdit ? "공고 수정에 실패했습니다." : "공고 등록에 실패했습니다.");
+			alert(isEdit ? "견적요청 수정에 실패했습니다." : "견적요청 등록에 실패했습니다.");
 		} finally {
 			setIsLoading(false);
 		}
@@ -83,9 +83,9 @@ export function PostListingForm({ listingId, initialData }: PostListingFormProps
 	return (
 		<div className="space-y-4 p-6 pb-24 lg:p-10">
 			<div>
-				<h1 className="text-2xl font-bold text-[#1F2937]">{isEdit ? "공고 수정" : "공고 등록"}</h1>
+				<h1 className="text-2xl font-bold text-[#1F2937]">{isEdit ? "견적요청 수정" : "견적요청 등록"}</h1>
 				<p className="mt-1 text-sm text-[#6B7280]">
-					{isEdit ? "공고 내용을 수정합니다." : "한국 공급기업들이 견적을 보내드립니다."}
+					{isEdit ? "견적요청 내용을 수정합니다." : "한국 공급기업들이 견적을 보내드립니다."}
 				</p>
 			</div>
 

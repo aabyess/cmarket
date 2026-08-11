@@ -12,7 +12,7 @@ type FilterValue = "all" | QuoteStatus;
 const FILTERS: { value: FilterValue; label: string }[] = [
 	{ value: "all", label: "전체" },
 	{ value: "pending", label: "검토 중" },
-	{ value: "awarded", label: "낙찰" },
+	{ value: "awarded", label: "계약 확정" },
 	{ value: "rejected", label: "미선정" },
 ];
 
@@ -46,7 +46,7 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 					onClick={() => router.push("/seller/listing-browse")}
 					className="mt-5 rounded-lg bg-[#3B82F6] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB]"
 				>
-					공고 둘러보기
+					견적요청 둘러보기
 				</button>
 			</div>
 		);

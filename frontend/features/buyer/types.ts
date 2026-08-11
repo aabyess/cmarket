@@ -121,3 +121,15 @@ export type ListingWithQuotes = {
 	fastestDays: number | null;
 	createdAt: string;
 };
+
+
+export type BuyerTradeSummaryBlock = {
+	total: number;
+	subItems: { label: string; value: number }[];
+};
+
+export type BuyerTradeSummary = {
+	inProgress: BuyerTradeSummaryBlock;
+	closed: BuyerTradeSummaryBlock;
+	contracts: BuyerTradeSummaryBlock;
+};

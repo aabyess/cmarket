@@ -12,7 +12,7 @@ const CURRENCY_SYMBOL: Record<Currency, string> = {
 const STATUS_CONFIG: Record<ListingStatus, { label: string; className: string }> = {
 	active: { label: "진행 중", className: "bg-[#EFF6FF] text-[#3B82F6]" },
 	closed: { label: "마감", className: "bg-[#F3F4F6] text-[#6B7280]" },
-	awarded: { label: "낙찰 완료", className: "bg-[#ECFDF5] text-[#059669]" },
+	awarded: { label: "계약 확정", className: "bg-[#ECFDF5] text-[#059669]" },
 };
 
 const CATEGORY_LABEL: Record<ListingCategory, string> = {

@@ -101,7 +101,7 @@ export function ChatRoomPanel({ room, myId, myRole }: ChatRoomPanelProps): React
 				{myRole === "buyer" ? (
 					room.quoteStatus === "awarded" ? (
 						<span className="rounded-full bg-imsg-blue/10 px-3 py-1.5 text-[13px] font-semibold text-imsg-blue">
-							낙찰됨
+							계약 확정
 						</span>
 					) : room.quoteStatus === "rejected" ? (
 						<span className="rounded-full bg-[#F3F4F6] px-3 py-1.5 text-[13px] font-semibold text-[#9CA3AF]">

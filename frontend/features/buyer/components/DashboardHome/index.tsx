@@ -1,16 +1,17 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Plus, FileText, Mail, FileCheck, TrendingUp, ArrowUpRight, Clock, ArrowRight, Bell, MessageSquare } from "lucide-react";
+import { Mail, ArrowRight, Clock, Bell, MessageSquare } from "lucide-react";
 import { cn } from "@/utils/cn";
-import type { BuyerDashboardData, BuyerTodo } from "@/features/buyer/types";
+import type { BuyerDashboardData, BuyerTodo, BuyerTradeSummary } from "@/features/buyer/types";
 
 type DashboardHomeProps = {
 	companyName: string;
 	data: BuyerDashboardData;
+	tradeSummary: BuyerTradeSummary;
 };
 
-export function DashboardHome({ companyName, data }: DashboardHomeProps) {
+export function DashboardHome({ companyName, data, tradeSummary }: DashboardHomeProps) {
 	const router = useRouter();
 
 	function handleNavigate(href: string) {
@@ -25,84 +26,45 @@ export function DashboardHome({ companyName, data }: DashboardHomeProps) {
 
 	return (
 		<div className="px-8 py-6 xl:px-12">
-			{/* Welcome */}
-			<div className="mb-8 flex items-center justify-between">
+			{/* 배너 (임시) */}
+			<div className="mb-6 flex items-center justify-between rounded-2xl border border-[#E5E7EB] bg-white px-8 py-7">
 				<div>
-					<p className="text-[13px] font-medium text-imsg-secondary">좋은 아침이에요 👋</p>
-					<h1 className="mt-1 text-[28px] font-bold tracking-tight text-[#0f172a]">
-						{companyName}
+					<p className="text-[13px] font-medium text-imsg-secondary">MitraPay</p>
+					<h1 className="mt-1 text-[22px] font-bold tracking-tight text-[#0f172a]">
+						{companyName}님, 환영합니다
 					</h1>
 				</div>
-				<button
-					onClick={() => handleNavigate("/buyer/post-listing")}
-					className="flex items-center gap-1.5 rounded-full bg-imsg-blue px-5 py-2.5 text-[14px] font-semibold text-white transition-colors hover:bg-blue-600 active:scale-95"
-				>
-					<Plus size={15} strokeWidth={2.5} />
-					새 공고
-				</button>
 			</div>
 
-			{/* Stat Cards */}
-			<div className="mb-6 grid grid-cols-2 gap-3 xl:grid-cols-4">
-				{[
-					{
-						label: "진행중 공고",
-						value: `${data.listingCount}건`,
-						icon: FileText,
-						trend: "+2",
-						trendLabel: "지난주 대비",
-						iconBg: "bg-blue-50",
-						iconColor: "text-imsg-blue",
-					},
-					{
-						label: "받은 견적",
-						value: `${data.badges.quotes}건`,
-						icon: Mail,
-						trend: "+8",
-						trendLabel: "이번주 신규",
-						iconBg: "bg-amber-50",
-						iconColor: "text-amber-500",
-					},
-					{
-						label: "진행중 계약",
-						value: "2건",
-						icon: FileCheck,
-						trend: "0",
-						trendLabel: "변동 없음",
-						iconBg: "bg-emerald-50",
-						iconColor: "text-emerald-500",
-					},
-					{
-						label: "이번달 절감액",
-						value: `$${data.savings.totalAmount.toLocaleString()}`,
-						icon: TrendingUp,
-						trend: "+18%",
-						trendLabel: "지난달 대비",
-						iconBg: "bg-emerald-50",
-						iconColor: "text-emerald-500",
-					},
-				].map((stat) => (
-					<div
-						key={stat.label}
-						className="rounded-2xl bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
-					>
-						<div className="flex items-start justify-between">
-							<span className={cn("flex size-9 items-center justify-center rounded-xl", stat.iconBg)}>
-								<stat.icon size={17} className={stat.iconColor} />
-							</span>
-							<span className="flex items-center gap-0.5 text-[11px] font-semibold text-emerald-500">
-								<ArrowUpRight size={11} />
-								{stat.trend}
-							</span>
-						</div>
-						<p className="mt-4 text-[28px] font-bold tracking-tight text-[#0f172a]">
-							{stat.value}
-						</p>
-						<p className="mt-0.5 text-[12px] text-imsg-secondary">
-							{stat.label} · {stat.trendLabel}
-						</p>
+			{/* 나의 거래 요약 */}
+			<div className="mb-6">
+				<div className="mb-3 flex items-center justify-between">
+					<h2 className="text-[15px] font-semibold text-[#0f172a]">나의 거래 요약</h2>
+				</div>
+				<div className="rounded-2xl bg-white p-6 shadow-sm">
+					<div className="grid grid-cols-1 divide-y divide-[#F2F2F7] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+						{[
+							{ label: "진행중", ...tradeSummary.inProgress },
+							{ label: "전체 마감", ...tradeSummary.closed },
+							{ label: "총 계약 건", ...tradeSummary.contracts },
+						].map((block) => (
+							<div key={block.label} className="px-0 py-4 first:pt-0 last:pb-0 sm:px-6 sm:py-0 sm:first:pl-0 sm:last:pr-0">
+								<div className="flex items-baseline justify-between">
+									<p className="text-[13px] font-medium text-imsg-secondary">{block.label}</p>
+									<p className="text-[24px] font-bold text-[#0f172a]">{block.total}건</p>
+								</div>
+								<div className="mt-3 space-y-2">
+									{block.subItems.map((sub) => (
+										<div key={sub.label} className="flex items-center justify-between text-[13px]">
+											<span className="text-imsg-secondary">{sub.label}</span>
+											<span className="font-medium text-[#0f172a]">{sub.value}</span>
+										</div>
+									))}
+								</div>
+							</div>
+						))}
 					</div>
-				))}
+				</div>
 			</div>
 
 			{/* Two Column */}

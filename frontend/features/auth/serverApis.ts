@@ -21,6 +21,7 @@ export type UserSummary = {
 	country: "indonesia" | "korea";
 	companyName: string;
 	email: string;
+	name: string;
 };
 
 export async function getUserSummary(): Promise<UserSummary | null> {
@@ -29,9 +30,10 @@ export async function getUserSummary(): Promise<UserSummary | null> {
 	const user = session?.user;
 	if (!user) return null;
 
-	const [profileResult, companyResult] = await Promise.all([
+	const [profileResult, companyResult, contactResult] = await Promise.all([
 		supabase.from("profiles").select("role, country").eq("id", user.id).single(),
 		supabase.from("companies").select("company_name").eq("profile_id", user.id).single(),
+		supabase.from("contacts").select("name").eq("profile_id", user.id).single(),
 	]);
 
 	if (!profileResult.data) return null;
@@ -41,5 +43,6 @@ export async function getUserSummary(): Promise<UserSummary | null> {
 		country: profileResult.data.country,
 		companyName: companyResult.data?.company_name ?? "",
 		email: user.email ?? "",
+		name: contactResult.data?.name ?? "",
 	};
 }

@@ -15,7 +15,7 @@ const CATEGORY_LABEL: Record<string, string> = {
 const STATUS_LABEL: Record<string, string> = {
 	active: "진행 중",
 	closed: "마감",
-	awarded: "낙찰 완료",
+	awarded: "계약 확정",
 };
 
 const CURRENCY_SYMBOL: Record<string, string> = {
@@ -44,7 +44,7 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
 				className="mb-4 inline-flex items-center gap-1.5 text-sm text-[#6B7280] transition-colors hover:text-[#374151]"
 			>
 				<ChevronLeft size={16} />
-				내 공고로
+				나의 견적으로
 			</Link>
 
 			<div className="mb-5 flex items-start justify-between gap-4">

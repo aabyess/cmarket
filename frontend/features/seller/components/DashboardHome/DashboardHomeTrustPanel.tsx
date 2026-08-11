@@ -13,7 +13,7 @@ const TRUST_ITEMS = [
 	{
 		key: "speed",
 		icon: Zap,
-		label: "평균 낙찰 소요",
+		label: "평균 계약 확정 소요",
 		value: "3~5일",
 		hint: "견적 제출 후",
 	},
@@ -22,7 +22,7 @@ const TRUST_ITEMS = [
 		icon: Receipt,
 		label: "견적 제출 수수료",
 		value: "무료",
-		hint: "낙찰 시에만 정산",
+		hint: "계약 확정 시에만 정산",
 	},
 ];
 

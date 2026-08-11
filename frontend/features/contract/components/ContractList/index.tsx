@@ -104,7 +104,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 					<FileCheck size={26} className="text-[#9CA3AF]" />
 				</div>
 				<p className="text-[17px] font-medium text-[#1F2937]">계약이 없어요</p>
-				<p className="mt-1 text-sm text-[#6B7280]">낙찰 확정 후 계약이 생성됩니다.</p>
+				<p className="mt-1 text-sm text-[#6B7280]">계약 확정 후 계약이 생성됩니다.</p>
 			</div>
 		);
 	}

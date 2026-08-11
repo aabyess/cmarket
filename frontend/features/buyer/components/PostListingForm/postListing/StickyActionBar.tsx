@@ -24,7 +24,7 @@ export default function StickyActionBar({ onSaveDraft, onPublish, isLoading }: S
 						onClick={onPublish}
 						disabled={isLoading}
 						className="px-8 py-2 bg-[#1B3A6B] text-white font-medium rounded-lg hover:bg-[#152d54] disabled:opacity-50 transition-colors">
-						{isLoading ? "등록 중..." : "공고 등록"}
+						{isLoading ? "등록 중..." : "견적요청 등록"}
 					</button>
 				</div>
 			</div>

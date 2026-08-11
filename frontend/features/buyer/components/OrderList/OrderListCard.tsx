@@ -17,7 +17,7 @@ const STATUS_CONFIG: Record <
 	active: { label: "진행 중", className: "bg-[#EFF6FF] text-[#3B82F6]", dotClassName: "bg-[#3B82F6]" },
 	closed: { label: "마감", className: "bg-[#F3F4F6] text-[#6B7280]", dotClassName: "bg-[#9CA3AF]" },
 	awarded: {
-		label: "낙찰 완료",
+		label: "계약 확정",
 		className: "bg-[#ECFDF5] text-[#059669]",
 		dotClassName: "bg-[#059669]",
 	},

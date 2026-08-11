@@ -153,7 +153,7 @@ export async function awardAndCreateContract(
 
 	if (!res.ok) {
 		const { error } = await res.json();
-		throw new Error(error ?? "낙찰 처리 실패");
+		throw new Error(error ?? "계약 확정 실패");
 	}
 }
 

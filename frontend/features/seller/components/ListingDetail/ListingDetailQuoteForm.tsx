@@ -110,7 +110,7 @@ export function ListingDetailQuoteForm({
 					{myQuote.status === "awarded" ? (
 						<span className="flex items-center gap-1 rounded-full bg-[#ECFDF5] px-2.5 py-1 text-xs font-medium text-[#059669]">
 							<CheckCircle2 size={12} />
-							낙찰
+							계약 확정
 						</span>
 					) : myQuote.status === "rejected" ? (
 						<span className="rounded-full bg-[#F3F4F6] px-2.5 py-1 text-xs font-medium text-[#6B7280]">
@@ -179,7 +179,7 @@ export function ListingDetailQuoteForm({
 				<div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-[#F3F4F6]">
 					<Clock size={22} className="text-[#9CA3AF]" />
 				</div>
-				<p className="text-[15px] font-medium text-[#1F2937]">마감된 공고예요</p>
+				<p className="text-[15px] font-medium text-[#1F2937]">마감된 견적요청입니다</p>
 				<p className="mt-1 text-sm text-[#6B7280]">더 이상 견적을 보낼 수 없어요.</p>
 			</div>
 		);

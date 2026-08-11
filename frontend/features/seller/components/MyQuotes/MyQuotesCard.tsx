@@ -13,7 +13,7 @@ const CURRENCY_SYMBOL: Record<Currency, string> = {
 
 const STATUS_CONFIG: Record<QuoteStatus, { label: string; className: string }> = {
 	pending: { label: "검토 중", className: "bg-[#EFF6FF] text-[#3B82F6]" },
-	awarded: { label: "낙찰", className: "bg-[#ECFDF5] text-[#059669]" },
+	awarded: { label: "계약 확정", className: "bg-[#ECFDF5] text-[#059669]" },
 	rejected: { label: "미선정", className: "bg-[#F3F4F6] text-[#6B7280]" },
 };
 
@@ -82,7 +82,7 @@ export function MyQuotesCard({ quote, onViewListing, onGoToChat }: MyQuotesCardP
 					onClick={onViewListing}
 					className="flex-1 rounded-lg border border-[#E5E7EB] py-2.5 text-[13px] font-medium text-[#374151] transition-colors hover:bg-gray-50"
 				>
-					공고 보기
+					견적요청 보기
 				</button>
 				{isAwarded && (
 					<button

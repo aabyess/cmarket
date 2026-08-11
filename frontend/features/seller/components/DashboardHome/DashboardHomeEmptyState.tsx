@@ -3,9 +3,9 @@
 import { Search, FileSearch, Send, Handshake, ChevronRight } from "lucide-react";
 
 const ONBOARDING_STEPS = [
-	{ key: "browse", icon: FileSearch, label: "1. 공고 찾기", hint: "관심 품목 검색" },
+	{ key: "browse", icon: FileSearch, label: "1. 견적요청 찾기", hint: "관심 품목 검색" },
 	{ key: "submit", icon: Send, label: "2. 견적 보내기", hint: "약 5분" },
-	{ key: "win", icon: Handshake, label: "3. 낙찰 & 거래", hint: "보통 3~5일" },
+	{ key: "win", icon: Handshake, label: "3. 계약 확정 & 거래", hint: "보통 3~5일" },
 ];
 
 type DashboardHomeEmptyStateProps = {
@@ -26,7 +26,7 @@ export function DashboardHomeEmptyState({
 			</div>
 
 			<p className="text-[17px] font-medium leading-snug text-[#1F2937]">
-				지금 <span className="text-[#3B82F6]">{openListingCount}건</span>의 공고가 열려 있어요
+				지금 <span className="text-[#3B82F6]">{openListingCount}건</span>의 견적요청이 열려 있어요
 			</p>
 			<p className="mt-1 text-[13px] text-[#6B7280]">
 				인도네시아 발주기관들이 공급기업을 찾고 있어요. 견적은 무료입니다.
@@ -51,7 +51,7 @@ export function DashboardHomeEmptyState({
 				onClick={onBrowseListings}
 				className="mt-3.5 w-full rounded-lg bg-[#3B82F6] py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB]"
 			>
-				열려 있는 공고 둘러보기
+				열려 있는 견적요청 둘러보기
 			</button>
 			<button
 				onClick={onEditProfile}

@@ -11,7 +11,7 @@ export type ViewMode = "grid" | "list";
 const STATUS_OPTIONS: { value: ListingStatus; label: string }[] = [
 	{ value: "active", label: "진행 중" },
 	{ value: "closed", label: "마감" },
-	{ value: "awarded", label: "낙찰 완료" },
+	{ value: "awarded", label: "계약 확정" },
 ];
 
 const SORT_LABEL: Record<SortOption, string> = {
@@ -50,7 +50,7 @@ export function OrderListFilterBar({
 					<input
 						value={search}
 						onChange={(e) => onSearchChange(e.target.value)}
-						placeholder="공고 검색"
+						placeholder="견적요청 검색"
 						className="w-40 bg-transparent text-[14px] leading-none outline-none placeholder:text-[#9CA3AF]"
 					/>
 				</div>

@@ -1,5 +1,5 @@
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
-import type { ListingWithQuotes, ReceivedQuote, ListingSummary, BuyerDashboardData ,ListingFormData, ListingStatus } from "@/features/buyer/types";
+import type { ListingWithQuotes, ReceivedQuote, ListingSummary, BuyerDashboardData, BuyerTradeSummary, ListingFormData, ListingStatus } from "@/features/buyer/types";
 import { getExchangeRates, convertCurrency } from "@/libs/exchangeRate";
 
 async function getSessionUser() {
@@ -45,6 +45,78 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 		savings: { totalAmount: 0, completedCount: 0 },
 		badges: { quotes: 0, chats: 0 },
 		activities: [],
+	};
+}
+
+export async function getBuyerTradeSummary(): Promise<BuyerTradeSummary> {
+	const { supabase, user } = await getSessionUser();
+
+	const empty: BuyerTradeSummary = {
+		inProgress: { total: 0, subItems: [{ label: "견적", value: 0 }, { label: "공고", value: 0 }] },
+		closed: { total: 0, subItems: [{ label: "견적", value: 0 }, { label: "공고", value: 0 }] },
+		contracts: { total: 0, subItems: [{ label: "입금 확인 대기", value: 0 }, { label: "입금 확인 완료", value: 0 }] },
+	};
+
+	if (!user) return empty;
+
+	const { data: listings, error: listingsError } = await supabase
+		.from("listings")
+		.select("id, status")
+		.eq("user_id", user.id);
+
+	if (listingsError) throw new Error(listingsError.message);
+
+	const activeListingIds = (listings ?? []).filter((l) => l.status === "active").map((l) => l.id);
+	const closedListingIds = (listings ?? []).filter((l) => l.status === "closed").map((l) => l.id);
+	const allListingIds = (listings ?? []).map((l) => l.id);
+
+	let activeQuoteCount = 0;
+	let closedQuoteCount = 0;
+
+	if (allListingIds.length > 0) {
+		const { data: quotes, error: quotesError } = await supabase
+			.from("quotes")
+			.select("listing_id")
+			.in("listing_id", allListingIds);
+
+		if (quotesError) throw new Error(quotesError.message);
+
+		activeQuoteCount = (quotes ?? []).filter((q) => activeListingIds.includes(q.listing_id)).length;
+		closedQuoteCount = (quotes ?? []).filter((q) => closedListingIds.includes(q.listing_id)).length;
+	}
+
+	const { data: contracts, error: contractsError } = await supabase
+		.from("contracts")
+		.select("payment_confirmed_at")
+		.eq("buyer_id", user.id);
+
+	if (contractsError) throw new Error(contractsError.message);
+
+	const pendingCount = (contracts ?? []).filter((c) => !c.payment_confirmed_at).length;
+	const confirmedCount = (contracts ?? []).filter((c) => c.payment_confirmed_at).length;
+
+	return {
+		inProgress: {
+			total: activeListingIds.length,
+			subItems: [
+				{ label: "견적", value: activeQuoteCount },
+				{ label: "공고", value: activeListingIds.length },
+			],
+		},
+		closed: {
+			total: closedListingIds.length,
+			subItems: [
+				{ label: "견적", value: closedQuoteCount },
+				{ label: "공고", value: closedListingIds.length },
+			],
+		},
+		contracts: {
+			total: (contracts ?? []).length,
+			subItems: [
+				{ label: "입금 확인 대기", value: pendingCount },
+				{ label: "입금 확인 완료", value: confirmedCount },
+			],
+		},
 	};
 }
 

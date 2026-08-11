@@ -34,7 +34,7 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 						className="flex items-center gap-1.5 rounded-full bg-imsg-blue px-5 py-2.5 text-[14px] font-semibold text-white transition-colors hover:bg-blue-600 active:scale-95"
 					>
 						<Search size={15} strokeWidth={2.5} />
-						공고 탐색
+						견적요청 탐색
 					</button>
 				</div>
 
@@ -42,7 +42,7 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 				<div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
 					{[
 						{
-							label: "공고 중인 건",
+							label: "견적요청 중인 건",
 							value: `${data.openListingCount}건`,
 							icon: FileText,
 							iconBg: "bg-blue-50",
@@ -56,16 +56,9 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 							iconColor: "text-amber-500",
 						},
 						{
-							label: "낙찰 확정",
+							label: "계약 확정",
 							value: `${data.awardedQuoteCount}건`,
 							icon: CheckCircle2,
-							iconBg: "bg-emerald-50",
-							iconColor: "text-emerald-500",
-						},
-						{
-							label: "진행중 계약",
-							value: `${data.contractCount}건`,
-							icon: FileCheck,
 							iconBg: "bg-emerald-50",
 							iconColor: "text-emerald-500",
 						},
@@ -92,7 +85,7 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 						<div className="rounded-2xl bg-white shadow-sm">
 							<div className="flex items-center justify-between px-5 py-4">
 								<div className="flex items-center gap-2">
-									<h2 className="text-[15px] font-semibold text-[#0f172a]">추천 공고</h2>
+									<h2 className="text-[15px] font-semibold text-[#0f172a]">추천 견적</h2>
 									{recommendedListings.length > 0 && (
 										<span className="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-imsg-blue">
 											{recommendedListings.length}건
@@ -103,7 +96,7 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 									onClick={() => handleNavigate("/seller/listing-browse")}
 									className="text-[13px] font-medium text-imsg-blue hover:underline"
 								>
-									전체 공고 보기
+									전체 견적 보기
 								</button>
 							</div>
 
@@ -114,9 +107,9 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 									<div className="mb-3 flex size-12 items-center justify-center rounded-full bg-imsg-surface">
 										<Search size={20} className="text-imsg-secondary" />
 									</div>
-									<p className="text-[14px] font-medium text-[#0f172a]">추천할 공고가 없어요</p>
+									<p className="text-[14px] font-medium text-[#0f172a]">추천할 견적이 없어요</p>
 									<p className="mt-1 text-[12px] text-imsg-secondary">
-										기업 프로필에서 취급 카테고리를 설정하면 맞춤 공고를 추천해드려요.
+										기업 프로필에서 취급 카테고리를 설정하면 맞춤 견적을 추천해드려요.
 									</p>
 									<button
 										onClick={() => handleNavigate("/seller/profile/edit")}
@@ -168,7 +161,7 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 							<div className="grid grid-cols-2 gap-2">
 								{[
 									{
-										label: "공고 탐색",
+										label: "견적 탐색",
 										sub: `${data.openListingCount}건`,
 										icon: Search,
 										iconBg: "bg-blue-50",

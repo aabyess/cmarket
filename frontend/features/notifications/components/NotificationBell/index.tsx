@@ -1,17 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { Bell, MessageSquare, X } from "lucide-react";
 import { useNotifications, NOTIFICATION_QUERY_KEYS } from "@/features/notifications/queries";
 import { markNotificationRead, markAllNotificationsRead, deleteNotification } from "@/features/notifications/apis";
 import { createClient } from "@/libs/supabase";
 import { cn } from "@/utils/cn";
-
-type NotificationBellProps = {
-	country: "indonesia" | "korea";
-};
 
 function formatTime(iso: string): string {
 	const date = new Date(iso);
@@ -24,31 +20,25 @@ function formatTime(iso: string): string {
 	return `${date.getMonth() + 1}/${date.getDate()}`;
 }
 
-export function NotificationBell({ country }: NotificationBellProps): React.ReactNode {
+export function NotificationBell(): React.ReactNode {
 	const router = useRouter();
+	const pathname = usePathname();
 	const queryClient = useQueryClient();
 	const { data: notifications = [] } = useNotifications();
 	const [isOpen, setIsOpen] = useState(false);
 	const ref = useRef<HTMLDivElement>(null);
 
 	const unreadCount = notifications.filter((n) => !n.isRead).length;
-	const chatBasePath = country === "indonesia" ? "/buyer/chat" : "/seller/chat";
+	const chatBasePath = pathname.startsWith("/seller") ? "/seller/chat" : "/buyer/chat";
 
-	// 외부 클릭 시 닫기
 	useEffect(() => {
 		function handleClickOutside(e: MouseEvent): void {
 			if (ref.current && !ref.current.contains(e.target as Node)) {
 				setIsOpen(false);
 			}
 		}
-
-		if (isOpen) {
-			document.addEventListener("mousedown", handleClickOutside);
-		}
-
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-		};
+		if (isOpen) document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, [isOpen]);
 
 	useEffect(() => {
@@ -104,23 +94,19 @@ export function NotificationBell({ country }: NotificationBellProps): React.Reac
 		<div className="relative" ref={ref}>
 			<button
 				onClick={() => setIsOpen(!isOpen)}
-				className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors text-[#6B7280] hover:text-[#4F46E5]"
-			>
-				<Bell size={20} />
+				className="relative flex h-7 w-7 items-center justify-center rounded-md text-sidebar-foreground outline-none hover:bg-black/5 hover:text-[#1F2937] transition-colors"			>
+				<Bell size={16} />
 				{unreadCount > 0 && (
-					<span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+					<span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500" />
 				)}
 			</button>
 
 			{isOpen && (
-				<div className="absolute right-0 mt-2 w-80 bg-white border border-[#E5E7EB] rounded-lg shadow-lg overflow-hidden z-50">
+				<div className="absolute left-0 mt-2 w-80 bg-white border border-[#E5E7EB] rounded-lg shadow-lg overflow-hidden z-50">
 					<div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E7EB]">
 						<p className="text-sm font-semibold text-[#1F2937]">알림</p>
 						{unreadCount > 0 && (
-							<button
-								onClick={handleMarkAllRead}
-								className="text-xs text-[#3B82F6] hover:underline"
-							>
+							<button onClick={handleMarkAllRead} className="text-xs text-[#3B82F6] hover:underline">
 								모두 읽음
 							</button>
 						)}

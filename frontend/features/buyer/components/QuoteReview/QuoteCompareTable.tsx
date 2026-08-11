@@ -83,7 +83,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 			router.push(`/buyer/chat?quoteId=${quoteId}`);
 		} catch (err) {
 			console.error(err);
-			alert("낙찰 처리 중 오류가 발생했습니다.");
+			alert("계약 확정 처리 중 오류가 발생했습니다.");
 		} finally {
 			setAwardingId(null);
 			setConfirmQuoteId(null);
@@ -252,10 +252,10 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 											{quote.status === "awarded"
 												? "확정됨"
 												: hasAwardedQuote
-													? "낙찰 마감"
+													? "계약 마감"
 													: awardingId === quote.id
 														? "처리 중..."
-														: "낙찰 확정"}
+														: "계약 확정"}
 										</button>
 										<button
 											onClick={() => handleStartChat(quote.id)}
@@ -274,7 +274,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 			</div>
 			<ConfirmModal
 				isOpen={confirmQuoteId !== null}
-				title="낙찰 확정하시겠습니까?"
+				title="계약을 확정하시겠습니까?"
 				description="이후 취소가 어렵습니다."
 				confirmLabel="확정"
 				variant="danger"

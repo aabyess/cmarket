@@ -37,38 +37,41 @@ export default function ListingBasicSection({ form, onChange }: ListingBasicSect
 	return (
 		<SectionWrapper title="무엇이 필요하신가요?" subtitle="구매하려는 물품을 알려주세요">
 			<div className="space-y-5">
-				<div>
-					<label className="mb-2 block text-sm font-medium text-[#374151]">
-						공고 제목 <span className="text-[#3B82F6]">*</span>
-						<div>
-							<label className="mb-2 block text-sm font-medium text-[#374151]">
-								카테고리 <span className="text-[#3B82F6]">*</span>
-							</label>
-							<div className="grid grid-cols-4 gap-2">
-								{CATEGORY_OPTIONS.map((cat) => (
-									<button
-										key={cat}
-										type="button"
-										onClick={() => onChange({ category: cat })}
-										className={`rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors ${
-											form.category === cat
-												? "border-[#3B82F6] bg-[#EFF6FF] text-[#3B82F6]"
-												: "border-[#E2E8F0] text-[#6B7280] hover:bg-[#F9FAFB]"
-										}`}
-									>
-										{CATEGORY_LABELS[cat]}
-									</button>
-								))}
-							</div>
+				<div className="space-y-4">
+					<div>
+						<label className="mb-2 block text-sm font-medium text-[#374151]">
+							견적요청 제목 <span className="text-[#3B82F6]">*</span>
+						</label>
+						<input
+							type="text"
+							value={form.title}
+							onChange={(e) => onChange({ title: e.target.value })}
+							placeholder="예: 사무용 프린터 20대 구매"
+							className="w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+						/>
+					</div>
+
+					<div>
+						<label className="mb-2 block text-sm font-medium text-[#374151]">
+							카테고리 <span className="text-[#3B82F6]">*</span>
+						</label>
+						<div className="grid grid-cols-4 gap-2">
+							{CATEGORY_OPTIONS.map((cat) => (
+								<button
+									key={cat}
+									type="button"
+									onClick={() => onChange({ category: cat })}
+									className={`rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors ${
+										form.category === cat
+											? "border-[#3B82F6] bg-[#EFF6FF] text-[#3B82F6]"
+											: "border-[#E2E8F0] text-[#6B7280] hover:bg-[#F9FAFB]"
+									}`}
+								>
+									{CATEGORY_LABELS[cat]}
+								</button>
+							))}
 						</div>
-					</label>
-					<input
-						type="text"
-						value={form.title}
-						onChange={(e) => onChange({ title: e.target.value })}
-						placeholder="예: 사무용 프린터 20대 구매"
-						className="w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
-					/>
+					</div>
 				</div>
 
 				<div>
