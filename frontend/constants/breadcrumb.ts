@@ -14,7 +14,7 @@ export const BREADCRUMB_LABELS: { pattern: RegExp; label: string }[] = [
 	{ pattern: /^\/seller\/quote-submit$/, label: "보낸 견적" },
 	{ pattern: /^\/seller\/chat$/, label: "채팅" },
 	{ pattern: /^\/seller\/contract$/, label: "계약 관리" },
-	{ pattern: /^\/seller\/profile\/edit$/, label: "기업 프로필" },
+	{ pattern: /^\/seller\/profile\/edit$/, label: "기업 홈페이지" },
 ];
 
 export function getBreadcrumbLabel(pathname: string): string {

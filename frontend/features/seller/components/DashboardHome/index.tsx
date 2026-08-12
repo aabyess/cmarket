@@ -109,13 +109,13 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 									</div>
 									<p className="text-sm font-medium text-[#0f172a]">추천할 견적이 없어요</p>
 									<p className="mt-1 text-xs text-imsg-secondary">
-										기업 프로필에서 취급 카테고리를 설정하면 맞춤 견적을 추천해드려요.
+										거래 설정에서 취급 카테고리를 지정하면 맞춤 견적을 추천해드려요.
 									</p>
 									<button
-										onClick={() => handleNavigate("/seller/profile/edit")}
+										onClick={() => handleNavigate("/seller/profile/edit?tab=settings")}
 										className="mt-4 rounded-full border border-[#E5E7EB] px-4 py-2 text-xs font-medium text-[#0f172a] transition-colors hover:bg-imsg-surface"
 									>
-										프로필 편집하기
+										취급 카테고리 설정하기
 									</button>
 								</div>
 							) : (
@@ -196,14 +196,14 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 							</div>
 						</div>
 
-						{/* 기업 프로필 유도 */}
+						{/* 기업 홈페이지 유도 */}
 						<div className="rounded-2xl bg-white p-4 shadow-sm">
 							<div className="flex items-start gap-3">
 								<span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-blue-50">
 									<Building2 size={16} className="text-imsg-blue" />
 								</span>
 								<div className="min-w-0 flex-1">
-									<p className="text-xs font-semibold text-[#0f172a]">기업 프로필 완성하기</p>
+									<p className="text-xs font-semibold text-[#0f172a]">기업 홈페이지 만들기</p>
 									<p className="mt-0.5 text-xs text-imsg-secondary">
 										바이어에게 신뢰를 주는 첫걸음이에요
 									</p>
@@ -211,7 +211,7 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 										onClick={() => handleNavigate("/seller/profile/edit")}
 										className="mt-2 flex items-center gap-1 text-xs font-semibold text-imsg-blue hover:underline"
 									>
-										프로필 편집하기
+										홈페이지 편집하기
 										<ArrowRight size={11} />
 									</button>
 								</div>

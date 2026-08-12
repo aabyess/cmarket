@@ -36,7 +36,7 @@ const SELLER_MENU_ITEMS = [
 	{ label: "보낸 견적", key: "quotes", icon: Send, href: "/seller/quote-submit", badge: null },
 	{ label: "채팅", key: "chat", icon: MessageSquare, href: "/seller/chat", badge: null },
 	{ label: "계약 관리", key: "contract", icon: FileCheck, href: "/seller/contract", badge: null },
-	{ label: "기업 프로필", key: "profile", icon: Building2, href: "/seller/profile/edit", badge: null },
+	{ label: "기업 홈페이지", key: "profile", icon: Building2, href: "/seller/profile/edit", badge: null },
 	{ label: "지원센터", key: "support", icon: HelpCircle, href: "#", badge: null },
 ];
 
