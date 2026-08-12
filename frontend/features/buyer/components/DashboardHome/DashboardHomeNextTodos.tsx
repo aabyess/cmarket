@@ -22,10 +22,10 @@ export function DashboardHomeNextTodos({ todos, onSelectTodo }: DashboardHomeNex
 						className="flex w-full items-center justify-between gap-2.5 rounded-xl border border-[#E5E7EB] bg-white px-3.5 py-3 text-left transition-colors hover:bg-gray-50"
 					>
 						<div className="min-w-0">
-							<p className="truncate text-[13px] font-medium text-[#1F2937]">{todo.title}</p>
+							<p className="truncate text-xs font-medium text-[#1F2937]">{todo.title}</p>
 							<p className="truncate text-xs text-[#6B7280]">{todo.description}</p>
 						</div>
-						<span className="shrink-0 text-[11px] text-[#9CA3AF]">
+						<span className="shrink-0 text-xs text-[#9CA3AF]">
 							{todo.deadlineText ?? "확인 필요"}
 						</span>
 					</button>

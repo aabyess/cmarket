@@ -110,7 +110,7 @@ function MenuItem({ icon: Icon, label, onClick, danger }: MenuItemProps) {
 			type="button"
 			onClick={onClick}
 			className={cn(
-				"flex w-full items-center gap-2.5 px-3.5 py-2 text-left text-[13px] font-medium transition-colors",
+				"flex w-full items-center gap-2.5 px-3.5 py-2 text-left text-xs font-medium transition-colors",
 				danger ? "text-[#DC2626] hover:bg-[#FEF2F2]" : "text-[#374151] hover:bg-[#F9FAFB]",
 			)}
 		>

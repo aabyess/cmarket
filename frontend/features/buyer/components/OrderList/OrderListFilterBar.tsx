@@ -53,14 +53,14 @@ export function OrderListFilterBar({
 				<button
 					onClick={onClearStatus}
 					className={cn(
-						"flex items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors",
+						"flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors",
 						isAllActive
 							? "bg-[#3B82F6] text-white"
 							: "text-[#374151] hover:bg-[#F9FAFB]",
 					)}
 				>
 					전체
-					<span className={cn("text-[11px]", isAllActive ? "text-white/70" : "text-[#9CA3AF]")}>
+					<span className={cn("text-xs", isAllActive ? "text-white/70" : "text-[#9CA3AF]")}>
 						{totalCount}
 					</span>
 				</button>
@@ -71,14 +71,14 @@ export function OrderListFilterBar({
 							key={option.value}
 							onClick={() => onSelectStatus(option.value)}
 							className={cn(
-								"flex items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors",
+								"flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors",
 								isActive
 									? "bg-[#3B82F6] text-white"
 									: "text-[#374151] hover:bg-[#F9FAFB]",
 							)}
 						>
 							{option.label}
-							<span className={cn("text-[11px]", isActive ? "text-white/70" : "text-[#9CA3AF]")}>
+							<span className={cn("text-xs", isActive ? "text-white/70" : "text-[#9CA3AF]")}>
 								{statusCounts[option.value]}
 							</span>
 						</button>
@@ -93,7 +93,7 @@ export function OrderListFilterBar({
 						value={search}
 						onChange={(e) => onSearchChange(e.target.value)}
 						placeholder="견적요청 검색"
-						className="w-36 bg-transparent text-[14px] leading-none outline-none placeholder:text-[#9CA3AF]"
+						className="w-36 bg-transparent text-sm leading-none outline-none placeholder:text-[#9CA3AF]"
 					/>
 				</div>
 
@@ -105,7 +105,7 @@ export function OrderListFilterBar({
 							key={option}
 							onClick={() => onSortChange(option)}
 							className={cn(
-								"rounded-lg px-2.5 py-1.5 text-[13px] font-medium transition-colors",
+								"rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors",
 								sort === option
 									? "bg-[#3B82F6] text-white"
 									: "text-[#374151] hover:bg-[#F9FAFB]",

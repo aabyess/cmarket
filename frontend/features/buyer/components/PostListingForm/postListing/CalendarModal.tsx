@@ -70,7 +70,7 @@ export default function CalendarModal({ isOpen, onClose, value, onSelect }: Cale
 								<ChevronLeft size={15} />
 							</button>
 						</div>
-						<p className="text-[15px] font-semibold text-[#1F2937]">
+						<p className="text-sm font-semibold text-[#1F2937]">
 							{viewYear}년 {viewMonth + 1}월
 						</p>
 						<div className="flex items-center gap-1">

@@ -155,7 +155,7 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 
 			{/* 메뉴 */}
 			<nav className="flex-1 px-3 py-4 overflow-y-auto">
-				<p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-sidebar-foreground/40">
+				<p className="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-sidebar-foreground/40">
 					메뉴
 				</p>
 				<div className="space-y-0.5">
@@ -182,7 +182,7 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 							/>
 							<span className="flex-1">{item.label}</span>
 							{item.badge && (
-								<span className="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-semibold bg-white/20 text-white">
+								<span className="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-semibold bg-white/20 text-white">
 									{item.badge}
 								</span>
 							)}

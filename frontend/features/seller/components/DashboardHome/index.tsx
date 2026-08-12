@@ -24,14 +24,14 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 				{/* Welcome */}
 				<div className="mb-8 flex items-center justify-between">
 					<div>
-						<p className="text-[13px] font-medium text-imsg-secondary">환영합니다 👋</p>
-						<h1 className="mt-1 text-[28px] font-bold tracking-tight text-[#0f172a]">
+						<p className="text-xs font-medium text-imsg-secondary">환영합니다 👋</p>
+						<h1 className="mt-1 text-xl font-bold tracking-tight text-[#0f172a]">
 							{companyName}
 						</h1>
 					</div>
 					<button
 						onClick={() => handleNavigate("/seller/listing-browse")}
-						className="flex items-center gap-1.5 rounded-full bg-imsg-blue px-5 py-2.5 text-[14px] font-semibold text-white transition-colors hover:bg-blue-600 active:scale-95"
+						className="flex items-center gap-1.5 rounded-full bg-imsg-blue px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-600 active:scale-95"
 					>
 						<Search size={15} strokeWidth={2.5} />
 						견적요청 탐색
@@ -70,10 +70,10 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 							<span className={`flex size-9 items-center justify-center rounded-xl ${stat.iconBg}`}>
 								<stat.icon size={17} className={stat.iconColor} />
 							</span>
-							<p className="mt-4 text-[28px] font-bold tracking-tight text-[#0f172a]">
+							<p className="mt-4 text-xl font-bold tracking-tight text-[#0f172a]">
 								{stat.value}
 							</p>
-							<p className="mt-0.5 text-[12px] text-imsg-secondary">{stat.label}</p>
+							<p className="mt-0.5 text-xs text-imsg-secondary">{stat.label}</p>
 						</div>
 					))}
 				</div>
@@ -85,16 +85,16 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 						<div className="rounded-2xl bg-white shadow-sm">
 							<div className="flex items-center justify-between px-5 py-4">
 								<div className="flex items-center gap-2">
-									<h2 className="text-[15px] font-semibold text-[#0f172a]">추천 견적</h2>
+									<h2 className="text-sm font-semibold text-[#0f172a]">추천 견적</h2>
 									{recommendedListings.length > 0 && (
-										<span className="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-imsg-blue">
+										<span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-imsg-blue">
 											{recommendedListings.length}건
 										</span>
 									)}
 								</div>
 								<button
 									onClick={() => handleNavigate("/seller/listing-browse")}
-									className="text-[13px] font-medium text-imsg-blue hover:underline"
+									className="text-xs font-medium text-imsg-blue hover:underline"
 								>
 									전체 견적 보기
 								</button>
@@ -107,13 +107,13 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 									<div className="mb-3 flex size-12 items-center justify-center rounded-full bg-imsg-surface">
 										<Search size={20} className="text-imsg-secondary" />
 									</div>
-									<p className="text-[14px] font-medium text-[#0f172a]">추천할 견적이 없어요</p>
-									<p className="mt-1 text-[12px] text-imsg-secondary">
+									<p className="text-sm font-medium text-[#0f172a]">추천할 견적이 없어요</p>
+									<p className="mt-1 text-xs text-imsg-secondary">
 										기업 프로필에서 취급 카테고리를 설정하면 맞춤 견적을 추천해드려요.
 									</p>
 									<button
 										onClick={() => handleNavigate("/seller/profile/edit")}
-										className="mt-4 rounded-full border border-[#E5E7EB] px-4 py-2 text-[13px] font-medium text-[#0f172a] transition-colors hover:bg-imsg-surface"
+										className="mt-4 rounded-full border border-[#E5E7EB] px-4 py-2 text-xs font-medium text-[#0f172a] transition-colors hover:bg-imsg-surface"
 									>
 										프로필 편집하기
 									</button>
@@ -131,14 +131,14 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 											>
 												<div className="min-w-0 flex-1">
 													<div className="flex items-center gap-2">
-														<span className="shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-imsg-blue">
+														<span className="shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-imsg-blue">
 															내 취급 카테고리
 														</span>
-														<h3 className="truncate text-[14px] font-semibold text-[#0f172a]">
+														<h3 className="truncate text-sm font-semibold text-[#0f172a]">
 															{listing.title}
 														</h3>
 													</div>
-													<p className="mt-0.5 text-[12px] text-imsg-secondary">
+													<p className="mt-0.5 text-xs text-imsg-secondary">
 														{listing.deliveryProvinsi} {listing.deliveryCity} · 마감 {new Date(listing.endDate).toLocaleDateString("ko-KR")}
 													</p>
 												</div>
@@ -155,7 +155,7 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 					<div className="space-y-4">
 						{/* 바로가기 */}
 						<div className="rounded-2xl bg-white p-4 shadow-sm">
-							<h2 className="mb-3 text-[13px] font-semibold uppercase tracking-wider text-imsg-secondary">
+							<h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-imsg-secondary">
 								바로가기
 							</h2>
 							<div className="grid grid-cols-2 gap-2">
@@ -186,10 +186,10 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 											<link.icon size={16} className={link.color} />
 										</span>
 										<span>
-											<span className="block text-[13px] font-semibold text-[#0f172a]">
+											<span className="block text-xs font-semibold text-[#0f172a]">
 												{link.label}
 											</span>
-											<span className="block text-[11px] text-imsg-secondary">{link.sub}</span>
+											<span className="block text-xs text-imsg-secondary">{link.sub}</span>
 										</span>
 									</button>
 								))}
@@ -203,13 +203,13 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 									<Building2 size={16} className="text-imsg-blue" />
 								</span>
 								<div className="min-w-0 flex-1">
-									<p className="text-[13px] font-semibold text-[#0f172a]">기업 프로필 완성하기</p>
-									<p className="mt-0.5 text-[12px] text-imsg-secondary">
+									<p className="text-xs font-semibold text-[#0f172a]">기업 프로필 완성하기</p>
+									<p className="mt-0.5 text-xs text-imsg-secondary">
 										바이어에게 신뢰를 주는 첫걸음이에요
 									</p>
 									<button
 										onClick={() => handleNavigate("/seller/profile/edit")}
-										className="mt-2 flex items-center gap-1 text-[12px] font-semibold text-imsg-blue hover:underline"
+										className="mt-2 flex items-center gap-1 text-xs font-semibold text-imsg-blue hover:underline"
 									>
 										프로필 편집하기
 										<ArrowRight size={11} />
@@ -221,14 +221,14 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 						{/* 최근 활동 */}
 						<div className="rounded-2xl bg-white shadow-sm">
 							<div className="px-4 py-3">
-								<h2 className="text-[13px] font-semibold uppercase tracking-wider text-imsg-secondary">
+								<h2 className="text-xs font-semibold uppercase tracking-wider text-imsg-secondary">
 									최근 활동
 								</h2>
 							</div>
 							<div className="h-px bg-[#F2F2F7]" />
 							<ul className="p-2">
 								{data.activities.length === 0 ? (
-									<li className="py-8 text-center text-[13px] text-imsg-secondary">
+									<li className="py-8 text-center text-xs text-imsg-secondary">
 										아직 활동이 없어요
 									</li>
 								) : (
@@ -241,8 +241,8 @@ export function DashboardHome({ companyName, data, recommendedListings }: Dashbo
 												<Bell size={12} className="text-imsg-blue" />
 											</span>
 											<div className="min-w-0 flex-1">
-												<p className="text-[13px] text-[#0f172a]">{activity.title}</p>
-												<p className="mt-0.5 text-[11px] text-imsg-secondary">{activity.timeText}</p>
+												<p className="text-xs text-[#0f172a]">{activity.title}</p>
+												<p className="mt-0.5 text-xs text-imsg-secondary">{activity.timeText}</p>
 											</div>
 										</li>
 									))

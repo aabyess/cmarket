@@ -20,7 +20,7 @@ export default function ListingCategorySection({ form, onChange }: ListingCatego
                         type="button"
                         onClick={() => onChange({ category: cat })}
                         className={cn(
-                            "rounded-lg border px-2.5 py-2 text-[13px] font-medium transition-colors",
+                            "rounded-lg border px-2.5 py-2 text-xs font-medium transition-colors",
                             form.category === cat
                                 ? "border-[#3B82F6] bg-[#3B82F6] text-white"
                                 : "border-[#E2E8F0] bg-white text-[#374151] hover:bg-[#F9FAFB]",

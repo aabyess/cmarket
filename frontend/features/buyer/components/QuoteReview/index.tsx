@@ -15,7 +15,7 @@ export function QuoteReview({ quotes }: QuoteReviewProps) {
 				<div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F3F4F6]">
 					<Mail size={26} className="text-[#9CA3AF]" />
 				</div>
-				<p className="text-[17px] font-medium text-[#1F2937]">아직 견적이 없어요</p>
+				<p className="text-base font-medium text-[#1F2937]">아직 견적이 없어요</p>
 				<p className="mt-1 text-sm text-[#6B7280]">보통 2~3일 안에 첫 견적이 도착해요.</p>
 			</div>
 		);

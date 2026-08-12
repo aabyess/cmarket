@@ -34,14 +34,14 @@ export function ListingDetailActions({ listingId }: ListingDetailActionsProps): 
 		<div className="flex shrink-0 items-center gap-2">
 			<Link
 				href={`/buyer/listing/${listingId}/edit`}
-				className="flex items-center gap-1.5 rounded-lg border border-[#E5E7EB] bg-white px-3.5 py-2 text-[13px] font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]"
+				className="flex items-center gap-1.5 rounded-lg border border-[#E5E7EB] bg-white px-3.5 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]"
 			>
 				<Pencil size={14} />
 				수정
 			</Link>
 			<button
 				onClick={() => setIsConfirmOpen(true)}
-				className="flex items-center gap-1.5 rounded-lg border border-[#FEE2E2] bg-white px-3.5 py-2 text-[13px] font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2]"
+				className="flex items-center gap-1.5 rounded-lg border border-[#FEE2E2] bg-white px-3.5 py-2 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2]"
 			>
 				<Trash2 size={14} />
 				삭제

@@ -103,7 +103,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 				<div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F3F4F6]">
 					<FileCheck size={26} className="text-[#9CA3AF]" />
 				</div>
-				<p className="text-[17px] font-medium text-[#1F2937]">계약이 없어요</p>
+				<p className="text-base font-medium text-[#1F2937]">계약이 없어요</p>
 				<p className="mt-1 text-sm text-[#6B7280]">계약 확정 후 계약이 생성됩니다.</p>
 			</div>
 		);
@@ -123,7 +123,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 						{/* 헤더 */}
 						<div className="mb-4 flex items-start justify-between gap-4">
 							<div>
-								<p className="text-[17px] font-semibold text-[#1F2937]">
+								<p className="text-base font-semibold text-[#1F2937]">
 									{contract.listing.title}
 								</p>
 								<p className="mt-1 flex items-center gap-1.5 text-sm text-[#6B7280]">
@@ -137,7 +137,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 						</div>
 
 						{/* 메타 정보 */}
-						<div className="mb-4 flex flex-wrap gap-4 text-[13px] text-[#6B7280]">
+						<div className="mb-4 flex flex-wrap gap-4 text-xs text-[#6B7280]">
 							<span className="flex items-center gap-1.5">
 								<DollarSign size={13} />
 								{CURRENCY_SYMBOL[contract.quote.currency]} {contract.quote.price.toLocaleString()}
@@ -154,7 +154,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 
 						{/* 상태 배너 */}
 						{contract.paymentConfirmedAt && (
-							<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#F0FDF4] px-3.5 py-2.5 text-[13px] font-medium text-[#16A34A]">
+							<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#F0FDF4] px-3.5 py-2.5 text-xs font-medium text-[#16A34A]">
 								<CheckCircle2 size={14} />
 								입금 확인 완료 · {new Date(contract.paymentConfirmedAt).toLocaleDateString("ko-KR")}
 							</div>
@@ -162,7 +162,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 
 						{/* Buyer: 영수증 업로드 대기 배너 */}
 						{role === "buyer" && contract.paymentReceiptUrl && !contract.paymentConfirmedAt && (
-							<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#EFF6FF] px-3.5 py-2.5 text-[13px] font-medium text-[#3B82F6]">
+							<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#EFF6FF] px-3.5 py-2.5 text-xs font-medium text-[#3B82F6]">
 								<CheckCircle2 size={14} />
 								영수증 업로드 완료 · 공급기업 확인 대기 중
 							</div>
@@ -170,7 +170,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 
 						{/* Seller: 영수증 도착 배너 */}
 						{role === "seller" && contract.paymentReceiptUrl && !contract.paymentConfirmedAt && (
-							<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#FFFBEB] px-3.5 py-2.5 text-[13px] font-medium text-[#D97706]">
+							<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#FFFBEB] px-3.5 py-2.5 text-xs font-medium text-[#D97706]">
 								<FileText size={14} />
 								송금 영수증 도착 · 확인 후 입금 처리해주세요
 							</div>
@@ -178,7 +178,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 
 						{/* Seller: 영수증 없을 때 안내 */}
 						{role === "seller" && !contract.paymentReceiptUrl && contract.status === "ongoing" && !contract.paymentConfirmedAt && (
-							<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#F9FAFB] px-3.5 py-2.5 text-[13px] text-[#9CA3AF]">
+							<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#F9FAFB] px-3.5 py-2.5 text-xs text-[#9CA3AF]">
 								<Clock size={14} />
 								바이어의 송금 영수증을 기다리는 중
 							</div>
@@ -204,7 +204,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 											<>
 												<button
 													onClick={() => handleViewReceipt(contract.id)}
-													className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] py-2.5 text-[13px] font-medium text-[#3B82F6] transition-colors hover:bg-[#DBEAFE]"
+													className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] py-2.5 text-xs font-medium text-[#3B82F6] transition-colors hover:bg-[#DBEAFE]"
 												>
 													<FileText size={14} />
 													영수증 보기
@@ -212,7 +212,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 												<button
 													onClick={() => fileInputRefs.current[contract.id]?.click()}
 													disabled={uploadingId === contract.id}
-													className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] py-2.5 text-[13px] font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB] disabled:opacity-60"
+													className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB] disabled:opacity-60"
 												>
 													<Upload size={14} />
 													{uploadingId === contract.id ? "업로드 중..." : "재업로드"}
@@ -222,7 +222,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 											<button
 												onClick={() => fileInputRefs.current[contract.id]?.click()}
 												disabled={uploadingId === contract.id}
-												className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#3B82F6] py-2.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
+												className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#3B82F6] py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
 											>
 												<Upload size={14} />
 												{uploadingId === contract.id ? "업로드 중..." : "송금 영수증 업로드"}
@@ -231,7 +231,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 										<button
 											onClick={() => setCancelConfirmId(contract.id)}
 											disabled={loadingId === contract.id}
-											className="flex-1 rounded-xl border border-[#E5E7EB] py-2.5 text-[13px] font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60"
+											className="flex-1 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60"
 										>
 											계약 취소
 										</button>
@@ -244,7 +244,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 										{contract.paymentReceiptUrl && (
 											<button
 												onClick={() => handleViewReceipt(contract.id)}
-												className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] py-2.5 text-[13px] font-medium text-[#3B82F6] transition-colors hover:bg-[#DBEAFE]"
+												className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] py-2.5 text-xs font-medium text-[#3B82F6] transition-colors hover:bg-[#DBEAFE]"
 											>
 												<FileText size={14} />
 												영수증 확인
@@ -254,7 +254,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 											onClick={() => setConfirmId(contract.id)}
 											disabled={loadingId === contract.id}
 											className={cn(
-												"flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-[13px] font-semibold transition-colors disabled:opacity-60",
+												"flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-semibold transition-colors disabled:opacity-60",
 												contract.paymentReceiptUrl
 													? "bg-[#16A34A] text-white hover:bg-[#15803D]"
 													: "border border-[#E5E7EB] bg-white text-[#9CA3AF]",
@@ -266,7 +266,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 										<button
 											onClick={() => setCancelConfirmId(contract.id)}
 											disabled={loadingId === contract.id}
-											className="flex-1 rounded-xl border border-[#E5E7EB] py-2.5 text-[13px] font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60"
+											className="flex-1 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60"
 										>
 											계약 취소
 										</button>

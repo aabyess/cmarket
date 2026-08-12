@@ -85,32 +85,32 @@ export function OrderListCard({ listing, onClick }: OrderListCardProps): React.R
 				</span>
 			</div>
 
-			<p className="text-[15px] font-semibold text-[#1F2937]">{listing.title}</p>
+			<p className="text-sm font-semibold text-[#1F2937]">{listing.title}</p>
 
 			{itemNames && (
-				<p className="mt-1 flex items-center gap-1.5 truncate text-[13px] text-[#6B7280]">
+				<p className="mt-1 flex items-center gap-1.5 truncate text-xs text-[#6B7280]">
 					<Package size={13} className="shrink-0" />
 					{itemNames}
 				</p>
 			)}
 
-			<p className="mt-1.5 text-[11px] text-[#9CA3AF]">{formatDate(listing.createdAt)}</p>
+			<p className="mt-1.5 text-xs text-[#9CA3AF]">{formatDate(listing.createdAt)}</p>
 
 			<div className="mt-3.5 flex items-center gap-5 border-t border-[#F3F4F6] pt-3.5">
 				<div>
-					<p className="text-[11px] text-[#9CA3AF]">예산</p>
-					<p className="text-[13px] font-semibold text-[#1F2937]">
+					<p className="text-xs text-[#9CA3AF]">예산</p>
+					<p className="text-xs font-semibold text-[#1F2937]">
 						{listing.budgetPublic
 							? `${symbol} ${listing.totalBudget.toLocaleString()}`
 							: "비공개"}
 					</p>
 				</div>
 				<div>
-					<p className="flex items-center gap-1 text-[11px] text-[#9CA3AF]">
+					<p className="flex items-center gap-1 text-xs text-[#9CA3AF]">
 						<MessageSquare size={11} />
 						받은 견적
 					</p>
-					<p className="text-[13px] font-semibold text-[#1F2937]">{listing.quoteCount}건</p>
+					<p className="text-xs font-semibold text-[#1F2937]">{listing.quoteCount}건</p>
 				</div>
 			</div>
 		</button>

@@ -82,7 +82,7 @@ export default function UnitSelect({ value, onChange }: UnitSelectProps): React.
 								>
 									{option.value}
 								</span>
-								<span className="block text-[11px] text-[#9CA3AF]">{option.desc}</span>
+								<span className="block text-xs text-[#9CA3AF]">{option.desc}</span>
 							</span>
 							{value === option.value && <Check size={14} className="shrink-0 text-[#3B82F6]" />}
 						</button>

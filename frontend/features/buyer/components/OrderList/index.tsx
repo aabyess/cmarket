@@ -81,7 +81,7 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 				<div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F3F4F6]">
 					<FileText size={26} className="text-[#9CA3AF]" />
 				</div>
-				<p className="text-[17px] font-medium text-[#1F2937]">등록한 견적요청이 없어요</p>
+				<p className="text-base font-medium text-[#1F2937]">등록한 견적요청이 없어요</p>
 				<p className="mt-1 text-sm text-[#6B7280]">
 					첫 견적요청을 올리면 한국 공급기업들이 견적을 보내드려요.
 				</p>
@@ -113,7 +113,7 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 
 			{filteredListings.length === 0 ? (
 				<div className="rounded-2xl border border-[#E5E7EB] bg-white p-12 text-center">
-					<p className="text-[15px] font-medium text-[#1F2937]">조건에 맞는 견적요청이 없어요</p>
+					<p className="text-sm font-medium text-[#1F2937]">조건에 맞는 견적요청이 없어요</p>
 					<p className="mt-1 text-sm text-[#6B7280]">검색어나 필터를 조정해보세요.</p>
 				</div>
 			) : (

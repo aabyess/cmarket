@@ -43,7 +43,7 @@ export function ListingBrowseCard({ listing, onClick }: ListingBrowseCardProps) 
 			<div className="mb-2 flex items-start justify-between gap-2">
 				<span
 					className={cn(
-						"flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium",
+						"flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
 						remaining.isClosed
 							? "bg-[#F3F4F6] text-[#6B7280]"
 							: remaining.isUrgent
@@ -56,19 +56,19 @@ export function ListingBrowseCard({ listing, onClick }: ListingBrowseCardProps) 
 				</span>
 
 				{listing.hasMyQuote && (
-					<span className="flex shrink-0 items-center gap-1 rounded-full bg-[#ECFDF5] px-2 py-0.5 text-[11px] font-medium text-[#059669]">
+					<span className="flex shrink-0 items-center gap-1 rounded-full bg-[#ECFDF5] px-2 py-0.5 text-xs font-medium text-[#059669]">
 						<CheckCircle2 size={11} />
 						견적 보냄
 					</span>
 				)}
 			</div>
 
-			<p className="line-clamp-2 min-h-[42px] text-[15px] font-medium leading-snug text-[#1F2937]">
+			<p className="line-clamp-2 min-h-[42px] text-sm font-medium leading-snug text-[#1F2937]">
 				{listing.title}
 			</p>
 
 			{itemNames && (
-				<p className="mt-1.5 flex items-center gap-1.5 truncate text-[13px] text-[#6B7280]">
+				<p className="mt-1.5 flex items-center gap-1.5 truncate text-xs text-[#6B7280]">
 					<Package size={12} className="shrink-0" />
 					<span className="truncate">{itemNames}</span>
 				</p>
@@ -76,28 +76,28 @@ export function ListingBrowseCard({ listing, onClick }: ListingBrowseCardProps) 
 
 			<div className="mt-3 grid grid-cols-2 gap-2 border-t border-[#F3F4F6] pt-3">
 				<div className="min-w-0">
-					<p className="text-[11px] text-[#9CA3AF]">예산</p>
+					<p className="text-xs text-[#9CA3AF]">예산</p>
 					{listing.budgetPublic ? (
 						<>
-							<p className="mt-0.5 truncate text-[14px] font-medium text-[#1F2937]">
+							<p className="mt-0.5 truncate text-sm font-medium text-[#1F2937]">
 								{symbol} {listing.totalBudget.toLocaleString()}
 							</p>
 							{listing.currency !== "KRW" && listing.budgetInKrw !== null && (
-								<p className="truncate text-[11px] text-[#9CA3AF]">
+								<p className="truncate text-xs text-[#9CA3AF]">
 									약 ₩ {Math.round(listing.budgetInKrw).toLocaleString()}
 								</p>
 							)}
 						</>
 					) : (
-						<p className="mt-0.5 truncate text-[14px] font-medium text-[#1F2937]">비공개</p>
+						<p className="mt-0.5 truncate text-sm font-medium text-[#1F2937]">비공개</p>
 					)}
 				</div>
 				<div className="min-w-0">
-					<p className="flex items-center gap-1 text-[11px] text-[#9CA3AF]">
+					<p className="flex items-center gap-1 text-xs text-[#9CA3AF]">
 						<MapPin size={11} />
 						배송지
 					</p>
-					<p className="mt-0.5 truncate text-[14px] font-medium text-[#1F2937]">
+					<p className="mt-0.5 truncate text-sm font-medium text-[#1F2937]">
 						{location || "-"}
 					</p>
 				</div>

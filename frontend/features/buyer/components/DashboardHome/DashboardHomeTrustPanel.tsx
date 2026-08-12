@@ -29,7 +29,7 @@ const TRUST_ITEMS = [
 export function DashboardHomeTrustPanel() {
 	return (
 		<div className="rounded-2xl border border-[#E5E7EB] bg-white p-3.5">
-			<p className="mb-3 text-[13px] font-medium text-[#1F2937]">MitraPay는 이런 곳이에요</p>
+			<p className="mb-3 text-xs font-medium text-[#1F2937]">MitraPay는 이런 곳이에요</p>
 
 			{TRUST_ITEMS.map((item, index) => (
 				<div
@@ -41,8 +41,8 @@ export function DashboardHomeTrustPanel() {
 					<item.icon size={16} className="mt-0.5 shrink-0 text-[#3B82F6]" />
 					<div className="min-w-0">
 						<p className="text-xs text-[#6B7280]">{item.label}</p>
-						<p className="text-[15px] font-medium text-[#1F2937]">{item.value}</p>
-						<p className="text-[11px] text-[#9CA3AF]">{item.hint}</p>
+						<p className="text-sm font-medium text-[#1F2937]">{item.value}</p>
+						<p className="text-xs text-[#9CA3AF]">{item.hint}</p>
 					</div>
 				</div>
 			))}

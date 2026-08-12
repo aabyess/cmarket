@@ -102,7 +102,7 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps): Re
 			<div className="fixed inset-0 flex items-center justify-center p-4">
 				<DialogPanel className="w-full max-w-md overflow-hidden rounded-3xl border border-white/40 bg-white/70 shadow-xl backdrop-blur-2xl backdrop-saturate-150">
 					<div className="flex items-center justify-between border-b border-[#F3F4F6] px-5 py-4">
-						<DialogTitle className="text-[17px] font-semibold text-[#1F2937]">
+						<DialogTitle className="text-base font-semibold text-[#1F2937]">
 							기업 프로필
 						</DialogTitle>
 						<button
@@ -133,12 +133,12 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps): Re
 									)}
 								</div>
 								<div className="min-w-0">
-									<p className="truncate text-[15px] font-semibold text-[#1F2937]">
+									<p className="truncate text-sm font-semibold text-[#1F2937]">
 										{companyName}
 									</p>
 									<button
 										onClick={() => logoInputRef.current?.click()}
-										className="text-[13px] text-imsg-blue hover:underline"
+										className="text-xs text-imsg-blue hover:underline"
 									>
 										로고 변경
 									</button>
@@ -152,18 +152,18 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps): Re
 								/>
 							</div>
 
-							<label className="mb-1.5 block text-[12px] font-medium text-[#374151]">회사 소개</label>
+							<label className="mb-1.5 block text-xs font-medium text-[#374151]">회사 소개</label>
 							<textarea
 								value={description}
 								onChange={(e) => setDescription(e.target.value)}
 								placeholder="공급기업에게 보여질 회사 소개를 입력해주세요"
 								rows={3}
-								className="mb-4 w-full resize-none rounded-xl border border-[#E5E7EB] bg-white px-3.5 py-2.5 text-[13px] outline-none focus:border-imsg-blue"
+								className="mb-4 w-full resize-none rounded-xl border border-[#E5E7EB] bg-white px-3.5 py-2.5 text-xs outline-none focus:border-imsg-blue"
 							/>
 
 							<div className="mb-4 grid grid-cols-2 gap-3">
 								<div>
-									<label className="mb-1.5 block text-[12px] font-medium text-[#374151]">
+									<label className="mb-1.5 block text-xs font-medium text-[#374151]">
 										설립 연도
 									</label>
 									<input
@@ -171,17 +171,17 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps): Re
 										value={establishedYear}
 										onChange={(e) => setEstablishedYear(e.target.value)}
 										placeholder="예: 2010"
-										className="w-full rounded-xl border border-[#E5E7EB] bg-white px-3.5 py-2.5 text-[13px] outline-none focus:border-imsg-blue"
+										className="w-full rounded-xl border border-[#E5E7EB] bg-white px-3.5 py-2.5 text-xs outline-none focus:border-imsg-blue"
 									/>
 								</div>
 								<div>
-									<label className="mb-1.5 block text-[12px] font-medium text-[#374151]">
+									<label className="mb-1.5 block text-xs font-medium text-[#374151]">
 										직원 수
 									</label>
 									<select
 										value={employeeCount}
 										onChange={(e) => setEmployeeCount(e.target.value)}
-										className="w-full rounded-xl border border-[#E5E7EB] bg-white px-3.5 py-2.5 text-[13px] outline-none focus:border-imsg-blue"
+										className="w-full rounded-xl border border-[#E5E7EB] bg-white px-3.5 py-2.5 text-xs outline-none focus:border-imsg-blue"
 									>
 										<option value="">선택</option>
 										{EMPLOYEE_COUNT_OPTIONS.map((opt) => (
@@ -193,7 +193,7 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps): Re
 								</div>
 							</div>
 
-							<label className="mb-1.5 block text-[12px] font-medium text-[#374151]">홈페이지</label>
+							<label className="mb-1.5 block text-xs font-medium text-[#374151]">홈페이지</label>
 							<div className="mb-4 flex items-center gap-2 rounded-xl border border-[#E5E7EB] bg-white px-3.5 py-2.5">
 								<Globe size={13} className="shrink-0 text-[#9CA3AF]" />
 								<input
@@ -201,11 +201,11 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps): Re
 									value={websiteUrl}
 									onChange={(e) => setWebsiteUrl(e.target.value)}
 									placeholder="https://example.com"
-									className="flex-1 text-[13px] outline-none"
+									className="flex-1 text-xs outline-none"
 								/>
 							</div>
 
-							<label className="mb-1.5 block text-[12px] font-medium text-[#374151]">
+							<label className="mb-1.5 block text-xs font-medium text-[#374151]">
 								인증 / 수상 이력
 							</label>
 							<div className="mb-2 flex gap-1.5">
@@ -219,11 +219,11 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps): Re
 										}
 									}}
 									placeholder="예: ISO 9001"
-									className="flex-1 rounded-xl border border-[#E5E7EB] bg-white px-3.5 py-2.5 text-[13px] outline-none focus:border-imsg-blue"
+									className="flex-1 rounded-xl border border-[#E5E7EB] bg-white px-3.5 py-2.5 text-xs outline-none focus:border-imsg-blue"
 								/>
 								<button
 									onClick={handleAddCert}
-									className="rounded-xl bg-imsg-blue px-3.5 py-2.5 text-[13px] font-medium text-white hover:bg-blue-600"
+									className="rounded-xl bg-imsg-blue px-3.5 py-2.5 text-xs font-medium text-white hover:bg-blue-600"
 								>
 									추가
 								</button>
@@ -232,7 +232,7 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps): Re
 								{certifications.map((cert) => (
 									<span
 										key={cert}
-										className="flex items-center gap-1 rounded-full bg-[#EFF6FF] px-2.5 py-1 text-[12px] font-medium text-imsg-blue"
+										className="flex items-center gap-1 rounded-full bg-[#EFF6FF] px-2.5 py-1 text-xs font-medium text-imsg-blue"
 									>
 										{cert}
 										<button onClick={() => handleRemoveCert(cert)}>
@@ -246,7 +246,7 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps): Re
 								onClick={handleSave}
 								disabled={isSaving}
 								className={cn(
-									"w-full rounded-xl py-3 text-[14px] font-semibold text-white transition-colors",
+									"w-full rounded-xl py-3 text-sm font-semibold text-white transition-colors",
 									"bg-imsg-blue hover:bg-blue-600 disabled:opacity-60",
 								)}
 							>

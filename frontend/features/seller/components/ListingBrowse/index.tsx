@@ -68,7 +68,7 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 						key={tab.value}
 						onClick={() => setStatusTab(tab.value)}
 						className={cn(
-							"rounded-lg px-4 py-1.5 text-[13px] font-medium transition-colors",
+							"rounded-lg px-4 py-1.5 text-xs font-medium transition-colors",
 							statusTab === tab.value
 								? "bg-[#3B82F6] text-white"
 								: "text-[#6B7280] hover:bg-[#F9FAFB]",
@@ -84,7 +84,7 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 					<div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F3F4F6]">
 						<FileSearch size={26} className="text-[#9CA3AF]" />
 					</div>
-					<p className="text-[17px] font-medium text-[#1F2937]">
+					<p className="text-base font-medium text-[#1F2937]">
 						{trimmedKeyword ? "검색 결과가 없어요" : "해당하는 공고가 없어요"}
 					</p>
 					<p className="mt-1 text-sm text-[#6B7280]">

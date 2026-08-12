@@ -38,7 +38,7 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 				<div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F3F4F6]">
 					<Send size={26} className="text-[#9CA3AF]" />
 				</div>
-				<p className="text-[17px] font-medium text-[#1F2937]">보낸 견적이 없어요</p>
+				<p className="text-base font-medium text-[#1F2937]">보낸 견적이 없어요</p>
 				<p className="mt-1 text-sm text-[#6B7280]">
 					열려 있는 공고를 찾아 첫 견적을 보내보세요.
 				</p>
@@ -60,7 +60,7 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 						key={item.value}
 						onClick={() => setFilter(item.value)}
 						className={cn(
-							"rounded-lg border px-4 py-2 text-[13px] font-medium transition-colors",
+							"rounded-lg border px-4 py-2 text-xs font-medium transition-colors",
 							filter === item.value
 								? "border-[#3B82F6] bg-[#3B82F6] text-white"
 								: "border-[#E2E8F0] bg-white text-[#374151] hover:bg-[#F9FAFB]",

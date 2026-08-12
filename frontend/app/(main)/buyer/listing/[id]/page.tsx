@@ -65,47 +65,47 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
 
 			<div className="mb-6 rounded-2xl border border-[#E5E7EB] bg-white p-6">
 				{listing.description && (
-					<p className="whitespace-pre-wrap text-[14px] leading-relaxed text-[#374151]">
+					<p className="whitespace-pre-wrap text-sm leading-relaxed text-[#374151]">
 						{listing.description}
 					</p>
 				)}
 
 				<div className="mt-4 grid grid-cols-2 gap-4 border-t border-[#F3F4F6] pt-4 sm:grid-cols-4">
 					<div>
-						<p className="text-[11px] text-[#9CA3AF]">예산</p>
-						<p className="text-[14px] font-semibold text-[#1F2937]">
+						<p className="text-xs text-[#9CA3AF]">예산</p>
+						<p className="text-sm font-semibold text-[#1F2937]">
 							{listing.budgetPublic ? `${symbol} ${listing.totalBudget.toLocaleString()}` : "비공개"}
 						</p>
 					</div>
 					<div>
-						<p className="text-[11px] text-[#9CA3AF]">마감일</p>
-						<p className="text-[14px] font-semibold text-[#1F2937]">
+						<p className="text-xs text-[#9CA3AF]">마감일</p>
+						<p className="text-sm font-semibold text-[#1F2937]">
 							{new Date(listing.endDate).toLocaleDateString("ko-KR")}
 						</p>
 					</div>
 					<div>
-						<p className="text-[11px] text-[#9CA3AF]">희망 납품 기간</p>
-						<p className="text-[14px] font-semibold text-[#1F2937]">{listing.deliveryDays}일</p>
+						<p className="text-xs text-[#9CA3AF]">희망 납품 기간</p>
+						<p className="text-sm font-semibold text-[#1F2937]">{listing.deliveryDays}일</p>
 					</div>
 					<div>
-						<p className="text-[11px] text-[#9CA3AF]">받은 견적</p>
-						<p className="text-[14px] font-semibold text-[#1F2937]">{quotes.length}건</p>
+						<p className="text-xs text-[#9CA3AF]">받은 견적</p>
+						<p className="text-sm font-semibold text-[#1F2937]">{quotes.length}건</p>
 					</div>
 				</div>
 
-				<div className="mt-4 flex items-start gap-1.5 border-t border-[#F3F4F6] pt-4 text-[13px] text-[#6B7280]">
+				<div className="mt-4 flex items-start gap-1.5 border-t border-[#F3F4F6] pt-4 text-xs text-[#6B7280]">
 					<MapPin size={14} className="mt-0.5 shrink-0" />
 					{listing.deliveryProvinsi} {listing.deliveryCity} {listing.deliveryAddress}
 				</div>
 
 				<div className="mt-4 border-t border-[#F3F4F6] pt-4">
-					<p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold text-[#9CA3AF]">
+					<p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-[#9CA3AF]">
 						<Package size={13} />
 						품목
 					</p>
 					<div className="space-y-1.5">
 						{listing.items.map((item) => (
-							<div key={item.id} className="flex items-center justify-between text-[13px]">
+							<div key={item.id} className="flex items-center justify-between text-xs">
 								<span className="text-[#374151]">
 									{item.name} {item.spec && `· ${item.spec}`}
 								</span>

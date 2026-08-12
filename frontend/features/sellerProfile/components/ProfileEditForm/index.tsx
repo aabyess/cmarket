@@ -186,7 +186,7 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 		<div className="space-y-6">
 			{/* 기본 기업 정보 */}
 			<div className="rounded-2xl border border-[#E5E7EB] bg-white p-6">
-				<h2 className="mb-4 flex items-center gap-2 text-[15px] font-semibold text-[#1F2937]">
+				<h2 className="mb-4 flex items-center gap-2 text-sm font-semibold text-[#1F2937]">
 					<Building2 size={16} className="text-[#6B7280]" />
 					기본 정보
 				</h2>
@@ -242,7 +242,7 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 
 			{/* 회사 소개 */}
 			<div className="rounded-2xl border border-[#E5E7EB] bg-white p-6">
-				<h2 className="mb-4 flex items-center gap-2 text-[15px] font-semibold text-[#1F2937]">
+				<h2 className="mb-4 flex items-center gap-2 text-sm font-semibold text-[#1F2937]">
 					<FileText size={16} className="text-[#6B7280]" />
 					회사 소개
 				</h2>
@@ -317,7 +317,7 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 
 			{/* 인증/수상 이력 */}
 			<div className="rounded-2xl border border-[#E5E7EB] bg-white p-6">
-				<h2 className="mb-4 flex items-center gap-2 text-[15px] font-semibold text-[#1F2937]">
+				<h2 className="mb-4 flex items-center gap-2 text-sm font-semibold text-[#1F2937]">
 					<Award size={16} className="text-[#6B7280]" />
 					인증 / 수상 이력
 				</h2>
@@ -360,7 +360,7 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 
 			{/* 계좌 정보 */}
 			<div className="rounded-2xl border border-[#E5E7EB] bg-white p-6">
-				<h2 className="mb-1 flex items-center gap-2 text-[15px] font-semibold text-[#1F2937]">
+				<h2 className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#1F2937]">
 					<CreditCard size={16} className="text-[#6B7280]" />
 					계좌 정보
 				</h2>
@@ -428,7 +428,7 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 			{/* 주요 제품/서비스 */}
 			<div className="rounded-2xl border border-[#E5E7EB] bg-white p-6">
 				<div className="mb-4 flex items-center justify-between">
-					<h2 className="text-[15px] font-semibold text-[#1F2937]">주요 제품 / 서비스</h2>
+					<h2 className="text-sm font-semibold text-[#1F2937]">주요 제품 / 서비스</h2>
 					<button
 						onClick={handleAddProduct}
 						className="flex items-center gap-1.5 rounded-lg border border-[#E5E7EB] px-3 py-1.5 text-xs font-medium text-[#374151] hover:bg-gray-50"
@@ -510,7 +510,7 @@ export function ProfileEditForm({ data }: ProfileEditFormProps) {
 					onClick={handleSubmit}
 					disabled={isLoading}
 					className={cn(
-						"w-full rounded-xl py-3.5 text-[15px] font-semibold text-white transition-colors",
+						"w-full rounded-xl py-3.5 text-sm font-semibold text-white transition-colors",
 						"bg-[#3B82F6] hover:bg-[#2563EB] disabled:opacity-60",
 					)}
 				>

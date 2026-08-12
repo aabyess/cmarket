@@ -65,7 +65,7 @@ export default async function CompanyProfilePage({ params }: CompanyPageProps) {
 				<div className="space-y-6 xl:col-span-2">
 					{company.description && (
 						<div className="rounded-2xl border border-[#E5E7EB] bg-white p-6">
-							<h2 className="mb-3 text-[15px] font-semibold text-[#1F2937]">회사 소개</h2>
+							<h2 className="mb-3 text-sm font-semibold text-[#1F2937]">회사 소개</h2>
 							<p className="whitespace-pre-wrap text-sm leading-relaxed text-[#374151]">
 								{company.description}
 							</p>
@@ -74,7 +74,7 @@ export default async function CompanyProfilePage({ params }: CompanyPageProps) {
 
 					{company.products.length > 0 && (
 						<div className="rounded-2xl border border-[#E5E7EB] bg-white p-6">
-							<h2 className="mb-4 flex items-center gap-2 text-[15px] font-semibold text-[#1F2937]">
+							<h2 className="mb-4 flex items-center gap-2 text-sm font-semibold text-[#1F2937]">
 								<Package size={15} className="text-[#6B7280]" />
 								주요 제품 / 서비스
 							</h2>
@@ -112,7 +112,7 @@ export default async function CompanyProfilePage({ params }: CompanyPageProps) {
 
 				<div className="space-y-6">
 					<div className="rounded-2xl border border-[#E5E7EB] bg-white p-6">
-						<h2 className="mb-4 text-[15px] font-semibold text-[#1F2937]">기업 정보</h2>
+						<h2 className="mb-4 text-sm font-semibold text-[#1F2937]">기업 정보</h2>
 						<div className="space-y-3 text-sm">
 							{[
 								{ label: "대표자", value: company.representative },
@@ -128,7 +128,7 @@ export default async function CompanyProfilePage({ params }: CompanyPageProps) {
 
 					{company.certifications.length > 0 && (
 						<div className="rounded-2xl border border-[#E5E7EB] bg-white p-6">
-							<h2 className="mb-3 flex items-center gap-2 text-[15px] font-semibold text-[#1F2937]">
+							<h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-[#1F2937]">
 								<Award size={15} className="text-[#6B7280]" />
 								인증 / 수상
 							</h2>

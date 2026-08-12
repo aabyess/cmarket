@@ -133,7 +133,7 @@ export function NotificationBell(): React.ReactNode {
 									>
 										<div className="flex items-center justify-between gap-2">
 											<p className="truncate text-sm font-medium text-[#1F2937]">{n.title}</p>
-											<span className="shrink-0 text-[11px] text-[#9CA3AF]">
+											<span className="shrink-0 text-xs text-[#9CA3AF]">
 												{formatTime(n.createdAt)}
 											</span>
 										</div>

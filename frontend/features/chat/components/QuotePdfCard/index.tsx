@@ -93,8 +93,8 @@ export function QuotePdfCard({ attachmentUrl, attachmentName, isMine }: QuotePdf
 					<FileText size={14} />
 				</div>
 				<div className="min-w-0">
-					<p className="truncate text-[13px] font-medium">{attachmentName ?? "견적서.pdf"}</p>
-					<p className={isMine ? "text-[11px] text-white/70" : "text-[11px] text-black/50"}>
+					<p className="truncate text-xs font-medium">{attachmentName ?? "견적서.pdf"}</p>
+					<p className={isMine ? "text-xs text-white/70" : "text-xs text-black/50"}>
 						{isOpening ? "여는 중..." : "견적서 · 탭하여 새 창에서 보기"}
 					</p>
 				</div>

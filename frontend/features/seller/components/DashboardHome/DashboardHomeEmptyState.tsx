@@ -25,10 +25,10 @@ export function DashboardHomeEmptyState({
 				<Search size={16} className="text-[#3B82F6]" />
 			</div>
 
-			<p className="text-[17px] font-medium leading-snug text-[#1F2937]">
+			<p className="text-base font-medium leading-snug text-[#1F2937]">
 				지금 <span className="text-[#3B82F6]">{openListingCount}건</span>의 견적요청이 열려 있어요
 			</p>
-			<p className="mt-1 text-[13px] text-[#6B7280]">
+			<p className="mt-1 text-xs text-[#6B7280]">
 				인도네시아 발주기관들이 공급기업을 찾고 있어요. 견적은 무료입니다.
 			</p>
 
@@ -38,7 +38,7 @@ export function DashboardHomeEmptyState({
 						<div className="flex-1 rounded-[10px] bg-[#F9FAFB] px-3 py-2.5">
 							<step.icon size={15} className="mb-1.5 text-[#3B82F6]" />
 							<p className="text-xs font-medium text-[#374151]">{step.label}</p>
-							<p className="text-[11px] text-[#9CA3AF]">{step.hint}</p>
+							<p className="text-xs text-[#9CA3AF]">{step.hint}</p>
 						</div>
 						{index < ONBOARDING_STEPS.length - 1 && (
 							<ChevronRight size={14} className="mt-6 shrink-0 text-[#D1D5DB]" />
@@ -55,7 +55,7 @@ export function DashboardHomeEmptyState({
 			</button>
 			<button
 				onClick={onEditProfile}
-				className="mt-2 w-full py-1.5 text-[13px] text-[#6B7280] transition-colors hover:text-[#374151]"
+				className="mt-2 w-full py-1.5 text-xs text-[#6B7280] transition-colors hover:text-[#374151]"
 			>
 				먼저 기업 프로필부터 채우기
 			</button>

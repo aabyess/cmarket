@@ -93,24 +93,24 @@ export function ChatRoomPanel({ room, myId, myRole }: ChatRoomPanelProps): React
 					<ChevronLeft className="size-6" strokeWidth={2.5} />
 				</button>
 				<div className="flex flex-col items-center">
-					<span className="text-[17px] font-semibold leading-tight text-[#0f172a]">
+					<span className="text-base font-semibold leading-tight text-[#0f172a]">
 						{room.partnerName}
 					</span>
-					<span className="text-[11px] text-imsg-secondary">{room.listingTitle}</span>
+					<span className="text-xs text-imsg-secondary">{room.listingTitle}</span>
 				</div>
 				{myRole === "buyer" ? (
 					room.quoteStatus === "awarded" ? (
-						<span className="rounded-full bg-imsg-blue/10 px-3 py-1.5 text-[13px] font-semibold text-imsg-blue">
+						<span className="rounded-full bg-imsg-blue/10 px-3 py-1.5 text-xs font-semibold text-imsg-blue">
 							계약 확정
 						</span>
 					) : room.quoteStatus === "rejected" ? (
-						<span className="rounded-full bg-[#F3F4F6] px-3 py-1.5 text-[13px] font-semibold text-[#9CA3AF]">
+						<span className="rounded-full bg-[#F3F4F6] px-3 py-1.5 text-xs font-semibold text-[#9CA3AF]">
 							마감
 						</span>
 					) : (
 						<button
 							onClick={() => setIsAwardModalOpen(true)}
-							className="rounded-full bg-imsg-blue px-3 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-blue-600"
+							className="rounded-full bg-imsg-blue px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-600"
 						>
 							확정
 						</button>
@@ -122,12 +122,12 @@ export function ChatRoomPanel({ room, myId, myRole }: ChatRoomPanelProps): React
 
 			{/* 견적 정보 */}
 			<div className="flex justify-center gap-6 border-b border-[#E5E7EB]/60 bg-white/60 px-4 py-2 backdrop-blur-xl">
-				<span className="text-[12px] text-imsg-secondary">
+				<span className="text-xs text-imsg-secondary">
 					견적가 <span className="font-semibold text-[#0f172a]">
 						{room.currency} {room.price.toLocaleString()}
 					</span>
 				</span>
-				<span className="text-[12px] text-imsg-secondary">
+				<span className="text-xs text-imsg-secondary">
 					납품 <span className="font-semibold text-[#0f172a]">{room.deliveryDays}일</span>
 				</span>
 			</div>
@@ -154,7 +154,7 @@ export function ChatRoomPanel({ room, myId, myRole }: ChatRoomPanelProps): React
 							}}
 							placeholder="메시지를 입력하세요"
 							rows={1}
-							className="max-h-32 w-full resize-none bg-transparent text-[15px] outline-none placeholder:text-imsg-secondary"
+							className="max-h-32 w-full resize-none bg-transparent text-sm outline-none placeholder:text-imsg-secondary"
 						/>
 					</div>
 					<button

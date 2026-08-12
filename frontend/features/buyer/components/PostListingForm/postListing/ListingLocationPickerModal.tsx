@@ -89,7 +89,7 @@ export default function ListingLocationPickerModal({
 			<div className="fixed inset-0 flex items-center justify-center p-4">
 				<DialogPanel className="w-full max-w-2xl rounded-2xl bg-white p-5">
 					<div className="mb-3 flex items-center justify-between">
-						<DialogTitle className="text-[15px] font-semibold text-[#1F2937]">
+						<DialogTitle className="text-sm font-semibold text-[#1F2937]">
 							배송지 위치 확인
 						</DialogTitle>
 						<button onClick={onClose} className="text-[#9CA3AF] hover:text-[#374151]">

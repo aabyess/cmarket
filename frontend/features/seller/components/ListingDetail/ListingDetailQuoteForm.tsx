@@ -124,25 +124,25 @@ export function ListingDetailQuoteForm({
 					)}
 				</div>
 
-				<p className="text-[15px] font-semibold text-[#1F2937]">보낸 견적</p>
+				<p className="text-sm font-semibold text-[#1F2937]">보낸 견적</p>
 
 				<div className="mt-3 flex items-center gap-6 border-t border-[#F3F4F6] pt-3">
 					<div>
-						<p className="text-[11px] text-[#9CA3AF]">견적가</p>
-						<p className="text-[19px] font-semibold text-[#1F2937]">
+						<p className="text-xs text-[#9CA3AF]">견적가</p>
+						<p className="text-lg font-semibold text-[#1F2937]">
 							{symbol} {myQuote.price.toLocaleString()}
 						</p>
 					</div>
 					<div>
-						<p className="text-[11px] text-[#9CA3AF]">납품</p>
-						<p className="text-[19px] font-semibold text-[#1F2937]">
+						<p className="text-xs text-[#9CA3AF]">납품</p>
+						<p className="text-lg font-semibold text-[#1F2937]">
 							{myQuote.deliveryDays}일
 						</p>
 					</div>
 				</div>
 
 				{myQuote.note && (
-					<p className="mt-3 whitespace-pre-wrap rounded-lg bg-[#F9FAFB] px-3 py-2.5 text-[13px] leading-relaxed text-[#374151]">
+					<p className="mt-3 whitespace-pre-wrap rounded-lg bg-[#F9FAFB] px-3 py-2.5 text-xs leading-relaxed text-[#374151]">
 						{myQuote.note}
 					</p>
 				)}
@@ -179,7 +179,7 @@ export function ListingDetailQuoteForm({
 				<div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-[#F3F4F6]">
 					<Clock size={22} className="text-[#9CA3AF]" />
 				</div>
-				<p className="text-[15px] font-medium text-[#1F2937]">마감된 견적요청입니다</p>
+				<p className="text-sm font-medium text-[#1F2937]">마감된 견적요청입니다</p>
 				<p className="mt-1 text-sm text-[#6B7280]">더 이상 견적을 보낼 수 없어요.</p>
 			</div>
 		);
@@ -188,7 +188,7 @@ export function ListingDetailQuoteForm({
 	// 제출 폼 또는 수정 폼
 	return (
 		<div className="rounded-2xl border-2 border-[#3B82F6] bg-white p-5">
-			<p className="text-[15px] font-semibold text-[#1F2937]">
+			<p className="text-sm font-semibold text-[#1F2937]">
 				{isEditing ? "견적 수정" : "견적 보내기"}
 			</p>
 			<p className="mt-1 text-xs text-[#6B7280]">

@@ -49,7 +49,7 @@ export function ChatView({ context, initialQuoteId }: ChatViewProps): React.Reac
 						<div className="mb-3 flex size-14 items-center justify-center rounded-full bg-imsg-surface">
 							<MessageSquare size={26} className="text-[#9CA3AF]" />
 						</div>
-						<p className="text-[15px] font-medium text-[#1F2937]">대화를 선택하세요</p>
+						<p className="text-sm font-medium text-[#1F2937]">대화를 선택하세요</p>
 						<p className="mt-1 text-sm text-imsg-secondary">
 							왼쪽 목록에서 선택하면 대화를 시작할 수 있어요.
 						</p>
