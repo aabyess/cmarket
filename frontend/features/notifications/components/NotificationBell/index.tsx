@@ -3,11 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { Bell, MessageSquare, X } from "lucide-react";
+import { Bell, Mail, MessageSquare, X } from "lucide-react";
 import { useNotifications, NOTIFICATION_QUERY_KEYS } from "@/features/notifications/queries";
 import { markNotificationRead, markAllNotificationsRead, deleteNotification } from "@/features/notifications/apis";
 import { createClient } from "@/libs/supabase";
 import { cn } from "@/utils/cn";
+import type { Notification } from "@/features/notifications/types";
 
 function formatTime(iso: string): string {
 	const date = new Date(iso);
@@ -72,11 +73,18 @@ export function NotificationBell(): React.ReactNode {
 		};
 	}, [queryClient]);
 
-	async function handleNotificationClick(quoteId: string, notificationId: string): Promise<void> {
-		await markNotificationRead(notificationId);
+	async function handleNotificationClick(notification: Notification): Promise<void> {
+		await markNotificationRead(notification.id);
 		queryClient.invalidateQueries({ queryKey: NOTIFICATION_QUERY_KEYS.all });
 		setIsOpen(false);
-		router.push(`${chatBasePath}?quoteId=${quoteId}`);
+
+		// 견적 도착은 채팅이 아니라 받은 견적 화면으로 보낸다.
+		if (notification.type === "quote") {
+			router.push("/buyer/quote-review");
+			return;
+		}
+
+		router.push(`${chatBasePath}?quoteId=${notification.quoteId}`);
 	}
 
 	async function handleMarkAllRead(): Promise<void> {
@@ -127,8 +135,21 @@ export function NotificationBell(): React.ReactNode {
 										!n.isRead && "bg-[#EFF6FF]",
 									)}
 								>
+									<span
+										className={cn(
+											"mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full",
+											n.type === "quote" ? "bg-[#EFF6FF]" : "bg-[#F3F4F6]",
+										)}
+									>
+										{n.type === "quote" ? (
+											<Mail size={12} className="text-[#3B82F6]" />
+										) : (
+											<MessageSquare size={12} className="text-[#6B7280]" />
+										)}
+									</span>
+
 									<button
-										onClick={() => handleNotificationClick(n.quoteId, n.id)}
+										onClick={() => handleNotificationClick(n)}
 										className="flex min-w-0 flex-1 flex-col gap-0.5 text-left"
 									>
 										<div className="flex items-center justify-between gap-2">

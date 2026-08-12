@@ -194,6 +194,7 @@ export function SiteBuilder({
 				<>
 					<SiteBuilderToolbar
 						publishState={resolvePublishState()}
+						publicHref={data.hasPublished ? `/companies/${data.profileId}` : null}
 						isPreview={isPreview}
 						isSaving={isSaving}
 						isPublishing={isPublishing}

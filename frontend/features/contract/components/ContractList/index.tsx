@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { FileCheck, Building2, Calendar, DollarSign, Upload, CheckCircle2, Clock, FileText, Truck } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
-import type { Contract, ContractStatus } from "@/features/contract/types";
+import { ContractListTabs } from "@/features/contract/components/ContractList/ContractListTabs";
+import type { Contract, ContractFilter, ContractStatus } from "@/features/contract/types";
 
 const CURRENCY_SYMBOL: Record<string, string> = {
 	USD: "$",
@@ -30,8 +31,16 @@ type ContractListProps = {
 	role: "buyer" | "seller";
 };
 
+/** 전체 탭에서는 손이 가야 하는 계약이 먼저 와야 한다. 취소된 계약은 맨 뒤로 보낸다. */
+const STATUS_ORDER: Record<ContractStatus, number> = {
+	ongoing: 0,
+	completed: 1,
+	cancelled: 2,
+};
+
 export function ContractList({ contracts, role }: ContractListProps) {
 	const router = useRouter();
+	const [filter, setFilter] = useState<ContractFilter>("all");
 	const [loadingId, setLoadingId] = useState<string | null>(null);
 	const [uploadingId, setUploadingId] = useState<string | null>(null);
 	const [confirmId, setConfirmId] = useState<string | null>(null);
@@ -97,6 +106,17 @@ export function ContractList({ contracts, role }: ContractListProps) {
 		}
 	}
 
+	const counts: Record<ContractFilter, number> = {
+		all: contracts.length,
+		ongoing: contracts.filter((c) => c.status === "ongoing").length,
+		completed: contracts.filter((c) => c.status === "completed").length,
+	};
+
+	const visibleContracts =
+		filter === "all"
+			? [...contracts].sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status])
+			: contracts.filter((c) => c.status === filter);
+
 	if (contracts.length === 0) {
 		return (
 			<div className="rounded-2xl border border-[#E5E7EB] bg-white p-12 text-center">
@@ -111,8 +131,17 @@ export function ContractList({ contracts, role }: ContractListProps) {
 
 	return (
 		<>
+			<ContractListTabs value={filter} counts={counts} onChange={setFilter} />
+
+			{visibleContracts.length === 0 ? (
+				<div className="rounded-2xl border border-[#E5E7EB] bg-white p-12 text-center">
+					<p className="text-sm text-[#6B7280]">
+						{filter === "ongoing" ? "진행 중인 계약이 없어요." : "완료된 계약이 없어요."}
+					</p>
+				</div>
+			) : (
 			<div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-				{contracts.map((contract) => (
+				{visibleContracts.map((contract) => (
 					<div
 						key={contract.id}
 						className={cn(
@@ -277,6 +306,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 					</div>
 				))}
 			</div>
+			)}
 
 			<ConfirmModal
 				isOpen={confirmId !== null}

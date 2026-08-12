@@ -67,13 +67,22 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		return NextResponse.json({ error: revisionError.message }, { status: 500 });
 	}
 
-	const { error: pageError } = await demo
+	// RLS 로 막히면 0행이 갱신되고도 에러가 나지 않는다. 갱신된 행을 돌려받아 확인한다.
+	const { data: updated, error: pageError } = await demo
 		.from("site_page")
 		.update({ draft_revision_id: revision.id })
-		.eq("id", page.id);
+		.eq("id", page.id)
+		.select("id");
 
 	if (pageError) {
 		return NextResponse.json({ error: pageError.message }, { status: 500 });
+	}
+
+	if (!updated || updated.length === 0) {
+		return NextResponse.json(
+			{ error: "초안을 저장할 권한이 없습니다. 관리자에게 문의해주세요." },
+			{ status: 403 },
+		);
 	}
 
 	return NextResponse.json({ revisionId: revision.id });

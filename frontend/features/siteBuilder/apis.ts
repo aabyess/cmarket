@@ -139,6 +139,7 @@ export async function getSiteEditorData(): Promise<SiteEditorData | null> {
 
 	return {
 		tenantId: company.site_tenant_id,
+		profileId: user.id,
 		pageId: page.id,
 		status: page.status,
 		blocks,
@@ -197,7 +198,7 @@ export async function getPublicSite(profileId: string): Promise<PublicSite | nul
 
 	const demoAdmin = await createServerAdminClient("demo");
 
-	const { data: page } = await demoAdmin
+	const { data: page, error: pageError } = await demoAdmin
 		.from("site_page")
 		.select("published_revision_id")
 		.eq("tenant_id", company.site_tenant_id)
@@ -205,13 +206,18 @@ export async function getPublicSite(profileId: string): Promise<PublicSite | nul
 		.eq("locale", SITE_PAGE_LOCALE)
 		.maybeSingle();
 
+	// service_role 은 RLS 는 우회해도 GRANT 는 우회하지 못한다.
+	// demo 스키마 권한이 없으면 여기서 조용히 빈 페이지가 되므로 남겨 둔다.
+	if (pageError) console.error("[getPublicSite] site_page:", pageError.message);
 	if (!page?.published_revision_id) return base;
 
-	const { data: revision } = await demoAdmin
+	const { data: revision, error: revisionError } = await demoAdmin
 		.from("page_revision")
 		.select("blocks")
 		.eq("id", page.published_revision_id)
 		.maybeSingle();
+
+	if (revisionError) console.error("[getPublicSite] page_revision:", revisionError.message);
 
 	const blocks = toBlocks(revision?.blocks);
 

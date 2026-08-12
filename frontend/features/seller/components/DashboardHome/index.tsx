@@ -63,7 +63,7 @@ export function DashboardHome({
 	];
 
 	return (
-		<div className="mx-auto max-w-[1200px] px-2 py-6 xl:px-0.5">
+		<div className="mx-auto max-w-[1200px] px-6 py-6 lg:px-8 xl:px-10">
 			{/* 배너 */}
 			<div className="mb-6 flex items-center justify-between rounded-2xl border border-[#E5E7EB] bg-white px-8 py-7">
 				<div>
@@ -74,7 +74,7 @@ export function DashboardHome({
 				</div>
 				<button
 					onClick={() => handleNavigate("/seller/listing-browse")}
-					className="flex shrink-0 items-center gap-1.5 rounded-full bg-imsg-blue px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-600 active:scale-95">
+					className="flex shrink-0 items-center gap-1.5 rounded-full bg-imsg-blue px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-blue-600 active:scale-95">
 					<Search size={15} strokeWidth={2.5} />
 					견적요청 탐색
 				</button>
@@ -143,42 +143,48 @@ export function DashboardHome({
 								</p>
 								<button
 									onClick={() => handleNavigate("/seller/profile/edit?tab=settings")}
-									className="mt-4 rounded-full border border-[#E5E7EB] px-4 py-2 text-sm font-medium text-[#0f172a] transition-colors hover:bg-imsg-surface">
+									className="mt-4 rounded-full border border-[#E5E7EB] px-4 py-2 text-sm font-medium text-[#0f172a] transition-colors duration-200 hover:bg-imsg-surface">
 									취급 카테고리 설정하기
 								</button>
 							</div>
 						) : (
-							<ul>
+							<ul className="p-2">
 								{recommendedListings.map((listing, i) => (
-									<li
-										key={listing.id}
-										className={cn(
-											"flex items-start gap-4 border-l-2 border-l-imsg-blue px-5 py-4 transition-colors hover:bg-imsg-surface",
-											i !== recommendedListings.length - 1 && "border-b border-b-[#F2F2F7]",
-										)}>
-										<div className="min-w-0 flex-1">
-											<div className="flex items-center gap-2">
-												<h3 className="truncate text-base font-semibold text-[#0f172a]">
-													{listing.title}
-												</h3>
-												<span className="shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold text-imsg-blue">
-													내 취급 카테고리
-												</span>
+									<li key={listing.id}>
+										<div className="relative flex items-start gap-4 rounded-xl py-3.5 pl-5 pr-3 transition-colors duration-200 hover:bg-imsg-surface">
+											<span className="absolute left-1.5 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-full bg-imsg-blue" />
+
+											<div className="min-w-0 flex-1">
+												<div className="flex items-center gap-2">
+													<h3 className="truncate text-base font-semibold text-[#0f172a]">
+														{listing.title}
+													</h3>
+													<span className="shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold text-imsg-blue">
+														내 취급 카테고리
+													</span>
+												</div>
+												<p className="mt-0.5 text-sm text-imsg-secondary">
+													{[listing.deliveryProvinsi, listing.deliveryCity]
+														.filter(Boolean)
+														.join(" ")}
+												</p>
+												<div className="mt-1.5 flex items-center gap-1 text-sm text-imsg-secondary">
+													<Clock size={11} />
+													<span>마감 {new Date(listing.endDate).toLocaleDateString("ko-KR")}</span>
+												</div>
 											</div>
-											<p className="mt-0.5 text-sm text-imsg-secondary">
-												{[listing.deliveryProvinsi, listing.deliveryCity].filter(Boolean).join(" ")}
-											</p>
-											<div className="mt-1.5 flex items-center gap-1 text-sm text-imsg-secondary">
-												<Clock size={11} />
-												<span>마감 {new Date(listing.endDate).toLocaleDateString("ko-KR")}</span>
-											</div>
+
+											<button
+												onClick={() => handleNavigate(`/seller/listing-browse/${listing.id}`)}
+												className="flex shrink-0 items-center gap-1 rounded-full bg-imsg-surface px-3.5 py-1.5 text-sm font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-[#E5E7EB]">
+												견적 보내기
+												<ArrowRight size={12} />
+											</button>
 										</div>
-										<button
-											onClick={() => handleNavigate(`/seller/listing-browse/${listing.id}`)}
-											className="flex shrink-0 items-center gap-1 rounded-full bg-imsg-surface px-3.5 py-1.5 text-sm font-semibold text-[#0f172a] transition-colors hover:bg-[#E5E7EB]">
-											견적 보내기
-											<ArrowRight size={12} />
-										</button>
+
+										{i !== recommendedListings.length - 1 && (
+											<div className="mx-5 h-px bg-[#F2F2F7]" />
+										)}
 									</li>
 								))}
 							</ul>
@@ -198,7 +204,7 @@ export function DashboardHome({
 								<button
 									key={link.label}
 									onClick={() => handleNavigate(link.href)}
-									className="flex flex-col gap-2.5 rounded-xl bg-imsg-surface p-3 text-left transition-colors hover:bg-[#E5E7EB]">
+									className="flex flex-col gap-2.5 rounded-xl bg-imsg-surface p-3 text-left transition-colors duration-200 hover:bg-[#E5E7EB]">
 									<span
 										className={cn("flex size-8 items-center justify-center rounded-lg", link.iconBg)}>
 										<link.icon size={16} className={link.color} />
@@ -248,7 +254,7 @@ export function DashboardHome({
 								data.activities.map((activity, i) => (
 									<li
 										key={i}
-										className="flex items-start gap-3 rounded-xl px-2 py-2.5 transition-colors hover:bg-imsg-surface">
+										className="flex items-start gap-3 rounded-xl px-2 py-2.5 transition-colors duration-200 hover:bg-imsg-surface">
 										<span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-blue-50">
 											<Bell size={12} className="text-imsg-blue" />
 										</span>

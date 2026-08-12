@@ -5,6 +5,7 @@ import type { SiteEditorData } from "@/features/siteBuilder/types";
 
 const BASE_DATA: SiteEditorData = {
 	tenantId: "tenant-1",
+	profileId: "profile-1",
 	pageId: "page-1",
 	status: "DRAFT",
 	blocks: MOCK_BLOCKS,

@@ -1,4 +1,9 @@
-import type { DeliveryMethod, ListingCategory } from "@/features/buyer/types";
+import type {
+	Currency,
+	DeliveryMethod,
+	ListingCategory,
+	ListingStatus,
+} from "@/features/buyer/types";
 
 export const CATEGORY_LABELS: Record<ListingCategory, string> = {
 	office: "사무용품",
@@ -18,3 +23,14 @@ export const DELIVERY_METHOD_LABELS: Record<DeliveryMethod, string> = {
 };
 
 export const DELIVERY_METHOD_OPTIONS: DeliveryMethod[] = ["sea_fob", "sea_cif", "air", "negotiate"];
+export const CURRENCY_SYMBOL: Record<Currency, string> = {
+	USD: "$",
+	IDR: "Rp",
+	KRW: "₩",
+};
+
+export const LISTING_STATUS_LABELS: Record<ListingStatus, string> = {
+	active: "진행 중",
+	closed: "마감",
+	awarded: "계약 확정",
+};

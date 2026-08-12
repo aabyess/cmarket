@@ -4,25 +4,19 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation"
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/utils/cn";
-
-type Term = {
-  id: string;
-  label: string;
-  required: boolean;
-};
-
-const TERMS: Term[] = [
-  { id: "service", label: "서비스 이용약관 동의", required: true },
-  { id: "privacy", label: "개인정보 수집 및 이용 동의", required: true },
-  { id: "thirdparty", label: "제3자 정보 제공 동의", required: true },
-  { id: "marketing", label: "마케팅 정보 수신 동의", required: false },
-];
+import { SignupTermsDetailModal } from "@/features/auth/components/SignupTerms/SignupTermsDetailModal";
+import { getTerms, isSignupCountry, TERMS_UI_TEXT } from "@/features/auth/terms";
+import type { TermDocument } from "@/features/auth/terms";
 
 export function SignupTerms() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const country = searchParams.get("country") ?? "indonesia";
+  const countryParam = searchParams.get("country");
+  const country = isSignupCountry(countryParam) ? countryParam : "indonesia";
+  const TERMS = getTerms(country);
+  const text = TERMS_UI_TEXT[country];
   const [checked, setChecked] = useState<Record<string, boolean>>({});
+  const [openTerm, setOpenTerm] = useState<TermDocument | null>(null);
 
   const isAllChecked = TERMS.every((t) => checked[t.id]);
   const isRequiredChecked = TERMS.filter((t) => t.required).every((t) => checked[t.id]);
@@ -59,7 +53,7 @@ export function SignupTerms() {
             className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-muted-foreground transition-colors"
           >
             <ChevronLeft className="h-4 w-4" />
-            이전
+            {text.back}
           </button>
           <div className="text-sm font-semibold text-foreground">2 / 4</div>
         </div>
@@ -68,9 +62,9 @@ export function SignupTerms() {
       <div className="flex flex-1 flex-col items-center justify-center px-4 py-8 sm:px-6">
         <div className="w-full max-w-2xl space-y-6">
           <div className="text-center space-y-2">
-            <h1 className="text-2xl font-bold text-[#1F2937]">약관 동의</h1>
+            <h1 className="text-2xl font-bold text-[#1F2937]">{text.title}</h1>
             <p className="text-sm text-muted-foreground">
-              회원가입을 위해 이용약관에 동의해 주세요.
+              {text.subtitle}
             </p>
           </div>
 
@@ -100,7 +94,7 @@ export function SignupTerms() {
                   </svg>
                 )}
               </div>
-              <span className="font-semibold text-[#1F2937]">전체 동의</span>
+              <span className="font-semibold text-[#1F2937]">{text.agreeAll}</span>
             </button>
 
             <div className="border-t border-[#E2E8F0]" />
@@ -140,12 +134,16 @@ export function SignupTerms() {
                           term.required ? "text-[#3B82F6]" : "text-[#9CA3AF]",
                         )}
                       >
-                        {term.required ? "[필수]" : "[선택]"}
+                        {term.required ? text.required : text.optional}
                       </span>
                       {term.label}
                     </span>
                   </button>
-                  <button className="text-[#9CA3AF] hover:text-[#374151] transition-colors ml-2">
+                  <button
+                    onClick={() => setOpenTerm(term)}
+                    aria-label={`${term.label} 상세 보기`}
+                    className="text-[#9CA3AF] hover:text-[#374151] transition-colors ml-2"
+                  >
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -163,11 +161,13 @@ export function SignupTerms() {
                 : "bg-[#D1D5DB] text-[#6B7280] cursor-not-allowed",
             )}
           >
-            다음으로 넘어가기
+            {text.next}
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       </div>
+
+      <SignupTermsDetailModal country={country} term={openTerm} onClose={() => setOpenTerm(null)} />
 
       <footer className="py-6 text-center text-xs text-[#9CA3AF]">
         © 2003 Cmarket Corp. All rights reserved.

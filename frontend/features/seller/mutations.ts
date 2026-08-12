@@ -1,22 +1,25 @@
 import { createClient } from "@/libs/supabase";
 import type { QuoteFormData } from "@/features/seller/types";
 
+// 발주사에게 알림을 남겨야 하는데 그건 남의 행이라 RLS 를 통과하지 못한다.
+// 견적 저장과 알림 생성을 한 곳에서 처리하려고 서버 라우트를 거친다.
 export async function postQuote(listingId: string, data: QuoteFormData): Promise<void> {
-	const supabase = createClient();
-
-	const { data: { user }, error: userError } = await supabase.auth.getUser();
-	if (userError || !user) throw new Error("로그인이 필요합니다.");
-
-	const { error } = await supabase.from("quotes").insert({
-		listing_id: listingId,
-		seller_id: user.id,
-		price: data.price,
-		currency: data.currency,
-		delivery_days: data.deliveryDays,
-		note: data.note,
+	const res = await fetch("/api/quote", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({
+			listingId,
+			price: data.price,
+			currency: data.currency,
+			deliveryDays: data.deliveryDays,
+			note: data.note,
+		}),
 	});
 
-	if (error) throw error;
+	if (!res.ok) {
+		const { error } = await res.json();
+		throw new Error(error ?? "견적 제출에 실패했습니다.");
+	}
 }
 
 export async function updateQuote(quoteId: string, data: QuoteFormData): Promise<void> {

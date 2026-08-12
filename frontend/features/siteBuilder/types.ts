@@ -105,6 +105,7 @@ export type SitePageStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
 export type SiteEditorData = {
 	tenantId: string;
+	profileId: string;
 	pageId: string;
 	status: SitePageStatus;
 	blocks: Block[];

@@ -118,7 +118,7 @@ export async function getListingDetail(listingId: string): Promise<ListingDetail
 	const { data, error } = await supabase
 		.from("listings")
 		.select(
-			"id, title, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, delivery_address, delivery_days, created_at, user_id, status",
+			"id, title, category, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, delivery_address, delivery_address_detail, delivery_days, delivery_method, delivery_timing_mode, delivery_deadline_date, delivery_lat, delivery_lng, attachments, created_at, user_id, status",
 		)
 		.eq("id", listingId)
 		.single();
@@ -164,10 +164,18 @@ export async function getListingDetail(listingId: string): Promise<ListingDetail
 		budgetInKrw: convertCurrency(totalBudget, data.currency as Currency, "KRW", rates),
 		budgetPublic: data.budget_public ?? false,
 		endDate: data.end_date,
+		category: data.category,
 		deliveryProvinsi: data.delivery_provinsi ?? "",
 		deliveryCity: data.delivery_city ?? "",
 		deliveryAddress: data.delivery_address ?? "",
+		deliveryAddressDetail: data.delivery_address_detail ?? "",
 		deliveryDays: data.delivery_days ?? 0,
+		deliveryMethod: data.delivery_method ?? "negotiate",
+		deliveryTimingMode: data.delivery_timing_mode ?? "negotiate",
+		deliveryDeadlineDate: data.delivery_deadline_date ?? null,
+		deliveryLat: data.delivery_lat !== null ? Number(data.delivery_lat) : null,
+		deliveryLng: data.delivery_lng !== null ? Number(data.delivery_lng) : null,
+		attachments: data.attachments ?? [],
 		createdAt: data.created_at,
 		status: data.status ?? "active",
 		companyName: company?.company_name ?? "",
@@ -249,12 +257,17 @@ export async function getRecommendedListings(): Promise<OpenListing[]> {
 
 	const quotedIds = (myQuotes ?? []).map((q) => q.listing_id);
 
+	// 마감일이 지났거나 비어 있는 공고는 추천에서 뺀다.
+	// end_date 가 null 이면 이 비교가 false 라 자연히 제외된다.
+	const today = new Date().toISOString().slice(0, 10);
+
 	let query = supabase
 		.from("listings")
 		.select(
 			"id, title, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, created_at",
 		)
 		.eq("status", "active")
+		.gte("end_date", today)
 		.in("category", categories)
 		.order("end_date", { ascending: true })
 		.limit(5);

@@ -1,12 +1,15 @@
 "use client";
 
 import { cva } from "class-variance-authority";
-import { Eye, Loader2, Save, Send } from "lucide-react";
+import Link from "next/link";
+import { ExternalLink, Eye, Loader2, Save, Send } from "lucide-react";
 
 export type SiteBuilderPublishState = "NEVER_PUBLISHED" | "UNPUBLISHED_CHANGES" | "SYNCED";
 
 type SiteBuilderToolbarProps = {
 	publishState: SiteBuilderPublishState;
+	/** 발행된 공개 페이지 주소. 미발행이면 null. */
+	publicHref: string | null;
 	isPreview: boolean;
 	isSaving: boolean;
 	isPublishing: boolean;
@@ -37,6 +40,7 @@ const GHOST_BUTTON_CLASS =
 
 export function SiteBuilderToolbar({
 	publishState,
+	publicHref,
 	isPreview,
 	isSaving,
 	isPublishing,
@@ -47,6 +51,17 @@ export function SiteBuilderToolbar({
 	return (
 		<div className="flex flex-wrap items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3">
 			<span className={badge({ state: publishState })}>{BADGE_LABELS[publishState]}</span>
+
+			{publicHref && (
+				<Link
+					href={publicHref}
+					target="_blank"
+					rel="noopener noreferrer"
+					className="flex items-center gap-1 text-xs font-medium text-imsg-blue hover:underline">
+					공개 페이지 보기
+					<ExternalLink size={11} />
+				</Link>
+			)}
 
 			<div className="ml-auto flex items-center gap-2">
 				<button type="button" onClick={onTogglePreview} className={GHOST_BUTTON_CLASS}>

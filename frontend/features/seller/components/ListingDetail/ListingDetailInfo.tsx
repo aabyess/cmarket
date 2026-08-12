@@ -1,130 +1,141 @@
-"use client";
-
-import { Clock, MapPin, Building2, Truck } from "lucide-react";
-import type { Currency } from "@/features/buyer/types";
+import { Building2, FileText } from "lucide-react";
+import { cva } from "class-variance-authority";
+import { ListingInfo } from "@/features/shared/components/ListingInfo";
+import { CATEGORY_LABELS, CURRENCY_SYMBOL } from "@/features/buyer/constants";
 import type { ListingDetail } from "@/features/seller/types";
-
-const CURRENCY_SYMBOL: Record<Currency, string> = {
-	USD: "$",
-	IDR: "Rp",
-	KRW: "₩",
-};
-
-function getRemainingText(endDate: string): string {
-	const diff = new Date(endDate).getTime() - Date.now();
-	if (diff <= 0) return "마감됨";
-	const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-	return `마감 D-${days}`;
-}
 
 type ListingDetailInfoProps = {
 	listing: ListingDetail;
 };
 
-export function ListingDetailInfo({ listing }: ListingDetailInfoProps) {
-	const symbol = CURRENCY_SYMBOL[listing.currency];
-	const location = [listing.deliveryCity, listing.deliveryProvinsi].filter(Boolean).join(", ");
+const statusChip = cva("rounded-full px-2.5 py-1 text-xs font-semibold", {
+	variants: {
+		state: {
+			open: "bg-[#EFF6FF] text-imsg-blue",
+			closing: "bg-[#FFFBEB] text-[#D97706]",
+			closed: "bg-[#F3F4F6] text-[#6B7280]",
+		},
+	},
+	defaultVariants: { state: "open" },
+});
+
+function daysUntil(endDate: string): number {
+	const end = new Date(endDate);
+	const today = new Date();
+	return Math.round(
+		(Date.UTC(end.getFullYear(), end.getMonth(), end.getDate()) -
+			Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())) /
+			86_400_000,
+	);
+}
+
+export function ListingDetailInfo({ listing }: ListingDetailInfoProps): React.JSX.Element {
+	const symbol = CURRENCY_SYMBOL[listing.currency] ?? "";
+	const remaining = daysUntil(listing.endDate);
+	const totalQuantity = listing.items.reduce((sum, item) => sum + item.quantity, 0);
+	const units = new Set(listing.items.map((item) => item.unit));
+
+	const summary = [
+		{
+			label: "예산",
+			value: listing.budgetPublic ? `${symbol} ${listing.totalBudget.toLocaleString()}` : "비공개",
+			sub:
+				listing.budgetPublic && listing.budgetInKrw !== null && listing.currency !== "KRW"
+					? `약 ₩ ${Math.round(listing.budgetInKrw).toLocaleString()}`
+					: listing.budgetPublic
+						? listing.currency
+						: "발주기업이 공개하지 않았어요",
+			accent: false,
+		},
+		{
+			label: "견적 마감",
+			value: new Date(listing.endDate).toLocaleDateString("ko-KR"),
+			sub: remaining > 0 ? `${remaining}일 남음` : remaining === 0 ? "오늘 마감" : "마감됨",
+			accent: remaining >= 0 && remaining <= 3,
+		},
+		{
+			label: "요청 품목",
+			value: `${listing.items.length}종`,
+			sub: units.size === 1 ? `총 ${totalQuantity.toLocaleString()} ${[...units][0]}` : null,
+			accent: false,
+		},
+	];
 
 	return (
-		<div className="space-y-4">
-			<div className="rounded-2xl border border-[#E5E7EB] bg-white p-5">
-				<div className="mb-2 flex items-center gap-2">
-					<span className="flex items-center gap-1 rounded-full bg-[#EFF6FF] px-2.5 py-1 text-xs font-medium text-[#3B82F6]">
-						<Clock size={12} />
-						{getRemainingText(listing.endDate)}
+		<div className="space-y-5">
+			<section className="rounded-2xl bg-white p-6 shadow-sm">
+				<div className="mb-2 flex flex-wrap items-center gap-2">
+					<span
+						className={statusChip({
+							state: remaining < 0 ? "closed" : remaining <= 3 ? "closing" : "open",
+						})}>
+						{remaining < 0 ? "마감됨" : remaining === 0 ? "오늘 마감" : `${remaining}일 남음`}
+					</span>
+					<span className="rounded-full bg-imsg-surface px-2.5 py-1 text-xs font-medium text-imsg-secondary">
+						{CATEGORY_LABELS[listing.category]}
+					</span>
+					<span className="text-xs text-imsg-secondary">
+						{new Date(listing.createdAt).toLocaleDateString("ko-KR")} 등록
 					</span>
 				</div>
 
-				<h2 className="text-xl font-bold text-[#1F2937]">{listing.title}</h2>
-
-				<p className="mt-1.5 flex items-center gap-1.5 text-sm text-[#6B7280]">
+				<h1 className="text-2xl font-bold tracking-tight text-[#0f172a]">{listing.title}</h1>
+				<p className="mt-1.5 flex items-center gap-1.5 text-sm text-imsg-secondary">
 					<Building2 size={14} />
-					{listing.companyName}
+					{listing.companyName || "발주기업"}
 				</p>
 
-				{listing.description && (
-					<p className="mt-3 whitespace-pre-wrap border-t border-[#F3F4F6] pt-3 text-sm leading-relaxed text-[#374151]">
-						{listing.description}
-					</p>
-				)}
-			</div>
-
-			<div className="rounded-2xl border border-[#E5E7EB] bg-white p-5">
-				<p className="mb-3 text-sm font-semibold text-[#1F2937]">요청 품목</p>
-
-				<div className="overflow-hidden rounded-lg border border-[#E2E8F0]">
-					<table className="w-full text-sm">
-						<thead className="border-b border-[#E2E8F0] bg-[#F9FAFB]">
-							<tr>
-								<th className="w-10 px-3 py-2.5 text-left text-xs font-medium text-[#6B7280]">
-									No.
-								</th>
-								<th className="px-3 py-2.5 text-left text-xs font-medium text-[#6B7280]">
-									품명
-								</th>
-								<th className="px-3 py-2.5 text-left text-xs font-medium text-[#6B7280]">
-									규격
-								</th>
-								<th className="w-24 px-3 py-2.5 text-right text-xs font-medium text-[#6B7280]">
-									수량
-								</th>
-							</tr>
-						</thead>
-						<tbody className="divide-y divide-[#F3F4F6]">
-							{listing.items.map((item, index) => (
-								<tr key={item.id}>
-									<td className="px-3 py-3 text-[#9CA3AF]">{index + 1}</td>
-									<td className="px-3 py-3 text-[#1F2937]">{item.name}</td>
-									<td className="px-3 py-3 text-[#6B7280]">{item.spec || "-"}</td>
-									<td className="px-3 py-3 text-right text-[#1F2937]">
-										{item.quantity.toLocaleString()} {item.unit}
-									</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
+				<div className="mt-5 grid grid-cols-1 divide-y divide-[#F2F2F7] border-t border-[#F2F2F7] pt-5 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+					{summary.map((cell) => (
+						<div key={cell.label} className="py-3 first:pt-0 last:pb-0 sm:px-5 sm:py-0 sm:first:pl-0">
+							<p className="text-sm font-medium text-imsg-secondary">{cell.label}</p>
+							<p
+								className={
+									cell.accent
+										? "mt-1 text-2xl font-bold tracking-tight text-imsg-blue"
+										: "mt-1 text-2xl font-bold tracking-tight text-[#0f172a]"
+								}>
+								{cell.value}
+							</p>
+							{cell.sub && <p className="mt-0.5 text-sm text-imsg-secondary">{cell.sub}</p>}
+						</div>
+					))}
 				</div>
-			</div>
+			</section>
 
-			<div className="rounded-2xl border border-[#E5E7EB] bg-white p-5">
-				<p className="mb-3 text-sm font-semibold text-[#1F2937]">거래 조건</p>
+			{listing.description && (
+				<section className="rounded-2xl bg-white p-6 shadow-sm">
+					<h2 className="mb-4 flex items-center gap-2 text-base font-semibold text-[#0f172a]">
+						<FileText size={16} className="text-imsg-secondary" />
+						상세 설명
+					</h2>
+					<div
+						className="prose prose-sm max-w-none text-[#374151] [&_table]:w-full [&_td]:border [&_td]:border-[#E5E7EB] [&_td]:p-2 [&_th]:border [&_th]:border-[#E5E7EB] [&_th]:bg-[#F9FAFB] [&_th]:p-2"
+						dangerouslySetInnerHTML={{ __html: listing.description }}
+					/>
+				</section>
+			)}
 
-				<div className="space-y-3 text-sm">
-					<div className="flex justify-between border-b border-[#F3F4F6] pb-3">
-						<span className="text-[#6B7280]">예산</span>
-						<span className="font-medium text-[#1F2937]">
-							{listing.budgetPublic
-								? `${symbol} ${listing.totalBudget.toLocaleString()}`
-								: "비공개"}
-						</span>
-					</div>
-
-					<div className="flex justify-between border-b border-[#F3F4F6] pb-3">
-						<span className="flex items-center gap-1.5 text-[#6B7280]">
-							<Truck size={14} />
-							희망 납품 기한
-						</span>
-						<span className="font-medium text-[#1F2937]">
-							{listing.deliveryDays > 0 ? `${listing.deliveryDays}일 이내` : "협의"}
-						</span>
-					</div>
-
-					<div className="flex justify-between gap-4">
-						<span className="flex shrink-0 items-center gap-1.5 text-[#6B7280]">
-							<MapPin size={14} />
-							배송지
-						</span>
-						<span className="text-right font-medium text-[#1F2937]">
-							{location}
-							{listing.deliveryAddress && (
-								<span className="block text-xs font-normal text-[#6B7280]">
-									{listing.deliveryAddress}
-								</span>
-							)}
-						</span>
-					</div>
-				</div>
-			</div>
+			<ListingInfo
+				listingId={listing.id}
+				items={listing.items}
+				currency={listing.currency}
+				attachments={listing.attachments}
+				delivery={{
+					provinsi: listing.deliveryProvinsi,
+					city: listing.deliveryCity,
+					address: listing.deliveryAddress,
+					addressDetail: listing.deliveryAddressDetail,
+					method: listing.deliveryMethod,
+					timingMode: listing.deliveryTimingMode,
+					deadlineDate: listing.deliveryDeadlineDate,
+					deliveryDays: listing.deliveryDays,
+					lat: listing.deliveryLat,
+					lng: listing.deliveryLng,
+					// 계약 확정 전에는 발주기업 담당자 연락처를 제공하지 않는다.
+					contact: null,
+				}}
+			/>
 		</div>
 	);
 }
