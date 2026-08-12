@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ImageIcon, Loader2, Plus, X } from "lucide-react";
-import { uploadImage } from "@/features/sellerProfile/utils";
+import { uploadImage } from "@/features/siteBuilder/upload";
 import { cn } from "@/utils/cn";
 
 const INPUT_CLASS =

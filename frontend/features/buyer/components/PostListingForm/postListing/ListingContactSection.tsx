@@ -34,7 +34,7 @@ export default function ListingContactSection({ form }: ListingContactSectionPro
 				</table>
 			</div>
 			<p className="mt-2 text-xs text-[#9CA3AF]">
-				회원가입 시 등록한 담당자 정보예요. 변경이 필요하면 기업 프로필에서 수정해주세요.
+				회원가입 시 등록한 담당자 정보예요. 변경이 필요하면 기업 홈페이지 › 기업 설정에서 수정해주세요.
 			</p>
 		</SectionWrapper>
 	);

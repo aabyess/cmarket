@@ -20,7 +20,7 @@ export default async function SellerSiteEditPage({
 					블록을 조립해 바이어에게 보여질 회사 소개 페이지를 만들어보세요
 				</p>
 			</div>
-			<SiteBuilder data={data} initialTab={tab === "settings" ? "SETTINGS" : "PAGE"} />
+			<SiteBuilder role="seller" data={data} initialTab={tab === "settings" ? "SETTINGS" : "PAGE"} />
 		</div>
 	);
 }

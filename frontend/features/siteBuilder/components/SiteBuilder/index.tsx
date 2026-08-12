@@ -11,11 +11,18 @@ import { SiteBuilderToolbar } from "@/features/siteBuilder/components/SiteBuilde
 import { SiteBuilderTradeSettings } from "@/features/siteBuilder/components/SiteBuilder/SiteBuilderTradeSettings";
 import { createBlock, moveBlock } from "@/features/siteBuilder/utils";
 import type { SiteBuilderPublishState } from "@/features/siteBuilder/components/SiteBuilder/SiteBuilderToolbar";
-import type { Block, BlockType, SiteEditorData, SiteTradeSettings } from "@/features/siteBuilder/types";
+import type {
+	Block,
+	BlockType,
+	SiteEditorData,
+	SiteRole,
+	SiteTradeSettings,
+} from "@/features/siteBuilder/types";
 
 export type BuilderTab = "PAGE" | "SETTINGS";
 
 type SiteBuilderProps = {
+	role: SiteRole;
 	data: SiteEditorData;
 	initialTab?: BuilderTab;
 };
@@ -32,6 +39,11 @@ const tabButton = cva("rounded-lg px-4 py-2 text-sm font-medium transition-color
 	defaultVariants: { active: false },
 });
 
+const SETTINGS_TAB_LABELS: Record<SiteRole, string> = {
+	buyer: "기업 설정",
+	seller: "거래 설정",
+};
+
 const feedbackBox = cva("flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium", {
 	variants: {
 		kind: {
@@ -42,7 +54,11 @@ const feedbackBox = cva("flex items-center gap-2 rounded-xl px-4 py-3 text-sm fo
 	defaultVariants: { kind: "SUCCESS" },
 });
 
-export function SiteBuilder({ data, initialTab = "PAGE" }: SiteBuilderProps): React.JSX.Element {
+export function SiteBuilder({
+	role,
+	data,
+	initialTab = "PAGE",
+}: SiteBuilderProps): React.JSX.Element {
 	const router = useRouter();
 
 	const [tab, setTab] = useState<BuilderTab>(initialTab);
@@ -79,7 +95,7 @@ export function SiteBuilder({ data, initialTab = "PAGE" }: SiteBuilderProps): Re
 	}
 
 	async function saveDraft(): Promise<boolean> {
-		const res = await fetch("/api/seller/site", {
+		const res = await fetch("/api/site", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ blocks }),
@@ -109,7 +125,7 @@ export function SiteBuilder({ data, initialTab = "PAGE" }: SiteBuilderProps): Re
 		try {
 			if (!(await saveDraft())) return;
 
-			const res = await fetch("/api/seller/site/publish", { method: "POST" });
+			const res = await fetch("/api/site/publish", { method: "POST" });
 			if (!res.ok) {
 				const { error } = await res.json();
 				showFeedback("ERROR", error ?? "발행에 실패했습니다.");
@@ -126,7 +142,7 @@ export function SiteBuilder({ data, initialTab = "PAGE" }: SiteBuilderProps): Re
 	async function handleSaveSettings(): Promise<void> {
 		setIsSavingSettings(true);
 		try {
-			const res = await fetch("/api/seller/profile", {
+			const res = await fetch("/api/site/settings", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(settings),
@@ -155,7 +171,7 @@ export function SiteBuilder({ data, initialTab = "PAGE" }: SiteBuilderProps): Re
 					type="button"
 					onClick={() => setTab("SETTINGS")}
 					className={tabButton({ active: tab === "SETTINGS" })}>
-					거래 설정
+					{SETTINGS_TAB_LABELS[role]}
 				</button>
 			</div>
 
@@ -168,7 +184,7 @@ export function SiteBuilder({ data, initialTab = "PAGE" }: SiteBuilderProps): Re
 
 			{tab === "SETTINGS" ? (
 				<SiteBuilderTradeSettings
-					company={data.company}
+					role={role}
 					settings={settings}
 					isSaving={isSavingSettings}
 					onChange={setSettings}

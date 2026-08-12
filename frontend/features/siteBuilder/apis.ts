@@ -60,6 +60,12 @@ export async function getSiteEditorData(): Promise<SiteEditorData | null> {
 		.eq("profile_id", user.id)
 		.maybeSingle();
 
+	const { data: contact } = await supabase
+		.from("contacts")
+		.select("name, title, department, email, phone, mobile")
+		.eq("profile_id", user.id)
+		.maybeSingle();
+
 	const { data: bank } = await supabase
 		.from("bank_accounts")
 		.select("bank_name, account_number, account_holder, swift_code, currency")
@@ -97,18 +103,11 @@ export async function getSiteEditorData(): Promise<SiteEditorData | null> {
 	let isSeeded = false;
 
 	if (blocks.length === 0) {
-		const [{ data: products }, { data: contact }] = await Promise.all([
-			supabase
-				.from("products")
-				.select("id, name, description, price_range, image_urls")
-				.eq("profile_id", user.id)
-				.order("sort_order", { ascending: true }),
-			supabase
-				.from("contacts")
-				.select("name, email, phone, mobile")
-				.eq("profile_id", user.id)
-				.maybeSingle(),
-		]);
+		const { data: products } = await supabase
+			.from("products")
+			.select("id, name, description, price_range, image_urls")
+			.eq("profile_id", user.id)
+			.order("sort_order", { ascending: true });
 
 		blocks = buildSeedBlocks({
 			companyName: company.company_name ?? "",
@@ -157,8 +156,16 @@ export async function getSiteEditorData(): Promise<SiteEditorData | null> {
 				swiftCode: bank?.swift_code ?? "",
 				currency: bank?.currency ?? "KRW",
 			},
+			company: toCompanyInfo(company),
+			contact: {
+				name: contact?.name ?? "",
+				title: contact?.title ?? "",
+				department: contact?.department ?? "",
+				email: contact?.email ?? "",
+				phone: contact?.phone ?? "",
+				mobile: contact?.mobile ?? "",
+			},
 		},
-		company: toCompanyInfo(company),
 	};
 }
 

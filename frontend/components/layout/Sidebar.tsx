@@ -27,6 +27,7 @@ const BUYER_MENU_ITEMS = [
 	{ label: "받은 견적", key: "quotes", icon: Mail, href: "/buyer/quote-review", badge: null },
 	{ label: "채팅", key: "chat", icon: MessageSquare, href: "/buyer/chat", badge: null },
 	{ label: "계약 관리", key: "contract", icon: FileCheck, href: "/buyer/contract", badge: null },
+	{ label: "기업 홈페이지", key: "profile", icon: Building2, href: "/buyer/profile/edit", badge: null },
 	{ label: "지원센터", key: "support", icon: HelpCircle, href: "#", badge: null },
 ];
 
@@ -103,7 +104,7 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 								</div>
 								<div className="py-1">
 									<Link
-										href={role === "seller" ? "/seller/profile/edit" : "#"}
+										href={`/${role}/profile/edit?tab=settings`}
 										onClick={() => setDropdownOpen(false)}
 										className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#374151] hover:bg-[#F3F4F6] transition-colors"
 									>

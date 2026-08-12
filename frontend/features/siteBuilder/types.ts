@@ -99,6 +99,8 @@ export type Block =
 
 export type BlockPropsOf<T extends BlockType> = Extract<Block, { type: T }>["props"];
 
+export type SiteRole = "buyer" | "seller";
+
 export type SitePageStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
 export type SiteEditorData = {
@@ -111,13 +113,24 @@ export type SiteEditorData = {
 	hasPublished: boolean;
 	hasUnpublishedChanges: boolean;
 	settings: SiteTradeSettings;
-	company: SiteCompanyInfo;
 };
 
 export type SiteTradeSettings = {
 	logoUrl: string;
 	categories: string[];
 	bankAccount: SiteBankAccount;
+	company: SiteCompanyInfo;
+	contact: SiteContactInfo;
+};
+
+// 사업자등록번호는 인보이스·계약서에 찍히는 식별자라 편집 대상이 아니다.
+export type SiteContactInfo = {
+	name: string;
+	title: string;
+	department: string;
+	email: string;
+	phone: string;
+	mobile: string;
 };
 
 export type SiteBankAccount = {
