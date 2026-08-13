@@ -3,8 +3,7 @@ import { getAuthHeaders } from "@/utils/authHeaders";
 
 export async function getServerUserRole(): Promise<"buyer" | "seller" | "admin" | null> {
 	const supabase = await createServerSupabaseClient();
-	const { data: { session } } = await supabase.auth.getSession();
-	const user = session?.user;
+	const { data: { user } } = await supabase.auth.getUser();
 	if (!user) return null;
 
 	const { data, error } = await supabase
@@ -51,7 +50,7 @@ export async function getUserSummary(): Promise<UserSummary | null> {
 	if (!profileResult.data) return null;
 
 	return {
-		role: authHeaders?.role ?? profileResult.data.role,
+		role: authHeaders?.role ?? profileResult.data.role ?? "buyer",
 		country: profileResult.data.country,
 		companyName: companyResult.data?.company_name ?? "",
 		email,

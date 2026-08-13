@@ -1,8 +1,25 @@
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+const PROTECTED_PREFIXES = ["/buyer", "/seller", "/support", "/admin"];
+
 export async function middleware(request: NextRequest) {
-	let supabaseResponse = NextResponse.next({ request });
+	// 클라이언트가 보낸 x-user-* 헤더는 위조일 수 있으니 항상 제거한다.
+	// 아래에서 미들웨어가 직접 검증한 값만 다시 세팅한다.
+	request.headers.delete("x-user-id");
+	request.headers.delete("x-user-email");
+	request.headers.delete("x-user-role");
+
+	const { pathname } = request.nextUrl;
+	const isProtectedPath = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+	const isAuthRelevant = isProtectedPath || pathname === "/login";
+
+	// 인증과 무관한 공개 경로는 위조 헤더 제거만 하고 바로 통과시킨다.
+	if (!isAuthRelevant) {
+		return NextResponse.next({ request });
+	}
+
+	const pendingCookies: { name: string; value: string; options: CookieOptions }[] = [];
 
 	const supabase = createServerClient(
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,30 +31,26 @@ export async function middleware(request: NextRequest) {
 				},
 				setAll(cookiesToSet) {
 					cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-					supabaseResponse = NextResponse.next({ request });
-					cookiesToSet.forEach(({ name, value, options }) =>
-						supabaseResponse.cookies.set(name, value, options),
-					);
+					pendingCookies.push(...cookiesToSet);
 				},
 			},
 		},
 	);
 
-	const { data: { user } } = await supabase.auth.getUser();
-	const { pathname } = request.nextUrl;
+	function buildResponse(): NextResponse {
+		const response = NextResponse.next({ request });
+		pendingCookies.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+		return response;
+	}
 
-	const isProtectedPath =
-		pathname.startsWith("/buyer") ||
-		pathname.startsWith("/seller") ||
-		pathname.startsWith("/support") ||
-		pathname.startsWith("/admin");
+	const { data: { user } } = await supabase.auth.getUser();
 
 	if (!user && isProtectedPath) {
 		return NextResponse.redirect(new URL("/login", request.url));
 	}
 
 	if (!user) {
-		return supabaseResponse;
+		return buildResponse();
 	}
 
 	const { data: profile } = await supabase
@@ -69,7 +82,7 @@ export async function middleware(request: NextRequest) {
 	}
 
 	if (role === "buyer" && pathname.startsWith("/seller")) {
-		return NextResponse.redirect(new URL("/buyer/dashboard", request.url));
+		return NextResponse.redirect(new URL("/seller/dashboard", request.url));
 	}
 
 	if (role === "seller" && pathname.startsWith("/buyer")) {
@@ -78,15 +91,16 @@ export async function middleware(request: NextRequest) {
 
 	// 이미 검증한 user/role을 헤더로 전달해 서버 컴포넌트에서 재조회하지 않게 한다.
 	request.headers.set("x-user-id", user.id);
-	request.headers.set("x-user-email", user.email ?? "");
+	try {
+		request.headers.set("x-user-email", user.email ?? "");
+	} catch {
+		// 이메일 값에 헤더로 쓸 수 없는 문자가 섞여 있으면 헤더 없이 진행한다.
+	}
 	request.headers.set("x-user-role", role);
 
-	const responseWithHeaders = NextResponse.next({ request });
-	supabaseResponse.cookies.getAll().forEach((cookie) => responseWithHeaders.cookies.set(cookie));
-
-	return responseWithHeaders;
+	return buildResponse();
 }
 
 export const config = {
-	matcher: ["/buyer/:path*", "/seller/:path*", "/support/:path*", "/admin/:path*", "/login"],
+	matcher: ["/((?!_next/static|_next/image|favicon.ico|api/).*)"],
 };

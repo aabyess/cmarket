@@ -1,3 +1,4 @@
+// components/commons/PageLoading/index.stories.tsx
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { PageLoading } from "@/components/commons/PageLoading";
 
