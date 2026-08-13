@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
+    "analyze": "ANALYZE=true next build",
     "start": "next start",
     "lint": "eslint",
     "storybook": "storybook dev -p 6006",
@@ -50,6 +51,7 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^5.2.1",
     "@eslint/eslintrc": "^3",
+    "@next/bundle-analyzer": "^15.5.12",
     "@storybook/addon-a11y": "^10.5.5",
     "@storybook/addon-docs": "^10.5.5",
     "@storybook/addon-mcp": "^0.7.0",
