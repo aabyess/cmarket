@@ -58,8 +58,12 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 					return a.lowestPrice - b.lowestPrice;
 				}
 				case "deadline":
-				default:
+				default: {
+					const aClosed = getRemaining(a.endDate).isClosed;
+					const bClosed = getRemaining(b.endDate).isClosed;
+					if (aClosed !== bClosed) return aClosed ? 1 : -1;
 					return new Date(a.endDate).getTime() - new Date(b.endDate).getTime();
+				}
 			}
 		});
 	}, [listings, search, sort, hasFilter]);

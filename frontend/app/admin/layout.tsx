@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { FileText, FolderOpen, LayoutDashboard, Mail } from "lucide-react";
 import { getIsAdmin } from "@/features/support/serverApis";
+import { LogoutButton } from "@/features/auth/components/LogoutButton";
 
 const MENU = [
 	{ href: "/admin", label: "대시보드", icon: LayoutDashboard },
@@ -47,6 +48,7 @@ export default async function AdminLayout({
 						className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-imsg-secondary transition-colors duration-200 hover:bg-imsg-surface">
 						사용자 화면 보기
 					</Link>
+					<LogoutButton />
 				</div>
 			</aside>
 
