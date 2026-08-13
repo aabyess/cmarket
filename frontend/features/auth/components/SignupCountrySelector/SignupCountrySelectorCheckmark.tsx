@@ -2,9 +2,13 @@
 
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "motion/react";
+import { CheckCircle2 } from "lucide-react";
 import checkmarkAnimation from "@/public/animations/checkmark.json";
 
-const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+const Lottie = dynamic(() => import("lottie-react"), {
+  ssr: false,
+  loading: () => <CheckCircle2 className="size-full text-[#3B82F6]" />,
+});
 
 type SignupCountrySelectorCheckmarkProps = {
   isSelected: boolean;

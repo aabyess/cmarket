@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SafeImage } from "@/components/commons/SafeImage";
 import type { GalleryProps } from "@/features/siteBuilder/types";
 
 type SiteRendererGalleryProps = {
@@ -18,7 +18,7 @@ export function SiteRendererGallery({ props }: SiteRendererGalleryProps): React.
 						key={url}
 						className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-[#F3F4F6]"
 					>
-						<Image
+						<SafeImage
 							src={url}
 							alt=""
 							fill

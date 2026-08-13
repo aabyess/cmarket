@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { Package } from "lucide-react";
+import { SafeImage } from "@/components/commons/SafeImage";
 import type { ProductsProps } from "@/features/siteBuilder/types";
 
 type SiteRendererProductsProps = {
@@ -18,7 +18,7 @@ export function SiteRendererProducts({ props }: SiteRendererProductsProps): Reac
 					<div key={item.id} className="overflow-hidden rounded-xl border border-[#F3F4F6]">
 						<div className="relative flex h-28 items-center justify-center bg-[#F3F4F6]">
 							{item.imageUrls[0] ? (
-								<Image
+								<SafeImage
 									src={item.imageUrls[0]}
 									alt={item.name}
 									fill
