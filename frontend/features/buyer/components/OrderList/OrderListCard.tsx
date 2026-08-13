@@ -3,6 +3,7 @@
 import { Clock, MessageSquare, Package } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { Currency, ListingCategory, ListingStatus, ListingSummary } from "@/features/buyer/types";
+import { CATEGORY_LABELS } from "@/features/buyer/constants";
 
 const CURRENCY_SYMBOL: Record<Currency, string> = {
 	USD: "$",
@@ -21,13 +22,6 @@ const STATUS_CONFIG: Record <
 		className: "bg-[#ECFDF5] text-[#059669]",
 		dotClassName: "bg-[#059669]",
 	},
-};
-
-const CATEGORY_LABEL: Record<ListingCategory, string> = {
-	office: "사무용품",
-	lab: "연구장비",
-	machinery: "산업기계",
-	chemical: "화학약품",
 };
 
 function getRemainingText(endDate: string): { text: string; isUrgent: boolean } {
@@ -69,9 +63,9 @@ export function OrderListCard({ listing, onClick }: OrderListCardProps): React.R
 					<span className={cn("size-1.5 rounded-full", status.dotClassName)} />
 					{status.label}
 				</span>
-				{listing.category && CATEGORY_LABEL[listing.category] && (
+				{listing.category && CATEGORY_LABELS[listing.category] && (
 					<span className="rounded-full bg-[#F3F4F6] px-2.5 py-1 text-xs font-medium text-[#6B7280]">
-						{CATEGORY_LABEL[listing.category]}
+						{CATEGORY_LABELS[listing.category]}
 					</span>
 				)}
 				<span

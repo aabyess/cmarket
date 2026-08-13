@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { DashboardHome } from "@/features/seller/components/DashboardHome";
 import { MOCK_RECOMMENDED_LISTINGS, MOCK_SELLER_DASHBOARD_DATA } from "@/features/seller/mocks";
 

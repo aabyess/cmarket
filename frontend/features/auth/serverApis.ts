@@ -1,6 +1,6 @@
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
 
-export async function getServerUserRole(): Promise<"buyer" | "seller" | null> {
+export async function getServerUserRole(): Promise<"buyer" | "seller" | "admin" | null> {
 	const supabase = await createServerSupabaseClient();
 	const { data: { session } } = await supabase.auth.getSession();
 	const user = session?.user;
@@ -17,7 +17,7 @@ export async function getServerUserRole(): Promise<"buyer" | "seller" | null> {
 }
 
 export type UserSummary = {
-	role: "buyer" | "seller";
+	role: "buyer" | "seller" | "admin";
 	country: "indonesia" | "korea";
 	companyName: string;
 	email: string;

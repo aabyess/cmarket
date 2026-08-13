@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { SiteRenderer } from "@/features/siteBuilder/components/SiteRenderer";
 import { MOCK_BLOCKS } from "@/features/siteBuilder/mocks";
 

@@ -28,7 +28,7 @@ const BUYER_MENU_ITEMS = [
 	{ label: "채팅", key: "chat", icon: MessageSquare, href: "/buyer/chat", badge: null },
 	{ label: "계약 관리", key: "contract", icon: FileCheck, href: "/buyer/contract", badge: null },
 	{ label: "기업 홈페이지", key: "profile", icon: Building2, href: "/buyer/profile/edit", badge: null },
-	{ label: "지원센터", key: "support", icon: HelpCircle, href: "#", badge: null },
+	{ label: "지원센터", key: "support", icon: HelpCircle, href: "/support", badge: null },
 ];
 
 const SELLER_MENU_ITEMS = [
@@ -38,7 +38,7 @@ const SELLER_MENU_ITEMS = [
 	{ label: "채팅", key: "chat", icon: MessageSquare, href: "/seller/chat", badge: null },
 	{ label: "계약 관리", key: "contract", icon: FileCheck, href: "/seller/contract", badge: null },
 	{ label: "기업 홈페이지", key: "profile", icon: Building2, href: "/seller/profile/edit", badge: null },
-	{ label: "지원센터", key: "support", icon: HelpCircle, href: "#", badge: null },
+	{ label: "지원센터", key: "support", icon: HelpCircle, href: "/support", badge: null },
 ];
 
 export function Sidebar({ role, companyName, name }: SidebarProps) {
