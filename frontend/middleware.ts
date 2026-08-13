@@ -76,7 +76,15 @@ export async function middleware(request: NextRequest) {
 		return NextResponse.redirect(new URL("/seller/dashboard", request.url));
 	}
 
-	return supabaseResponse;
+	// 이미 검증한 user/role을 헤더로 전달해 서버 컴포넌트에서 재조회하지 않게 한다.
+	request.headers.set("x-user-id", user.id);
+	request.headers.set("x-user-email", user.email ?? "");
+	request.headers.set("x-user-role", role);
+
+	const responseWithHeaders = NextResponse.next({ request });
+	supabaseResponse.cookies.getAll().forEach((cookie) => responseWithHeaders.cookies.set(cookie));
+
+	return responseWithHeaders;
 }
 
 export const config = {
