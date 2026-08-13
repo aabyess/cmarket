@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "flagcdn.com" },
+      { protocol: "https", hostname: "sqwwqbxmypoatsfgukxj.supabase.co" },
     ],
   },
   turbopack: {

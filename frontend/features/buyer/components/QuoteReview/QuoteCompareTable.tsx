@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { MessageSquare, Building2, CheckCircle2, ExternalLink } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { startChat } from "@/features/chat/mutations";
@@ -185,9 +186,11 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 										</div>
 										<div className="flex items-center gap-2">
 											{quote.seller.logoUrl ? (
-												<img
+												<Image
 													src={quote.seller.logoUrl}
 													alt={quote.seller.companyName}
+													width={32}
+													height={32}
 													className="size-8 rounded-lg object-cover"
 												/>
 											) : (

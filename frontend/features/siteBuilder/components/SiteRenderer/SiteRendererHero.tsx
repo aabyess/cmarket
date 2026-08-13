@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { cva } from "class-variance-authority";
 import { Building2 } from "lucide-react";
 import type { HeroProps } from "@/features/siteBuilder/types";
@@ -41,7 +42,7 @@ export function SiteRendererHero({ props }: SiteRendererHeroProps): React.JSX.El
 			<div className="relative">
 				{props.logoUrl && (
 					<div className="mb-4 flex size-14 items-center justify-center overflow-hidden rounded-xl bg-white/20">
-						<img src={props.logoUrl} alt="" className="size-full object-cover" />
+						<Image src={props.logoUrl} alt="" width={56} height={56} className="size-full object-cover" />
 					</div>
 				)}
 				{!props.logoUrl && (

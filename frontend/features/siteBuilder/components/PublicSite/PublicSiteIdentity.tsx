@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Building2 } from "lucide-react";
 import type { SiteCompanyInfo } from "@/features/siteBuilder/types";
 
@@ -29,9 +30,11 @@ export function PublicSiteIdentity({
 
 			<div className="flex items-center gap-4">
 				{logoUrl ? (
-					<img
+					<Image
 						src={logoUrl}
 						alt={company.companyName}
+						width={64}
+						height={64}
 						className="size-16 shrink-0 rounded-2xl object-cover"
 					/>
 				) : (

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { GalleryProps } from "@/features/siteBuilder/types";
 
 type SiteRendererGalleryProps = {
@@ -13,12 +14,18 @@ export function SiteRendererGallery({ props }: SiteRendererGalleryProps): React.
 
 			<div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
 				{props.imageUrls.map((url) => (
-					<img
+					<div
 						key={url}
-						src={url}
-						alt=""
-						className="aspect-[4/3] w-full rounded-lg bg-[#F3F4F6] object-cover"
-					/>
+						className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-[#F3F4F6]"
+					>
+						<Image
+							src={url}
+							alt=""
+							fill
+							sizes="(min-width: 640px) 25vw, 50vw"
+							className="object-cover"
+						/>
+					</div>
 				))}
 			</div>
 		</section>
