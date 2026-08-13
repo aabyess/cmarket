@@ -1,8 +1,10 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "motion/react";
-import Lottie from "lottie-react";
 import checkmarkAnimation from "@/public/animations/checkmark.json";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 type SignupCountrySelectorCheckmarkProps = {
   isSelected: boolean;

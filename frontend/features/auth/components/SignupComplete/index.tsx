@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
 import checkmarkAnimation from "@/public/animations/checkmark.json";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 type SignupCompleteProps = {
 	role: "buyer" | "seller";
