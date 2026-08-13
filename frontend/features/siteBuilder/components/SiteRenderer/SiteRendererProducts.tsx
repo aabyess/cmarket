@@ -1,4 +1,5 @@
 import { Package } from "lucide-react";
+import { SafeImage } from "@/components/commons/SafeImage";
 import type { ProductsProps } from "@/features/siteBuilder/types";
 
 type SiteRendererProductsProps = {
@@ -15,9 +16,15 @@ export function SiteRendererProducts({ props }: SiteRendererProductsProps): Reac
 			<div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
 				{props.items.map((item) => (
 					<div key={item.id} className="overflow-hidden rounded-xl border border-[#F3F4F6]">
-						<div className="flex h-28 items-center justify-center bg-[#F3F4F6]">
+						<div className="relative flex h-28 items-center justify-center bg-[#F3F4F6]">
 							{item.imageUrls[0] ? (
-								<img src={item.imageUrls[0]} alt={item.name} className="size-full object-cover" />
+								<SafeImage
+									src={item.imageUrls[0]}
+									alt={item.name}
+									fill
+									sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+									className="object-cover"
+								/>
 							) : (
 								<Package size={22} className="text-[#9CA3AF]" />
 							)}

@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
+import { getAuthHeaders } from "@/utils/authHeaders";
 import type { Inquiry, Notice, SupportResource } from "@/features/support/types";
 
 type NoticeRow = {
@@ -54,6 +55,9 @@ const RESOURCE_COLUMNS =
 	"id, title, description, file_name, storage_path, file_size, download_count, published_at, created_at";
 
 export async function getIsAdmin(): Promise<boolean> {
+	const authHeaders = await getAuthHeaders();
+	if (authHeaders) return authHeaders.role === "admin";
+
 	const supabase = await createServerSupabaseClient();
 	const {
 		data: { user },

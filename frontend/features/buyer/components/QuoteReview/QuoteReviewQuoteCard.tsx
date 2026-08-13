@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { cva } from "class-variance-authority";
+import { SafeImage } from "@/components/commons/SafeImage";
 import {
 	Building2,
 	CheckCircle2,
@@ -95,9 +96,11 @@ export function QuoteReviewQuoteCard({
 				href={`/companies/${quote.seller.profileId}?from=${encodeURIComponent(backHref)}`}
 				className="group mb-4 -mx-2 flex items-center gap-3 rounded-xl px-2 py-2 transition-colors duration-200 hover:bg-imsg-surface">
 				{quote.seller.logoUrl ? (
-					<img
+					<SafeImage
 						src={quote.seller.logoUrl}
 						alt={quote.seller.companyName}
+						width={44}
+						height={44}
 						className="size-11 shrink-0 rounded-xl object-cover"
 					/>
 				) : (

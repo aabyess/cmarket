@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MessageSquare, Building2, CheckCircle2, ExternalLink } from "lucide-react";
+import { SafeImage } from "@/components/commons/SafeImage";
 import { cn } from "@/utils/cn";
 import { startChat } from "@/features/chat/mutations";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
@@ -185,9 +186,11 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 										</div>
 										<div className="flex items-center gap-2">
 											{quote.seller.logoUrl ? (
-												<img
+												<SafeImage
 													src={quote.seller.logoUrl}
 													alt={quote.seller.companyName}
+													width={32}
+													height={32}
 													className="size-8 rounded-lg object-cover"
 												/>
 											) : (

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ImageIcon, Loader2, Plus, X } from "lucide-react";
+import { SafeImage } from "@/components/commons/SafeImage";
 import { uploadImage } from "@/features/siteBuilder/upload";
 import { cn } from "@/utils/cn";
 
@@ -165,7 +166,7 @@ export function SiteBuilderImageField({
 					{isUploading ? (
 						<Loader2 size={18} className="animate-spin text-[#9CA3AF]" />
 					) : value ? (
-						<img src={value} alt="" className="size-full object-cover" />
+						<SafeImage src={value} alt="" width={64} height={64} className="size-full object-cover" />
 					) : (
 						<ImageIcon size={18} className="text-[#9CA3AF]" />
 					)}
@@ -220,7 +221,7 @@ export function SiteBuilderImageListField({
 			<div className="flex flex-wrap gap-2">
 				{values.map((url) => (
 					<div key={url} className="group relative size-16 overflow-hidden rounded-lg">
-						<img src={url} alt="" className="size-full object-cover" />
+						<SafeImage src={url} alt="" width={64} height={64} className="size-full object-cover" />
 						<button
 							type="button"
 							onClick={() => onChange(values.filter((v) => v !== url))}

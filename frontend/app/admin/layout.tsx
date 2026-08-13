@@ -16,8 +16,8 @@ export default async function AdminLayout({
 }: {
 	children: React.ReactNode;
 }): Promise<React.JSX.Element> {
-	// 미들웨어가 이미 막지만, 레이아웃에서도 확인한다.
-	// 미들웨어는 쿠키만 보고 판단하므로 권한이 회수된 직후를 잡지 못한다.
+	// 미들웨어가 매 요청마다 DB에서 role을 새로 조회해 검증하고, 그 결과를 헤더로 전달한다.
+	// getIsAdmin()은 그 헤더를 읽을 뿐이라 재조회는 아니지만 같은 요청 내 최신 값이다.
 	if (!(await getIsAdmin())) redirect("/login");
 
 	return (

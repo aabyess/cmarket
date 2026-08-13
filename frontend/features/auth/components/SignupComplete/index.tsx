@@ -2,8 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
+import { CheckCircle2 } from "lucide-react";
 import checkmarkAnimation from "@/public/animations/checkmark.json";
+
+const Lottie = dynamic(() => import("lottie-react"), {
+	ssr: false,
+	loading: () => <CheckCircle2 className="size-full text-[#3B82F6]" />,
+});
 
 type SignupCompleteProps = {
 	role: "buyer" | "seller";
