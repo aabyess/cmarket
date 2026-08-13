@@ -1,8 +1,20 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import SectionWrapper from "@/features/buyer/components/PostListingForm/postListing/SectionWrapper";
-import ListingDescriptionEditor from "@/features/buyer/components/PostListingForm/postListing/ListingDescriptionEditor";
 import type { ListingFormData } from "@/features/buyer/types";
+
+const ListingDescriptionEditor = dynamic(
+	() => import("@/features/buyer/components/PostListingForm/postListing/ListingDescriptionEditor"),
+	{
+		ssr: false,
+		loading: () => (
+			<div className="flex h-[220px] items-center justify-center rounded-lg border border-[#E2E8F0] text-sm text-imsg-secondary">
+				에디터를 불러오는 중...
+			</div>
+		),
+	},
+);
 
 type ListingNoteSectionProps = {
 	form: ListingFormData;
