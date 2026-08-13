@@ -1,6 +1,8 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+// 인증이 필요한 라우트 그룹. matcher는 헤더 위조 방지를 위해 일부러 훨씬 넓게 잡았으므로,
+// 새 보호 라우트를 추가할 때는 여기만 갱신하면 된다(matcher를 건드릴 필요 없음).
 const PROTECTED_PREFIXES = ["/buyer", "/seller", "/support", "/admin"];
 
 export async function middleware(request: NextRequest) {
@@ -82,7 +84,7 @@ export async function middleware(request: NextRequest) {
 	}
 
 	if (role === "buyer" && pathname.startsWith("/seller")) {
-		return NextResponse.redirect(new URL("/seller/dashboard", request.url));
+		return NextResponse.redirect(new URL("/buyer/dashboard", request.url));
 	}
 
 	if (role === "seller" && pathname.startsWith("/buyer")) {
@@ -93,14 +95,18 @@ export async function middleware(request: NextRequest) {
 	request.headers.set("x-user-id", user.id);
 	try {
 		request.headers.set("x-user-email", user.email ?? "");
-	} catch {
+	} catch (err) {
 		// 이메일 값에 헤더로 쓸 수 없는 문자가 섞여 있으면 헤더 없이 진행한다.
+		console.error("Failed to set x-user-email header", err);
 	}
 	request.headers.set("x-user-role", role);
 
 	return buildResponse();
 }
 
+// 정적 자산/API를 뺀 전체 경로를 매칭한다. 좁혔다가 새 공개 라우트가 빠지면
+// 그 경로에서 헤더 위조 검사를 건너뛰게 되므로, 보호 경로가 아닌 요청은
+// 위에서 헤더 삭제만 하고 즉시 반환해 비용을 최소화한다.
 export const config = {
 	matcher: ["/((?!_next/static|_next/image|favicon.ico|api/).*)"],
 };
