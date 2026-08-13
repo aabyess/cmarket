@@ -83,7 +83,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 			router.push(`/buyer/chat?quoteId=${quoteId}`);
 		} catch (err) {
 			console.error(err);
-			alert("낙찰 처리 중 오류가 발생했습니다.");
+			alert("계약 확정 처리 중 오류가 발생했습니다.");
 		} finally {
 			setAwardingId(null);
 			setConfirmQuoteId(null);
@@ -100,7 +100,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 					<div>
 						<span
 							className={cn(
-								"text-[17px] font-semibold",
+								"text-base font-semibold",
 								isLowest ? "text-[#D97706]" : "text-[#1F2937]",
 							)}
 						>
@@ -117,7 +117,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 				return (
 					<span
 						className={cn(
-							"text-[17px] font-semibold",
+							"text-base font-semibold",
 							quote.deliveryDays === fastestDays ? "text-[#16A34A]" : "text-[#1F2937]",
 						)}
 					>
@@ -138,7 +138,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 				return <span className="text-[#374151]">{quote.seller.address || "-"}</span>;
 			case "note":
 				return (
-					<span className="whitespace-pre-wrap text-[13px] leading-relaxed text-[#6B7280]">
+					<span className="whitespace-pre-wrap text-xs leading-relaxed text-[#6B7280]">
 						{quote.note || "-"}
 					</span>
 				);
@@ -167,17 +167,17 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 									>
 										<div className="mb-2 flex flex-wrap gap-1">
 											{isLowest && (
-												<span className="rounded-full bg-[#FEF3C7] px-2 py-0.5 text-[11px] font-medium text-[#D97706]">
+												<span className="rounded-full bg-[#FEF3C7] px-2 py-0.5 text-xs font-medium text-[#D97706]">
 													최저가
 												</span>
 											)}
 											{quote.deliveryDays === fastestDays && (
-												<span className="rounded-full bg-[#F0FDF4] px-2 py-0.5 text-[11px] font-medium text-[#16A34A]">
+												<span className="rounded-full bg-[#F0FDF4] px-2 py-0.5 text-xs font-medium text-[#16A34A]">
 													최속납기
 												</span>
 											)}
 											{quote.status === "awarded" && (
-												<span className="flex items-center gap-0.5 rounded-full bg-[#059669] px-2 py-0.5 text-[11px] font-medium text-white">
+												<span className="flex items-center gap-0.5 rounded-full bg-[#059669] px-2 py-0.5 text-xs font-medium text-white">
 													<CheckCircle2 size={10} />
 													확정
 												</span>
@@ -197,7 +197,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 											)}
 											<button
 												onClick={() => router.push(`/companies/${quote.seller.profileId}`)}
-												className="flex items-center gap-1 text-[14px] font-semibold text-[#1F2937] hover:text-[#3B82F6] hover:underline"
+												className="flex items-center gap-1 text-sm font-semibold text-[#1F2937] hover:text-[#3B82F6] hover:underline"
 											>
 												{quote.seller.companyName || "이름 없음"}
 												<ExternalLink size={12} className="text-[#9CA3AF]" />
@@ -242,7 +242,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 											onClick={() => setConfirmQuoteId(quote.id)}
 											disabled={awardingId === quote.id || hasAwardedQuote}
 											className={cn(
-												"flex w-full items-center justify-center gap-1.5 rounded-lg py-2.5 text-[13px] font-semibold transition-colors",
+												"flex w-full items-center justify-center gap-1.5 rounded-lg py-2.5 text-xs font-semibold transition-colors",
 												quote.status === "awarded"
 													? "border border-[#D1FAE5] bg-[#F0FDF4] text-[#059669]"
 													: "border border-[#E5E7EB] bg-white text-[#374151] hover:border-[#8B5CF6] hover:text-[#8B5CF6] disabled:opacity-60",
@@ -252,15 +252,15 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 											{quote.status === "awarded"
 												? "확정됨"
 												: hasAwardedQuote
-													? "낙찰 마감"
+													? "계약 마감"
 													: awardingId === quote.id
 														? "처리 중..."
-														: "낙찰 확정"}
+														: "계약 확정"}
 										</button>
 										<button
 											onClick={() => handleStartChat(quote.id)}
 											disabled={startingId === quote.id}
-											className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#3B82F6] py-2.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
+											className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#3B82F6] py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
 										>
 											<MessageSquare size={14} />
 											{startingId === quote.id ? "이동 중..." : "문의하기"}
@@ -274,7 +274,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 			</div>
 			<ConfirmModal
 				isOpen={confirmQuoteId !== null}
-				title="낙찰 확정하시겠습니까?"
+				title="계약을 확정하시겠습니까?"
 				description="이후 취소가 어렵습니다."
 				confirmLabel="확정"
 				variant="danger"

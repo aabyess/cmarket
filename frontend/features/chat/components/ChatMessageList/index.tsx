@@ -64,7 +64,7 @@ export function ChatMessageList({ messages, myId }: ChatMessageListProps): React
 						<div key={message.id} className={sameAsPrev ? "mt-0.5" : "mt-3"}>
 							{showDate && (
 								<div className="my-4 flex justify-center">
-									<span className="rounded-full bg-black/5 px-3 py-1 text-[11px] font-medium text-imsg-secondary">
+									<span className="rounded-full bg-black/5 px-3 py-1 text-xs font-medium text-imsg-secondary">
 										{dateLabel}
 									</span>
 								</div>
@@ -81,7 +81,7 @@ export function ChatMessageList({ messages, myId }: ChatMessageListProps): React
 								) : (
 									<div
 										className={cn(
-											"w-fit rounded-[20px] px-3.5 py-2 text-[15px] leading-snug",
+											"w-fit rounded-[20px] px-3.5 py-2 text-sm leading-snug",
 											isMine
 												? "bg-imsg-blue text-white"
 												: "bg-[#E9E9EB] text-black",
@@ -92,7 +92,7 @@ export function ChatMessageList({ messages, myId }: ChatMessageListProps): React
 											<>
 												<p className="whitespace-pre-wrap break-words">{message.translatedContent}</p>
 												<div className="my-1.5 border-t border-black/10" />
-												<p className="whitespace-pre-wrap break-words text-[13px] italic text-black/50">
+												<p className="whitespace-pre-wrap break-words text-xs italic text-black/50">
 													{message.content}
 												</p>
 											</>
@@ -105,10 +105,10 @@ export function ChatMessageList({ messages, myId }: ChatMessageListProps): React
 								{/* 시간 + 읽음 */}
 								<div className="flex shrink-0 items-center gap-1 pb-0.5">
 									{isLastMine && (
-										<span className="text-[11px] font-medium text-imsg-blue">읽음</span>
+										<span className="text-xs font-medium text-imsg-blue">읽음</span>
 									)}
 									{showTime && (
-										<span className="text-[11px] text-imsg-secondary">
+										<span className="text-xs text-imsg-secondary">
 											{formatTime(message.createdAt)}
 										</span>
 									)}

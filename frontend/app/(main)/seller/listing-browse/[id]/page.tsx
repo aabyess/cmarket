@@ -16,10 +16,10 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
 	if (!listing) notFound();
 
 	return (
-		<div className="px-8 py-6 xl:px-12">
+		<div className="mx-auto max-w-[1200px] px-6 py-6 lg:px-8 xl:px-10">
 			<Link
 				href="/seller/listing-browse"
-				className="mb-4 inline-flex items-center gap-1.5 text-sm text-[#6B7280] transition-colors hover:text-[#374151]"
+				className="mb-4 inline-flex items-center gap-1.5 text-sm text-imsg-secondary transition-colors duration-200 hover:text-[#374151]"
 			>
 				<ChevronLeft size={16} />
 				공고 목록으로

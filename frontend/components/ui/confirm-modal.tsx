@@ -49,7 +49,7 @@ export function ConfirmModal({
                                 transition={{ duration: 0.18, ease: "easeOut" }}
                                 className="rounded-2xl bg-white p-6 shadow-xl"
                             >
-                                <DialogTitle className="text-[17px] font-semibold text-[#1F2937]">
+                                <DialogTitle className="text-base font-semibold text-[#1F2937]">
                                     {title}
                                 </DialogTitle>
 

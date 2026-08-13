@@ -45,7 +45,7 @@ export function QuoteReviewFilterBar({
 					value={search}
 					onChange={(e) => onSearchChange(e.target.value)}
 					placeholder="공고 검색"
-					className="w-40 bg-transparent text-[14px] outline-none placeholder:text-[#9CA3AF]"
+					className="w-40 bg-transparent text-sm outline-none placeholder:text-[#9CA3AF]"
 				/>
 			</div>
 
@@ -57,7 +57,7 @@ export function QuoteReviewFilterBar({
 						key={option.value}
 						onClick={() => onHasFilterChange(option.value)}
 						className={cn(
-							"rounded-lg px-2.5 py-1.5 text-[13px] font-medium transition-colors",
+							"rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors",
 							hasFilter === option.value
 								? "bg-[#3B82F6] text-white"
 								: "text-[#374151] hover:bg-[#F9FAFB]",
@@ -71,7 +71,7 @@ export function QuoteReviewFilterBar({
 			<div className="h-6 w-px bg-[#E5E7EB]" />
 
 			<Popover className="relative">
-				<PopoverButton className="flex items-center gap-1.5 px-3.5 py-2.5 text-[13px] font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
+				<PopoverButton className="flex items-center gap-1.5 px-3.5 py-2.5 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
 					<ArrowUpDown size={14} />
 					{SORT_LABEL[sort]}
 				</PopoverButton>
@@ -82,7 +82,7 @@ export function QuoteReviewFilterBar({
 							key={option}
 							onClick={() => onSortChange(option)}
 							className={cn(
-								"w-full rounded-lg px-3 py-2 text-left text-[13px] font-medium transition-colors",
+								"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
 								sort === option
 									? "bg-[#EFF6FF] text-[#3B82F6]"
 									: "text-[#374151] hover:bg-[#F9FAFB]",

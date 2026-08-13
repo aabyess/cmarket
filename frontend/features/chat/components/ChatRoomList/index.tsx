@@ -61,7 +61,7 @@ export function ChatRoomList({ rooms, activeQuoteId, onSelect }: ChatRoomListPro
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
 						placeholder="검색"
-						className="w-full bg-transparent text-[15px] outline-none placeholder:text-imsg-secondary"
+						className="w-full bg-transparent text-sm outline-none placeholder:text-imsg-secondary"
 					/>
 				</div>
 			</div>
@@ -97,19 +97,19 @@ export function ChatRoomList({ rooms, activeQuoteId, onSelect }: ChatRoomListPro
 
 							<div className="min-w-0 flex-1">
 								<div className="flex items-baseline justify-between gap-2">
-									<span className="truncate text-[15px] font-semibold text-[#0f172a]">
+									<span className="truncate text-sm font-semibold text-[#0f172a]">
 										{room.partnerName}
 									</span>
-									<span className="shrink-0 text-[11px] text-imsg-secondary">
+									<span className="shrink-0 text-xs text-imsg-secondary">
 										{formatTime(room.lastMessageAt)}
 									</span>
 								</div>
 								<div className="flex items-center justify-between gap-2">
-									<span className="truncate text-[13px] text-imsg-secondary">
+									<span className="truncate text-xs text-imsg-secondary">
 										{room.lastMessage}
 									</span>
 									{room.unreadCount > 0 && (
-										<span className="flex size-[18px] shrink-0 items-center justify-center rounded-full bg-imsg-blue text-[11px] font-semibold text-white">
+										<span className="flex size-[18px] shrink-0 items-center justify-center rounded-full bg-imsg-blue text-xs font-semibold text-white">
 											{room.unreadCount}
 										</span>
 									)}

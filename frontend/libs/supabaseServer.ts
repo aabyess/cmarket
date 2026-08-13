@@ -2,12 +2,13 @@ import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 
-export async function createServerSupabaseClient() {
+export async function createServerSupabaseClient(schema: "public" | "demo" = "public") {
 	const cookieStore = await cookies();
 	return createServerClient(
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,
 		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 		{
+			db: { schema },
 			cookies: {
 				getAll() {
 					return cookieStore.getAll();
@@ -21,11 +22,11 @@ export async function createServerSupabaseClient() {
 		},
 	);
 }
-
-export async function createServerAdminClient() {
+export async function createServerAdminClient(schema: "public" | "demo" = "public") {
 	return createClient(
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,
 		process.env.SUPABASE_SERVICE_ROLE_KEY!,
+		{ db: { schema } },
 	);
 }
 

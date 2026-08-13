@@ -26,7 +26,11 @@ export async function middleware(request: NextRequest) {
 	const { data: { user } } = await supabase.auth.getUser();
 	const { pathname } = request.nextUrl;
 
-	const isProtectedPath = pathname.startsWith("/buyer") || pathname.startsWith("/seller");
+	const isProtectedPath =
+		pathname.startsWith("/buyer") ||
+		pathname.startsWith("/seller") ||
+		pathname.startsWith("/support") ||
+		pathname.startsWith("/admin");
 
 	if (!user && isProtectedPath) {
 		return NextResponse.redirect(new URL("/login", request.url));
@@ -43,10 +47,25 @@ export async function middleware(request: NextRequest) {
 		.single();
 
 	const role = profile?.role ?? "buyer";
-	const homePath = role === "seller" ? "/seller/dashboard" : "/buyer/dashboard";
+	const HOME_BY_ROLE: Record<string, string> = {
+		admin: "/admin",
+		seller: "/seller/dashboard",
+		buyer: "/buyer/dashboard",
+	};
+	const homePath = HOME_BY_ROLE[role] ?? "/buyer/dashboard";
 
 	if (pathname === "/login") {
 		return NextResponse.redirect(new URL(homePath, request.url));
+	}
+
+	// 운영자 화면은 운영자만. 나머지는 자기 역할의 홈으로 돌려보낸다.
+	if (pathname.startsWith("/admin") && role !== "admin") {
+		return NextResponse.redirect(new URL(homePath, request.url));
+	}
+
+	// 운영자는 거래 화면을 쓰지 않는다. 소속 회사가 없어 데이터가 비어 보인다.
+	if (role === "admin" && (pathname.startsWith("/buyer") || pathname.startsWith("/seller"))) {
+		return NextResponse.redirect(new URL("/admin", request.url));
 	}
 
 	if (role === "buyer" && pathname.startsWith("/seller")) {
@@ -61,5 +80,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-	matcher: ["/buyer/:path*", "/seller/:path*", "/login"],
+	matcher: ["/buyer/:path*", "/seller/:path*", "/support/:path*", "/admin/:path*", "/login"],
 };

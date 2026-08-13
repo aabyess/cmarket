@@ -17,10 +17,10 @@ export default async function OrderListPage() {
 				</div>
 				<Link
 					href="/buyer/post-listing"
-					className="flex items-center gap-1.5 rounded-lg bg-[#3B82F6] px-4 py-2.5 text-[13px] font-medium text-white transition-colors hover:bg-[#2563EB]"
+					className="flex items-center gap-1.5 rounded-lg bg-[#3B82F6] px-4 py-2.5 text-xs font-medium text-white transition-colors hover:bg-[#2563EB]"
 				>
 					<Plus size={15} />
-					새 공고
+					새 견적 등록
 				</Link>
 			</div>
 

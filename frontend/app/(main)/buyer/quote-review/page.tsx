@@ -50,7 +50,7 @@ export default async function QuoteReviewPage({ searchParams }: QuoteReviewPageP
 				<p className="mt-1 text-sm text-[#6B7280]">견적 {quotes.length}건 · 가격 낮은 순</p>
 			</div>
 
-			<QuoteReview quotes={quotes} />
+			<QuoteReview quotes={quotes} backHref={`/buyer/quote-review?listingId=${listingId}`} />
 		</div>
 	);
 }

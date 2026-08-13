@@ -1,20 +1,19 @@
 import { Sidebar } from "@/components/layout/Sidebar";
-import { Header } from "@/components/layout/Header";
 import { getUserSummary } from "@/features/auth/serverApis";
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
 	const summary = await getUserSummary();
 
-	const role = summary?.role ?? "buyer";
-	const country = summary?.country ?? "indonesia";
+	// 운영자는 이 레이아웃에 도달하지 않는다(미들웨어가 /admin 으로 돌려보낸다).
+	const role = summary?.role === "seller" ? "seller" : "buyer";
 	const companyName = summary?.companyName ?? "";
+	const name = summary?.name ?? "";
 
 	return (
-		<div className="flex min-h-screen bg-[#F2F2F7]">
-			<Sidebar role={role} country={country} companyName={companyName} />
+		<div className="flex min-h-screen bg-[#F7F8F8]">
+			<Sidebar role={role} companyName={companyName} name={name} />
 			<div className="flex-1 lg:ml-64">
-				<Header country={country} />
-				<main className="pt-16">{children}</main>
+				<main>{children}</main>
 			</div>
 		</div>
 	);

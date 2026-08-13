@@ -2,6 +2,7 @@
 
 import { cn } from "@/utils/cn";
 import type { Currency, ListingCategory, ListingStatus, ListingSummary } from "@/features/buyer/types";
+import { CATEGORY_LABELS } from "@/features/buyer/constants";
 
 const CURRENCY_SYMBOL: Record<Currency, string> = {
 	USD: "$",
@@ -12,14 +13,7 @@ const CURRENCY_SYMBOL: Record<Currency, string> = {
 const STATUS_CONFIG: Record<ListingStatus, { label: string; className: string }> = {
 	active: { label: "진행 중", className: "bg-[#EFF6FF] text-[#3B82F6]" },
 	closed: { label: "마감", className: "bg-[#F3F4F6] text-[#6B7280]" },
-	awarded: { label: "낙찰 완료", className: "bg-[#ECFDF5] text-[#059669]" },
-};
-
-const CATEGORY_LABEL: Record<ListingCategory, string> = {
-	office: "사무용품",
-	lab: "연구장비",
-	machinery: "산업기계",
-	chemical: "화학약품",
+	awarded: { label: "계약 확정", className: "bg-[#ECFDF5] text-[#059669]" },
 };
 
 function formatDate(iso: string): string {
@@ -60,7 +54,7 @@ export function OrderListTable({ listings, onSelect }: OrderListTableProps): Rea
 						const status = STATUS_CONFIG[listing.status];
 						const symbol = CURRENCY_SYMBOL[listing.currency];
 						const remaining = getRemainingText(listing.endDate);
-						const categoryLabel = listing.category ? CATEGORY_LABEL[listing.category] : null;
+						const categoryLabel = listing.category ? CATEGORY_LABELS[listing.category] : null;
 
 						return (
 							<tr

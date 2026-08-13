@@ -1,19 +1,13 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { MapPin } from "lucide-react";
 import SectionWrapper from "@/features/buyer/components/PostListingForm/postListing/SectionWrapper";
+import ListingLocationPickerModal from "@/features/buyer/components/PostListingForm/postListing/ListingLocationPickerModal";
+import { cn } from "@/utils/cn";
+import { getProvinces, getRegencies, type WilayahOption } from "@/libs/wilayah";
 import type { ListingFormData } from "@/features/buyer/types";
-
-const PROVINSI_LIST = [
-	"Aceh", "Sumatera Utara", "Sumatera Barat", "Riau", "Kepulauan Riau",
-	"Jambi", "Bengkulu", "Sumatera Selatan", "Kepulauan Bangka Belitung",
-	"Lampung", "DKI Jakarta", "Jawa Barat", "Banten", "Jawa Tengah",
-	"DI Yogyakarta", "Jawa Timur", "Bali", "Nusa Tenggara Barat",
-	"Nusa Tenggara Timur", "Kalimantan Barat", "Kalimantan Tengah",
-	"Kalimantan Selatan", "Kalimantan Timur", "Kalimantan Utara",
-	"Sulawesi Utara", "Gorontalo", "Sulawesi Tengah", "Sulawesi Barat",
-	"Sulawesi Selatan", "Sulawesi Tenggara", "Maluku", "Maluku Utara",
-	"Papua Barat", "Papua",
-];
+import { DELIVERY_METHOD_LABELS, DELIVERY_METHOD_OPTIONS } from "@/features/buyer/constants";
 
 type ListingDeliverySectionProps = {
 	form: ListingFormData;
@@ -21,38 +15,139 @@ type ListingDeliverySectionProps = {
 };
 
 export default function ListingDeliverySection({ form, onChange }: ListingDeliverySectionProps) {
+	const [provinces, setProvinces] = useState<WilayahOption[]>([]);
+	const [regencies, setRegencies] = useState<WilayahOption[]>([]);
+	const [isLoadingRegencies, setIsLoadingRegencies] = useState(false);
+	const [isMapOpen, setIsMapOpen] = useState(false);
+
+	useEffect(() => {
+		getProvinces()
+			.then(setProvinces)
+			.catch((err) => console.error(err));
+	}, []);
+
+	useEffect(() => {
+		const selectedProvince = provinces.find((p) => p.name === form.deliveryProvinsi);
+		if (!selectedProvince) {
+			setRegencies([]);
+			return;
+		}
+
+		setIsLoadingRegencies(true);
+		getRegencies(selectedProvince.code)
+			.then(setRegencies)
+			.catch((err) => console.error(err))
+			.finally(() => setIsLoadingRegencies(false));
+	}, [form.deliveryProvinsi, provinces]);
+
+	function handleProvinceChange(name: string): void {
+		onChange({ deliveryProvinsi: name, deliveryCity: "", deliveryLat: null, deliveryLng: null });
+	}
+
+	function handleCityChange(name: string): void {
+		onChange({ deliveryCity: name, deliveryLat: null, deliveryLng: null });
+	}
+
 	return (
-		<SectionWrapper title="배송지" subtitle="물품을 받을 주소를 입력해주세요">
-			<div className="space-y-3">
-				<div className="grid grid-cols-2 gap-3">
-					<select
-						value={form.deliveryProvinsi}
-						onChange={(e) => onChange({ deliveryProvinsi: e.target.value })}
-						className="rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
-					>
-						<option value="">주(Provinsi) 선택</option>
-						{PROVINSI_LIST.map((provinsi) => (
-							<option key={provinsi} value={provinsi}>
-								{provinsi}
-							</option>
+		<SectionWrapper
+			title="납품 장소 및 조건"
+			subtitle="공급사가 견적을 산정할 기준 주소예요. 정확한 배송지를 입력해주세요."
+		>
+			<div className="space-y-4">
+				<div>
+					<label className="mb-2 block text-sm font-medium text-[#374151]">배송 방식</label>
+					<div className="flex flex-wrap gap-1.5">
+						{DELIVERY_METHOD_OPTIONS.map((method) => (
+							<button
+								key={method}
+								type="button"
+								onClick={() => onChange({ deliveryMethod: method })}
+								className={cn(
+									"rounded-lg border px-3.5 py-2 text-sm font-medium transition-colors",
+									form.deliveryMethod === method
+										? "border-[#3B82F6] bg-[#3B82F6] text-white"
+										: "border-[#E2E8F0] bg-white text-[#374151] hover:bg-[#F9FAFB]",
+								)}
+							>
+								{DELIVERY_METHOD_LABELS[method]}
+							</button>
 						))}
-					</select>
+					</div>
+				</div>
+
+				<div className="space-y-3">
+					<div className="grid grid-cols-2 gap-3">
+						<select
+							value={form.deliveryProvinsi}
+							onChange={(e) => handleProvinceChange(e.target.value)}
+							className="rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+						>
+							<option value="">주(Provinsi) 선택</option>
+							{provinces.map((province) => (
+								<option key={province.code} value={province.name}>
+									{province.name}
+								</option>
+							))}
+						</select>
+						<select
+							value={form.deliveryCity}
+							onChange={(e) => handleCityChange(e.target.value)}
+							disabled={!form.deliveryProvinsi || isLoadingRegencies}
+							className="rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6] disabled:bg-[#F9FAFB] disabled:text-[#9CA3AF]"
+						>
+							<option value="">
+								{isLoadingRegencies ? "불러오는 중..." : "시/군(Kota/Kabupaten) 선택"}
+							</option>
+							{regencies.map((regency) => (
+								<option key={regency.code} value={regency.name}>
+									{regency.name}
+								</option>
+							))}
+						</select>
+					</div>
+
+					<div className="grid grid-cols-[1fr_1.6fr] gap-3">
+						<button
+							type="button"
+							onClick={() => setIsMapOpen(true)}
+							className="flex items-center justify-center gap-1.5 rounded-lg border border-[#3B82F6] px-4 py-3 text-sm font-medium text-[#3B82F6] transition-colors hover:bg-[#EFF6FF]"
+						>
+							<MapPin size={15} />
+							{form.deliveryLat ? "지도에서 위치 다시 확인" : "지도에서 위치 확인"}
+						</button>
+						<input
+							type="text"
+							value={form.deliveryAddress}
+							onChange={(e) => onChange({ deliveryAddress: e.target.value })}
+							placeholder="상세 주소"
+							className="rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+						/>
+					</div>
+
 					<input
 						type="text"
-						value={form.deliveryCity}
-						onChange={(e) => onChange({ deliveryCity: e.target.value })}
-						placeholder="시/군 (Kota/Kabupaten)"
-						className="rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+						value={form.deliveryAddressDetail}
+						onChange={(e) => onChange({ deliveryAddressDetail: e.target.value })}
+						placeholder="상세 정보 (건물명, 층수, 호수 등)"
+						className="w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
 					/>
 				</div>
-				<input
-					type="text"
-					value={form.deliveryAddress}
-					onChange={(e) => onChange({ deliveryAddress: e.target.value })}
-					placeholder="상세 주소"
-					className="w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
-				/>
 			</div>
+
+			<ListingLocationPickerModal
+				isOpen={isMapOpen}
+				onClose={() => setIsMapOpen(false)}
+				initialLat={form.deliveryLat}
+				initialLng={form.deliveryLng}
+				initialSearchQuery={[form.deliveryProvinsi, form.deliveryCity].filter(Boolean).join(", ")}
+				onConfirm={(lat, lng, address) =>
+					onChange({
+						deliveryLat: lat,
+						deliveryLng: lng,
+						deliveryAddress: address || form.deliveryAddress,
+					})
+				}
+			/>
 		</SectionWrapper>
 	);
 }

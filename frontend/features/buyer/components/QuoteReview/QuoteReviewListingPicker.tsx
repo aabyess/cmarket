@@ -70,7 +70,7 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 				<div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F3F4F6]">
 					<Mail size={26} className="text-[#9CA3AF]" />
 				</div>
-				<p className="text-[17px] font-medium text-[#1F2937]">등록한 공고가 없어요</p>
+				<p className="text-base font-medium text-[#1F2937]">등록한 공고가 없어요</p>
 				<p className="mt-1 text-sm text-[#6B7280]">
 					공고를 올리면 공급기업들이 견적을 보내드려요.
 				</p>
@@ -97,7 +97,7 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 
 			{filteredListings.length === 0 ? (
 				<div className="rounded-2xl border border-[#E5E7EB] bg-white p-12 text-center">
-					<p className="text-[15px] font-medium text-[#1F2937]">조건에 맞는 공고가 없어요</p>
+					<p className="text-sm font-medium text-[#1F2937]">조건에 맞는 공고가 없어요</p>
 					<p className="mt-1 text-sm text-[#6B7280]">검색어나 필터를 조정해보세요.</p>
 				</div>
 			) : (
@@ -121,14 +121,14 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 							>
 								<div className="mb-2 flex items-start justify-between gap-2">
 									{isAwarded ? (
-										<span className="flex items-center gap-1 rounded-full bg-[#ECFDF5] px-2 py-0.5 text-[11px] font-medium text-[#059669]">
+										<span className="flex items-center gap-1 rounded-full bg-[#ECFDF5] px-2 py-0.5 text-xs font-medium text-[#059669]">
 											<CheckCircle2 size={11} />
 											거래 확정
 										</span>
 									) : (
 										<span
 											className={cn(
-												"flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium",
+												"flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
 												remaining.isClosed
 													? "bg-[#F3F4F6] text-[#6B7280]"
 													: remaining.isUrgent
@@ -142,40 +142,40 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 									)}
 
 									{hasQuotes && (
-										<span className="shrink-0 text-[13px] font-semibold text-[#3B82F6]">
+										<span className="shrink-0 text-xs font-semibold text-[#3B82F6]">
 											견적 {listing.quoteCount}
 										</span>
 									)}
 								</div>
 
-								<p className="line-clamp-2 min-h-[42px] text-[15px] font-medium leading-snug text-[#1F2937]">
+								<p className="line-clamp-2 min-h-[42px] text-sm font-medium leading-snug text-[#1F2937]">
 									{listing.title}
 								</p>
 
 								{hasQuotes ? (
 									<div className="mt-3 grid grid-cols-2 gap-2 border-t border-[#F3F4F6] pt-3">
 										<div>
-											<p className="flex items-center gap-1 text-[11px] text-[#9CA3AF]">
+											<p className="flex items-center gap-1 text-xs text-[#9CA3AF]">
 												<TrendingDown size={11} className="text-[#D97706]" />
 												최저가
 											</p>
-											<p className="mt-0.5 truncate text-[14px] font-medium text-[#1F2937]">
+											<p className="mt-0.5 truncate text-sm font-medium text-[#1F2937]">
 												{symbol} {listing.lowestPrice?.toLocaleString()}
 											</p>
 										</div>
 										<div>
-											<p className="flex items-center gap-1 text-[11px] text-[#9CA3AF]">
+											<p className="flex items-center gap-1 text-xs text-[#9CA3AF]">
 												<Truck size={11} className="text-[#16A34A]" />
 												최속납기
 											</p>
-											<p className="mt-0.5 text-[14px] font-medium text-[#1F2937]">
+											<p className="mt-0.5 text-sm font-medium text-[#1F2937]">
 												{listing.fastestDays}일
 											</p>
 										</div>
 									</div>
 								) : (
 									<div className="mt-3 border-t border-[#F3F4F6] pt-3">
-										<p className="text-[13px] text-[#9CA3AF]">아직 견적이 없어요</p>
+										<p className="text-xs text-[#9CA3AF]">아직 견적이 없어요</p>
 									</div>
 								)}
 							</button>

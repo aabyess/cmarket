@@ -33,7 +33,7 @@ export function DashboardHomeQuickMenu({ badges, onNavigate }: DashboardHomeQuic
 						className="relative flex flex-col items-start gap-0.5 rounded-xl border border-[#E5E7EB] bg-white p-3 transition-colors hover:bg-gray-50"
 					>
 						{badgeCount > 0 && (
-							<span className="absolute right-2 top-2 rounded-full bg-[#EF4444] px-1.5 py-px text-[10px] text-white">
+							<span className="absolute right-2 top-2 rounded-full bg-[#EF4444] px-1.5 py-px text-xs text-white">
 								{badgeCount}
 							</span>
 						)}

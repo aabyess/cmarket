@@ -24,7 +24,7 @@ const mockListings: Listing[] = [
 
 const statusBadgeMap: Record<ListingStatus, { label: string; color: string }> = {
 	active: { label: "진행중", color: "bg-sky-100/80 text-sky-700 border border-sky-200" },
-	pending: { label: "낙찰대기", color: "bg-amber-100/80 text-amber-700 border border-amber-200" },
+	pending: { label: "계약 대기", color: "bg-amber-100/80 text-amber-700 border border-amber-200" },
 	closed: { label: "마감", color: "bg-gray-100/70 text-gray-600 border border-gray-200" },
 };
 
@@ -32,14 +32,14 @@ export function RecentListings() {
 	return (
 		<div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
 			<div className="p-7 border-b border-border">
-				<h2 className="text-lg font-bold text-card-foreground">최근 공고</h2>
+				<h2 className="text-lg font-bold text-card-foreground">최근 견적요청</h2>
 			</div>
 
 			<div className="overflow-x-auto">
 				<table className="w-full text-sm whitespace-nowrap">
 					<thead className="bg-muted/60 border-b border-border">
 						<tr>
-							{["공고 ID", "명칭", "카테고리", "입찰", "마감일", "상태", "액션"].map((th) => (
+							{["견적요청 ID", "명칭", "카테고리", "입찰", "마감일", "상태", "액션"].map((th) => (
 								<th
 									key={th}
 									className="px-3 py-4 text-left font-semibold text-card-foreground text-xs uppercase tracking-wide">
@@ -89,7 +89,7 @@ export function RecentListings() {
 
 			<div className="px-7 py-5 border-t border-border bg-muted/30 flex items-center justify-between">
 				<p className="text-sm font-medium text-muted-foreground">총 {mockListings.length}개의 공고</p>
-				<Link href="/buyer/order-list" className="...">모든 공고 보기 <ArrowRight size={16} /></Link>
+				<Link href="/buyer/order-list" className="...">모든 견적 보기 <ArrowRight size={16} /></Link>
 			</div>
 		</div>
 	);

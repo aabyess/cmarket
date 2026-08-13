@@ -12,7 +12,7 @@ const CURRENCY_SYMBOL: Record<Currency, string> = {
 
 const STATUS_CONFIG: Record<QuoteStatus, { label: string; className: string }> = {
 	pending: { label: "검토 중", className: "bg-[#EFF6FF] text-[#3B82F6]" },
-	awarded: { label: "낙찰", className: "bg-[#ECFDF5] text-[#059669]" },
+	awarded: { label: "계약 확정", className: "bg-[#ECFDF5] text-[#059669]" },
 	rejected: { label: "미선정", className: "bg-[#F3F4F6] text-[#6B7280]" },
 };
 
@@ -60,36 +60,36 @@ export function QuoteReviewCard({
 				)}
 			</div>
 
-			<p className="flex items-center gap-1.5 text-[15px] font-medium text-[#1F2937]">
+			<p className="flex items-center gap-1.5 text-sm font-medium text-[#1F2937]">
 				<Building2 size={15} className="shrink-0 text-[#6B7280]" />
 				{quote.seller.companyName}
 			</p>
 
 			<div className="mt-3 flex items-center gap-6 border-t border-[#F3F4F6] pt-3">
 				<div>
-					<p className="text-[11px] text-[#9CA3AF]">견적가</p>
-					<p className="text-[17px] font-semibold text-[#1F2937]">
+					<p className="text-xs text-[#9CA3AF]">견적가</p>
+					<p className="text-base font-semibold text-[#1F2937]">
 						{symbol} {quote.price.toLocaleString()}
 					</p>
 				</div>
 				<div>
-					<p className="flex items-center gap-1 text-[11px] text-[#9CA3AF]">
+					<p className="flex items-center gap-1 text-xs text-[#9CA3AF]">
 						<Truck size={11} />
 						납품
 					</p>
-					<p className="text-[17px] font-semibold text-[#1F2937]">{quote.deliveryDays}일</p>
+					<p className="text-base font-semibold text-[#1F2937]">{quote.deliveryDays}일</p>
 				</div>
 			</div>
 
 			{quote.note && (
-				<p className="mt-3 whitespace-pre-wrap rounded-lg bg-[#F9FAFB] px-3 py-2.5 text-[13px] leading-relaxed text-[#374151]">
+				<p className="mt-3 whitespace-pre-wrap rounded-lg bg-[#F9FAFB] px-3 py-2.5 text-xs leading-relaxed text-[#374151]">
 					{quote.note}
 				</p>
 			)}
 
 			<button
 				onClick={() => setIsExpanded(!isExpanded)}
-				className="mt-3 flex w-full items-center justify-center gap-1 py-2 text-[13px] text-[#6B7280] transition-colors hover:text-[#374151]"
+				className="mt-3 flex w-full items-center justify-center gap-1 py-2 text-xs text-[#6B7280] transition-colors hover:text-[#374151]"
 			>
 				기업 정보 {isExpanded ? "접기" : "보기"}
 				<ChevronDown
@@ -99,7 +99,7 @@ export function QuoteReviewCard({
 			</button>
 
 			{isExpanded && (
-				<div className="space-y-2.5 rounded-lg bg-[#F9FAFB] p-4 text-[13px]">
+				<div className="space-y-2.5 rounded-lg bg-[#F9FAFB] p-4 text-xs">
 					<div className="flex justify-between gap-4">
 						<span className="shrink-0 text-[#6B7280]">대표자</span>
 						<span className="text-right text-[#1F2937]">{quote.seller.representative || "-"}</span>

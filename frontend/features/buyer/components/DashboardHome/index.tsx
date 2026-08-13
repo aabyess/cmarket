@@ -1,16 +1,17 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Plus, FileText, Mail, FileCheck, TrendingUp, ArrowUpRight, Clock, ArrowRight, Bell, MessageSquare } from "lucide-react";
+import { Mail, ArrowRight, Clock, Bell, MessageSquare } from "lucide-react";
 import { cn } from "@/utils/cn";
-import type { BuyerDashboardData, BuyerTodo } from "@/features/buyer/types";
+import type { BuyerDashboardData, BuyerTodo, BuyerTradeSummary } from "@/features/buyer/types";
 
 type DashboardHomeProps = {
 	companyName: string;
 	data: BuyerDashboardData;
+	tradeSummary: BuyerTradeSummary;
 };
 
-export function DashboardHome({ companyName, data }: DashboardHomeProps) {
+export function DashboardHome({ companyName, data, tradeSummary }: DashboardHomeProps) {
 	const router = useRouter();
 
 	function handleNavigate(href: string) {
@@ -24,85 +25,46 @@ export function DashboardHome({ companyName, data }: DashboardHomeProps) {
 	const urgentTodos = data.todos.filter((t) => t.highlights.length > 0);
 
 	return (
-		<div className="px-8 py-6 xl:px-12">
-			{/* Welcome */}
-			<div className="mb-8 flex items-center justify-between">
+		<div className="mx-auto max-w-[1200px] px-2 py-6 xl:px-0.5">
+			{/* 배너 (임시) */}
+			<div className="mb-6 flex items-center justify-between rounded-2xl border border-[#E5E7EB] bg-white px-8 py-7">
 				<div>
-					<p className="text-[13px] font-medium text-imsg-secondary">좋은 아침이에요 👋</p>
-					<h1 className="mt-1 text-[28px] font-bold tracking-tight text-[#0f172a]">
-						{companyName}
+					<p className="text-sm font-medium text-imsg-secondary">MitraPay</p>
+					<h1 className="mt-1 text-2xl font-bold tracking-tight text-[#0f172a]">
+						{companyName}님, 환영합니다
 					</h1>
 				</div>
-				<button
-					onClick={() => handleNavigate("/buyer/post-listing")}
-					className="flex items-center gap-1.5 rounded-full bg-imsg-blue px-5 py-2.5 text-[14px] font-semibold text-white transition-colors hover:bg-blue-600 active:scale-95"
-				>
-					<Plus size={15} strokeWidth={2.5} />
-					새 공고
-				</button>
 			</div>
 
-			{/* Stat Cards */}
-			<div className="mb-6 grid grid-cols-2 gap-3 xl:grid-cols-4">
-				{[
-					{
-						label: "진행중 공고",
-						value: `${data.listingCount}건`,
-						icon: FileText,
-						trend: "+2",
-						trendLabel: "지난주 대비",
-						iconBg: "bg-blue-50",
-						iconColor: "text-imsg-blue",
-					},
-					{
-						label: "받은 견적",
-						value: `${data.badges.quotes}건`,
-						icon: Mail,
-						trend: "+8",
-						trendLabel: "이번주 신규",
-						iconBg: "bg-amber-50",
-						iconColor: "text-amber-500",
-					},
-					{
-						label: "진행중 계약",
-						value: "2건",
-						icon: FileCheck,
-						trend: "0",
-						trendLabel: "변동 없음",
-						iconBg: "bg-emerald-50",
-						iconColor: "text-emerald-500",
-					},
-					{
-						label: "이번달 절감액",
-						value: `$${data.savings.totalAmount.toLocaleString()}`,
-						icon: TrendingUp,
-						trend: "+18%",
-						trendLabel: "지난달 대비",
-						iconBg: "bg-emerald-50",
-						iconColor: "text-emerald-500",
-					},
-				].map((stat) => (
-					<div
-						key={stat.label}
-						className="rounded-2xl bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
-					>
-						<div className="flex items-start justify-between">
-							<span className={cn("flex size-9 items-center justify-center rounded-xl", stat.iconBg)}>
-								<stat.icon size={17} className={stat.iconColor} />
-							</span>
-							<span className="flex items-center gap-0.5 text-[11px] font-semibold text-emerald-500">
-								<ArrowUpRight size={11} />
-								{stat.trend}
-							</span>
-						</div>
-						<p className="mt-4 text-[28px] font-bold tracking-tight text-[#0f172a]">
-							{stat.value}
-						</p>
-						<p className="mt-0.5 text-[12px] text-imsg-secondary">
-							{stat.label} · {stat.trendLabel}
-						</p>
+			{/* 나의 거래 요약 */}
+			<div className="mb-6">
+				<div className="mb-3 flex items-center justify-between">
+					<h2 className="text-base font-semibold text-[#0f172a]">나의 거래 요약</h2>
+				</div>
+				<div className="rounded-2xl bg-white p-6 shadow-sm">
+					<div className="grid grid-cols-1 divide-y divide-[#F2F2F7] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+						{[
+							{ label: "진행중", ...tradeSummary.inProgress },
+							{ label: "전체 마감", ...tradeSummary.closed },
+							{ label: "총 계약 건", ...tradeSummary.contracts },
+						].map((block) => (
+							<div key={block.label} className="px-0 py-4 first:pt-0 last:pb-0 sm:px-6 sm:py-0 sm:first:pl-0 sm:last:pr-0">
+								<div className="flex items-baseline justify-between">
+									<p className="text-sm font-medium text-imsg-secondary">{block.label}</p>
+									<p className="text-3xl font-bold text-[#0f172a]">{block.total}건</p>
+								</div>
+								<div className="mt-3 space-y-2">
+									{block.subItems.map((sub) => (
+										<div key={sub.label} className="flex items-center justify-between text-sm">
+											<span className="text-imsg-secondary">{sub.label}</span>
+											<span className="font-medium text-[#0f172a]">{sub.value}</span>
+										</div>
+									))}
+								</div>
+							</div>
+						))}
 					</div>
-				))}
+				</div>
 			</div>
 
 			{/* Two Column */}
@@ -112,16 +74,16 @@ export function DashboardHome({ companyName, data }: DashboardHomeProps) {
 					<div className="rounded-2xl bg-white shadow-sm">
 						<div className="flex items-center justify-between px-5 py-4">
 							<div className="flex items-center gap-2">
-								<h2 className="text-[15px] font-semibold text-[#0f172a]">할 일</h2>
+								<h2 className="text-base font-semibold text-[#0f172a]">할 일</h2>
 								{urgentTodos.length > 0 && (
-									<span className="rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-500">
+									<span className="rounded-full bg-red-50 px-2 py-0.5 text-sm font-semibold text-red-500">
 										{urgentTodos.length} 긴급
 									</span>
 								)}
 							</div>
 							<button
 								onClick={() => handleNavigate("/buyer/order-list")}
-								className="text-[13px] font-medium text-imsg-blue hover:underline"
+								className="text-sm font-medium text-imsg-blue hover:underline"
 							>
 								모두 보기
 							</button>
@@ -134,13 +96,13 @@ export function DashboardHome({ companyName, data }: DashboardHomeProps) {
 								<div className="mb-3 flex size-12 items-center justify-center rounded-full bg-imsg-surface">
 									<Clock size={20} className="text-imsg-secondary" />
 								</div>
-								<p className="text-[14px] font-medium text-[#0f172a]">지금은 할 일이 없어요</p>
-								<p className="mt-1 text-[12px] text-imsg-secondary">
+								<p className="text-base font-medium text-[#0f172a]">지금은 할 일이 없어요</p>
+								<p className="mt-1 text-sm text-imsg-secondary">
 									공고 {data.listingCount}건이 진행 중이에요. 견적이 도착하면 알려드릴게요.
 								</p>
 								<button
 									onClick={() => handleNavigate("/buyer/order-list")}
-									className="mt-4 rounded-full border border-[#E5E7EB] px-4 py-2 text-[13px] font-medium text-[#0f172a] transition-colors hover:bg-imsg-surface"
+									className="mt-4 rounded-full border border-[#E5E7EB] px-4 py-2 text-sm font-medium text-[#0f172a] transition-colors hover:bg-imsg-surface"
 								>
 									진행 중인 공고 보기
 								</button>
@@ -158,18 +120,18 @@ export function DashboardHome({ companyName, data }: DashboardHomeProps) {
 									>
 										<div className="min-w-0 flex-1">
 											<div className="flex items-center gap-2">
-												<h3 className="truncate text-[14px] font-semibold text-[#0f172a]">
+												<h3 className="truncate text-base font-semibold text-[#0f172a]">
 													{todo.title}
 												</h3>
 												{todo.highlights.length > 0 && (
-													<span className="shrink-0 rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-500">
+													<span className="shrink-0 rounded-full bg-red-50 px-2 py-0.5 text-sm font-semibold text-red-500">
 														긴급
 													</span>
 												)}
 											</div>
-											<p className="mt-0.5 text-[13px] text-imsg-secondary">{todo.description}</p>
+											<p className="mt-0.5 text-sm text-imsg-secondary">{todo.description}</p>
 											{todo.deadlineText && (
-												<div className="mt-1.5 flex items-center gap-1 text-[11px] text-imsg-secondary">
+												<div className="mt-1.5 flex items-center gap-1 text-sm text-imsg-secondary">
 													<Clock size={11} />
 													<span className={todo.highlights.length > 0 ? "text-red-500" : ""}>
 														{todo.deadlineText}
@@ -180,7 +142,7 @@ export function DashboardHome({ companyName, data }: DashboardHomeProps) {
 										<button
 											onClick={() => handleTodoAction(todo)}
 											className={cn(
-												"flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-[12px] font-semibold transition-colors",
+												"flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors",
 												todo.highlights.length > 0
 													? "bg-imsg-blue text-white hover:bg-blue-600"
 													: "bg-imsg-surface text-[#0f172a] hover:bg-[#E5E7EB]",
@@ -200,7 +162,7 @@ export function DashboardHome({ companyName, data }: DashboardHomeProps) {
 				<div className="space-y-4">
 					{/* 바로가기 */}
 					<div className="rounded-2xl bg-white p-4 shadow-sm">
-						<h2 className="mb-3 text-[13px] font-semibold text-imsg-secondary uppercase tracking-wider">
+						<h2 className="mb-3 text-sm font-semibold text-imsg-secondary uppercase tracking-wider">
 							바로가기
 						</h2>
 						<div className="grid grid-cols-2 gap-2">
@@ -231,10 +193,10 @@ export function DashboardHome({ companyName, data }: DashboardHomeProps) {
 										<link.icon size={16} className={link.color} />
 									</span>
 									<span>
-										<span className="block text-[13px] font-semibold text-[#0f172a]">
+										<span className="block text-sm font-semibold text-[#0f172a]">
 											{link.label}
 										</span>
-										<span className="block text-[11px] text-imsg-secondary">{link.sub}</span>
+										<span className="block text-sm text-imsg-secondary">{link.sub}</span>
 									</span>
 								</button>
 							))}
@@ -244,14 +206,14 @@ export function DashboardHome({ companyName, data }: DashboardHomeProps) {
 					{/* 최근 활동 */}
 					<div className="rounded-2xl bg-white shadow-sm">
 						<div className="flex items-center gap-2 px-4 py-3">
-							<h2 className="text-[13px] font-semibold text-imsg-secondary uppercase tracking-wider">
+							<h2 className="text-sm font-semibold text-imsg-secondary uppercase tracking-wider">
 								최근 활동
 							</h2>
 						</div>
 						<div className="h-px bg-[#F2F2F7]" />
 						<ul className="p-2">
 							{data.activities.length === 0 ? (
-								<li className="py-8 text-center text-[13px] text-imsg-secondary">
+								<li className="py-8 text-center text-sm text-imsg-secondary">
 									아직 활동이 없어요
 								</li>
 							) : (
@@ -264,8 +226,8 @@ export function DashboardHome({ companyName, data }: DashboardHomeProps) {
 											<Bell size={12} className="text-imsg-blue" />
 										</span>
 										<div className="min-w-0 flex-1">
-											<p className="text-[13px] text-[#0f172a]">{activity.title}</p>
-											<p className="mt-0.5 text-[11px] text-imsg-secondary">{activity.timeText}</p>
+											<p className="text-sm text-[#0f172a]">{activity.title}</p>
+											<p className="mt-0.5 text-sm text-imsg-secondary">{activity.timeText}</p>
 										</div>
 									</li>
 								))

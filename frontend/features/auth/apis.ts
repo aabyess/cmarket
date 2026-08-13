@@ -179,7 +179,7 @@ export async function signupKorea(payload: SignupKoreaPayload): Promise<void> {
 	if (contactError) throw new Error(contactError.message);
 }
 
-export async function getUserRole(): Promise<"buyer" | "seller" | null> {
+export async function getUserRole(): Promise<"buyer" | "seller" | "admin" | null> {
 	const supabase = createClient();
 	const { data: { user } } = await supabase.auth.getUser();
 	if (!user) return null;

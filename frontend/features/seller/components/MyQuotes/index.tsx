@@ -3,18 +3,21 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Send } from "lucide-react";
-import { cn } from "@/utils/cn";
 import { MyQuotesCard } from "@/features/seller/components/MyQuotes/MyQuotesCard";
+import { MyQuotesFilterBar } from "@/features/seller/components/MyQuotes/MyQuotesFilterBar";
+import { MyQuotesTable } from "@/features/seller/components/MyQuotes/MyQuotesTable";
+import type {
+	MyQuotesFilter,
+	MyQuotesViewMode,
+} from "@/features/seller/components/MyQuotes/MyQuotesFilterBar";
 import type { MyQuote, QuoteStatus } from "@/features/seller/types";
 
-type FilterValue = "all" | QuoteStatus;
-
-const FILTERS: { value: FilterValue; label: string }[] = [
-	{ value: "all", label: "전체" },
-	{ value: "pending", label: "검토 중" },
-	{ value: "awarded", label: "낙찰" },
-	{ value: "rejected", label: "미선정" },
-];
+/** 아직 결과를 기다리는 견적이 먼저 와야 한다. 확정된 건은 계약 관리에서 다루므로 맨 뒤로 보낸다. */
+const STATUS_ORDER: Record<QuoteStatus, number> = {
+	pending: 0,
+	rejected: 1,
+	awarded: 2,
+};
 
 type MyQuotesProps = {
 	quotes: MyQuote[];
@@ -22,15 +25,20 @@ type MyQuotesProps = {
 
 export function MyQuotes({ quotes }: MyQuotesProps) {
 	const router = useRouter();
-	const [filter, setFilter] = useState<FilterValue>("all");
+	const [filter, setFilter] = useState<MyQuotesFilter>("all");
+	const [viewMode, setViewMode] = useState<MyQuotesViewMode>("grid");
 
 	const filteredQuotes =
-		filter === "all" ? quotes : quotes.filter((quote) => quote.status === filter);
+		filter === "all"
+			? [...quotes].sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status])
+			: quotes.filter((quote) => quote.status === filter);
 
-	function getCount(value: FilterValue): number {
-		if (value === "all") return quotes.length;
-		return quotes.filter((quote) => quote.status === value).length;
-	}
+	const counts: Record<MyQuotesFilter, number> = {
+		all: quotes.length,
+		pending: quotes.filter((q) => q.status === "pending").length,
+		awarded: quotes.filter((q) => q.status === "awarded").length,
+		rejected: quotes.filter((q) => q.status === "rejected").length,
+	};
 
 	if (quotes.length === 0) {
 		return (
@@ -38,7 +46,7 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 				<div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F3F4F6]">
 					<Send size={26} className="text-[#9CA3AF]" />
 				</div>
-				<p className="text-[17px] font-medium text-[#1F2937]">보낸 견적이 없어요</p>
+				<p className="text-base font-medium text-[#1F2937]">보낸 견적이 없어요</p>
 				<p className="mt-1 text-sm text-[#6B7280]">
 					열려 있는 공고를 찾아 첫 견적을 보내보세요.
 				</p>
@@ -46,7 +54,7 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 					onClick={() => router.push("/seller/listing-browse")}
 					className="mt-5 rounded-lg bg-[#3B82F6] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB]"
 				>
-					공고 둘러보기
+					견적요청 둘러보기
 				</button>
 			</div>
 		);
@@ -54,28 +62,19 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 
 	return (
 		<div>
-			<div className="mb-4 flex gap-2">
-				{FILTERS.map((item) => (
-					<button
-						key={item.value}
-						onClick={() => setFilter(item.value)}
-						className={cn(
-							"rounded-lg border px-4 py-2 text-[13px] font-medium transition-colors",
-							filter === item.value
-								? "border-[#3B82F6] bg-[#3B82F6] text-white"
-								: "border-[#E2E8F0] bg-white text-[#374151] hover:bg-[#F9FAFB]",
-						)}
-					>
-						{item.label} {getCount(item.value)}
-					</button>
-				))}
-			</div>
+			<MyQuotesFilterBar
+				filter={filter}
+				counts={counts}
+				viewMode={viewMode}
+				onFilterChange={setFilter}
+				onViewModeChange={setViewMode}
+			/>
 
 			{filteredQuotes.length === 0 ? (
 				<div className="rounded-2xl border border-[#E5E7EB] bg-white p-10 text-center">
 					<p className="text-sm text-[#6B7280]">해당하는 견적이 없어요.</p>
 				</div>
-			) : (
+			) : viewMode === "grid" ? (
 				<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
 					{filteredQuotes.map((quote) => (
 						<MyQuotesCard
@@ -86,6 +85,12 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 						/>
 					))}
 				</div>
+			) : (
+				<MyQuotesTable
+					quotes={filteredQuotes}
+					onViewListing={(listingId) => router.push(`/seller/listing-browse/${listingId}`)}
+					onGoToChat={(quoteId) => router.push(`/seller/chat/${quoteId}`)}
+				/>
 			)}
 		</div>
 	);

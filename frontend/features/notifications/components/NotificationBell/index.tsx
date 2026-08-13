@@ -1,17 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { Bell, MessageSquare, X } from "lucide-react";
+import { Bell, Mail, MessageSquare, X } from "lucide-react";
 import { useNotifications, NOTIFICATION_QUERY_KEYS } from "@/features/notifications/queries";
 import { markNotificationRead, markAllNotificationsRead, deleteNotification } from "@/features/notifications/apis";
 import { createClient } from "@/libs/supabase";
 import { cn } from "@/utils/cn";
-
-type NotificationBellProps = {
-	country: "indonesia" | "korea";
-};
+import type { Notification } from "@/features/notifications/types";
 
 function formatTime(iso: string): string {
 	const date = new Date(iso);
@@ -24,31 +21,25 @@ function formatTime(iso: string): string {
 	return `${date.getMonth() + 1}/${date.getDate()}`;
 }
 
-export function NotificationBell({ country }: NotificationBellProps): React.ReactNode {
+export function NotificationBell(): React.ReactNode {
 	const router = useRouter();
+	const pathname = usePathname();
 	const queryClient = useQueryClient();
 	const { data: notifications = [] } = useNotifications();
 	const [isOpen, setIsOpen] = useState(false);
 	const ref = useRef<HTMLDivElement>(null);
 
 	const unreadCount = notifications.filter((n) => !n.isRead).length;
-	const chatBasePath = country === "indonesia" ? "/buyer/chat" : "/seller/chat";
+	const chatBasePath = pathname.startsWith("/seller") ? "/seller/chat" : "/buyer/chat";
 
-	// 외부 클릭 시 닫기
 	useEffect(() => {
 		function handleClickOutside(e: MouseEvent): void {
 			if (ref.current && !ref.current.contains(e.target as Node)) {
 				setIsOpen(false);
 			}
 		}
-
-		if (isOpen) {
-			document.addEventListener("mousedown", handleClickOutside);
-		}
-
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-		};
+		if (isOpen) document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, [isOpen]);
 
 	useEffect(() => {
@@ -82,11 +73,18 @@ export function NotificationBell({ country }: NotificationBellProps): React.Reac
 		};
 	}, [queryClient]);
 
-	async function handleNotificationClick(quoteId: string, notificationId: string): Promise<void> {
-		await markNotificationRead(notificationId);
+	async function handleNotificationClick(notification: Notification): Promise<void> {
+		await markNotificationRead(notification.id);
 		queryClient.invalidateQueries({ queryKey: NOTIFICATION_QUERY_KEYS.all });
 		setIsOpen(false);
-		router.push(`${chatBasePath}?quoteId=${quoteId}`);
+
+		// 견적 도착은 채팅이 아니라 받은 견적 화면으로 보낸다.
+		if (notification.type === "quote") {
+			router.push("/buyer/quote-review");
+			return;
+		}
+
+		router.push(`${chatBasePath}?quoteId=${notification.quoteId}`);
 	}
 
 	async function handleMarkAllRead(): Promise<void> {
@@ -104,23 +102,19 @@ export function NotificationBell({ country }: NotificationBellProps): React.Reac
 		<div className="relative" ref={ref}>
 			<button
 				onClick={() => setIsOpen(!isOpen)}
-				className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors text-[#6B7280] hover:text-[#4F46E5]"
-			>
-				<Bell size={20} />
+				className="relative flex h-7 w-7 items-center justify-center rounded-md text-sidebar-foreground outline-none hover:bg-black/5 hover:text-[#1F2937] transition-colors"			>
+				<Bell size={16} />
 				{unreadCount > 0 && (
-					<span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+					<span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500" />
 				)}
 			</button>
 
 			{isOpen && (
-				<div className="absolute right-0 mt-2 w-80 bg-white border border-[#E5E7EB] rounded-lg shadow-lg overflow-hidden z-50">
+				<div className="absolute left-0 mt-2 w-80 bg-white border border-[#E5E7EB] rounded-lg shadow-lg overflow-hidden z-50">
 					<div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E7EB]">
 						<p className="text-sm font-semibold text-[#1F2937]">알림</p>
 						{unreadCount > 0 && (
-							<button
-								onClick={handleMarkAllRead}
-								className="text-xs text-[#3B82F6] hover:underline"
-							>
+							<button onClick={handleMarkAllRead} className="text-xs text-[#3B82F6] hover:underline">
 								모두 읽음
 							</button>
 						)}
@@ -141,13 +135,26 @@ export function NotificationBell({ country }: NotificationBellProps): React.Reac
 										!n.isRead && "bg-[#EFF6FF]",
 									)}
 								>
+									<span
+										className={cn(
+											"mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full",
+											n.type === "quote" ? "bg-[#EFF6FF]" : "bg-[#F3F4F6]",
+										)}
+									>
+										{n.type === "quote" ? (
+											<Mail size={12} className="text-[#3B82F6]" />
+										) : (
+											<MessageSquare size={12} className="text-[#6B7280]" />
+										)}
+									</span>
+
 									<button
-										onClick={() => handleNotificationClick(n.quoteId, n.id)}
+										onClick={() => handleNotificationClick(n)}
 										className="flex min-w-0 flex-1 flex-col gap-0.5 text-left"
 									>
 										<div className="flex items-center justify-between gap-2">
 											<p className="truncate text-sm font-medium text-[#1F2937]">{n.title}</p>
-											<span className="shrink-0 text-[11px] text-[#9CA3AF]">
+											<span className="shrink-0 text-xs text-[#9CA3AF]">
 												{formatTime(n.createdAt)}
 											</span>
 										</div>

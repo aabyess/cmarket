@@ -14,7 +14,7 @@ export function DashboardHomeWaiting({ listingCount, onViewListings }: Dashboard
 				<Clock size={28} className="text-[#9CA3AF]" />
 			</div>
 
-			<p className="text-[17px] font-medium text-[#1F2937]">지금은 할 일이 없어요</p>
+			<p className="text-base font-medium text-[#1F2937]">지금은 할 일이 없어요</p>
 			<p className="mt-1 text-sm leading-relaxed text-[#6B7280]">
 				공고 {listingCount}건이 진행 중이에요.
 				<br />

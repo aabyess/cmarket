@@ -1,4 +1,11 @@
-import type { Currency, ListingItem } from "@/features/buyer/types";
+import type {
+	Currency,
+	DeliveryMethod,
+	DeliveryTimingMode,
+	ListingAttachment,
+	ListingCategory,
+	ListingItem,
+} from "@/features/buyer/types";
 
 export type SellerDashboardData = {
 	openListingCount: number;
@@ -26,9 +33,18 @@ export type OpenListing = {
 	status: "active" | "closed" | "awarded";
 };
 export type ListingDetail = OpenListing & {
+	category: ListingCategory;
 	deliveryAddress: string;
+	deliveryAddressDetail: string;
 	deliveryDays: number;
+	deliveryMethod: DeliveryMethod;
+	deliveryTimingMode: DeliveryTimingMode;
+	deliveryDeadlineDate: string | null;
+	deliveryLat: number | null;
+	deliveryLng: number | null;
+	attachments: ListingAttachment[];
 	companyName: string;
+	// 담당자 연락처는 계약 성립 전까지 공급기업에 제공하지 않는다(제3자 제공 동의 범위).
 	myQuote: MyQuoteSummary | null;
 };
 
