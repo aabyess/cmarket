@@ -1,6 +1,8 @@
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
-import type { ListingWithQuotes, ReceivedQuote, ListingSummary, BuyerDashboardData, BuyerTradeSummary, ListingFormData, ListingStatus } from "@/features/buyer/types";
+import type { ListingWithQuotes, ReceivedQuote, ListingSummary, BuyerDashboardData, BuyerTradeSummary, BuyerTodo, BuyerActivity, ListingFormData, ListingStatus, Currency } from "@/features/buyer/types";
 import { getExchangeRates, convertCurrency } from "@/libs/exchangeRate";
+import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
+import { formatRelativeTime } from "@/utils/formatRelativeTime";
 
 async function getSessionUser() {
 	const supabase = await createServerSupabaseClient();
@@ -24,27 +26,101 @@ export async function getBuyerCompanyName(): Promise<string> {
 export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 	const { supabase, user } = await getSessionUser();
 
-	if (!user) {
-		return {
-			listingCount: 0,
-			todos: [],
-			savings: { totalAmount: 0, completedCount: 0 },
-			badges: { quotes: 0, chats: 0 },
-			activities: [],
-		};
-	}
-
-	const { count } = await supabase
-		.from("listings")
-		.select("*", { count: "exact", head: true })
-		.eq("user_id", user.id);
-
-	return {
-		listingCount: count ?? 0,
+	const empty: BuyerDashboardData = {
+		listingCount: 0,
 		todos: [],
 		savings: { totalAmount: 0, completedCount: 0 },
 		badges: { quotes: 0, chats: 0 },
 		activities: [],
+	};
+
+	if (!user) return empty;
+
+	const [{ data: listings }, { count: unreadQuoteCount }, { data: recentNotifications }] = await Promise.all([
+		supabase
+			.from("listings")
+			.select("id, title, status, currency, end_date, quotes(price)")
+			.eq("user_id", user.id),
+		supabase
+			.from("notifications")
+			.select("*", { count: "exact", head: true })
+			.eq("profile_id", user.id)
+			.eq("type", "quote")
+			.eq("is_read", false),
+		supabase
+			.from("notifications")
+			.select("id, type, title, content, created_at")
+			.eq("profile_id", user.id)
+			.order("created_at", { ascending: false })
+			.limit(5),
+	]);
+
+	const listingRows = listings ?? [];
+	const listingIds = listingRows.map((row) => row.id);
+
+	const { data: quoteIdRows } =
+		listingIds.length > 0
+			? await supabase.from("quotes").select("id").in("listing_id", listingIds)
+			: { data: [] as { id: string }[] };
+
+	const quoteIds = (quoteIdRows ?? []).map((row) => row.id);
+
+	const { count: unreadChatCount } =
+		quoteIds.length > 0
+			? await supabase
+					.from("messages")
+					.select("*", { count: "exact", head: true })
+					.in("quote_id", quoteIds)
+					.eq("is_read", false)
+					.neq("sender_id", user.id)
+			: { count: 0 };
+
+	const todos: BuyerTodo[] = listingRows
+		.filter((row) => row.status === "active")
+		.map((row) => ({
+			row,
+			quotes: (row.quotes as unknown as { price: number }[]) ?? [],
+		}))
+		.filter(({ quotes }) => quotes.length > 0)
+		.map(({ row, quotes }) => {
+			const lowestPrice = Math.min(...quotes.map((q) => Number(q.price)));
+			const symbol = CURRENCY_SYMBOL[row.currency as Currency];
+			const daysLeft = Math.ceil((new Date(row.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+			const isUrgent = daysLeft <= 3;
+
+			return {
+				id: row.id,
+				endDate: row.end_date,
+				todo: {
+					id: row.id,
+					listingId: row.id,
+					title: row.title,
+					description: `견적 ${quotes.length}건 · 최저가 ${symbol}${lowestPrice.toLocaleString()}`,
+					deadlineText: daysLeft > 0 ? `마감까지 ${daysLeft}일` : "마감",
+					actionLabel: "견적 비교하고 선택하기",
+					highlights: isUrgent ? [{ label: "마감임박", value: `D-${daysLeft}` }] : [],
+				} satisfies BuyerTodo,
+			};
+		})
+		.sort((a, b) => a.endDate.localeCompare(b.endDate))
+		.slice(0, 5)
+		.map(({ todo }) => todo);
+
+	const activities: BuyerActivity[] = (recentNotifications ?? []).map((row) => ({
+		id: row.id,
+		type: row.type === "quote" ? "quote" : "document",
+		title: row.title,
+		description: row.content,
+		timeText: formatRelativeTime(row.created_at),
+	}));
+
+	return {
+		listingCount: listingRows.length,
+		todos,
+		// 대시보드 UI에 절약금액 카드가 아직 없어 계산 기준을 정하지 않았다. 필요해지면 채운다.
+		savings: { totalAmount: 0, completedCount: 0 },
+		badges: { quotes: unreadQuoteCount ?? 0, chats: unreadChatCount ?? 0 },
+		activities,
 	};
 }
 
