@@ -114,7 +114,7 @@ export function NotificationBell(): React.ReactNode {
 					<div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E7EB]">
 						<p className="text-sm font-semibold text-[#1F2937]">알림</p>
 						{unreadCount > 0 && (
-							<button onClick={handleMarkAllRead} className="text-xs text-[#3B82F6] hover:underline">
+							<button onClick={handleMarkAllRead} className="text-xs text-imsg-blue hover:underline">
 								모두 읽음
 							</button>
 						)}
@@ -142,7 +142,7 @@ export function NotificationBell(): React.ReactNode {
 										)}
 									>
 										{n.type === "quote" ? (
-											<Mail size={12} className="text-[#3B82F6]" />
+											<Mail size={12} className="text-imsg-blue" />
 										) : (
 											<MessageSquare size={12} className="text-[#6B7280]" />
 										)}
@@ -163,7 +163,8 @@ export function NotificationBell(): React.ReactNode {
 
 									<button
 										onClick={(e) => handleDelete(e, n.id)}
-										className="mt-0.5 shrink-0 text-[#D1D5DB] opacity-0 transition-opacity group-hover:opacity-100 hover:text-[#9CA3AF]"
+										aria-label="알림 삭제"
+										className="mt-0.5 shrink-0 text-[#D1D5DB] opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 hover:text-[#9CA3AF]"
 									>
 										<X size={14} />
 									</button>
