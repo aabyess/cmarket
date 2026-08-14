@@ -12,7 +12,7 @@ const categoryButton = cva(
 	{
 		variants: {
 			active: {
-				true: "bg-[#3B82F6] text-white",
+				true: "bg-imsg-blue text-white",
 				false: "text-[#374151] hover:bg-[#F9FAFB]",
 			},
 		},

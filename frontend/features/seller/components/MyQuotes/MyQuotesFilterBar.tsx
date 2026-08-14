@@ -27,7 +27,7 @@ const filterButton = cva(
 	{
 		variants: {
 			active: {
-				true: "bg-[#3B82F6] text-white",
+				true: "bg-imsg-blue text-white",
 				false: "text-[#374151] hover:bg-[#F9FAFB]",
 			},
 		},
@@ -47,7 +47,7 @@ const viewButton = cva(
 	{
 		variants: {
 			active: {
-				true: "bg-[#3B82F6] text-white",
+				true: "bg-imsg-blue text-white",
 				false: "text-[#9CA3AF] hover:bg-[#F9FAFB]",
 			},
 		},

@@ -117,7 +117,7 @@ export function ListingDetailQuoteForm({
 							미선정
 						</span>
 					) : (
-						<span className="flex items-center gap-1 rounded-full bg-[#EFF6FF] px-2.5 py-1 text-xs font-medium text-[#3B82F6]">
+						<span className="flex items-center gap-1 rounded-full bg-[#EFF6FF] px-2.5 py-1 text-xs font-medium text-imsg-blue">
 							<Clock size={12} />
 							검토 중
 						</span>
@@ -151,7 +151,7 @@ export function ListingDetailQuoteForm({
 					<>
 						<button
 							onClick={() => setIsEditing(true)}
-							className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-lg border border-[#3B82F6] py-3 text-sm font-semibold text-[#3B82F6] transition-colors hover:bg-[#EFF6FF]"
+							className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-lg border border-imsg-blue py-3 text-sm font-semibold text-imsg-blue transition-colors hover:bg-[#EFF6FF]"
 						>
 							<Pencil size={15} />
 							견적 수정하기
@@ -187,7 +187,7 @@ export function ListingDetailQuoteForm({
 
 	// 제출 폼 또는 수정 폼
 	return (
-		<div className="rounded-2xl border-2 border-[#3B82F6] bg-white p-5">
+		<div className="rounded-2xl border-2 border-imsg-blue bg-white p-5">
 			<p className="text-sm font-semibold text-[#1F2937]">
 				{isEditing ? "견적 수정" : "견적 보내기"}
 			</p>
@@ -200,7 +200,7 @@ export function ListingDetailQuoteForm({
 			<div className="mt-4 space-y-4">
 				<div>
 					<label className="mb-2 block text-sm font-medium text-[#374151]">
-						견적 금액 <span className="text-[#3B82F6]">*</span>
+						견적 금액 <span className="text-imsg-blue">*</span>
 					</label>
 					<div className="mb-2 flex gap-1.5">
 						{CURRENCIES.map((currency) => (
@@ -210,7 +210,7 @@ export function ListingDetailQuoteForm({
 								className={cn(
 									"flex-1 rounded-lg border py-2 text-xs font-medium transition-colors",
 									form.currency === currency.value
-										? "border-[#3B82F6] bg-[#3B82F6] text-white"
+										? "border-imsg-blue bg-imsg-blue text-white"
 										: "border-[#E2E8F0] bg-white text-[#374151] hover:bg-[#F9FAFB]",
 								)}
 							>
@@ -226,14 +226,14 @@ export function ListingDetailQuoteForm({
 							value={form.price || ""}
 							onChange={(e) => handleChange({ price: Number(e.target.value) })}
 							placeholder="0"
-							className="flex-1 rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+							className="flex-1 rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 						/>
 					</div>
 				</div>
 
 				<div>
 					<label className="mb-2 block text-sm font-medium text-[#374151]">
-						납품 소요일 <span className="text-[#3B82F6]">*</span>
+						납품 소요일 <span className="text-imsg-blue">*</span>
 					</label>
 					<div className="flex items-center gap-2">
 						<input
@@ -242,7 +242,7 @@ export function ListingDetailQuoteForm({
 							value={form.deliveryDays || ""}
 							onChange={(e) => handleChange({ deliveryDays: Number(e.target.value) })}
 							placeholder="30"
-							className="w-28 rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+							className="w-28 rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 						/>
 						<span className="text-sm text-[#6B7280]">일 이내</span>
 					</div>
@@ -255,7 +255,7 @@ export function ListingDetailQuoteForm({
 						onChange={(e) => handleChange({ note: e.target.value })}
 						placeholder="품질 보증, 대체 사양 제안, 배송 조건 등"
 						rows={4}
-						className="w-full resize-none rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+						className="w-full resize-none rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 					/>
 				</div>
 
@@ -273,7 +273,7 @@ export function ListingDetailQuoteForm({
 						<button
 							onClick={handleUpdate}
 							disabled={isLoading}
-							className="flex-1 rounded-lg bg-[#3B82F6] py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
+							className="flex-1 rounded-lg bg-imsg-blue py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
 						>
 							{isLoading ? "저장 중..." : "수정 저장"}
 						</button>
@@ -282,7 +282,7 @@ export function ListingDetailQuoteForm({
 					<button
 						onClick={handleSubmit}
 						disabled={isLoading}
-						className="w-full rounded-lg bg-[#3B82F6] py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
+						className="w-full rounded-lg bg-imsg-blue py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
 					>
 						{isLoading ? "제출 중..." : "견적 제출하기"}
 					</button>

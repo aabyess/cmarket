@@ -65,7 +65,7 @@ export default function ListingDeliverySection({ form, onChange }: ListingDelive
 								className={cn(
 									"rounded-lg border px-3.5 py-2 text-sm font-medium transition-colors",
 									form.deliveryMethod === method
-										? "border-[#3B82F6] bg-[#3B82F6] text-white"
+										? "border-imsg-blue bg-imsg-blue text-white"
 										: "border-[#E2E8F0] bg-white text-[#374151] hover:bg-[#F9FAFB]",
 								)}
 							>
@@ -80,7 +80,7 @@ export default function ListingDeliverySection({ form, onChange }: ListingDelive
 						<select
 							value={form.deliveryProvinsi}
 							onChange={(e) => handleProvinceChange(e.target.value)}
-							className="rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+							className="rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 						>
 							<option value="">주(Provinsi) 선택</option>
 							{provinces.map((province) => (
@@ -93,7 +93,7 @@ export default function ListingDeliverySection({ form, onChange }: ListingDelive
 							value={form.deliveryCity}
 							onChange={(e) => handleCityChange(e.target.value)}
 							disabled={!form.deliveryProvinsi || isLoadingRegencies}
-							className="rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6] disabled:bg-[#F9FAFB] disabled:text-[#9CA3AF]"
+							className="rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue disabled:bg-[#F9FAFB] disabled:text-[#9CA3AF]"
 						>
 							<option value="">
 								{isLoadingRegencies ? "불러오는 중..." : "시/군(Kota/Kabupaten) 선택"}
@@ -110,7 +110,7 @@ export default function ListingDeliverySection({ form, onChange }: ListingDelive
 						<button
 							type="button"
 							onClick={() => setIsMapOpen(true)}
-							className="flex items-center justify-center gap-1.5 rounded-lg border border-[#3B82F6] px-4 py-3 text-sm font-medium text-[#3B82F6] transition-colors hover:bg-[#EFF6FF]"
+							className="flex items-center justify-center gap-1.5 rounded-lg border border-imsg-blue px-4 py-3 text-sm font-medium text-imsg-blue transition-colors hover:bg-[#EFF6FF]"
 						>
 							<MapPin size={15} />
 							{form.deliveryLat ? "지도에서 위치 다시 확인" : "지도에서 위치 확인"}
@@ -120,7 +120,7 @@ export default function ListingDeliverySection({ form, onChange }: ListingDelive
 							value={form.deliveryAddress}
 							onChange={(e) => onChange({ deliveryAddress: e.target.value })}
 							placeholder="상세 주소"
-							className="rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+							className="rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 						/>
 					</div>
 
@@ -129,7 +129,7 @@ export default function ListingDeliverySection({ form, onChange }: ListingDelive
 						value={form.deliveryAddressDetail}
 						onChange={(e) => onChange({ deliveryAddressDetail: e.target.value })}
 						placeholder="상세 정보 (건물명, 층수, 호수 등)"
-						className="w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+						className="w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 					/>
 				</div>
 			</div>

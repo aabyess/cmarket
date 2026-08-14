@@ -67,8 +67,8 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		alignItems: "center",
 	},
-	priceLabel: { fontSize: 10, color: "#3B82F6" },
-	priceValue: { fontSize: 20, fontWeight: "bold", color: "#3B82F6" },
+	priceLabel: { fontSize: 10, color: "#2563EB" },
+	priceValue: { fontSize: 20, fontWeight: "bold", color: "#2563EB" },
 	footer: { marginTop: 24, fontSize: 8, color: "#9CA3AF", textAlign: "center" },
 });
 

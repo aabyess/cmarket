@@ -59,7 +59,7 @@ export function QuoteReviewFilterBar({
 						className={cn(
 							"rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors",
 							hasFilter === option.value
-								? "bg-[#3B82F6] text-white"
+								? "bg-imsg-blue text-white"
 								: "text-[#374151] hover:bg-[#F9FAFB]",
 						)}
 					>
@@ -84,7 +84,7 @@ export function QuoteReviewFilterBar({
 							className={cn(
 								"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
 								sort === option
-									? "bg-[#EFF6FF] text-[#3B82F6]"
+									? "bg-[#EFF6FF] text-imsg-blue"
 									: "text-[#374151] hover:bg-[#F9FAFB]",
 							)}
 						>

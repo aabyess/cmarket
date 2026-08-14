@@ -7,7 +7,7 @@ import checkmarkAnimation from "@/public/animations/checkmark.json";
 
 const Lottie = dynamic(() => import("lottie-react"), {
   ssr: false,
-  loading: () => <CheckCircle2 className="size-full text-[#3B82F6]" />,
+  loading: () => <CheckCircle2 className="size-full text-imsg-blue" />,
 });
 
 type SignupCountrySelectorCheckmarkProps = {

@@ -211,7 +211,7 @@ export default function ListingDescriptionEditor({ value, onChange }: ListingDes
 							key={phrase}
 							type="button"
 							onClick={() => insertPhrase(phrase)}
-							className="rounded-full border border-[#E2E8F0] bg-white px-3 py-1.5 text-xs font-medium text-[#374151] transition-colors hover:border-[#3B82F6] hover:text-[#3B82F6]"
+							className="rounded-full border border-[#E2E8F0] bg-white px-3 py-1.5 text-xs font-medium text-[#374151] transition-colors hover:border-imsg-blue hover:text-imsg-blue"
 						>
 							+ {phrase}
 						</button>
@@ -243,7 +243,7 @@ function ToolbarButton({ onClick, icon: Icon, isActive, disabled }: ToolbarButto
 			disabled={disabled}
 			className={cn(
 				"flex size-8 items-center justify-center rounded transition-colors disabled:opacity-40",
-				isActive ? "bg-[#EFF6FF] text-[#3B82F6]" : "text-[#6B7280] hover:bg-[#F3F4F6]",
+				isActive ? "bg-[#EFF6FF] text-imsg-blue" : "text-[#6B7280] hover:bg-[#F3F4F6]",
 			)}
 		>
 			<Icon size={18} />

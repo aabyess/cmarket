@@ -6,7 +6,7 @@ type SiteRendererStatsProps = {
 
 export function SiteRendererStats({ props }: SiteRendererStatsProps): React.JSX.Element {
 	return (
-		<section className="rounded-2xl border border-[#E5E7EB] bg-white px-10 py-8">
+		<section className="rounded-2xl border border-[#E5E7EB] bg-white px-4 sm:px-10 py-8">
 			{props.heading && (
 				<h3 className="mb-5 text-[17px] font-bold text-[#1F2937]">{props.heading}</h3>
 			)}

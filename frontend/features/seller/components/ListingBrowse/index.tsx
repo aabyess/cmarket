@@ -58,7 +58,7 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 					value={keyword}
 					onChange={(e) => setKeyword(e.target.value)}
 					placeholder="품목명, 공고 제목으로 검색"
-					className="w-full rounded-xl border border-[#E2E8F0] bg-white py-3.5 pl-11 pr-4 text-sm text-[#1F2937] placeholder:text-[#9CA3AF] focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+					className="w-full rounded-xl border border-[#E2E8F0] bg-white py-3.5 pl-11 pr-4 text-sm text-[#1F2937] placeholder:text-[#9CA3AF] focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 				/>
 			</div>
 
@@ -70,7 +70,7 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 						className={cn(
 							"rounded-lg px-4 py-1.5 text-xs font-medium transition-colors",
 							statusTab === tab.value
-								? "bg-[#3B82F6] text-white"
+								? "bg-imsg-blue text-white"
 								: "text-[#6B7280] hover:bg-[#F9FAFB]",
 						)}
 					>

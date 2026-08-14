@@ -15,7 +15,7 @@ const STATUS_CONFIG: Record <
 	ListingStatus,
 	{ label: string; className: string; dotClassName: string }
 > = {
-	active: { label: "진행 중", className: "bg-[#EFF6FF] text-[#3B82F6]", dotClassName: "bg-[#3B82F6]" },
+	active: { label: "진행 중", className: "bg-[#EFF6FF] text-imsg-blue", dotClassName: "bg-imsg-blue" },
 	closed: { label: "마감", className: "bg-[#F3F4F6] text-[#6B7280]", dotClassName: "bg-[#9CA3AF]" },
 	awarded: {
 		label: "계약 확정",

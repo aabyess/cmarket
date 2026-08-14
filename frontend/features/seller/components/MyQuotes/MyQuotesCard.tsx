@@ -12,7 +12,7 @@ const CURRENCY_SYMBOL: Record<Currency, string> = {
 };
 
 const STATUS_CONFIG: Record<QuoteStatus, { label: string; className: string }> = {
-	pending: { label: "검토 중", className: "bg-[#EFF6FF] text-[#3B82F6]" },
+	pending: { label: "검토 중", className: "bg-[#EFF6FF] text-imsg-blue" },
 	awarded: { label: "계약 확정", className: "bg-[#ECFDF5] text-[#059669]" },
 	rejected: { label: "미선정", className: "bg-[#F3F4F6] text-[#6B7280]" },
 };
@@ -87,7 +87,7 @@ export function MyQuotesCard({ quote, onViewListing, onGoToChat }: MyQuotesCardP
 				{isAwarded && (
 					<button
 						onClick={onGoToChat}
-						className="flex-1 rounded-lg bg-[#3B82F6] py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#2563EB]"
+						className="flex-1 rounded-lg bg-imsg-blue py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#2563EB]"
 					>
 						대화하기
 					</button>

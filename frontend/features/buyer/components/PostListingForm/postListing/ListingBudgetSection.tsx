@@ -30,7 +30,7 @@ export default function ListingBudgetSection({ form, onChange }: ListingBudgetSe
 								className={cn(
 									"rounded-lg px-4 py-1.5 text-sm font-medium transition-colors",
 									!form.budgetPublic
-										? "bg-[#3B82F6] text-white"
+										? "bg-imsg-blue text-white"
 										: "bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]",
 								)}
 							>
@@ -41,7 +41,7 @@ export default function ListingBudgetSection({ form, onChange }: ListingBudgetSe
 								className={cn(
 									"rounded-lg px-4 py-1.5 text-sm font-medium transition-colors",
 									form.budgetPublic
-										? "bg-[#3B82F6] text-white"
+										? "bg-imsg-blue text-white"
 										: "bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]",
 								)}
 							>
@@ -62,7 +62,7 @@ export default function ListingBudgetSection({ form, onChange }: ListingBudgetSe
 									onChange({ totalBudget: numeric });
 								}}
 								placeholder="예산 금액 (원)"
-								className="flex-1 rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+								className="flex-1 rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 							/>
 						</div>
 					)}
@@ -77,7 +77,7 @@ export default function ListingBudgetSection({ form, onChange }: ListingBudgetSe
 								className={cn(
 									"rounded-lg px-4 py-1.5 text-sm font-medium transition-colors",
 									form.deliveryTimingMode === "negotiate"
-										? "bg-[#3B82F6] text-white"
+										? "bg-imsg-blue text-white"
 										: "bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]",
 								)}
 							>
@@ -88,7 +88,7 @@ export default function ListingBudgetSection({ form, onChange }: ListingBudgetSe
 								className={cn(
 									"rounded-lg px-4 py-1.5 text-sm font-medium transition-colors",
 									form.deliveryTimingMode === "specific"
-										? "bg-[#3B82F6] text-white"
+										? "bg-imsg-blue text-white"
 										: "bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]",
 								)}
 							>

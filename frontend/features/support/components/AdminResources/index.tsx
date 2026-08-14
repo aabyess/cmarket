@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { Loader2, Trash2, Upload } from "lucide-react";
+import { ConfirmModal } from "@/components/ui/confirm-modal";
 import type { SupportResource } from "@/features/support/types";
 
 type AdminResourcesProps = {
@@ -25,6 +26,8 @@ export function AdminResources({ resources }: AdminResourcesProps): React.JSX.El
 	const [description, setDescription] = useState("");
 	const [fileName, setFileName] = useState("");
 	const [isSaving, setIsSaving] = useState(false);
+	const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+	const [isDeleting, setIsDeleting] = useState(false);
 
 	async function handleUpload(): Promise<void> {
 		const file = fileRef.current?.files?.[0];
@@ -54,14 +57,22 @@ export function AdminResources({ resources }: AdminResourcesProps): React.JSX.El
 		}
 	}
 
-	async function handleDelete(id: string): Promise<void> {
-		const res = await fetch(`/api/admin/resource?id=${id}`, { method: "DELETE" });
-		if (!res.ok) {
-			const { error } = await res.json();
-			alert(error ?? "삭제에 실패했습니다.");
-			return;
+	async function handleDelete(): Promise<void> {
+		if (!deleteTargetId) return;
+
+		setIsDeleting(true);
+		try {
+			const res = await fetch(`/api/admin/resource?id=${deleteTargetId}`, { method: "DELETE" });
+			if (!res.ok) {
+				const { error } = await res.json();
+				alert(error ?? "삭제에 실패했습니다.");
+				return;
+			}
+			router.refresh();
+		} finally {
+			setIsDeleting(false);
+			setDeleteTargetId(null);
 		}
-		router.refresh();
 	}
 
 	return (
@@ -85,7 +96,7 @@ export function AdminResources({ resources }: AdminResourcesProps): React.JSX.El
 				/>
 
 				<div className="flex items-center gap-3">
-					<label className="flex cursor-pointer items-center gap-2 rounded-lg border border-[#E5E7EB] px-4 py-2.5 text-sm font-medium text-[#374151] transition-colors duration-200 hover:bg-imsg-surface">
+					<label className="hover:bg-imsg-surface flex cursor-pointer items-center gap-2 rounded-lg border border-[#E5E7EB] px-4 py-2.5 text-sm font-medium text-[#374151] transition-colors duration-200">
 						<Upload size={14} />
 						파일 선택
 						<input
@@ -95,7 +106,7 @@ export function AdminResources({ resources }: AdminResourcesProps): React.JSX.El
 							onChange={(e) => setFileName(e.target.files?.[0]?.name ?? "")}
 						/>
 					</label>
-					<span className="min-w-0 flex-1 truncate text-sm text-imsg-secondary">
+					<span className="text-imsg-secondary min-w-0 flex-1 truncate text-sm">
 						{fileName || "선택된 파일 없음"}
 					</span>
 				</div>
@@ -104,7 +115,7 @@ export function AdminResources({ resources }: AdminResourcesProps): React.JSX.El
 					type="button"
 					onClick={handleUpload}
 					disabled={!fileName || title.trim().length === 0 || isSaving}
-					className="flex w-full items-center justify-center gap-2 rounded-xl bg-imsg-blue py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-blue-600 disabled:opacity-40">
+					className="bg-imsg-blue flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-blue-600 disabled:opacity-40">
 					{isSaving && <Loader2 size={15} className="animate-spin" />}
 					업로드
 				</button>
@@ -112,7 +123,7 @@ export function AdminResources({ resources }: AdminResourcesProps): React.JSX.El
 
 			{resources.length === 0 ? (
 				<div className="rounded-2xl bg-white p-12 text-center shadow-sm">
-					<p className="text-sm text-imsg-secondary">등록된 자료가 없어요</p>
+					<p className="text-imsg-secondary text-sm">등록된 자료가 없어요</p>
 				</div>
 			) : (
 				<div className="overflow-hidden rounded-2xl bg-white shadow-sm">
@@ -124,14 +135,14 @@ export function AdminResources({ resources }: AdminResourcesProps): React.JSX.El
 										<span className="block truncate text-sm font-medium text-[#0f172a]">
 											{resource.title}
 										</span>
-										<span className="block truncate text-xs text-imsg-secondary">
+										<span className="text-imsg-secondary block truncate text-xs">
 											{resource.fileName} · {formatSize(resource.fileSize)} · 다운로드{" "}
 											{resource.downloadCount}
 										</span>
 									</span>
 									<button
 										type="button"
-										onClick={() => handleDelete(resource.id)}
+										onClick={() => setDeleteTargetId(resource.id)}
 										aria-label="자료 삭제"
 										className="shrink-0 text-[#9CA3AF] transition-colors duration-200 hover:text-[#DC2626]">
 										<Trash2 size={15} />
@@ -143,6 +154,17 @@ export function AdminResources({ resources }: AdminResourcesProps): React.JSX.El
 					</ul>
 				</div>
 			)}
+
+			<ConfirmModal
+				isOpen={deleteTargetId !== null}
+				title="이 자료를 삭제할까요?"
+				description="삭제하면 되돌릴 수 없습니다."
+				confirmLabel="삭제"
+				variant="danger"
+				isLoading={isDeleting}
+				onConfirm={handleDelete}
+				onClose={() => setDeleteTargetId(null)}
+			/>
 		</div>
 	);
 }

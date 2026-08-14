@@ -40,7 +40,7 @@ export default function DescriptionLinkModal({ isOpen, onClose, onSubmit }: Desc
 							if (e.key === "Enter") handleSubmit();
 						}}
 						placeholder="https://example.com"
-						className="mt-3 w-full rounded-lg border border-[#E2E8F0] px-3 py-2.5 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+						className="mt-3 w-full rounded-lg border border-[#E2E8F0] px-3 py-2.5 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 					/>
 					<div className="mt-4 flex justify-end gap-2">
 						<button
@@ -52,7 +52,7 @@ export default function DescriptionLinkModal({ isOpen, onClose, onSubmit }: Desc
 						<button
 							onClick={handleSubmit}
 							disabled={!url.trim()}
-							className="rounded-lg bg-[#3B82F6] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-50"
+							className="rounded-lg bg-imsg-blue px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-50"
 						>
 							삽입
 						</button>

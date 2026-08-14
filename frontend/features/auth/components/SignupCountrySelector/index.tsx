@@ -62,7 +62,7 @@ export function SignupCountrySelector() {
           <Button
             onClick={handleNext}
             disabled={!selectedCountry}
-            className="w-full h-12 font-semibold text-base bg-[#3B82F6] hover:bg-[#2563EB] text-white disabled:bg-[#D1D5DB] disabled:text-[#6B7280] flex items-center justify-center group"
+            className="w-full h-12 font-semibold text-base bg-imsg-blue hover:bg-[#2563EB] text-white disabled:bg-[#D1D5DB] disabled:text-[#6B7280] flex items-center justify-center group"
           >
             다음으로 넘어가기
             <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
