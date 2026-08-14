@@ -150,6 +150,8 @@ export async function middleware(request: NextRequest) {
 
 // 정적 자산/API를 뺀 전체 경로를 매칭한다. 좁혔다가 새 공개 라우트가 빠지면
 // 그 경로에서 헤더 위조 검사와 언어 라우팅을 건너뛰게 된다.
+// ".*\\..*"로 확장자 있는 경로(public/의 이미지·폰트 등 정적 파일)를 제외해야 한다 —
+// 이게 빠지면 /images/foo.png 같은 요청도 next-intl 라우팅을 타면서 정적 파일 서빙이 깨진다.
 export const config = {
-	matcher: ["/((?!_next/static|_next/image|favicon.ico|api/).*)"],
+	matcher: ["/((?!_next/static|_next/image|favicon.ico|api/|.*\\..*).*)"],
 };
