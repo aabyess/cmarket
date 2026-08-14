@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import dynamic from "next/dynamic";
 import { CheckCircle2 } from "lucide-react";
@@ -16,6 +17,7 @@ type SignupCompleteProps = {
 };
 
 export function SignupComplete({ role }: SignupCompleteProps) {
+	const t = useTranslations("SignupComplete");
 	const router = useRouter();
 	const [countdown, setCountdown] = useState(3);
 	const homePath = role === "seller" ? "/seller/dashboard" : "/buyer/dashboard";
@@ -45,14 +47,14 @@ export function SignupComplete({ role }: SignupCompleteProps) {
 				</div>
 
 				<div className="text-center space-y-2">
-					<h1 className="text-2xl font-bold text-[#1F2937]">회원가입 완료!</h1>
+					<h1 className="text-2xl font-bold text-[#1F2937]">{t("title")}</h1>
 					<p className="text-sm text-[#6B7280]">
-						MitraPay에 오신 것을 환영합니다.
+						{t("welcome")}
 					</p>
 				</div>
 
 				<p className="text-sm text-[#9CA3AF]">
-					{countdown}초 후 대시보드로 이동합니다.
+					{t("countdown", { seconds: countdown })}
 				</p>
 
 
@@ -60,7 +62,7 @@ export function SignupComplete({ role }: SignupCompleteProps) {
 					onClick={() => router.push(homePath)}
 					className="w-full h-12 rounded-xl font-semibold text-base bg-imsg-blue hover:bg-[#2563EB] text-white transition-colors"
 				>
-					바로 시작하기
+					{t("start")}
 				</button>
 			</div>
 		</main>

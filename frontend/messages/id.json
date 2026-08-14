@@ -3,5 +3,1349 @@
 		"ko": "한국어",
 		"id": "Bahasa Indonesia",
 		"en": "English"
+	},
+	"Common": {
+		"copyright": "© 2003 Cmarket Corp. All rights reserved."
+	},
+	"Sidebar": {
+		"menuHeading": "Menu",
+		"menu": {
+			"dashboard": "Dasbor",
+			"postListing": "Buat Permintaan",
+			"myListings": "Permintaan Saya",
+			"receivedQuotes": "Penawaran Diterima",
+			"sentQuotes": "Penawaran Terkirim",
+			"browseListings": "Lihat Permintaan",
+			"chat": "Obrolan",
+			"contract": "Manajemen Kontrak",
+			"profile": "Halaman Perusahaan",
+			"support": "Pusat Bantuan"
+		},
+		"dropdown": {
+			"myProfile": "Profil Saya",
+			"settings": "Pengaturan",
+			"terms": "Syarat Layanan",
+			"privacy": "Kebijakan Privasi",
+			"logout": "Keluar"
+		}
+	},
+	"Login": {
+		"title": "Masuk",
+		"idLabel": "ID",
+		"idPlaceholder": "Masukkan ID Anda",
+		"passwordLabel": "Kata Sandi",
+		"passwordPlaceholder": "Masukkan kata sandi Anda",
+		"rememberUsername": "Simpan ID",
+		"submit": "Masuk",
+		"submitting": "Sedang masuk...",
+		"errorInvalid": "ID atau kata sandi salah.",
+		"noAccount": "Belum punya akun?",
+		"signup": "Daftar",
+		"supportNotice": "Konsultan profesional kami siap membantu pertanyaan solusi Anda.",
+		"supportPhone": "Pusat layanan pelanggan 02-742-9217"
+	},
+	"SignupCountrySelector": {
+		"step": "1 / 4",
+		"back": "Kembali",
+		"description": "Anda akan didaftarkan sebagai pembeli atau pemasok sesuai negara yang dipilih.",
+		"next": "Lanjutkan",
+		"flagAlt": "Bendera {name}",
+		"cards": {
+			"indonesia": {
+				"name": "Indonesia",
+				"badge": "Beli · Pemesanan",
+				"description": "Perusahaan yang membeli barang/jasa"
+			},
+			"korea": {
+				"name": "Korea Selatan",
+				"badge": "Jual · Penawaran",
+				"description": "Perusahaan yang menjual barang/jasa"
+			}
+		}
+	},
+	"SignupTerms": {
+		"detailAria": "Lihat detail {label}"
+	},
+	"SignupComplete": {
+		"title": "Pendaftaran Selesai!",
+		"welcome": "Selamat datang di MitraPay.",
+		"countdown": "Akan diarahkan ke dashboard dalam {seconds} detik.",
+		"start": "Mulai sekarang"
+	},
+	"SignupInfoKorea": {
+		"step": "3 / 4",
+		"back": "Kembali",
+		"title": "Masukkan Informasi",
+		"subtitle": "Mohon masukkan informasi perusahaan pemasok Anda.",
+		"accountSectionTitle": "Buat Akun",
+		"accountSectionDescription": "Masukkan informasi login Anda.",
+		"idLabel": "ID",
+		"idPlaceholder": "Min. 4 karakter huruf/angka",
+		"checking": "Memeriksa...",
+		"duplicateCheck": "Cek Ketersediaan",
+		"idAvailable": "ID tersedia.",
+		"idTaken": "ID sudah digunakan.",
+		"passwordLabel": "Kata Sandi",
+		"passwordPlaceholder": "Masukkan kata sandi",
+		"passwordStrengthWeak": "Lemah",
+		"passwordStrengthMedium": "Sedang",
+		"passwordStrengthStrong": "Kuat",
+		"passwordStrengthVeryStrong": "Sangat Kuat",
+		"passwordConfirmLabel": "Konfirmasi Kata Sandi",
+		"passwordConfirmPlaceholder": "Masukkan ulang kata sandi",
+		"passwordMatch": "Kata sandi cocok.",
+		"managerSectionTitle": "Informasi Penanggung Jawab",
+		"managerSectionDescription": "Masukkan informasi penanggung jawab yang dapat dihubungi.",
+		"nameLabel": "Nama",
+		"namePlaceholder": "Contoh: Kim Cheolsu",
+		"titleLabel": "Jabatan",
+		"titlePlaceholder": "Manajer",
+		"deptLabel": "Departemen",
+		"deptPlaceholder": "Tim Penjualan",
+		"contactLabel": "Kontak",
+		"mobileLabel": "Ponsel",
+		"phoneLabel": "Telepon",
+		"faxLabel": "Faks",
+		"emailLabel": "Email",
+		"emailIdPlaceholder": "ID email",
+		"domainPlaceholder": "Masukkan domain",
+		"businessSectionTitle": "Informasi Perusahaan",
+		"businessSectionDescription": "Mohon masukkan informasi perusahaan pemasok Anda.",
+		"businessNumberLabel": "Nomor Registrasi Bisnis",
+		"businessNumberHint": "Nomor 10 digit yang diterbitkan oleh kantor pajak",
+		"businessNumberPlaceholder": "000-00-00000",
+		"companyNameLabel": "Nama Perusahaan",
+		"companyNamePlaceholder": "Nama perusahaan",
+		"representativeLabel": "Nama Perwakilan",
+		"representativePlaceholder": "Nama perwakilan",
+		"addressLabel": "Alamat Usaha",
+		"postcodePlaceholder": "Kode pos",
+		"addressSearch": "Cari alamat",
+		"addressBasePlaceholder": "Alamat utama",
+		"addressDetailPlaceholder": "Masukkan alamat detail (opsional)",
+		"categoryLabel": "Bidang Usaha",
+		"categoryPlaceholder": "Cth: Manufaktur",
+		"itemLabel": "Jenis Usaha",
+		"itemPlaceholder": "Cth: Produksi alat kantor",
+		"submit": "Selesaikan Pendaftaran",
+		"submitting": "Memproses...",
+		"noneOption": "Tidak ada",
+		"customOption": "Input manual",
+		"errors": {
+			"usernameMin": "ID minimal 4 karakter.",
+			"usernameCheck": "Mohon cek ketersediaan ID.",
+			"passwordMin": "Kata sandi minimal 8 karakter.",
+			"passwordMismatch": "Kata sandi tidak cocok.",
+			"managerNameRequired": "Mohon masukkan nama penanggung jawab.",
+			"mobileRequired": "Mohon masukkan nomor ponsel.",
+			"emailRequired": "Mohon masukkan email.",
+			"businessNumberRequired": "Mohon masukkan nomor registrasi bisnis 10 digit.",
+			"companyNameRequired": "Mohon masukkan nama perusahaan.",
+			"representativeNameRequired": "Mohon masukkan nama perwakilan.",
+			"addressRequired": "Mohon masukkan alamat.",
+			"categoryRequired": "Mohon pilih bidang usaha."
+		}
+	},
+	"ContractPage": {
+		"title": "Manajemen Kontrak",
+		"description": "Periksa dan kelola kontrak yang sedang berjalan"
+	},
+	"BuyerOrderListPage": {
+		"title": "Permintaan Saya",
+		"count": "{count} permintaan terdaftar",
+		"newListing": "Buat Permintaan Baru"
+	},
+	"BuyerQuoteReviewPage": {
+		"title": "Penawaran Diterima",
+		"subtitle": "Pilih permintaan untuk melihat penawaran",
+		"backToList": "Kembali ke daftar permintaan",
+		"quoteCount": "{count} penawaran · Urutan harga terendah"
+	},
+	"ChatRoomList": {
+		"title": "Chat",
+		"searchPlaceholder": "Cari",
+		"emptyTitle": "Belum ada percakapan",
+		"emptyDescription": "Setelah bertukar penawaran, Anda bisa mengobrol di sini."
+	},
+	"ChatRoomPanel": {
+		"statusAwarded": "Dikonfirmasi",
+		"statusRejected": "Ditutup",
+		"awardButton": "Konfirmasi",
+		"quotePriceLabel": "Harga Penawaran",
+		"deliveryLabel": "Pengiriman",
+		"deliveryDays": "{days} hari",
+		"messagePlaceholder": "Ketik pesan",
+		"awardModalTitle": "Konfirmasi perusahaan ini?",
+		"awardModalDescription": "{partnerName} akan dikonfirmasi sebagai pemasok akhir. Penawaran lainnya akan otomatis ditandai tidak terpilih, dan tindakan ini tidak dapat diubah setelah dikonfirmasi.",
+		"awardModalConfirm": "Konfirmasi"
+	},
+	"ChatMessageList": {
+		"dateLabel": "{day}/{month}/{year}",
+		"read": "Dibaca"
+	},
+	"ChatView": {
+		"emptyTitle": "Pilih percakapan",
+		"emptyDescription": "Pilih dari daftar di sebelah kiri untuk mulai mengobrol."
+	},
+	"QuotePdfCard": {
+		"previewAlt": "Pratinjau penawaran",
+		"defaultFileName": "Penawaran.pdf",
+		"opening": "Membuka...",
+		"openHint": "Penawaran · Ketuk untuk membuka di jendela baru"
+	},
+	"ChatFab": {
+		"title": "Chat",
+		"comingSoon": "Fitur chat akan segera hadir."
+	},
+	"NotificationBell": {
+		"title": "Notifikasi",
+		"markAllRead": "Tandai semua dibaca",
+		"emptyText": "Belum ada notifikasi"
+	},
+	"AdminNoticeForm": {
+		"titleLabel": "Judul",
+		"titlePlaceholder": "Judul pengumuman",
+		"contentLabel": "Isi",
+		"contentPlaceholder": "Masukkan isi pengumuman.",
+		"pinToTop": "Sematkan di atas daftar",
+		"delete": "Hapus",
+		"saveDraft": "Simpan draf",
+		"publish": "Terbitkan",
+		"saveError": "Gagal menyimpan.",
+		"deleteError": "Gagal menghapus.",
+		"deleteConfirmTitle": "Hapus pengumuman ini?",
+		"deleteConfirmDescription": "Tindakan ini tidak dapat dibatalkan setelah dihapus."
+	},
+	"AdminResources": {
+		"uploadSectionTitle": "Unggah materi baru",
+		"titlePlaceholder": "Judul materi (contoh: Formulir Pembebasan Jaminan Kontrak 2026)",
+		"descriptionPlaceholder": "Deskripsi (opsional)",
+		"chooseFile": "Pilih file",
+		"noFileChosen": "Belum ada file dipilih",
+		"upload": "Unggah",
+		"uploadError": "Gagal mengunggah.",
+		"deleteError": "Gagal menghapus.",
+		"empty": "Belum ada materi terdaftar",
+		"downloadCount": "{count} unduhan",
+		"deleteAriaLabel": "Hapus materi",
+		"deleteConfirmTitle": "Hapus materi ini?",
+		"deleteConfirmDescription": "Setelah dihapus, tindakan ini tidak dapat dibatalkan.",
+		"deleteConfirmButton": "Hapus"
+	},
+	"AdminDashboardPage": {
+		"title": "Dasbor Operator",
+		"subtitle": "Kelola konten dan pertanyaan pusat dukungan",
+		"pendingInquiries": "Pertanyaan menunggu jawaban",
+		"notices": "Pengumuman",
+		"resources": "Pusat Materi",
+		"countUnit": "{count}",
+		"totalCount": "Total {count}",
+		"publishedCount": "{count} diterbitkan",
+		"draftCount": "{count} draf"
+	},
+	"AdminLayout": {
+		"menuDashboard": "Dasbor",
+		"menuNotices": "Pengumuman",
+		"menuResources": "Pusat Materi",
+		"menuInquiries": "Tanya Jawab",
+		"adminBadge": "Operator",
+		"viewUserSite": "Lihat tampilan pengguna"
+	},
+	"AdminInquiriesPage": {
+		"title": "Tanya Jawab",
+		"summary": "Total {total} · Menunggu jawaban {openCount}"
+	},
+	"AdminInquiryDetailPage": {
+		"backToList": "Kembali ke daftar pertanyaan"
+	},
+	"AdminNoticesPage": {
+		"title": "Pengumuman",
+		"count": "{count}",
+		"newNotice": "Pengumuman baru",
+		"empty": "Belum ada pengumuman terdaftar",
+		"statusPublished": "Diterbitkan",
+		"statusDraft": "Draf",
+		"pinned": "Disematkan"
+	},
+	"AdminNoticeDetailPage": {
+		"backToList": "Kembali ke daftar pengumuman",
+		"title": "Edit pengumuman"
+	},
+	"AdminNoticeNewPage": {
+		"backToList": "Kembali ke daftar pengumuman",
+		"title": "Pengumuman baru"
+	},
+	"AdminResourcesPage": {
+		"title": "Pusat Materi",
+		"count": "{count}"
+	},
+	"UserBadge": {
+		"indonesia": "Indonesia",
+		"korea": "Korea Selatan"
+	},
+	"ConfirmModal": {
+		"confirm": "Konfirmasi",
+		"cancel": "Batal",
+		"processing": "Memproses..."
+	},
+	"LogoutButton": {
+		"logout": "Keluar"
+	},
+	"SecurityModal": {
+		"connectingTitle": "Membangun koneksi aman",
+		"verifyingTitle": "Memverifikasi informasi Anda",
+		"subtitle": "Masuk dengan aman",
+		"sslLabel": "Koneksi terenkripsi SSL"
+	},
+	"PageLoading": {
+		"loading": "Memuat..."
+	},
+	"Pagination": {
+		"perPage": "{size} / halaman"
+	},
+	"NotFoundPage": {
+		"title": "Halaman tidak ditemukan",
+		"description": "Halaman yang Anda cari tidak ada atau sedang dalam persiapan.",
+		"backHome": "Kembali ke Beranda"
+	},
+	"SiteBuilderSeed": {
+		"introHeading": "Profil Perusahaan",
+		"productsHeading": "Produk Unggulan",
+		"certificationsHeading": "Sertifikasi dan Penghargaan",
+		"statsHeading": "Sekilas Info",
+		"establishedLabel": "Didirikan",
+		"employeeLabel": "Karyawan",
+		"contactHeading": "Kontak"
+	},
+	"ListingCategory": {
+		"office": "Perlengkapan Kantor",
+		"lab": "Peralatan Penelitian",
+		"machinery": "Mesin Industri",
+		"chemical": "Bahan Kimia",
+		"other": "Barang Lainnya"
+	},
+	"DeliveryMethod": {
+		"sea_fob": "Pengiriman Laut (FOB)",
+		"sea_cif": "Pengiriman Laut (CIF)",
+		"air": "Pengiriman Udara",
+		"negotiate": "Ditentukan melalui negosiasi"
+	},
+	"ListingStatusLabel": {
+		"active": "Berjalan",
+		"closed": "Ditutup",
+		"awarded": "Dikonfirmasi"
+	},
+	"InquiryCategoryLabel": {
+		"ACCOUNT": "Akun & Keanggotaan",
+		"LISTING": "Pendaftaran Permintaan",
+		"QUOTE": "Pengiriman & Perbandingan Penawaran",
+		"CONTRACT": "Kontrak & Pengiriman",
+		"PAYMENT": "Pembayaran & Penyelesaian",
+		"ETC": "Lainnya"
+	},
+	"InquiryStatusLabel": {
+		"OPEN": "Menunggu Balasan",
+		"ANSWERED": "Sudah Dibalas",
+		"CLOSED": "Selesai"
+	},
+	"FaqCategoryLabel": {
+		"ACCOUNT": "Akun & Keanggotaan",
+		"LISTING": "Permintaan Penawaran",
+		"QUOTE": "Penawaran",
+		"CONTRACT": "Kontrak & Pengiriman",
+		"PAYMENT": "Pembayaran & Penyelesaian"
+	},
+	"SiteBuilder": {
+		"pageTab": "Halaman Web",
+		"settingsTabBuyer": "Pengaturan Perusahaan",
+		"settingsTabSeller": "Pengaturan Transaksi",
+		"saveError": "Gagal menyimpan.",
+		"draftSaved": "Draf berhasil disimpan.",
+		"publishError": "Gagal mempublikasikan.",
+		"published": "Halaman web berhasil dipublikasikan.",
+		"settingsSaved": "Pengaturan transaksi berhasil disimpan.",
+		"seededBannerText": "Kami telah membuat draf menggunakan informasi profil perusahaan yang sudah Anda isi sebelumnya. Silakan periksa dan sunting isinya, lalu simpan.",
+		"seededBannerBold": "Perubahan tidak akan diterapkan sebelum Anda menyimpannya.",
+		"emptyTitle": "Belum ada blok",
+		"emptyDescription": "Tambahkan blok di bawah untuk membuat halaman web Anda."
+	},
+	"SiteBuilderAddBlock": {
+		"heading": "Tambah Blok",
+		"labels": {
+			"HERO": "Banner Utama",
+			"TEXT": "Konten",
+			"PRODUCTS": "Daftar Produk",
+			"CERTIFICATIONS": "Sertifikasi & Penghargaan",
+			"CONTACT": "Kontak",
+			"GALLERY": "Galeri Gambar",
+			"STATS": "Statistik",
+			"CTA": "Ajakan Bertindak"
+		},
+		"descriptions": {
+			"HERO": "Banner atas — logo, nama perusahaan, tagline singkat",
+			"TEXT": "Konten bebas — profil perusahaan, sejarah, kapasitas produksi",
+			"PRODUCTS": "Kartu produk — gambar, deskripsi, kisaran harga",
+			"CERTIFICATIONS": "Lencana riwayat sertifikasi dan penghargaan",
+			"CONTACT": "Penanggung jawab, email, telepon, alamat",
+			"GALLERY": "Gambar bebas seperti pabrik, lini produksi, dll.",
+			"STATS": "Sorotan angka seperti tahun berdiri, jumlah karyawan",
+			"CTA": "Tombol ajakan untuk meminta penawaran"
+		}
+	},
+	"SiteBuilderBlockCard": {
+		"labels": {
+			"HERO": "Banner Utama",
+			"TEXT": "Konten",
+			"PRODUCTS": "Daftar Produk",
+			"CERTIFICATIONS": "Sertifikasi & Penghargaan",
+			"CONTACT": "Kontak",
+			"GALLERY": "Galeri Gambar",
+			"STATS": "Statistik",
+			"CTA": "Ajakan Bertindak"
+		},
+		"descriptions": {
+			"HERO": "Banner atas — logo, nama perusahaan, tagline singkat",
+			"TEXT": "Konten bebas — profil perusahaan, sejarah, kapasitas produksi",
+			"PRODUCTS": "Kartu produk — gambar, deskripsi, kisaran harga",
+			"CERTIFICATIONS": "Lencana riwayat sertifikasi dan penghargaan",
+			"CONTACT": "Penanggung jawab, email, telepon, alamat",
+			"GALLERY": "Gambar bebas seperti pabrik, lini produksi, dll.",
+			"STATS": "Sorotan angka seperti tahun berdiri, jumlah karyawan",
+			"CTA": "Tombol ajakan untuk meminta penawaran"
+		},
+		"collapse": "Tutup",
+		"expand": "Buka",
+		"moveUpTitle": "Pindah ke atas",
+		"moveUpAria": "Pindahkan blok ke atas",
+		"moveDownTitle": "Pindah ke bawah",
+		"moveDownAria": "Pindahkan blok ke bawah",
+		"removeTitle": "Hapus blok",
+		"deleteConfirmTitle": "Hapus blok ini?",
+		"deleteConfirmDescription": "Setelah dihapus, tindakan ini tidak dapat dibatalkan.",
+		"deleteConfirmButton": "Hapus"
+	},
+	"SiteBuilderBlockEditor": {
+		"heroEyebrowLabel": "Teks kecil atas",
+		"heroEyebrowPlaceholder": "Contoh: Spesialis Permesinan Presisi",
+		"heroTitleLabel": "Judul",
+		"heroTitlePlaceholder": "Contoh: Daehan Precision Industries",
+		"heroTitleAccentLabel": "Bagian judul yang ditonjolkan",
+		"heroTitleAccentPlaceholder": "Ditampilkan dengan warna aksen setelah judul",
+		"heroSubtitleLabel": "Tagline singkat",
+		"heroSubtitlePlaceholder": "Tulis deskripsi yang mudah dipahami pengunjung dalam 30 detik",
+		"heroLogoLabel": "Logo",
+		"heroLogoHint": "Disarankan gambar persegi",
+		"heroOverlayLabel": "Kegelapan latar belakang",
+		"heroImagesLabel": "Gambar latar belakang",
+		"heroChipsLabel": "Tag unggulan",
+		"heroChipsPlaceholder": "Contoh: Mesin industri, ekspor ke 12 negara",
+		"heroButtonsLabel": "Tombol",
+		"heroCtaLabelLabel": "Teks tombol",
+		"heroCtaLabelPlaceholder": "Contoh: Hubungi Kami",
+		"heroCtaHrefLabel": "Tautan",
+		"heroCtaHrefPlaceholder": "Contoh: #contact",
+		"heroCtaEmphasisLabel": "Penekanan",
+		"heroAddButton": "Tambah Tombol",
+		"textHeadingLabel": "Subjudul",
+		"textHeadingPlaceholder": "Contoh: Profil Perusahaan",
+		"textBodyLabel": "Konten",
+		"textBodyPlaceholder": "Tuliskan bebas sejarah perusahaan, kapasitas produksi, riwayat pengiriman utama, dll.",
+		"productsHeadingLabel": "Subjudul",
+		"productsHeadingPlaceholder": "Contoh: Produk Unggulan",
+		"productsNameLabel": "Nama produk",
+		"productsNamePlaceholder": "Contoh: Rumah Bantalan Presisi",
+		"productsDescriptionLabel": "Deskripsi",
+		"productsDescriptionPlaceholder": "Contoh: SUS304 · toleransi ±0,01mm",
+		"productsPriceLabel": "Kisaran harga",
+		"productsPricePlaceholder": "Contoh: 1 juta~5 juta KRW / Hubungi kami",
+		"productsImagesLabel": "Gambar produk",
+		"productsEmpty": "Silakan tambahkan produk",
+		"productsAddButton": "Tambah Produk",
+		"certificationsHeadingLabel": "Subjudul",
+		"certificationsHeadingPlaceholder": "Contoh: Sertifikasi dan Penghargaan",
+		"certificationsItemsLabel": "Item sertifikasi & penghargaan",
+		"certificationsItemsPlaceholder": "Contoh: ISO 9001, Inno-Biz",
+		"contactHeadingLabel": "Subjudul",
+		"contactHeadingPlaceholder": "Contoh: Kontak",
+		"contactManagerLabel": "Penanggung jawab",
+		"contactManagerPlaceholder": "Contoh: Kim Suchul / Manajer Tim Ekspor",
+		"contactEmailLabel": "Email",
+		"contactEmailPlaceholder": "Contoh: export@example.com",
+		"contactPhoneLabel": "Telepon",
+		"contactPhonePlaceholder": "Contoh: +82-31-123-4567",
+		"contactAddressLabel": "Alamat",
+		"contactAddressPlaceholder": "Contoh: 123 Sandan-ro, Danwon-gu, Ansan-si, Gyeonggi-do",
+		"contactWebsiteLabel": "Situs web",
+		"contactWebsitePlaceholder": "Contoh: https://example.com",
+		"galleryHeadingLabel": "Subjudul",
+		"galleryHeadingPlaceholder": "Contoh: Fasilitas Produksi",
+		"galleryImagesLabel": "Gambar",
+		"statsHeadingLabel": "Subjudul",
+		"statsHeadingPlaceholder": "Contoh: Sekilas Info",
+		"statsValueLabel": "Angka",
+		"statsValuePlaceholder": "Contoh: 1994",
+		"statsLabelLabel": "Nama item",
+		"statsLabelPlaceholder": "Contoh: Didirikan",
+		"statsEmpty": "Silakan tambahkan item",
+		"statsAddButton": "Tambah Item",
+		"ctaHeadingLabel": "Judul",
+		"ctaHeadingPlaceholder": "Contoh: Membutuhkan komponen tertentu?",
+		"ctaDescriptionLabel": "Deskripsi",
+		"ctaDescriptionPlaceholder": "Contoh: Kirim permintaan penawaran dan kami akan membalas dalam 1 hari kerja.",
+		"ctaButtonLabelLabel": "Teks tombol",
+		"ctaButtonLabelPlaceholder": "Contoh: Minta Penawaran",
+		"ctaButtonHrefLabel": "Tautan tombol",
+		"ctaButtonHrefPlaceholder": "Kosongkan agar tombol hanya ditampilkan"
+	},
+	"SiteBuilderFields": {
+		"add": "Tambah",
+		"uploadError": "Terjadi kesalahan saat mengunggah gambar.",
+		"removeImage": "Hapus Gambar"
+	},
+	"SiteBuilderToolbar": {
+		"badgeNeverPublished": "Belum Dipublikasikan",
+		"badgeUnpublishedChanges": "Ada Perubahan Belum Dipublikasikan",
+		"badgeSynced": "Dipublikasikan",
+		"viewPublicPage": "Lihat Halaman Publik",
+		"editMode": "Ke Mode Edit",
+		"previewMode": "Pratinjau",
+		"saveDraft": "Simpan Draf",
+		"publish": "Publikasikan"
+	},
+	"SiteBuilderTradeSettings": {
+		"businessInfoTitle": "Informasi Bisnis",
+		"businessInfoHint": "Nomor registrasi bisnis tercantum di kontrak dan invoice sehingga tidak dapat diubah. Hubungi pusat dukungan jika perlu koreksi.",
+		"companyNameLabel": "Nama Perusahaan",
+		"companyNamePlaceholder": "Contoh: Daehan Precision Industries",
+		"representativeLabel": "Perwakilan",
+		"representativePlaceholder": "Contoh: Kim Daehan",
+		"businessTypeLabel": "Jenis Usaha",
+		"businessTypePlaceholder": "Contoh: Manufaktur",
+		"businessItemLabel": "Bidang Usaha",
+		"businessItemPlaceholder": "Contoh: Komponen Mesin Presisi",
+		"addressLabel": "Alamat",
+		"addressPlaceholder": "Contoh: 123 Sandan-ro, Danwon-gu, Ansan-si, Gyeonggi-do",
+		"businessNumberLabel": "Nomor Registrasi Bisnis",
+		"businessNumberUnchangeable": "(Tidak dapat diubah)",
+		"contactInfoTitle": "Informasi Kontak",
+		"contactInfoHint": "Kontak ini akan dibagikan ke perusahaan mitra selama proses penawaran dan kontrak.",
+		"nameLabel": "Nama",
+		"namePlaceholder": "Contoh: Kim Suchul",
+		"titleLabel": "Jabatan",
+		"titlePlaceholder": "Contoh: Manajer",
+		"departmentLabel": "Departemen",
+		"departmentPlaceholder": "Contoh: Tim Penjualan Ekspor",
+		"emailLabel": "Email",
+		"emailPlaceholder": "Contoh: export@example.com",
+		"mobileLabel": "Ponsel",
+		"mobilePlaceholder": "Contoh: 010-1234-5678",
+		"phoneLabel": "Telepon Kantor",
+		"phonePlaceholder": "Contoh: 031-123-4567",
+		"categoryTitle": "Kategori yang Ditangani",
+		"categoryHint": "Kami akan merekomendasikan permintaan penawaran yang sesuai berdasarkan kategori yang dipilih.",
+		"logoTitle": "Logo Perusahaan",
+		"logoHint": "Ditampilkan di tempat yang terlihat oleh perusahaan mitra, seperti layar perbandingan penawaran.",
+		"logoFieldHint": "Disarankan gambar persegi",
+		"bankTitle": "Informasi Rekening",
+		"bankHint": "Ditampilkan kepada pembeli saat invoice diterbitkan. Masukkan berdasarkan transfer internasional (T/T).",
+		"bankNameLabel": "Nama Bank",
+		"bankNamePlaceholder": "Contoh: KB Kookmin Bank",
+		"currencyLabel": "Mata Uang Penerimaan",
+		"accountNumberLabel": "Nomor Rekening",
+		"accountNumberPlaceholder": "Contoh: 123-456-789012",
+		"accountHolderLabel": "Pemilik Rekening",
+		"accountHolderPlaceholder": "Contoh: Daehan Precision Industries",
+		"swiftCodeLabel": "Kode SWIFT",
+		"swiftCodePlaceholder": "Contoh: CZNBKRSE",
+		"saveButton": "Simpan Pengaturan"
+	},
+	"PostListingForm": {
+		"titleRequired": "Silakan masukkan judul permintaan penawaran.",
+		"itemRequired": "Silakan masukkan minimal satu barang.",
+		"deliveryRequired": "Silakan masukkan alamat pengiriman.",
+		"updateFailed": "Gagal memperbarui permintaan penawaran.",
+		"publishFailed": "Gagal mendaftarkan permintaan penawaran.",
+		"draftSaved": "Draf berhasil disimpan",
+		"editTitle": "Ubah Permintaan Penawaran",
+		"createTitle": "Buat Permintaan Penawaran",
+		"editSubtitle": "Ubah detail permintaan penawaran Anda.",
+		"createSubtitle": "Perusahaan pemasok Korea akan mengirimkan penawaran kepada Anda."
+	},
+	"CalendarModal": {
+		"weekday_sun": "Min",
+		"weekday_mon": "Sen",
+		"weekday_tue": "Sel",
+		"weekday_wed": "Rab",
+		"weekday_thu": "Kam",
+		"weekday_fri": "Jum",
+		"weekday_sat": "Sab",
+		"title": "Pilih Tanggal Pengiriman",
+		"yearMonth": "{month}/{year}"
+	},
+	"DescriptionLinkModal": {
+		"title": "Sisipkan Tautan",
+		"cancel": "Batal",
+		"insert": "Sisipkan"
+	},
+	"ListingAttachmentSection": {
+		"maxFilesError": "Anda dapat melampirkan maksimal {max} file.",
+		"fileTooLarge": "{fileName} dilewati karena melebihi 5MB.",
+		"uploadFailed": "Gagal mengunggah {fileName}: {error}",
+		"title": "Lampiran",
+		"subtitle": "Lampirkan file yang dapat menjadi referensi pemasok saat membuat penawaran. (Opsional, maks. 10 file, masing-masing 5MB)",
+		"dropzoneText": "Lampirkan file: klik atau seret file ke sini",
+		"maxSize": "Maks. 5MB"
+	},
+	"ListingBasicSection": {
+		"title": "Apa yang Anda butuhkan?",
+		"subtitle": "Beri tahu kami barang yang ingin Anda beli",
+		"listingTitleLabel": "Judul Permintaan Penawaran",
+		"listingTitlePlaceholder": "Contoh: Pembelian 20 unit printer kantor",
+		"itemsLabel": "Barang",
+		"nameSpecColumn": "Nama Barang / Spesifikasi",
+		"quantityColumn": "Jumlah",
+		"unitColumn": "Satuan",
+		"emptyItems": "Silakan tambahkan barang",
+		"namePlaceholder": "Nama barang",
+		"specPlaceholder": "Spesifikasi (opsional)",
+		"addItem": "Tambah Barang"
+	},
+	"ListingBudgetSection": {
+		"title": "Ketentuan Permintaan Penawaran",
+		"subtitle": "Tetapkan anggaran dan tanggal pengiriman yang diinginkan",
+		"budgetLabel": "Anggaran",
+		"budgetPrivate": "Anggaran Rahasia",
+		"budgetPublic": "Anggaran Terbuka",
+		"budgetPlaceholder": "Jumlah anggaran",
+		"deadlineLabel": "Tanggal Pengiriman yang Diinginkan",
+		"negotiable": "Dapat Dinegosiasikan",
+		"specificSchedule": "Jadwal Tertentu",
+		"selectDeadline": "Silakan pilih tanggal pengiriman"
+	},
+	"ListingCategorySection": {
+		"title": "Kategori apa ini?",
+		"subtitle": "Silakan pilih kategori"
+	},
+	"ListingContactSection": {
+		"title": "Informasi Kontak",
+		"subtitle": "Akan diungkapkan kepada pemasok setelah kontrak disepakati.",
+		"roleColumn": "Peran",
+		"nameColumn": "Nama",
+		"phoneColumn": "Kontak",
+		"contactPerson": "Penanggung Jawab",
+		"editHint": "Ini adalah informasi kontak yang didaftarkan saat pendaftaran. Jika perlu diubah, silakan perbarui di Beranda Perusahaan › Pengaturan Perusahaan."
+	},
+	"ListingDeliverySection": {
+		"title": "Lokasi dan Ketentuan Pengiriman",
+		"subtitle": "Ini adalah alamat acuan bagi pemasok untuk menghitung penawaran. Mohon masukkan alamat pengiriman yang akurat.",
+		"deliveryMethodLabel": "Metode Pengiriman",
+		"provinceSelect": "Pilih Provinsi",
+		"loading": "Memuat...",
+		"citySelect": "Pilih Kota/Kabupaten",
+		"recheckLocation": "Periksa Ulang Lokasi di Peta",
+		"checkLocation": "Periksa Lokasi di Peta",
+		"addressPlaceholder": "Alamat lengkap",
+		"addressDetailPlaceholder": "Detail tambahan (nama gedung, lantai, nomor unit, dll.)"
+	},
+	"ListingDescriptionEditor": {
+		"quickPhrases": [
+			"Sampel dapat diminta",
+			"Merek bebas",
+			"Spesifikasi setara atau lebih baik dapat diterima",
+			"Pengiriman bertahap dimungkinkan",
+			"Manual/katalog berbahasa Inggris disediakan",
+			"Sertifikasi SNI diperlukan",
+			"Dokumen MSDS diperlukan",
+			"Sertifikasi halal diperlukan",
+			"Produk yang mendukung 220V",
+			"Ketentuan FOB/CIF dapat dinegosiasikan"
+		],
+		"editorPlaceholder": "Silakan tuliskan tujuan penggunaan, standar kualitas, catatan tambahan, dll. secara bebas",
+		"fileSizeError": "Ukuran file tidak boleh melebihi 5MB.",
+		"imageUploadFailed": "Gagal mengunggah gambar.",
+		"quickPhrasesTitle": "Frasa yang sering digunakan"
+	},
+	"ListingExtendDropdown": {
+		"extendFailed": "Terjadi kesalahan saat memproses perpanjangan.",
+		"extendDays": "Perpanjang {days} hari",
+		"processing": "Memproses...",
+		"extend": "Perpanjang"
+	},
+	"ListingLocationPickerModal": {
+		"title": "Konfirmasi Lokasi Pengiriman",
+		"mapLoading": "Memuat peta...",
+		"searchPlaceholder": "Cari alamat atau nama tempat",
+		"mapHint": "Klik pada peta atau seret pin untuk menentukan lokasi yang tepat.",
+		"cancel": "Batal",
+		"confirm": "Konfirmasi Lokasi Ini"
+	},
+	"ListingNoteSection": {
+		"editorLoading": "Memuat editor...",
+		"title": "Catatan Tambahan",
+		"subtitle": "Jika ada ketentuan tambahan atau catatan untuk pemasok, silakan tuliskan secara bebas."
+	},
+	"StickyActionBar": {
+		"confirmMessage": "Pastikan semua kolom wajib telah diisi.",
+		"saveDraft": "Simpan Draf",
+		"publishing": "Mendaftarkan...",
+		"publish": "Daftarkan Permintaan Penawaran"
+	},
+	"TableMenu": {
+		"insertTable": "Sisipkan Tabel (3 × 3)",
+		"addRowBelow": "Tambah Baris di Bawah",
+		"addColumnRight": "Tambah Kolom di Kanan",
+		"toggleHeaderRow": "Aktifkan/Nonaktifkan Baris Header",
+		"deleteRow": "Hapus Baris",
+		"deleteColumn": "Hapus Kolom",
+		"deleteTable": "Hapus Tabel"
+	},
+	"UnitSelect": {
+		"placeholder": "Satuan"
+	},
+	"ListingBrowse": {
+		"tabAll": "Semua",
+		"tabActive": "Berlangsung",
+		"tabClosed": "Ditutup",
+		"searchPlaceholder": "Cari nama produk atau judul permintaan",
+		"emptySearchTitle": "Tidak ada hasil pencarian",
+		"emptyDefaultTitle": "Tidak ada permintaan yang sesuai",
+		"emptySearchDescription": "Coba cari dengan kata kunci lain.",
+		"emptyDefaultDescription": "Kami akan memberi tahu Anda saat ada permintaan baru."
+	},
+	"ListingBrowseCard": {
+		"closed": "Ditutup",
+		"daysLeft": "D-{days}",
+		"quoteSent": "Penawaran terkirim",
+		"budgetLabel": "Anggaran",
+		"budgetPrivate": "Tidak dipublikasikan",
+		"aboutKrw": "sekitar ₩ {value}",
+		"deliveryLabel": "Lokasi pengiriman"
+	},
+	"ListingDetailInfo": {
+		"budgetLabel": "Anggaran",
+		"budgetPrivate": "Tidak dipublikasikan",
+		"aboutKrw": "sekitar ₩ {value}",
+		"budgetPrivateNote": "Perusahaan pembeli tidak mempublikasikan anggaran ini",
+		"deadlineLabel": "Batas penawaran",
+		"daysLeft": "{days} hari lagi",
+		"closingToday": "Ditutup hari ini",
+		"closed": "Ditutup",
+		"itemsLabel": "Item diminta",
+		"itemsCount": "{count} jenis",
+		"totalQuantity": "Total {quantity} {unit}",
+		"registeredOn": "Terdaftar {date}",
+		"companyFallback": "Perusahaan pembeli",
+		"descriptionTitle": "Deskripsi detail"
+	},
+	"ListingDetailQuoteForm": {
+		"priceRequiredError": "Masukkan jumlah penawaran.",
+		"deliveryDaysRequiredError": "Masukkan estimasi hari pengiriman.",
+		"submitError": "Gagal mengirim penawaran.",
+		"updateError": "Gagal mengubah penawaran.",
+		"statusAwarded": "Disepakati",
+		"statusRejected": "Tidak terpilih",
+		"statusPending": "Sedang ditinjau",
+		"sentQuoteLabel": "Penawaran terkirim",
+		"priceLabel": "Harga penawaran",
+		"deliveryLabel": "Pengiriman",
+		"daysSuffix": "{days} hari",
+		"editButton": "Ubah penawaran",
+		"editHint": "Anda dapat mengubahnya hingga batas waktu",
+		"viewSentQuotesButton": "Daftar penawaran terkirim",
+		"closedTitle": "Permintaan penawaran ini sudah ditutup",
+		"closedDescription": "Anda tidak dapat lagi mengirim penawaran.",
+		"editTitle": "Ubah penawaran",
+		"newTitle": "Kirim penawaran",
+		"editSubtitle": "Perubahan akan ditampilkan kepada perusahaan pembeli.",
+		"newSubtitle": "Anda dapat mengubahnya kapan saja hingga batas waktu.",
+		"priceFieldLabel": "Jumlah penawaran",
+		"deliveryFieldLabel": "Estimasi hari pengiriman",
+		"pricePlaceholder": "0",
+		"deliveryDaysPlaceholder": "30",
+		"deliveryDaysSuffix": "hari",
+		"noteFieldLabel": "Catatan tambahan",
+		"notePlaceholder": "Jaminan kualitas, spesifikasi alternatif, syarat pengiriman, dll.",
+		"cancelButton": "Batal",
+		"savingButton": "Menyimpan...",
+		"saveButton": "Simpan perubahan",
+		"submittingButton": "Mengirim...",
+		"submitButton": "Kirim penawaran"
+	},
+	"MyQuotes": {
+		"emptyTitle": "Belum ada penawaran terkirim",
+		"emptyDescription": "Cari permintaan yang masih terbuka dan kirim penawaran pertama Anda.",
+		"emptyCta": "Jelajahi permintaan penawaran",
+		"filteredEmpty": "Tidak ada penawaran yang sesuai."
+	},
+	"MyQuotesCard": {
+		"statusPending": "Sedang ditinjau",
+		"statusAwarded": "Disepakati",
+		"statusRejected": "Tidak terpilih",
+		"priceLabel": "Harga penawaran saya",
+		"deliveryLabel": "Pengiriman",
+		"daysSuffix": "{days} hari",
+		"viewListingButton": "Lihat permintaan",
+		"chatButton": "Chat"
+	},
+	"MyQuotesFilterBar": {
+		"filterAll": "Semua",
+		"filterPending": "Sedang ditinjau",
+		"filterAwarded": "Disepakati",
+		"filterRejected": "Tidak terpilih",
+		"gridViewAriaLabel": "Tampilkan sebagai kartu",
+		"listViewAriaLabel": "Tampilkan sebagai daftar"
+	},
+	"MyQuotesTable": {
+		"statusPending": "Sedang ditinjau",
+		"statusAwarded": "Disepakati",
+		"statusRejected": "Tidak terpilih",
+		"columnStatus": "Status",
+		"columnListing": "Permintaan",
+		"columnBuyer": "Perusahaan pembeli",
+		"columnPrice": "Harga penawaran saya",
+		"columnDelivery": "Pengiriman",
+		"columnSubmittedAt": "Tanggal kirim",
+		"daysSuffix": "{days} hari",
+		"chatButton": "Chat"
+	},
+	"SellerListingBrowsePage": {
+		"title": "Jelajahi Permintaan",
+		"subtitle": "{count} permintaan sedang menerima penawaran"
+	},
+	"SellerListingDetailPage": {
+		"backToList": "Kembali ke daftar permintaan"
+	},
+	"SellerQuoteSubmitPage": {
+		"title": "Penawaran Terkirim",
+		"subtitle": "{count} penawaran telah dikirim"
+	},
+	"SellerProfileEditPage": {
+		"title": "Halaman Perusahaan",
+		"subtitle": "Susun blok untuk membuat halaman profil perusahaan yang akan dilihat oleh pembeli"
+	},
+	"BuyerProfileEditPage": {
+		"title": "Halaman Perusahaan",
+		"subtitle": "Susun blok untuk membuat halaman profil perusahaan yang akan dilihat oleh pemasok"
+	},
+	"SupportFaq": {
+		"all": "Semua {count}"
+	},
+	"SupportHome": {
+		"noticesLabel": "Pengumuman",
+		"noticesDescription": "Info perubahan layanan dan pemeliharaan",
+		"resourcesLabel": "Pusat Dokumen",
+		"resourcesDescription": "Formulir kontrak dan panduan",
+		"faqLabel": "Pertanyaan yang Sering Diajukan",
+		"faqDescription": "Mulai dari pendaftaran hingga pembayaran",
+		"inquiryLabel": "Hubungi Kami",
+		"inquiryDescription": "Tanyakan langsung kepada kami",
+		"heroTitle": "Ada yang bisa kami bantu?",
+		"heroDescription": "Cek dulu pertanyaan yang sering diajukan, dan jika belum terjawab, silakan hubungi kami.",
+		"viewMore": "Lihat semua",
+		"noticesEmpty": "Belum ada pengumuman",
+		"resourcesEmpty": "Belum ada dokumen",
+		"pinnedBadge": "Penting"
+	},
+	"SupportInquiries": {
+		"emptyTitle": "Belum ada riwayat pertanyaan",
+		"emptyDescription": "Jika ada yang ingin ditanyakan, silakan hubungi kami kapan saja.",
+		"replyCount": "Balasan {count}"
+	},
+	"SupportInquiryDetail": {
+		"submitFailed": "Gagal mengirim.",
+		"staffLabel": "Tim Dukungan MitraPay",
+		"additionalInquiry": "Pertanyaan tambahan",
+		"writeReply": "Tulis balasan",
+		"replyPlaceholder": "Silakan tulis balasan Anda.",
+		"additionalPlaceholder": "Tulis di sini jika ada yang ingin ditambahkan.",
+		"submitReply": "Kirim balasan",
+		"submitAdditionalInquiry": "Kirim pertanyaan tambahan"
+	},
+	"SupportInquiryForm": {
+		"submitFailed": "Gagal mengirim pertanyaan.",
+		"categoryLabel": "Jenis pertanyaan",
+		"titleLabel": "Judul",
+		"titlePlaceholder": "Ada yang bisa kami bantu?",
+		"contentLabel": "Isi pertanyaan",
+		"contentPlaceholder": "Semakin detail Anda menjelaskan situasinya, semakin akurat jawaban yang kami berikan. Jika terkait permintaan penawaran atau kontrak tertentu, sertakan juga judulnya.",
+		"submit": "Kirim pertanyaan"
+	},
+	"SupportNotices": {
+		"empty": "Belum ada pengumuman",
+		"pinnedBadge": "Penting"
+	},
+	"SupportResources": {
+		"empty": "Belum ada dokumen",
+		"openError": "Terjadi kesalahan saat membuka dokumen."
+	},
+	"SupportFaqPage": {
+		"backToSupport": "Kembali ke Pusat Bantuan",
+		"title": "Pertanyaan yang Sering Diajukan",
+		"subtitle": "Jika jawaban yang dicari tidak ditemukan, silakan hubungi kami."
+	},
+	"SupportInquiriesPage": {
+		"backToSupport": "Kembali ke Pusat Bantuan",
+		"title": "Hubungi Kami",
+		"count": "{count} pertanyaan",
+		"newInquiry": "Ajukan pertanyaan"
+	},
+	"SupportInquiryDetailPage": {
+		"backToList": "Kembali ke riwayat pertanyaan"
+	},
+	"SupportInquiryNewPage": {
+		"backToList": "Kembali ke riwayat pertanyaan",
+		"title": "Ajukan Pertanyaan",
+		"subtitle": "Kami akan memberi tahu Anda melalui notifikasi saat balasan tersedia. Biasanya kami membalas dalam 1 hari kerja."
+	},
+	"SupportNoticesPage": {
+		"backToSupport": "Kembali ke Pusat Bantuan",
+		"title": "Pengumuman",
+		"count": "{count} pengumuman"
+	},
+	"SupportNoticeDetailPage": {
+		"backToList": "Kembali ke Pengumuman",
+		"pinnedBadge": "Penting"
+	},
+	"SupportResourcesPage": {
+		"backToSupport": "Kembali ke Pusat Bantuan",
+		"title": "Pusat Dokumen",
+		"subtitle": "Formulir kontrak dan panduan · {count} dokumen"
+	},
+	"OrderList": {
+		"emptyAction": "Buat Permintaan Penawaran Pertama",
+		"emptyDescription": "Setelah Anda mengunggah permintaan penawaran pertama, perusahaan pemasok Korea akan mengirimkan penawaran.",
+		"emptyTitle": "Belum ada permintaan penawaran",
+		"noResultsDescription": "Coba sesuaikan kata kunci atau filter Anda.",
+		"noResultsTitle": "Tidak ada permintaan penawaran yang sesuai",
+		"searchPlaceholder": "Cari permintaan",
+		"sortDeadline": "Tenggat",
+		"sortNewest": "Terbaru",
+		"statusActive": "Berjalan",
+		"statusAll": "Semua",
+		"statusAwarded": "Dikonfirmasi",
+		"statusClosed": "Ditutup"
+	},
+	"OrderListCard": {
+		"budgetLabel": "Anggaran",
+		"budgetPrivate": "Tidak Dipublikasikan",
+		"closed": "Ditutup",
+		"deadlineDays": "Tenggat D-{days}",
+		"quoteCount": "{count}",
+		"receivedQuotesLabel": "Penawaran Diterima",
+		"registeredOn": "Terdaftar {date}",
+		"statusActive": "Berjalan",
+		"statusAwarded": "Dikonfirmasi",
+		"statusClosed": "Ditutup"
+	},
+	"OrderListTable": {
+		"budgetPrivate": "Tidak Dipublikasikan",
+		"closed": "Ditutup",
+		"columnBudget": "Anggaran",
+		"columnCategory": "Kategori",
+		"columnCreatedAt": "Tanggal Daftar",
+		"columnDeadline": "Tenggat",
+		"columnQuoteCount": "Penawaran Diterima",
+		"columnStatus": "Status",
+		"columnTitle": "Nama Permintaan",
+		"deadlineDays": "D-{days}",
+		"quoteCount": "{count}",
+		"statusActive": "Berjalan",
+		"statusAwarded": "Dikonfirmasi",
+		"statusClosed": "Ditutup"
+	},
+	"QuoteReview": {
+		"awardErrorMessage": "Terjadi kesalahan saat memproses konfirmasi kontrak.",
+		"confirmDescription": "Setelah dikonfirmasi, penawaran lain tidak dapat dipilih dan perusahaan pemasok akan diberi tahu tentang kontrak ini.",
+		"confirmLabel": "Konfirmasi Kontrak",
+		"confirmTitle": "Konfirmasi kontrak dengan penawaran ini?",
+		"emptyDescription": "Penawaran pertama biasanya tiba dalam 2-3 hari.",
+		"emptyTitle": "Belum ada penawaran"
+	},
+	"QuoteCompareTable": {
+		"approxPriceIdr": "Sekitar Rp {amount}",
+		"awardAction": "Konfirmasi Kontrak",
+		"awardClosed": "Kontrak Ditutup",
+		"awardedBadge": "Dikonfirmasi",
+		"awardedStatus": "Dikonfirmasi",
+		"awardErrorMessage": "Terjadi kesalahan saat memproses konfirmasi kontrak.",
+		"days": "{count} hari",
+		"fastestDeliveryBadge": "Pengiriman Tercepat",
+		"itemHeader": "Item",
+		"lowestPriceBadge": "Harga Terendah",
+		"modalConfirmLabel": "Konfirmasi",
+		"modalDescription": "Sulit untuk membatalkan setelah ini.",
+		"modalTitle": "Konfirmasi kontrak ini?",
+		"navigating": "Mengalihkan...",
+		"noName": "Tanpa Nama",
+		"processing": "Memproses...",
+		"rowLabelAddress": "Alamat",
+		"rowLabelBusinessType": "Jenis / Bidang Usaha",
+		"rowLabelDelivery": "Waktu Pengiriman",
+		"rowLabelNote": "Catatan Penawaran",
+		"rowLabelPrice": "Harga Penawaran",
+		"rowLabelRepresentative": "Perwakilan",
+		"startChat": "Hubungi"
+	},
+	"QuoteReviewFilterBar": {
+		"filterAll": "Semua",
+		"filterHas": "Ada Penawaran",
+		"filterNone": "Tanpa Penawaran",
+		"searchPlaceholder": "Cari permintaan",
+		"sortDeadline": "Tenggat",
+		"sortLowestPrice": "Termurah",
+		"sortNewest": "Terbaru",
+		"sortQuoteCount": "Terbanyak"
+	},
+	"QuoteReviewListingPicker": {
+		"awardedBadge": "Dikonfirmasi",
+		"closed": "Ditutup",
+		"days": "{count} hari",
+		"deadlineDays": "D-{days}",
+		"emptyAction": "Buat Permintaan Pertama",
+		"emptyDescription": "Setelah Anda memposting permintaan, perusahaan pemasok akan mengirimkan penawaran.",
+		"emptyTitle": "Belum ada permintaan yang diposting",
+		"fastestDeliveryLabel": "Pengiriman Tercepat",
+		"lowestPriceLabel": "Harga Terendah",
+		"noQuotesYet": "Belum ada penawaran",
+		"noResultsDescription": "Coba sesuaikan kata kunci atau filter Anda.",
+		"noResultsTitle": "Tidak ada permintaan yang sesuai",
+		"quoteCountLabel": "{count} penawaran"
+	},
+	"QuoteReviewListingTable": {
+		"awardedBadge": "Dikonfirmasi",
+		"closed": "Ditutup",
+		"columnFastestDelivery": "Pengiriman Tercepat",
+		"columnLowestPrice": "Harga Terendah",
+		"columnQuoteCount": "Penawaran Diterima",
+		"columnStatus": "Status",
+		"columnTitle": "Nama Permintaan",
+		"days": "{count} hari",
+		"deadlineDays": "D-{days}",
+		"noQuotes": "Tidak Ada",
+		"quoteCount": "{count}"
+	},
+	"ContractList": {
+		"cancelContract": "Batalkan Kontrak",
+		"cancelModalConfirmLabel": "Konfirmasi Pembatalan",
+		"cancelModalDescription": "Tindakan ini tidak dapat dibatalkan setelah dikonfirmasi.",
+		"cancelModalTitle": "Batalkan kontrak ini?",
+		"confirmPayment": "Konfirmasi Pembayaran",
+		"confirmPaymentModalDescription": "Setelah dikonfirmasi, kontrak akan ditandai selesai. Pastikan pembayaran benar-benar telah diterima sebelum melanjutkan.",
+		"confirmPaymentModalTitle": "Konfirmasi pembayaran ini?",
+		"confirmReceipt": "Periksa Bukti Transfer",
+		"contractedOn": "Kontrak {date}",
+		"deliveryDaysLabel": "Pengiriman {days} hari",
+		"emptyDescription": "Kontrak akan dibuat setelah konfirmasi kontrak.",
+		"emptyTitle": "Belum ada kontrak",
+		"genericErrorMessage": "Terjadi kesalahan saat memproses permintaan.",
+		"noPartnerCompanyName": "Tanpa Nama Perusahaan",
+		"noResultsCompleted": "Tidak ada kontrak yang selesai.",
+		"noResultsOngoing": "Tidak ada kontrak yang sedang berjalan.",
+		"paymentConfirmed": "Pembayaran dikonfirmasi · {date}",
+		"processing": "Memproses...",
+		"receiptArrived": "Bukti transfer diterima · Periksa dan proses pembayaran",
+		"receiptUploadedWaiting": "Bukti transfer diunggah · Menunggu konfirmasi pemasok",
+		"receiptUploadErrorMessage": "Terjadi kesalahan saat mengunggah bukti transfer.",
+		"receiptViewErrorMessage": "Terjadi kesalahan saat memuat bukti transfer.",
+		"reupload": "Unggah Ulang",
+		"statusCancelled": "Dibatalkan",
+		"statusCompleted": "Selesai",
+		"statusOngoing": "Berjalan",
+		"uploading": "Mengunggah...",
+		"uploadReceipt": "Unggah Bukti Transfer",
+		"viewReceipt": "Lihat Bukti Transfer",
+		"waitingForReceipt": "Menunggu bukti transfer dari pembeli"
+	},
+	"ContractListTable": {
+		"cancelContract": "Batalkan Kontrak",
+		"columnAction": "Aksi",
+		"columnAmount": "Jumlah",
+		"columnContractDate": "Tanggal Kontrak",
+		"columnDelivery": "Pengiriman",
+		"columnPartner": "Mitra",
+		"columnStatus": "Status",
+		"columnTitle": "Nama Permintaan",
+		"confirmPaymentTitle": "Konfirmasi Pembayaran",
+		"confirmReceiptTitle": "Periksa Bukti Transfer",
+		"days": "{count} hari",
+		"noPartnerCompanyName": "Tanpa Nama Perusahaan",
+		"reuploadReceiptTitle": "Unggah Ulang Bukti Transfer",
+		"statusCancelled": "Dibatalkan",
+		"statusCompleted": "Selesai",
+		"statusOngoing": "Berjalan",
+		"uploadReceiptTitle": "Unggah Bukti Transfer",
+		"viewReceiptTitle": "Lihat Bukti Transfer"
+	},
+	"ContractListTabs": {
+		"searchPlaceholder": "Cari permintaan",
+		"tabAll": "Semua",
+		"tabCompleted": "Selesai",
+		"tabOngoing": "Berjalan"
+	},
+	"ListingDetail": {
+		"backToList": "Kembali ke Penawaran Saya",
+		"registeredOn": "Terdaftar pada {date}",
+		"descriptionTitle": "Deskripsi Detail"
+	},
+	"ListingDetailDelivery": {
+		"title": "Info Pengiriman & Kontak",
+		"locationLabel": "Lokasi Pengiriman",
+		"methodLabel": "Metode Pengiriman",
+		"timingLabel": "Waktu Pengiriman",
+		"contactLabel": "Kontak Person",
+		"notEntered": "Belum diisi",
+		"viewOnMap": "Lihat di peta",
+		"toBeDiscussed": "Akan didiskusikan",
+		"deadlineUntil": "Sampai {date}",
+		"withinDaysAfterAward": "Dalam {days} hari setelah pemenang ditentukan"
+	},
+	"ListingDetailItems": {
+		"title": "Item yang Diminta",
+		"itemCount": "{count}",
+		"itemLabel": "Item",
+		"specLabel": "Spesifikasi",
+		"quantityLabel": "Jumlah",
+		"unitPriceLabel": "Harga Satuan yang Diharapkan",
+		"amountLabel": "Jumlah Harga",
+		"itemsTotal": "Total Item",
+		"emptyState": "Belum ada item terdaftar"
+	},
+	"ListingDetailSummary": {
+		"budgetLabel": "Anggaran",
+		"private": "Rahasia",
+		"budgetHiddenNote": "Tidak terlihat oleh pemasok",
+		"deadlineLabel": "Batas Penawaran",
+		"daysRemaining": "{count} hari lagi",
+		"dueToday": "Berakhir hari ini",
+		"closed": "Sudah berakhir",
+		"itemsLabel": "Item yang Diminta",
+		"itemCount": "{count}",
+		"totalQuantity": "Total {quantity} {unit}",
+		"quotesLabel": "Penawaran Diterima",
+		"quoteCount": "{count}",
+		"sortedByLowestPrice": "Diurutkan dari harga terendah",
+		"noneYet": "Belum ada"
+	},
+	"ListingDetailActions": {
+		"edit": "Ubah",
+		"delete": "Hapus",
+		"deleteFailedAlert": "Gagal menghapus permintaan.",
+		"deleteConfirmTitle": "Hapus permintaan ini?",
+		"deleteConfirmDescription": "Setelah dihapus, tindakan ini tidak dapat dibatalkan. Penawaran yang diterima juga akan ikut terhapus."
+	},
+	"BuyerListingPage": {
+		"title": "Penawaran Diterima",
+		"quoteCount": "{count} penawaran · Urutan harga terendah",
+		"emptyQuotes": "Belum ada penawaran yang diterima"
+	},
+	"ListingInfoAttachments": {
+		"heading": "Lampiran",
+		"openError": "Terjadi kesalahan saat membuka lampiran."
+	},
+	"ListingInfoDelivery": {
+		"title": "Syarat Pengiriman",
+		"placeLabel": "Lokasi Pengiriman",
+		"methodLabel": "Metode Pengiriman",
+		"timingLabel": "Waktu Pengiriman",
+		"contactLabel": "Kontak",
+		"notEntered": "Belum diisi",
+		"negotiateAfterDecision": "Ditentukan melalui negosiasi",
+		"deadlineUntil": "Sampai {date}",
+		"afterAwardDays": "Dalam {days} hari setelah pemenang ditentukan",
+		"viewOnMap": "Lihat di peta",
+		"contactHiddenNotice": "Kontak penanggung jawab akan dibagikan setelah kontrak dikonfirmasi."
+	},
+	"ListingInfoItems": {
+		"heading": "Barang yang Diminta",
+		"itemCount": "{count} jenis",
+		"empty": "Belum ada barang yang terdaftar",
+		"columnName": "Barang",
+		"columnSpec": "Spesifikasi",
+		"columnQuantity": "Jumlah",
+		"columnUnitPrice": "Harga Satuan Diinginkan",
+		"columnAmount": "Jumlah Harga",
+		"itemsTotal": "Total Barang"
+	},
+	"PublicSite": {
+		"emptyTitle": "Belum ada halaman profil perusahaan",
+		"emptyDescription": "Perusahaan ini belum mendaftarkan halaman profil. Silakan periksa informasi bisnis di atas, atau hubungi langsung melalui halaman penawaran."
+	},
+	"PublicSiteIdentity": {
+		"heading": "Informasi Bisnis",
+		"representativeLabel": "Perwakilan",
+		"businessTypeLabel": "Jenis Usaha",
+		"businessItemLabel": "Bidang Usaha",
+		"businessNumberLabel": "Nomor Registrasi Bisnis",
+		"addressLabel": "Alamat",
+		"businessTypeUnknown": "Jenis usaha belum terdaftar"
+	},
+	"SiteRendererContact": {
+		"managerLabel": "Penanggung Jawab",
+		"emailLabel": "Email",
+		"phoneLabel": "Telepon",
+		"addressLabel": "Alamat",
+		"websiteLabel": "Situs Web"
+	},
+	"CompanyProfilePage": {
+		"backLabel": "Kembali ke Penawaran Diterima"
+	},
+	"RelativeTime": {
+		"justNow": "Baru saja",
+		"minutesAgo": "{count} menit lalu",
+		"hoursAgo": "{count} jam lalu",
+		"yesterday": "Kemarin",
+		"daysAgo": "{count} hari lalu"
+	},
+	"BuyerDashboardData": {
+		"quoteLabel": "Penawaran",
+		"listingLabel": "Permintaan",
+		"pendingPaymentLabel": "Menunggu Konfirmasi Pembayaran",
+		"confirmedPaymentLabel": "Pembayaran Terkonfirmasi",
+		"quotesSummary": "{count} penawaran · Harga terendah {price}",
+		"deadlineDays": "{days} hari lagi",
+		"deadlineClosed": "Ditutup",
+		"compareAction": "Bandingkan dan pilih penawaran",
+		"urgentLabel": "Segera berakhir"
+	},
+	"SellerDashboardData": {
+		"contractConfirmedActivity": "{title} · Kontrak telah dikonfirmasi",
+		"quoteSubmittedActivity": "{title} · Penawaran telah dikirim"
+	},
+	"BuyerDashboard": {
+		"welcome": "Selamat datang, {companyName}",
+		"tradeSummaryTitle": "Ringkasan Transaksi Saya",
+		"summaryInProgress": "Sedang Berjalan",
+		"summaryClosed": "Semua Ditutup",
+		"summaryContracts": "Total Kontrak",
+		"totalCount": "{count}",
+		"todoTitle": "Tugas",
+		"urgentCount": "{count} Mendesak",
+		"viewAll": "Lihat Semua",
+		"todoEmptyTitle": "Tidak ada tugas saat ini",
+		"todoEmptyDescription": "{count} permintaan sedang berjalan. Kami akan memberi tahu Anda saat penawaran tiba.",
+		"todoEmptyAction": "Lihat permintaan yang sedang berjalan",
+		"urgentBadge": "Mendesak",
+		"shortcutsTitle": "Pintasan",
+		"shortcutQuotesLabel": "Penawaran Diterima",
+		"shortcutQuotesSub": "{count}",
+		"shortcutChatLabel": "Obrolan",
+		"shortcutChatSub": "{count} belum dibaca",
+		"recentActivityTitle": "Aktivitas Terbaru",
+		"recentActivityEmpty": "Belum ada aktivitas"
+	},
+	"SellerDashboard": {
+		"welcome": "Selamat datang, {companyName}",
+		"exploreButton": "Cari Permintaan",
+		"tradeSummaryTitle": "Ringkasan Transaksi Saya",
+		"summaryListingsLabel": "Permintaan Penawaran",
+		"summaryListingsSubLabel": "Rekomendasi Kategori Saya",
+		"summaryQuotesLabel": "Penawaran Terkirim",
+		"summaryQuotesPendingLabel": "Menunggu Tinjauan",
+		"summaryQuotesAwardedLabel": "Dimenangkan",
+		"summaryContractsLabel": "Kontrak",
+		"summaryContractsAwardedLabel": "Penawaran Dimenangkan",
+		"totalCount": "{count}",
+		"recommendedTitle": "Rekomendasi Permintaan",
+		"viewAll": "Lihat Semua",
+		"recommendedEmptyTitle": "Tidak ada rekomendasi permintaan",
+		"recommendedEmptyDescription": "Atur kategori bisnis Anda di pengaturan untuk mendapatkan rekomendasi yang sesuai.",
+		"recommendedEmptyAction": "Atur kategori bisnis",
+		"myCategoryBadge": "Kategori Saya",
+		"deadlinePrefix": "Batas waktu",
+		"sendQuoteAction": "Kirim Penawaran",
+		"shortcutsTitle": "Pintasan",
+		"shortcutBrowseLabel": "Cari Permintaan",
+		"shortcutBrowseSub": "{count}",
+		"shortcutChatLabel": "Obrolan",
+		"shortcutChatSub": "Periksa",
+		"companyPageTitle": "Buat Halaman Perusahaan",
+		"companyPageDescription": "Langkah pertama untuk membangun kepercayaan pembeli",
+		"companyPageAction": "Edit halaman perusahaan",
+		"recentActivityTitle": "Aktivitas Terbaru",
+		"recentActivityEmpty": "Belum ada aktivitas"
+	},
+	"SignupInfoIndonesia": {
+		"step": "3 / 4",
+		"back": "Kembali",
+		"title": "Masukkan Informasi",
+		"subtitle": "Mohon masukkan informasi lembaga pemesan Anda.",
+		"accountSectionTitle": "Buat Akun",
+		"accountSectionDescription": "Masukkan informasi login Anda.",
+		"idLabel": "ID",
+		"idPlaceholder": "Min. 4 karakter huruf/angka",
+		"checking": "Memeriksa...",
+		"duplicateCheck": "Cek Ketersediaan",
+		"idAvailable": "ID tersedia.",
+		"idTaken": "ID sudah digunakan.",
+		"passwordLabel": "Kata Sandi",
+		"passwordPlaceholder": "Masukkan kata sandi",
+		"passwordStrengthLabel": "Kekuatan: {strength}",
+		"passwordStrengthWeak": "Lemah",
+		"passwordStrengthMedium": "Sedang",
+		"passwordStrengthStrong": "Kuat",
+		"passwordStrengthVeryStrong": "Sangat Kuat",
+		"passwordRuleLength": "Minimal 8 karakter",
+		"passwordRuleUppercase": "Mengandung huruf besar",
+		"passwordRuleNumber": "Mengandung angka",
+		"passwordRuleSpecial": "Mengandung karakter spesial",
+		"passwordConfirmLabel": "Konfirmasi Kata Sandi",
+		"passwordConfirmPlaceholder": "Masukkan ulang kata sandi",
+		"passwordMatch": "Kata sandi cocok.",
+		"passwordMismatch": "Kata sandi tidak cocok.",
+		"managerSectionTitle": "Penanggung Jawab",
+		"managerSectionDescription": "Masukkan informasi penanggung jawab operasional.",
+		"nameAndTitleLabel": "Nama dan Jabatan",
+		"namePlaceholder": "Nama",
+		"titlePlaceholder": "Jabatan",
+		"deptPlaceholder": "Departemen",
+		"contactLabel": "Kontak",
+		"mobileLabel": "Ponsel",
+		"phoneLabel": "Telepon",
+		"faxLabel": "Faks",
+		"emailLabel": "Email",
+		"emailIdPlaceholder": "ID email",
+		"domainPlaceholder": "Masukkan domain",
+		"businessSectionTitle": "Informasi Perusahaan",
+		"businessSectionDescription": "Pilih jenis lembaga pemesan dan masukkan informasinya.",
+		"npwpLabel": "NPWP (Nomor Pajak)",
+		"npwpHint": "Nomor pajak 15 digit yang diterbitkan oleh DJP",
+		"nibLabel": "NIB (Nomor Induk Berusaha)",
+		"nibHint": "Nomor 13 digit yang diterbitkan melalui OSS (Online Single Submission)",
+		"companyNameLabel": "Nama Perusahaan",
+		"companyNamePlaceholder": "PT. Nama Perusahaan",
+		"representativeLabel": "Nama Perwakilan",
+		"representativePlaceholder": "Nama perwakilan",
+		"addressLabel": "Alamat Usaha",
+		"provinsiPlaceholder": "Pilih Provinsi",
+		"cityPlaceholder": "Kota/Kabupaten",
+		"addressSearch": "Cari alamat",
+		"addressBasePlaceholder": "Alamat utama",
+		"addressDetailPlaceholder": "Masukkan alamat detail (opsional)",
+		"categoryLabel": "Bidang Usaha",
+		"categoryPlaceholder": "Cth: Jasa",
+		"itemLabel": "Jenis Usaha",
+		"itemPlaceholder": "Cth: Pengembangan perangkat lunak",
+		"submit": "Selesaikan Pendaftaran",
+		"submitting": "Memproses...",
+		"noneOption": "Tidak ada",
+		"customOption": "Input manual",
+		"errors": {
+			"checkUsernameMinLength": "ID minimal 4 karakter.",
+			"usernameMin": "ID minimal 6 karakter.",
+			"usernameCheck": "Mohon cek ketersediaan ID.",
+			"passwordMin": "Kata sandi minimal 8 karakter.",
+			"passwordConfirmRequired": "Kata sandi tidak cocok.",
+			"managerNameRequired": "Mohon masukkan nama penanggung jawab.",
+			"mobileRequired": "Mohon masukkan nomor ponsel.",
+			"emailRequired": "Mohon masukkan email.",
+			"npwpRequired": "Mohon masukkan NPWP 15 digit.",
+			"nibRequired": "Mohon masukkan NIB.",
+			"companyNameRequired": "Mohon masukkan nama perusahaan.",
+			"representativeNameRequired": "Mohon masukkan nama perwakilan.",
+			"provinsiRequired": "Mohon pilih Provinsi.",
+			"cityRequired": "Mohon masukkan kota/kabupaten.",
+			"addressBaseRequired": "Mohon masukkan alamat utama.",
+			"categoryRequired": "Mohon pilih bidang usaha."
+		}
 	}
 }

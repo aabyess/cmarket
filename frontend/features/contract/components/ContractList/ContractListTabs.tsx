@@ -1,57 +1,67 @@
 "use client";
 
-import { cva } from "class-variance-authority";
+import { useTranslations } from "next-intl";
+import { Search } from "lucide-react";
+import { cn } from "@/utils/cn";
 import type { ContractFilter } from "@/features/contract/types";
 
 type ContractListTabsProps = {
 	value: ContractFilter;
 	counts: Record<ContractFilter, number>;
 	onChange: (value: ContractFilter) => void;
+	search: string;
+	onSearchChange: (value: string) => void;
 };
 
-const TABS: { value: ContractFilter; label: string }[] = [
-	{ value: "all", label: "전체" },
-	{ value: "ongoing", label: "진행 중" },
-	{ value: "completed", label: "계약 완료" },
-];
-
-const tab = cva("flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-200", {
-	variants: {
-		active: {
-			true: "bg-[#EFF6FF] text-imsg-blue",
-			false: "text-imsg-secondary hover:bg-gray-50",
-		},
-	},
-	defaultVariants: { active: false },
-});
-
-const countChip = cva("rounded-full px-1.5 py-0.5 text-xs font-semibold", {
-	variants: {
-		active: {
-			true: "bg-imsg-blue text-white",
-			false: "bg-imsg-surface text-imsg-secondary",
-		},
-	},
-	defaultVariants: { active: false },
-});
+const TAB_VALUES: ContractFilter[] = ["all", "ongoing", "completed"];
 
 export function ContractListTabs({
 	value,
 	counts,
 	onChange,
+	search,
+	onSearchChange,
 }: ContractListTabsProps): React.JSX.Element {
+	const t = useTranslations("ContractListTabs");
+	const tabLabels: Record<ContractFilter, string> = {
+		all: t("tabAll"),
+		ongoing: t("tabOngoing"),
+		completed: t("tabCompleted"),
+	};
+
 	return (
-		<div className="mb-4 flex gap-1 rounded-xl border border-[#E5E7EB] bg-white p-1">
-			{TABS.map((item) => (
-				<button
-					key={item.value}
-					type="button"
-					onClick={() => onChange(item.value)}
-					className={tab({ active: value === item.value })}>
-					{item.label}
-					<span className={countChip({ active: value === item.value })}>{counts[item.value]}</span>
-				</button>
-			))}
+		<div className="flex flex-wrap items-center gap-1 rounded-xl border border-[#E5E7EB] bg-white p-1">
+			{TAB_VALUES.map((tabValue) => {
+				const isActive = value === tabValue;
+				return (
+					<button
+						key={tabValue}
+						type="button"
+						onClick={() => onChange(tabValue)}
+						className={cn(
+							"flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors",
+							isActive ? "bg-[#3B82F6] text-white" : "text-[#374151] hover:bg-[#F9FAFB]",
+						)}
+					>
+						{tabLabels[tabValue]}
+						<span className={cn("text-xs", isActive ? "text-white/70" : "text-[#9CA3AF]")}>
+							{counts[tabValue]}
+						</span>
+					</button>
+				);
+			})}
+
+			<div className="mx-1 h-6 w-px bg-[#E5E7EB]" />
+
+			<div className="flex items-center gap-2 px-2 py-1">
+				<Search size={16} className="shrink-0 text-[#9CA3AF]" />
+				<input
+					value={search}
+					onChange={(e) => onSearchChange(e.target.value)}
+					placeholder={t("searchPlaceholder")}
+					className="w-32 bg-transparent text-sm leading-none outline-none placeholder:text-[#9CA3AF]"
+				/>
+			</div>
 		</div>
 	);
 }

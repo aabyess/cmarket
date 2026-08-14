@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
@@ -33,25 +34,14 @@ import { cn } from "@/utils/cn";
 import DescriptionLinkModal from "@/features/buyer/components/PostListingForm/postListing/DescriptionLinkModal";
 import TableMenu from "@/features/buyer/components/PostListingForm/postListing/TableMenu";
 
-const QUICK_PHRASES = [
-	"샘플 요청 가능",
-	"브랜드 무관",
-	"동등 이상 사양 가능",
-	"분할 납품 가능",
-	"영문 매뉴얼/카탈로그 제공",
-	"SNI 인증 필요",
-	"MSDS 서류 필요",
-	"할랄 인증 필요",
-	"220V 사용 가능 제품",
-	"FOB/CIF 조건 협의 가능",
-];
-
 type ListingDescriptionEditorProps = {
 	value: string;
 	onChange: (html: string) => void;
 };
 
 export default function ListingDescriptionEditor({ value, onChange }: ListingDescriptionEditorProps) {
+	const t = useTranslations("ListingDescriptionEditor");
+	const QUICK_PHRASES = t.raw("quickPhrases") as string[];
 	const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
 	const [isUploading, setIsUploading] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
@@ -61,7 +51,7 @@ export default function ListingDescriptionEditor({ value, onChange }: ListingDes
 			StarterKit,
 			Underline,
 			Link.configure({ openOnClick: false }),
-			Placeholder.configure({ placeholder: "용도, 품질 기준, 참고사항 등을 자유롭게 적어주세요" }),
+			Placeholder.configure({ placeholder: t("editorPlaceholder") }),
 			Image,
 			TextAlign.configure({ types: ["heading", "paragraph"] }),
 			Table.configure({ resizable: true }),
@@ -88,7 +78,7 @@ export default function ListingDescriptionEditor({ value, onChange }: ListingDes
 		if (!file || !editor) return;
 
 		if (file.size > 5 * 1024 * 1024) {
-			alert("파일 크기는 5MB를 초과할 수 없습니다.");
+			alert(t("fileSizeError"));
 			return;
 		}
 
@@ -111,7 +101,7 @@ export default function ListingDescriptionEditor({ value, onChange }: ListingDes
 			editor.chain().focus().setImage({ src: url }).run();
 		} catch (err) {
 			console.error(err);
-			alert("이미지 업로드에 실패했습니다.");
+			alert(t("imageUploadFailed"));
 		} finally {
 			setIsUploading(false);
 		}
@@ -204,7 +194,7 @@ export default function ListingDescriptionEditor({ value, onChange }: ListingDes
 
 			{/* 자주 쓰이는 문구 */}
 			<div className="border-t border-[#E2E8F0] bg-[#F9FAFB] px-4 py-3">
-				<p className="mb-2 text-xs font-medium text-[#9CA3AF]">자주 쓰이는 문구</p>
+				<p className="mb-2 text-xs font-medium text-[#9CA3AF]">{t("quickPhrasesTitle")}</p>
 				<div className="flex flex-wrap gap-1.5">
 					{QUICK_PHRASES.map((phrase) => (
 						<button

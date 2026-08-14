@@ -2,6 +2,7 @@
 
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { motion, AnimatePresence } from "motion/react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/utils/cn";
 
 type ConfirmModalProps = {
@@ -20,13 +21,17 @@ export function ConfirmModal({
 	isOpen,
 	title,
 	description,
-	confirmLabel = "확인",
-	cancelLabel = "취소",
+	confirmLabel,
+	cancelLabel,
 	isLoading = false,
 	variant = "default",
 	onConfirm,
 	onClose,
 }: ConfirmModalProps) {
+	const t = useTranslations("ConfirmModal");
+	const resolvedConfirmLabel = confirmLabel ?? t("confirm");
+	const resolvedCancelLabel = cancelLabel ?? t("cancel");
+
 	return (
 		<AnimatePresence>
 			{isOpen && (
@@ -63,7 +68,7 @@ export function ConfirmModal({
                                         disabled={isLoading}
                                         className="flex-1 rounded-lg border border-[#E5E7EB] py-3 text-sm font-medium text-[#374151] transition-colors hover:bg-gray-50 disabled:opacity-50"
                                     >
-                                        {cancelLabel}
+                                        {resolvedCancelLabel}
                                     </button>
                                     <button
                                         onClick={onConfirm}
@@ -75,7 +80,7 @@ export function ConfirmModal({
                                                 : "bg-imsg-blue hover:bg-[#2563EB]",
                                         )}
                                     >
-                                        {isLoading ? "처리 중..." : confirmLabel}
+                                        {isLoading ? t("processing") : resolvedConfirmLabel}
                                     </button>
                                 </div>
                             </motion.div>

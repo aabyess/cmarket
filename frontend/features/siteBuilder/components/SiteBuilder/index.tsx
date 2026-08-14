@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { cva } from "class-variance-authority";
 import { AlertCircle, CheckCircle2, Sparkles } from "lucide-react";
@@ -39,11 +40,6 @@ const tabButton = cva("rounded-lg px-4 py-2 text-sm font-medium transition-color
 	defaultVariants: { active: false },
 });
 
-const SETTINGS_TAB_LABELS: Record<SiteRole, string> = {
-	buyer: "기업 설정",
-	seller: "거래 설정",
-};
-
 const feedbackBox = cva("flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium", {
 	variants: {
 		kind: {
@@ -59,7 +55,10 @@ export function SiteBuilder({
 	data,
 	initialTab = "PAGE",
 }: SiteBuilderProps): React.JSX.Element {
+	const t = useTranslations("SiteBuilder");
 	const router = useRouter();
+
+	const settingsTabLabel = role === "buyer" ? t("settingsTabBuyer") : t("settingsTabSeller");
 
 	const [tab, setTab] = useState<BuilderTab>(initialTab);
 	const [blocks, setBlocks] = useState<Block[]>(data.blocks);
@@ -103,7 +102,7 @@ export function SiteBuilder({
 
 		if (!res.ok) {
 			const { error } = await res.json();
-			showFeedback("ERROR", error ?? "저장에 실패했습니다.");
+			showFeedback("ERROR", error ?? t("saveError"));
 			return false;
 		}
 
@@ -114,7 +113,7 @@ export function SiteBuilder({
 	async function handleSave(): Promise<void> {
 		setIsSaving(true);
 		try {
-			if (await saveDraft()) showFeedback("SUCCESS", "초안이 저장되었습니다.");
+			if (await saveDraft()) showFeedback("SUCCESS", t("draftSaved"));
 		} finally {
 			setIsSaving(false);
 		}
@@ -128,11 +127,11 @@ export function SiteBuilder({
 			const res = await fetch("/api/site/publish", { method: "POST" });
 			if (!res.ok) {
 				const { error } = await res.json();
-				showFeedback("ERROR", error ?? "발행에 실패했습니다.");
+				showFeedback("ERROR", error ?? t("publishError"));
 				return;
 			}
 
-			showFeedback("SUCCESS", "홈페이지가 발행되었습니다.");
+			showFeedback("SUCCESS", t("published"));
 			router.refresh();
 		} finally {
 			setIsPublishing(false);
@@ -150,11 +149,11 @@ export function SiteBuilder({
 
 			if (!res.ok) {
 				const { error } = await res.json();
-				showFeedback("ERROR", error ?? "저장에 실패했습니다.");
+				showFeedback("ERROR", error ?? t("saveError"));
 				return;
 			}
 
-			showFeedback("SUCCESS", "거래 설정이 저장되었습니다.");
+			showFeedback("SUCCESS", t("settingsSaved"));
 			router.refresh();
 		} finally {
 			setIsSavingSettings(false);
@@ -165,13 +164,13 @@ export function SiteBuilder({
 		<div className="space-y-5">
 			<div className="flex gap-1 rounded-xl border border-[#E5E7EB] bg-white p-1">
 				<button type="button" onClick={() => setTab("PAGE")} className={tabButton({ active: tab === "PAGE" })}>
-					홈페이지
+					{t("pageTab")}
 				</button>
 				<button
 					type="button"
 					onClick={() => setTab("SETTINGS")}
 					className={tabButton({ active: tab === "SETTINGS" })}>
-					{SETTINGS_TAB_LABELS[role]}
+					{settingsTabLabel}
 				</button>
 			</div>
 
@@ -207,8 +206,7 @@ export function SiteBuilder({
 						<div className="flex items-start gap-2.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] px-4 py-3">
 							<Sparkles size={15} className="mt-0.5 shrink-0 text-imsg-blue" />
 							<p className="text-sm text-[#1D4ED8]">
-								기존에 입력해 둔 기업 프로필 정보로 초안을 만들어 뒀어요. 내용을 확인하고 수정한 뒤
-								저장해주세요. <span className="font-medium">저장하기 전까지는 반영되지 않습니다.</span>
+								{t("seededBannerText")} <span className="font-medium">{t("seededBannerBold")}</span>
 							</p>
 						</div>
 					)}
@@ -236,9 +234,9 @@ export function SiteBuilder({
 
 								{blocks.length === 0 && (
 									<div className="rounded-2xl border border-[#E5E7EB] bg-white px-6 py-12 text-center">
-										<p className="text-sm font-medium text-[#374151]">아직 블록이 없어요</p>
+										<p className="text-sm font-medium text-[#374151]">{t("emptyTitle")}</p>
 										<p className="mt-1 text-xs text-[#9CA3AF]">
-											아래에서 블록을 추가해 홈페이지를 만들어보세요.
+											{t("emptyDescription")}
 										</p>
 									</div>
 								)}

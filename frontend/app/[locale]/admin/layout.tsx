@@ -1,15 +1,9 @@
 import { Link, redirect } from "@/i18n/navigation";
 import { FileText, FolderOpen, LayoutDashboard, Mail } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { getIsAdmin } from "@/features/support/serverApis";
 import { LogoutButton } from "@/features/auth/components/LogoutButton";
 import { LanguageSwitcher } from "@/components/commons/LanguageSwitcher";
-
-const MENU = [
-	{ href: "/admin", label: "대시보드", icon: LayoutDashboard },
-	{ href: "/admin/notices", label: "공지사항", icon: FileText },
-	{ href: "/admin/resources", label: "자료실", icon: FolderOpen },
-	{ href: "/admin/inquiries", label: "1:1 문의", icon: Mail },
-];
 
 export default async function AdminLayout({
 	children,
@@ -19,10 +13,18 @@ export default async function AdminLayout({
 	params: Promise<{ locale: string }>;
 }): Promise<React.JSX.Element> {
 	const { locale } = await params;
+	const t = await getTranslations("AdminLayout");
 
 	// 미들웨어가 매 요청마다 DB에서 role을 새로 조회해 검증하고, 그 결과를 헤더로 전달한다.
 	// getIsAdmin()은 그 헤더를 읽을 뿐이라 재조회는 아니지만 같은 요청 내 최신 값이다.
 	if (!(await getIsAdmin())) redirect({ href: "/login", locale });
+
+	const MENU = [
+		{ href: "/admin", label: t("menuDashboard"), icon: LayoutDashboard },
+		{ href: "/admin/notices", label: t("menuNotices"), icon: FileText },
+		{ href: "/admin/resources", label: t("menuResources"), icon: FolderOpen },
+		{ href: "/admin/inquiries", label: t("menuInquiries"), icon: Mail },
+	];
 
 	return (
 		<div className="flex min-h-screen bg-[#F7F8F8]">
@@ -30,7 +32,7 @@ export default async function AdminLayout({
 				<div className="flex items-center justify-between border-b border-[#E5E7EB] px-5 py-5">
 					<div>
 						<p className="text-sm font-bold text-[#0f172a]">MitraPay</p>
-						<p className="mt-0.5 text-xs text-imsg-secondary">운영자</p>
+						<p className="mt-0.5 text-xs text-imsg-secondary">{t("adminBadge")}</p>
 					</div>
 					<LanguageSwitcher />
 				</div>
@@ -53,7 +55,7 @@ export default async function AdminLayout({
 					<Link
 						href="/support"
 						className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-imsg-secondary transition-colors duration-200 hover:bg-imsg-surface">
-						사용자 화면 보기
+						{t("viewUserSite")}
 					</Link>
 					<LogoutButton />
 				</div>

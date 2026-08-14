@@ -1,13 +1,17 @@
 import type { FaqCategory, InquiryCategory, InquiryStatus } from "@/features/support/types";
 
-export const INQUIRY_CATEGORY_LABELS: Record<InquiryCategory, string> = {
-	ACCOUNT: "회원 · 계정",
-	LISTING: "견적요청 등록",
-	QUOTE: "견적 제출 · 비교",
-	CONTRACT: "계약 · 납품",
-	PAYMENT: "결제 · 정산",
-	ETC: "기타",
-};
+type LabelTranslator = (key: string) => string;
+
+export function getInquiryCategoryLabels(t: LabelTranslator): Record<InquiryCategory, string> {
+	return {
+		ACCOUNT: t("ACCOUNT"),
+		LISTING: t("LISTING"),
+		QUOTE: t("QUOTE"),
+		CONTRACT: t("CONTRACT"),
+		PAYMENT: t("PAYMENT"),
+		ETC: t("ETC"),
+	};
+}
 
 export const INQUIRY_CATEGORY_OPTIONS: InquiryCategory[] = [
 	"ACCOUNT",
@@ -18,19 +22,23 @@ export const INQUIRY_CATEGORY_OPTIONS: InquiryCategory[] = [
 	"ETC",
 ];
 
-export const INQUIRY_STATUS_LABELS: Record<InquiryStatus, string> = {
-	OPEN: "답변 대기",
-	ANSWERED: "답변 완료",
-	CLOSED: "종료",
-};
+export function getInquiryStatusLabels(t: LabelTranslator): Record<InquiryStatus, string> {
+	return {
+		OPEN: t("OPEN"),
+		ANSWERED: t("ANSWERED"),
+		CLOSED: t("CLOSED"),
+	};
+}
 
-export const FAQ_CATEGORY_LABELS: Record<FaqCategory, string> = {
-	ACCOUNT: "회원 · 계정",
-	LISTING: "견적요청",
-	QUOTE: "견적",
-	CONTRACT: "계약 · 납품",
-	PAYMENT: "결제 · 정산",
-};
+export function getFaqCategoryLabels(t: LabelTranslator): Record<FaqCategory, string> {
+	return {
+		ACCOUNT: t("ACCOUNT"),
+		LISTING: t("LISTING"),
+		QUOTE: t("QUOTE"),
+		CONTRACT: t("CONTRACT"),
+		PAYMENT: t("PAYMENT"),
+	};
+}
 
 export const FAQ_CATEGORY_OPTIONS: FaqCategory[] = [
 	"ACCOUNT",

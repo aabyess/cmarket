@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { FileText, Loader2 } from "lucide-react";
 
 type QuotePdfCardProps = {
@@ -10,6 +11,7 @@ type QuotePdfCardProps = {
 };
 
 export function QuotePdfCard({ attachmentUrl, attachmentName, isMine }: QuotePdfCardProps): React.ReactNode {
+	const t = useTranslations("QuotePdfCard");
 	const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
 	const [thumbnailFailed, setThumbnailFailed] = useState(false);
 	const [isOpening, setIsOpening] = useState(false);
@@ -75,7 +77,7 @@ export function QuotePdfCard({ attachmentUrl, attachmentName, isMine }: QuotePdf
 		>
 			<div className="flex h-40 items-center justify-center bg-white/90">
 				{thumbnailUrl ? (
-					<img src={thumbnailUrl} alt="견적서 미리보기" className="h-full w-full object-contain" />
+					<img src={thumbnailUrl} alt={t("previewAlt")} className="h-full w-full object-contain" />
 				) : thumbnailFailed ? (
 					<FileText size={28} className="text-[#9CA3AF]" />
 				) : (
@@ -93,9 +95,9 @@ export function QuotePdfCard({ attachmentUrl, attachmentName, isMine }: QuotePdf
 					<FileText size={14} />
 				</div>
 				<div className="min-w-0">
-					<p className="truncate text-xs font-medium">{attachmentName ?? "견적서.pdf"}</p>
+					<p className="truncate text-xs font-medium">{attachmentName ?? t("defaultFileName")}</p>
 					<p className={isMine ? "text-xs text-white/70" : "text-xs text-black/50"}>
-						{isOpening ? "여는 중..." : "견적서 · 탭하여 새 창에서 보기"}
+						{isOpening ? t("opening") : t("openHint")}
 					</p>
 				</div>
 			</div>

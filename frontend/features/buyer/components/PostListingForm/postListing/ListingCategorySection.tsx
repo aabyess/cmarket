@@ -1,9 +1,10 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import SectionWrapper from "@/features/buyer/components/PostListingForm/postListing/SectionWrapper";
 import { cn } from "@/utils/cn";
 import type { ListingFormData } from "@/features/buyer/types";
-import { CATEGORY_LABELS, CATEGORY_OPTIONS } from "@/features/buyer/constants";
+import { getCategoryLabels, CATEGORY_OPTIONS } from "@/features/buyer/constants";
 
 type ListingCategorySectionProps = {
 	form: ListingFormData;
@@ -11,8 +12,10 @@ type ListingCategorySectionProps = {
 };
 
 export default function ListingCategorySection({ form, onChange }: ListingCategorySectionProps) {
+	const t = useTranslations("ListingCategorySection");
+	const categoryLabels = getCategoryLabels(useTranslations("ListingCategory"));
 	return (
-		<SectionWrapper title="어떤 품목인가요?" subtitle="카테고리를 선택해주세요">
+		<SectionWrapper title={t("title")} subtitle={t("subtitle")}>
 			<div className="grid grid-cols-3 gap-1.5 sm:grid-cols-5">
                 {CATEGORY_OPTIONS.map((cat) => (
                     <button
@@ -26,7 +29,7 @@ export default function ListingCategorySection({ form, onChange }: ListingCatego
                                 : "border-[#E2E8F0] bg-white text-[#374151] hover:bg-[#F9FAFB]",
                         )}
                     >
-                        {CATEGORY_LABELS[cat]}
+                        {categoryLabels[cat]}
                     </button>
                 ))}
             </div>

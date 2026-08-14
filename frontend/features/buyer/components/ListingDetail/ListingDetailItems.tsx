@@ -1,4 +1,5 @@
 import { Package } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
 import type { Currency, ListingItem } from "@/features/buyer/types";
 
@@ -7,7 +8,11 @@ type ListingDetailItemsProps = {
 	currency: Currency;
 };
 
-export function ListingDetailItems({ items, currency }: ListingDetailItemsProps): React.JSX.Element {
+export async function ListingDetailItems({
+	items,
+	currency,
+}: ListingDetailItemsProps): Promise<React.JSX.Element> {
+	const t = await getTranslations("ListingDetailItems");
 	const symbol = CURRENCY_SYMBOL[currency] ?? "";
 	const hasPrice = items.some((item) => item.price > 0);
 	const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -16,9 +21,9 @@ export function ListingDetailItems({ items, currency }: ListingDetailItemsProps)
 		<section className="rounded-2xl bg-white p-6 shadow-sm">
 			<h2 className="mb-4 flex items-center gap-2 text-base font-semibold text-[#0f172a]">
 				<Package size={16} className="text-imsg-secondary" />
-				요청 품목
+				{t("title")}
 				<span className="rounded-full bg-imsg-surface px-2 py-0.5 text-xs font-medium text-imsg-secondary">
-					{items.length}종
+					{t("itemCount", { count: items.length })}
 				</span>
 			</h2>
 
@@ -26,11 +31,11 @@ export function ListingDetailItems({ items, currency }: ListingDetailItemsProps)
 				<table className="w-full text-left text-sm">
 					<thead className="bg-[#FAFAFC]">
 						<tr className="text-xs text-imsg-secondary">
-							<th className="px-4 py-2.5 font-medium">품목</th>
-							<th className="px-4 py-2.5 font-medium">규격</th>
-							<th className="px-4 py-2.5 text-right font-medium">수량</th>
-							{hasPrice && <th className="px-4 py-2.5 text-right font-medium">희망 단가</th>}
-							{hasPrice && <th className="px-4 py-2.5 text-right font-medium">금액</th>}
+							<th className="px-4 py-2.5 font-medium">{t("itemLabel")}</th>
+							<th className="px-4 py-2.5 font-medium">{t("specLabel")}</th>
+							<th className="px-4 py-2.5 text-right font-medium">{t("quantityLabel")}</th>
+							{hasPrice && <th className="px-4 py-2.5 text-right font-medium">{t("unitPriceLabel")}</th>}
+							{hasPrice && <th className="px-4 py-2.5 text-right font-medium">{t("amountLabel")}</th>}
 						</tr>
 					</thead>
 					<tbody>
@@ -60,7 +65,7 @@ export function ListingDetailItems({ items, currency }: ListingDetailItemsProps)
 						<tfoot>
 							<tr className="border-t border-[#F2F2F7] bg-[#FAFAFC]">
 								<td className="px-4 py-3 text-xs text-imsg-secondary" colSpan={hasPrice ? 4 : 3}>
-									품목 합계
+									{t("itemsTotal")}
 								</td>
 								<td className="whitespace-nowrap px-4 py-3 text-right font-bold text-[#0f172a]">
 									{symbol} {total.toLocaleString()}
@@ -72,7 +77,7 @@ export function ListingDetailItems({ items, currency }: ListingDetailItemsProps)
 			</div>
 
 			{items.length === 0 && (
-				<p className="py-6 text-center text-sm text-imsg-secondary">등록된 품목이 없어요</p>
+				<p className="py-6 text-center text-sm text-imsg-secondary">{t("emptyState")}</p>
 			)}
 		</section>
 	);

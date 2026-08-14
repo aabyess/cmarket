@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { CheckCircle2, Pencil, Clock } from "lucide-react";
 import { cn } from "@/utils/cn";
@@ -27,6 +28,7 @@ export function ListingDetailQuoteForm({
 	myQuote,
 	isClosed,
 }: ListingDetailQuoteFormProps) {
+	const t = useTranslations("ListingDetailQuoteForm");
 	const router = useRouter();
 	const [isEditing, setIsEditing] = useState(false);
 	const [form, setForm] = useState<QuoteFormData>({
@@ -47,11 +49,11 @@ export function ListingDetailQuoteForm({
 
 	function validate(): boolean {
 		if (form.price <= 0) {
-			setError("견적 금액을 입력해주세요.");
+			setError(t("priceRequiredError"));
 			return false;
 		}
 		if (form.deliveryDays <= 0) {
-			setError("납품 소요일을 입력해주세요.");
+			setError(t("deliveryDaysRequiredError"));
 			return false;
 		}
 		return true;
@@ -66,7 +68,7 @@ export function ListingDetailQuoteForm({
 			router.refresh();
 		} catch (err) {
 			console.error(err);
-			setError("견적 제출에 실패했습니다.");
+			setError(t("submitError"));
 		} finally {
 			setIsLoading(false);
 		}
@@ -82,7 +84,7 @@ export function ListingDetailQuoteForm({
 			router.refresh();
 		} catch (err) {
 			console.error(err);
-			setError("견적 수정에 실패했습니다.");
+			setError(t("updateError"));
 		} finally {
 			setIsLoading(false);
 		}
@@ -110,33 +112,33 @@ export function ListingDetailQuoteForm({
 					{myQuote.status === "awarded" ? (
 						<span className="flex items-center gap-1 rounded-full bg-[#ECFDF5] px-2.5 py-1 text-xs font-medium text-[#059669]">
 							<CheckCircle2 size={12} />
-							계약 확정
+							{t("statusAwarded")}
 						</span>
 					) : myQuote.status === "rejected" ? (
 						<span className="rounded-full bg-[#F3F4F6] px-2.5 py-1 text-xs font-medium text-[#6B7280]">
-							미선정
+							{t("statusRejected")}
 						</span>
 					) : (
 						<span className="flex items-center gap-1 rounded-full bg-[#EFF6FF] px-2.5 py-1 text-xs font-medium text-imsg-blue">
 							<Clock size={12} />
-							검토 중
+							{t("statusPending")}
 						</span>
 					)}
 				</div>
 
-				<p className="text-sm font-semibold text-[#1F2937]">보낸 견적</p>
+				<p className="text-sm font-semibold text-[#1F2937]">{t("sentQuoteLabel")}</p>
 
 				<div className="mt-3 flex items-center gap-6 border-t border-[#F3F4F6] pt-3">
 					<div>
-						<p className="text-xs text-[#9CA3AF]">견적가</p>
+						<p className="text-xs text-[#9CA3AF]">{t("priceLabel")}</p>
 						<p className="text-lg font-semibold text-[#1F2937]">
 							{symbol} {myQuote.price.toLocaleString()}
 						</p>
 					</div>
 					<div>
-						<p className="text-xs text-[#9CA3AF]">납품</p>
+						<p className="text-xs text-[#9CA3AF]">{t("deliveryLabel")}</p>
 						<p className="text-lg font-semibold text-[#1F2937]">
-							{myQuote.deliveryDays}일
+							{t("daysSuffix", { days: myQuote.deliveryDays })}
 						</p>
 					</div>
 				</div>
@@ -154,10 +156,10 @@ export function ListingDetailQuoteForm({
 							className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-lg border border-imsg-blue py-3 text-sm font-semibold text-imsg-blue transition-colors hover:bg-[#EFF6FF]"
 						>
 							<Pencil size={15} />
-							견적 수정하기
+							{t("editButton")}
 						</button>
 						<p className="mt-2 text-center text-xs text-[#9CA3AF]">
-							마감 전까지 수정할 수 있어요
+							{t("editHint")}
 						</p>
 					</>
 				) : (
@@ -165,7 +167,7 @@ export function ListingDetailQuoteForm({
 						onClick={() => router.push("/seller/quote-submit")}
 						className="mt-4 w-full rounded-lg border border-[#E5E7EB] py-3 text-sm font-medium text-[#374151] transition-colors hover:bg-gray-50"
 					>
-						보낸 견적 목록
+						{t("viewSentQuotesButton")}
 					</button>
 				)}
 			</div>
@@ -179,8 +181,8 @@ export function ListingDetailQuoteForm({
 				<div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-[#F3F4F6]">
 					<Clock size={22} className="text-[#9CA3AF]" />
 				</div>
-				<p className="text-sm font-medium text-[#1F2937]">마감된 견적요청입니다</p>
-				<p className="mt-1 text-sm text-[#6B7280]">더 이상 견적을 보낼 수 없어요.</p>
+				<p className="text-sm font-medium text-[#1F2937]">{t("closedTitle")}</p>
+				<p className="mt-1 text-sm text-[#6B7280]">{t("closedDescription")}</p>
 			</div>
 		);
 	}
@@ -189,18 +191,18 @@ export function ListingDetailQuoteForm({
 	return (
 		<div className="rounded-2xl border-2 border-imsg-blue bg-white p-5">
 			<p className="text-sm font-semibold text-[#1F2937]">
-				{isEditing ? "견적 수정" : "견적 보내기"}
+				{isEditing ? t("editTitle") : t("newTitle")}
 			</p>
 			<p className="mt-1 text-xs text-[#6B7280]">
 				{isEditing
-					? "수정 내역은 발주기관에게 표시돼요."
-					: "마감 전까지 언제든 수정할 수 있어요."}
+					? t("editSubtitle")
+					: t("newSubtitle")}
 			</p>
 
 			<div className="mt-4 space-y-4">
 				<div>
 					<label className="mb-2 block text-sm font-medium text-[#374151]">
-						견적 금액 <span className="text-imsg-blue">*</span>
+						{t("priceFieldLabel")} <span className="text-imsg-blue">*</span>
 					</label>
 					<div className="mb-2 flex gap-1.5">
 						{CURRENCIES.map((currency) => (
@@ -225,7 +227,7 @@ export function ListingDetailQuoteForm({
 							min={0}
 							value={form.price || ""}
 							onChange={(e) => handleChange({ price: Number(e.target.value) })}
-							placeholder="0"
+							placeholder={t("pricePlaceholder")}
 							className="flex-1 rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 						/>
 					</div>
@@ -233,7 +235,7 @@ export function ListingDetailQuoteForm({
 
 				<div>
 					<label className="mb-2 block text-sm font-medium text-[#374151]">
-						납품 소요일 <span className="text-imsg-blue">*</span>
+						{t("deliveryFieldLabel")} <span className="text-imsg-blue">*</span>
 					</label>
 					<div className="flex items-center gap-2">
 						<input
@@ -241,19 +243,19 @@ export function ListingDetailQuoteForm({
 							min={1}
 							value={form.deliveryDays || ""}
 							onChange={(e) => handleChange({ deliveryDays: Number(e.target.value) })}
-							placeholder="30"
+							placeholder={t("deliveryDaysPlaceholder")}
 							className="w-28 rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 						/>
-						<span className="text-sm text-[#6B7280]">일 이내</span>
+						<span className="text-sm text-[#6B7280]">{t("deliveryDaysSuffix")}</span>
 					</div>
 				</div>
 
 				<div>
-					<label className="mb-2 block text-sm font-medium text-[#374151]">제안 메모</label>
+					<label className="mb-2 block text-sm font-medium text-[#374151]">{t("noteFieldLabel")}</label>
 					<textarea
 						value={form.note}
 						onChange={(e) => handleChange({ note: e.target.value })}
-						placeholder="품질 보증, 대체 사양 제안, 배송 조건 등"
+						placeholder={t("notePlaceholder")}
 						rows={4}
 						className="w-full resize-none rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 					/>
@@ -268,14 +270,14 @@ export function ListingDetailQuoteForm({
 							disabled={isLoading}
 							className="flex-1 rounded-lg border border-[#E5E7EB] py-3 text-sm font-medium text-[#374151] transition-colors hover:bg-gray-50 disabled:opacity-50"
 						>
-							취소
+							{t("cancelButton")}
 						</button>
 						<button
 							onClick={handleUpdate}
 							disabled={isLoading}
 							className="flex-1 rounded-lg bg-imsg-blue py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
 						>
-							{isLoading ? "저장 중..." : "수정 저장"}
+							{isLoading ? t("savingButton") : t("saveButton")}
 						</button>
 					</div>
 				) : (
@@ -284,7 +286,7 @@ export function ListingDetailQuoteForm({
 						disabled={isLoading}
 						className="w-full rounded-lg bg-imsg-blue py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
 					>
-						{isLoading ? "제출 중..." : "견적 제출하기"}
+						{isLoading ? t("submittingButton") : t("submitButton")}
 					</button>
 				)}
 			</div>

@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { CalendarClock, ExternalLink, MapPin, Ship, User } from "lucide-react";
-import { DELIVERY_METHOD_LABELS } from "@/features/buyer/constants";
+import { getTranslations } from "next-intl/server";
+import { getDeliveryMethodLabels } from "@/features/buyer/constants";
 import type { DeliveryMethod, DeliveryTimingMode } from "@/features/buyer/types";
 
 export type ListingInfoDeliveryProps = {
@@ -18,7 +19,10 @@ export type ListingInfoDeliveryProps = {
 	contact: { name: string; phone: string } | null;
 };
 
-export function ListingInfoDelivery(props: ListingInfoDeliveryProps): React.JSX.Element {
+export async function ListingInfoDelivery(props: ListingInfoDeliveryProps): Promise<React.JSX.Element> {
+	const t = await getTranslations("ListingInfoDelivery");
+	const deliveryMethodLabels = getDeliveryMethodLabels(await getTranslations("DeliveryMethod"));
+
 	const fullAddress = [props.provinsi, props.city, props.address, props.addressDetail]
 		.filter(Boolean)
 		.join(" ");
@@ -30,39 +34,40 @@ export function ListingInfoDelivery(props: ListingInfoDeliveryProps): React.JSX.
 
 	const timing =
 		props.timingMode === "specific" && props.deadlineDate
-			? `${new Date(props.deadlineDate).toLocaleDateString("ko-KR")}까지`
+			? t("deadlineUntil", { date: new Date(props.deadlineDate).toLocaleDateString("ko-KR") })
 			: props.deliveryDays > 0
-				? `낙찰 후 ${props.deliveryDays}일 이내`
-				: "협의 후 결정";
+				? t("afterAwardDays", { days: props.deliveryDays })
+				: t("negotiateAfterDecision");
 
 	const rows = [
 		{
 			icon: MapPin,
-			label: "납품 장소",
-			value: fullAddress || "미입력",
+			label: t("placeLabel"),
+			value: fullAddress || t("notEntered"),
 			link: mapUrl,
 		},
 		{
 			icon: Ship,
-			label: "운송 방법",
-			value: DELIVERY_METHOD_LABELS[props.method] ?? "협의 후 결정",
+			label: t("methodLabel"),
+			value: deliveryMethodLabels[props.method] ?? t("negotiateAfterDecision"),
 			link: null,
 		},
-		{ icon: CalendarClock, label: "납품 시기", value: timing, link: null },
+		{ icon: CalendarClock, label: t("timingLabel"), value: timing, link: null },
 	];
 
 	if (props.contact) {
 		rows.push({
 			icon: User,
-			label: "담당자",
-			value: [props.contact.name, props.contact.phone].filter(Boolean).join(" · ") || "미입력",
+			label: t("contactLabel"),
+			value:
+				[props.contact.name, props.contact.phone].filter(Boolean).join(" · ") || t("notEntered"),
 			link: null,
 		});
 	}
 
 	return (
 		<section className="rounded-2xl bg-white p-6 shadow-sm">
-			<h2 className="mb-4 text-base font-semibold text-[#0f172a]">납품 조건</h2>
+			<h2 className="mb-4 text-base font-semibold text-[#0f172a]">{t("title")}</h2>
 
 			<dl className="space-y-px overflow-hidden rounded-xl bg-[#F2F2F7]">
 				{rows.map((row) => (
@@ -79,7 +84,7 @@ export function ListingInfoDelivery(props: ListingInfoDeliveryProps): React.JSX.
 									target="_blank"
 									rel="noopener noreferrer"
 									className="ml-2 inline-flex items-center gap-1 text-xs font-medium text-imsg-blue hover:underline">
-									지도에서 보기
+									{t("viewOnMap")}
 									<ExternalLink size={11} />
 								</Link>
 							)}
@@ -89,9 +94,7 @@ export function ListingInfoDelivery(props: ListingInfoDeliveryProps): React.JSX.
 			</dl>
 
 			{!props.contact && (
-				<p className="mt-3 text-xs text-imsg-secondary">
-					담당자 연락처는 계약이 확정된 뒤 공개됩니다.
-				</p>
+				<p className="mt-3 text-xs text-imsg-secondary">{t("contactHiddenNotice")}</p>
 			)}
 		</section>
 	);

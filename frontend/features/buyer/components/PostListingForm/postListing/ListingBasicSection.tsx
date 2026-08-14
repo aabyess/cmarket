@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import SectionWrapper from "@/features/buyer/components/PostListingForm/postListing/SectionWrapper";
 import UnitSelect from "@/features/buyer/components/PostListingForm/postListing/UnitSelect";
 import type { ListingFormData, ListingItem } from "@/features/buyer/types";
@@ -10,6 +11,8 @@ type ListingBasicSectionProps = {
 };
 
 export default function ListingBasicSection({ form, onChange }: ListingBasicSectionProps) {
+	const t = useTranslations("ListingBasicSection");
+
 	function handleAddItem() {
 		const newItem: ListingItem = {
 			id: Date.now().toString(),
@@ -33,24 +36,24 @@ export default function ListingBasicSection({ form, onChange }: ListingBasicSect
 	}
 
 	return (
-		<SectionWrapper title="무엇이 필요하신가요?" subtitle="구매하려는 물품을 알려주세요">
+		<SectionWrapper title={t("title")} subtitle={t("subtitle")}>
 			<div className="space-y-5">
 				<div>
 					<label className="mb-2 block text-sm font-medium text-[#374151]">
-						견적요청 제목 <span className="text-imsg-blue">*</span>
+						{t("listingTitleLabel")} <span className="text-imsg-blue">*</span>
 					</label>
 					<input
 						type="text"
 						value={form.title}
 						onChange={(e) => onChange({ title: e.target.value })}
-						placeholder="예: 사무용 프린터 20대 구매"
+						placeholder={t("listingTitlePlaceholder")}
 						className="w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 					/>
 				</div>
 
 				<div>
 					<label className="mb-2 block text-sm font-medium text-[#374151]">
-						품목 <span className="text-imsg-blue">*</span>
+						{t("itemsLabel")} <span className="text-imsg-blue">*</span>
 					</label>
 					<div className="overflow-visible rounded-lg border border-[#E2E8F0]">
 						<table className="w-full text-sm">
@@ -60,13 +63,13 @@ export default function ListingBasicSection({ form, onChange }: ListingBasicSect
 										No.
 									</th>
 									<th className="px-3 py-2.5 text-left text-xs font-medium text-[#6B7280]">
-										품명 / 규격
+										{t("nameSpecColumn")}
 									</th>
 									<th className="w-20 px-3 py-2.5 text-left text-xs font-medium text-[#6B7280]">
-										수량
+										{t("quantityColumn")}
 									</th>
 									<th className="w-24 px-3 py-2.5 text-left text-xs font-medium text-[#6B7280]">
-										단위
+										{t("unitColumn")}
 									</th>
 									<th className="w-8" />
 								</tr>
@@ -75,7 +78,7 @@ export default function ListingBasicSection({ form, onChange }: ListingBasicSect
 								{form.items.length === 0 ? (
 									<tr>
 										<td colSpan={5} className="px-3 py-8 text-center text-sm text-[#9CA3AF]">
-											품목을 추가해주세요
+											{t("emptyItems")}
 										</td>
 									</tr>
 								) : (
@@ -88,14 +91,14 @@ export default function ListingBasicSection({ form, onChange }: ListingBasicSect
 														type="text"
 														value={item.name}
 														onChange={(e) => handleUpdateItem(item.id, "name", e.target.value)}
-														placeholder="품명"
+														placeholder={t("namePlaceholder")}
 														className="w-full rounded border border-[#E2E8F0] px-3 py-1.5 text-sm focus:border-imsg-blue focus:outline-none"
 													/>
 													<input
 														type="text"
 														value={item.spec}
 														onChange={(e) => handleUpdateItem(item.id, "spec", e.target.value)}
-														placeholder="규격 / 사양 (선택)"
+														placeholder={t("specPlaceholder")}
 														className="w-full rounded border border-[#E2E8F0] px-3 py-1.5 text-sm focus:border-imsg-blue focus:outline-none"
 													/>
 												</div>
@@ -135,7 +138,7 @@ export default function ListingBasicSection({ form, onChange }: ListingBasicSect
 							className="flex w-full items-center justify-center gap-1.5 border-t border-[#E2E8F0] py-3 text-sm text-[#6B7280] transition-colors hover:bg-[#F9FAFB]"
 						>
 							<span className="text-base leading-none">+</span>
-							품목 추가
+							{t("addItem")}
 						</button>
 					</div>
 				</div>

@@ -1,13 +1,19 @@
 import { Link } from "@/i18n/navigation";
 import { CalendarClock, ExternalLink, MapPin, Ship, User } from "lucide-react";
-import { DELIVERY_METHOD_LABELS } from "@/features/buyer/constants";
+import { getTranslations } from "next-intl/server";
+import { getDeliveryMethodLabels } from "@/features/buyer/constants";
 import type { ListingDetailData } from "@/features/buyer/components/ListingDetail/types";
 
 type ListingDetailDeliveryProps = {
 	listing: ListingDetailData;
 };
 
-export function ListingDetailDelivery({ listing }: ListingDetailDeliveryProps): React.JSX.Element {
+export async function ListingDetailDelivery({
+	listing,
+}: ListingDetailDeliveryProps): Promise<React.JSX.Element> {
+	const t = await getTranslations("ListingDetailDelivery");
+	const deliveryMethodLabels = getDeliveryMethodLabels(await getTranslations("DeliveryMethod"));
+
 	const fullAddress = [
 		listing.deliveryProvinsi,
 		listing.deliveryCity,
@@ -25,34 +31,37 @@ export function ListingDetailDelivery({ listing }: ListingDetailDeliveryProps): 
 	const rows = [
 		{
 			icon: MapPin,
-			label: "납품 장소",
-			value: fullAddress || "미입력",
+			label: t("locationLabel"),
+			value: fullAddress || t("notEntered"),
 			link: mapUrl,
-			linkLabel: "지도에서 보기",
+			linkLabel: t("viewOnMap"),
 		},
 		{
 			icon: Ship,
-			label: "운송 방법",
-			value: DELIVERY_METHOD_LABELS[listing.deliveryMethod] ?? "협의 후 결정",
+			label: t("methodLabel"),
+			value: deliveryMethodLabels[listing.deliveryMethod] ?? t("toBeDiscussed"),
 			link: null,
 			linkLabel: null,
 		},
 		{
 			icon: CalendarClock,
-			label: "납품 시기",
+			label: t("timingLabel"),
 			value:
 				listing.deliveryTimingMode === "specific" && listing.deliveryDeadlineDate
-					? `${new Date(listing.deliveryDeadlineDate).toLocaleDateString("ko-KR")}까지`
+					? t("deadlineUntil", {
+							date: new Date(listing.deliveryDeadlineDate).toLocaleDateString("ko-KR"),
+						})
 					: listing.deliveryDays > 0
-						? `낙찰 후 ${listing.deliveryDays}일 이내`
-						: "협의 후 결정",
+						? t("withinDaysAfterAward", { days: listing.deliveryDays })
+						: t("toBeDiscussed"),
 			link: null,
 			linkLabel: null,
 		},
 		{
 			icon: User,
-			label: "담당자",
-			value: [listing.contactName, listing.contactPhone].filter(Boolean).join(" · ") || "미입력",
+			label: t("contactLabel"),
+			value:
+				[listing.contactName, listing.contactPhone].filter(Boolean).join(" · ") || t("notEntered"),
 			link: null,
 			linkLabel: null,
 		},
@@ -60,7 +69,7 @@ export function ListingDetailDelivery({ listing }: ListingDetailDeliveryProps): 
 
 	return (
 		<section className="rounded-2xl bg-white p-6 shadow-sm">
-			<h2 className="mb-4 text-base font-semibold text-[#0f172a]">납품 및 연락 정보</h2>
+			<h2 className="mb-4 text-base font-semibold text-[#0f172a]">{t("title")}</h2>
 
 			<dl className="space-y-px overflow-hidden rounded-xl bg-[#F2F2F7]">
 				{rows.map((row) => (

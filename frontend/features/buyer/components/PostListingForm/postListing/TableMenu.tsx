@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import type { Editor } from "@tiptap/react";
 import { Table, Rows3, Columns3, ArrowLeftRight, Trash2 } from "lucide-react";
 import { cn } from "@/utils/cn";
@@ -10,6 +11,7 @@ type TableMenuProps = {
 };
 
 export default function TableMenu({ editor }: TableMenuProps): React.ReactNode {
+	const t = useTranslations("TableMenu");
 	const [isOpen, setIsOpen] = useState(false);
 	const ref = useRef<HTMLDivElement>(null);
 	const isInTable = editor.isActive("table");
@@ -46,7 +48,7 @@ export default function TableMenu({ editor }: TableMenuProps): React.ReactNode {
 				<div className="absolute left-0 top-full z-20 mt-1 w-52 overflow-hidden rounded-xl border border-[#E5E7EB] bg-white py-1.5 shadow-lg">
 					<MenuItem
 						icon={Table}
-						label="표 삽입 (3 × 3)"
+						label={t("insertTable")}
 						onClick={() =>
 							run(() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run())
 						}
@@ -57,35 +59,35 @@ export default function TableMenu({ editor }: TableMenuProps): React.ReactNode {
 							<div className="my-1 h-px bg-[#F3F4F6]" />
 							<MenuItem
 								icon={Rows3}
-								label="아래에 행 추가"
+								label={t("addRowBelow")}
 								onClick={() => run(() => editor.chain().focus().addRowAfter().run())}
 							/>
 							<MenuItem
 								icon={Columns3}
-								label="오른쪽에 열 추가"
+								label={t("addColumnRight")}
 								onClick={() => run(() => editor.chain().focus().addColumnAfter().run())}
 							/>
 							<MenuItem
 								icon={ArrowLeftRight}
-								label="머리글 행 전환"
+								label={t("toggleHeaderRow")}
 								onClick={() => run(() => editor.chain().focus().toggleHeaderRow().run())}
 							/>
 							<div className="my-1 h-px bg-[#F3F4F6]" />
 							<MenuItem
 								icon={Trash2}
-								label="행 삭제"
+								label={t("deleteRow")}
 								danger
 								onClick={() => run(() => editor.chain().focus().deleteRow().run())}
 							/>
 							<MenuItem
 								icon={Trash2}
-								label="열 삭제"
+								label={t("deleteColumn")}
 								danger
 								onClick={() => run(() => editor.chain().focus().deleteColumn().run())}
 							/>
 							<MenuItem
 								icon={Trash2}
-								label="표 삭제"
+								label={t("deleteTable")}
 								danger
 								onClick={() => run(() => editor.chain().focus().deleteTable().run())}
 							/>

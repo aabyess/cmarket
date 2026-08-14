@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { getNotice } from "@/features/support/serverApis";
 
 type NoticeDetailPageProps = {
@@ -13,6 +14,7 @@ export default async function NoticeDetailPage({
 	const { id } = await params;
 	const notice = await getNotice(id);
 	if (!notice) notFound();
+	const t = await getTranslations("SupportNoticeDetailPage");
 
 	return (
 		<div className="mx-auto max-w-[900px] px-6 py-6 lg:px-8 xl:px-10">
@@ -20,14 +22,14 @@ export default async function NoticeDetailPage({
 				href="/support/notices"
 				className="mb-4 inline-flex items-center gap-1.5 text-sm text-imsg-secondary transition-colors duration-200 hover:text-[#374151]">
 				<ChevronLeft size={16} />
-				공지사항으로
+				{t("backToList")}
 			</Link>
 
 			<article className="rounded-2xl bg-white p-8 shadow-sm">
 				<div className="mb-2 flex items-center gap-2">
 					{notice.isPinned && (
 						<span className="rounded-full bg-[#EFF6FF] px-2 py-0.5 text-xs font-semibold text-imsg-blue">
-							중요
+							{t("pinnedBadge")}
 						</span>
 					)}
 					<span className="text-xs text-imsg-secondary">

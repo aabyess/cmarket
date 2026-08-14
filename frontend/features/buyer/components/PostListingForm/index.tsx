@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import ListingCategorySection from "@/features/buyer/components/PostListingForm/postListing/ListingCategorySection";
 import ListingBasicSection from "@/features/buyer/components/PostListingForm/postListing/ListingBasicSection";
@@ -44,6 +45,7 @@ type PostListingFormProps = {
 };
 
 export function PostListingForm({ listingId, initialData, contactInfo }: PostListingFormProps): React.ReactNode {
+	const t = useTranslations("PostListingForm");
 	const router = useRouter();
 	const isEdit = Boolean(listingId);
 
@@ -83,15 +85,15 @@ export function PostListingForm({ listingId, initialData, contactInfo }: PostLis
 
 	async function handlePublish(): Promise<void> {
 		if (!form.title) {
-			alert("견적요청 제목을 입력해주세요.");
+			alert(t("titleRequired"));
 			return;
 		}
 		if (form.items.every((item) => !item.name)) {
-			alert("품목을 하나 이상 입력해주세요.");
+			alert(t("itemRequired"));
 			return;
 		}
 		if (!form.deliveryProvinsi || !form.deliveryCity) {
-			alert("배송지를 입력해주세요.");
+			alert(t("deliveryRequired"));
 			return;
 		}
 
@@ -107,7 +109,7 @@ export function PostListingForm({ listingId, initialData, contactInfo }: PostLis
 			}
 		} catch (err) {
 			console.error(err);
-			alert(isEdit ? "견적요청 수정에 실패했습니다." : "견적요청 등록에 실패했습니다.");
+			alert(isEdit ? t("updateFailed") : t("publishFailed"));
 		} finally {
 			setIsLoading(false);
 		}
@@ -115,15 +117,15 @@ export function PostListingForm({ listingId, initialData, contactInfo }: PostLis
 
 	function handleSaveDraft(): void {
 		localStorage.setItem("listing_draft", JSON.stringify(form));
-		alert("임시저장 완료");
+		alert(t("draftSaved"));
 	}
 
 	return (
 		<div className="space-y-4 p-6 pb-24 lg:p-10">
 			<div>
-				<h1 className="text-2xl font-bold text-[#1F2937]">{isEdit ? "견적요청 수정" : "견적요청 등록"}</h1>
+				<h1 className="text-2xl font-bold text-[#1F2937]">{isEdit ? t("editTitle") : t("createTitle")}</h1>
 				<p className="mt-1 text-sm text-[#6B7280]">
-					{isEdit ? "견적요청 내용을 수정합니다." : "한국 공급기업들이 견적을 보내드립니다."}
+					{isEdit ? t("editSubtitle") : t("createSubtitle")}
 				</p>
 			</div>
 

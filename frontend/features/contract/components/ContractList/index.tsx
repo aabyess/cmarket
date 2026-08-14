@@ -1,23 +1,21 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { FileCheck, Building2, Calendar, DollarSign, Upload, CheckCircle2, Clock, FileText, Truck } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
+import { Pagination } from "@/components/commons/Pagination";
+import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import { ContractListTabs } from "@/features/contract/components/ContractList/ContractListTabs";
+import { ContractListTable } from "@/features/contract/components/ContractList/ContractListTable";
 import type { Contract, ContractFilter, ContractStatus } from "@/features/contract/types";
 
 const CURRENCY_SYMBOL: Record<string, string> = {
 	USD: "$",
 	IDR: "Rp",
 	KRW: "₩",
-};
-
-const STATUS_LABEL: Record<ContractStatus, string> = {
-	ongoing: "진행 중",
-	completed: "납품 완료",
-	cancelled: "취소됨",
 };
 
 const STATUS_STYLE: Record<ContractStatus, string> = {
@@ -39,13 +37,27 @@ const STATUS_ORDER: Record<ContractStatus, number> = {
 };
 
 export function ContractList({ contracts, role }: ContractListProps) {
+	const t = useTranslations("ContractList");
 	const router = useRouter();
+	const statusLabels: Record<ContractStatus, string> = {
+		ongoing: t("statusOngoing"),
+		completed: t("statusCompleted"),
+		cancelled: t("statusCancelled"),
+	};
 	const [filter, setFilter] = useState<ContractFilter>("all");
+	const [search, setSearch] = useState("");
 	const [loadingId, setLoadingId] = useState<string | null>(null);
 	const [uploadingId, setUploadingId] = useState<string | null>(null);
 	const [confirmId, setConfirmId] = useState<string | null>(null);
 	const [cancelConfirmId, setCancelConfirmId] = useState<string | null>(null);
+	const [viewMode, setViewMode] = useState<ViewMode>("list");
+	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(10);
 	const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+	function handleUploadClick(contractId: string) {
+		fileInputRefs.current[contractId]?.click();
+	}
 
 	async function handleStatusChange(contractId: string, status: "completed" | "cancelled") {
 		setLoadingId(contractId);
@@ -62,7 +74,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 			router.refresh();
 		} catch (err) {
 			console.error(err);
-			alert("처리 중 오류가 발생했습니다.");
+			alert(t("genericErrorMessage"));
 		} finally {
 			setLoadingId(null);
 			setConfirmId(null);
@@ -88,7 +100,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 			router.refresh();
 		} catch (err) {
 			console.error(err);
-			alert("영수증 업로드 중 오류가 발생했습니다.");
+			alert(t("receiptUploadErrorMessage"));
 		} finally {
 			setUploadingId(null);
 		}
@@ -102,7 +114,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 			window.open(url, "_blank");
 		} catch (err) {
 			console.error(err);
-			alert("영수증을 불러오는 중 오류가 발생했습니다.");
+			alert(t("receiptViewErrorMessage"));
 		}
 	}
 
@@ -112,10 +124,25 @@ export function ContractList({ contracts, role }: ContractListProps) {
 		completed: contracts.filter((c) => c.status === "completed").length,
 	};
 
-	const visibleContracts =
+	const keyword = search.trim().toLowerCase();
+	const visibleContracts = (
 		filter === "all"
 			? [...contracts].sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status])
-			: contracts.filter((c) => c.status === filter);
+			: contracts.filter((c) => c.status === filter)
+	).filter((c) => {
+		if (!keyword) return true;
+		return (
+			c.listing.title.toLowerCase().includes(keyword) ||
+			c.partnerCompanyName.toLowerCase().includes(keyword)
+		);
+	});
+
+	useEffect(() => {
+		setPage(1);
+	}, [filter, search, pageSize]);
+
+	const pageCount = Math.max(1, Math.ceil(visibleContracts.length / pageSize));
+	const paginatedContracts = visibleContracts.slice((page - 1) * pageSize, page * pageSize);
 
 	if (contracts.length === 0) {
 		return (
@@ -123,25 +150,61 @@ export function ContractList({ contracts, role }: ContractListProps) {
 				<div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F3F4F6]">
 					<FileCheck size={26} className="text-[#9CA3AF]" />
 				</div>
-				<p className="text-base font-medium text-[#1F2937]">계약이 없어요</p>
-				<p className="mt-1 text-sm text-[#6B7280]">계약 확정 후 계약이 생성됩니다.</p>
+				<p className="text-base font-medium text-[#1F2937]">{t("emptyTitle")}</p>
+				<p className="mt-1 text-sm text-[#6B7280]">{t("emptyDescription")}</p>
 			</div>
 		);
 	}
 
 	return (
 		<>
-			<ContractListTabs value={filter} counts={counts} onChange={setFilter} />
+			<div className="mb-4 flex items-center justify-between gap-2">
+				<ContractListTabs
+					value={filter}
+					counts={counts}
+					onChange={setFilter}
+					search={search}
+					onSearchChange={setSearch}
+				/>
+				<ViewModeToggle value={viewMode} onChange={setViewMode} />
+			</div>
+
+			{/* 영수증 업로드용 파일 인풋. 카드/테이블 어느 뷰에서도 열 수 있도록 뷰와 무관하게 둔다. */}
+			{role === "buyer" &&
+				paginatedContracts.map((contract) => (
+					<input
+						key={contract.id}
+						ref={(el) => { fileInputRefs.current[contract.id] = el; }}
+						type="file"
+						accept="image/*,.pdf"
+						className="hidden"
+						onChange={(e) => {
+							const file = e.target.files?.[0];
+							if (file) handleReceiptUpload(contract.id, file);
+						}}
+					/>
+				))}
 
 			{visibleContracts.length === 0 ? (
 				<div className="rounded-2xl border border-[#E5E7EB] bg-white p-12 text-center">
 					<p className="text-sm text-[#6B7280]">
-						{filter === "ongoing" ? "진행 중인 계약이 없어요." : "완료된 계약이 없어요."}
+						{filter === "ongoing" ? t("noResultsOngoing") : t("noResultsCompleted")}
 					</p>
 				</div>
+			) : viewMode === "list" ? (
+				<ContractListTable
+					contracts={paginatedContracts}
+					role={role}
+					loadingId={loadingId}
+					uploadingId={uploadingId}
+					onUploadClick={handleUploadClick}
+					onViewReceipt={handleViewReceipt}
+					onRequestConfirm={setConfirmId}
+					onRequestCancel={setCancelConfirmId}
+				/>
 			) : (
 			<div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-				{visibleContracts.map((contract) => (
+				{paginatedContracts.map((contract) => (
 					<div
 						key={contract.id}
 						className={cn(
@@ -157,11 +220,11 @@ export function ContractList({ contracts, role }: ContractListProps) {
 								</p>
 								<p className="mt-1 flex items-center gap-1.5 text-sm text-[#6B7280]">
 									<Building2 size={13} />
-									{contract.partnerCompanyName || "기업명 없음"}
+									{contract.partnerCompanyName || t("noPartnerCompanyName")}
 								</p>
 							</div>
-							<span className={cn("shrink-0 rounded-full px-3 py-1 text-xs font-medium", STATUS_STYLE[contract.status])}>
-								{STATUS_LABEL[contract.status]}
+							<span className={cn("shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium", STATUS_STYLE[contract.status])}>
+								{statusLabels[contract.status]}
 							</span>
 						</div>
 
@@ -173,11 +236,11 @@ export function ContractList({ contracts, role }: ContractListProps) {
 							</span>
 							<span className="flex items-center gap-1.5">
 								<Truck size={13} />
-								납기 {contract.quote.deliveryDays}일
+								{t("deliveryDaysLabel", { days: contract.quote.deliveryDays })}
 							</span>
 							<span className="flex items-center gap-1.5">
 								<Calendar size={13} />
-								{new Date(contract.createdAt).toLocaleDateString("ko-KR")} 계약
+								{t("contractedOn", { date: new Date(contract.createdAt).toLocaleDateString("ko-KR") })}
 							</span>
 						</div>
 
@@ -185,7 +248,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 						{contract.paymentConfirmedAt && (
 							<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#F0FDF4] px-3.5 py-2.5 text-xs font-medium text-[#16A34A]">
 								<CheckCircle2 size={14} />
-								입금 확인 완료 · {new Date(contract.paymentConfirmedAt).toLocaleDateString("ko-KR")}
+								{t("paymentConfirmed", { date: new Date(contract.paymentConfirmedAt).toLocaleDateString("ko-KR") })}
 							</div>
 						)}
 
@@ -193,7 +256,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 						{role === "buyer" && contract.paymentReceiptUrl && !contract.paymentConfirmedAt && (
 							<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#EFF6FF] px-3.5 py-2.5 text-xs font-medium text-imsg-blue">
 								<CheckCircle2 size={14} />
-								영수증 업로드 완료 · 공급기업 확인 대기 중
+								{t("receiptUploadedWaiting")}
 							</div>
 						)}
 
@@ -201,7 +264,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 						{role === "seller" && contract.paymentReceiptUrl && !contract.paymentConfirmedAt && (
 							<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#FFFBEB] px-3.5 py-2.5 text-xs font-medium text-[#D97706]">
 								<FileText size={14} />
-								송금 영수증 도착 · 확인 후 입금 처리해주세요
+								{t("receiptArrived")}
 							</div>
 						)}
 
@@ -209,7 +272,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 						{role === "seller" && !contract.paymentReceiptUrl && contract.status === "ongoing" && !contract.paymentConfirmedAt && (
 							<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#F9FAFB] px-3.5 py-2.5 text-xs text-[#9CA3AF]">
 								<Clock size={14} />
-								바이어의 송금 영수증을 기다리는 중
+								{t("waitingForReceipt")}
 							</div>
 						)}
 
@@ -219,16 +282,6 @@ export function ContractList({ contracts, role }: ContractListProps) {
 								{/* Buyer 버튼 */}
 								{role === "buyer" && (
 									<>
-										<input
-											ref={(el) => { fileInputRefs.current[contract.id] = el; }}
-											type="file"
-											accept="image/*,.pdf"
-											className="hidden"
-											onChange={(e) => {
-												const file = e.target.files?.[0];
-												if (file) handleReceiptUpload(contract.id, file);
-											}}
-										/>
 										{contract.paymentReceiptUrl ? (
 											<>
 												<button
@@ -236,7 +289,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 													className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] py-2.5 text-xs font-medium text-imsg-blue transition-colors hover:bg-[#DBEAFE]"
 												>
 													<FileText size={14} />
-													영수증 보기
+													{t("viewReceipt")}
 												</button>
 												<button
 													onClick={() => fileInputRefs.current[contract.id]?.click()}
@@ -244,7 +297,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 													className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB] disabled:opacity-60"
 												>
 													<Upload size={14} />
-													{uploadingId === contract.id ? "업로드 중..." : "재업로드"}
+													{uploadingId === contract.id ? t("uploading") : t("reupload")}
 												</button>
 											</>
 										) : (
@@ -254,7 +307,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 												className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-imsg-blue py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
 											>
 												<Upload size={14} />
-												{uploadingId === contract.id ? "업로드 중..." : "송금 영수증 업로드"}
+												{uploadingId === contract.id ? t("uploading") : t("uploadReceipt")}
 											</button>
 										)}
 										<button
@@ -262,7 +315,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 											disabled={loadingId === contract.id}
 											className="flex-1 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60"
 										>
-											계약 취소
+											{t("cancelContract")}
 										</button>
 									</>
 								)}
@@ -276,7 +329,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 												className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] py-2.5 text-xs font-medium text-imsg-blue transition-colors hover:bg-[#DBEAFE]"
 											>
 												<FileText size={14} />
-												영수증 확인
+												{t("confirmReceipt")}
 											</button>
 										)}
 										<button
@@ -290,14 +343,14 @@ export function ContractList({ contracts, role }: ContractListProps) {
 											)}
 										>
 											<CheckCircle2 size={14} />
-											{loadingId === contract.id ? "처리 중..." : "입금 확인"}
+											{loadingId === contract.id ? t("processing") : t("confirmPayment")}
 										</button>
 										<button
 											onClick={() => setCancelConfirmId(contract.id)}
 											disabled={loadingId === contract.id}
 											className="flex-1 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60"
 										>
-											계약 취소
+											{t("cancelContract")}
 										</button>
 									</>
 								)}
@@ -308,11 +361,21 @@ export function ContractList({ contracts, role }: ContractListProps) {
 			</div>
 			)}
 
+			{visibleContracts.length > 0 && (
+				<Pagination
+					page={page}
+					pageCount={pageCount}
+					pageSize={pageSize}
+					onPageChange={setPage}
+					onPageSizeChange={setPageSize}
+				/>
+			)}
+
 			<ConfirmModal
 				isOpen={confirmId !== null}
-				title="입금 확인하시겠습니까?"
-				description="확인 후 계약이 완료 처리됩니다. 실제 입금 여부를 확인 후 진행해주세요."
-				confirmLabel="입금 확인"
+				title={t("confirmPaymentModalTitle")}
+				description={t("confirmPaymentModalDescription")}
+				confirmLabel={t("confirmPayment")}
 				variant="default"
 				isLoading={loadingId === confirmId}
 				onConfirm={() => confirmId && handleStatusChange(confirmId, "completed")}
@@ -321,9 +384,9 @@ export function ContractList({ contracts, role }: ContractListProps) {
 
 			<ConfirmModal
 				isOpen={cancelConfirmId !== null}
-				title="계약을 취소하시겠습니까?"
-				description="취소 후에는 되돌릴 수 없습니다."
-				confirmLabel="취소 확정"
+				title={t("cancelModalTitle")}
+				description={t("cancelModalDescription")}
+				confirmLabel={t("cancelModalConfirmLabel")}
 				variant="danger"
 				isLoading={loadingId === cancelConfirmId}
 				onConfirm={() => cancelConfirmId && handleStatusChange(cancelConfirmId, "cancelled")}

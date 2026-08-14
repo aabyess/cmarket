@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -10,6 +11,8 @@ import { getTerms, isSignupCountry, TERMS_UI_TEXT } from "@/features/auth/terms"
 import type { TermDocument } from "@/features/auth/terms";
 
 export function SignupTerms() {
+  const t = useTranslations("SignupTerms");
+  const tCommon = useTranslations("Common");
   const router = useRouter();
   const searchParams = useSearchParams();
   const countryParam = searchParams.get("country");
@@ -142,7 +145,7 @@ export function SignupTerms() {
                   </button>
                   <button
                     onClick={() => setOpenTerm(term)}
-                    aria-label={`${term.label} 상세 보기`}
+                    aria-label={t("detailAria", { label: term.label })}
                     className="text-[#9CA3AF] hover:text-[#374151] transition-colors ml-2"
                   >
                     <ChevronRight className="w-4 h-4" />
@@ -171,7 +174,7 @@ export function SignupTerms() {
       <SignupTermsDetailModal country={country} term={openTerm} onClose={() => setOpenTerm(null)} />
 
       <footer className="py-6 text-center text-xs text-[#9CA3AF]">
-        © 2003 Cmarket Corp. All rights reserved.
+        {tCommon("copyright")}
       </footer>
     </main>
   );

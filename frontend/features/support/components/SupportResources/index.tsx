@@ -1,6 +1,7 @@
 "use client";
 
 import { Download, FolderOpen } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { SupportResource } from "@/features/support/types";
 
 type SupportResourcesProps = {
@@ -14,6 +15,8 @@ function formatSize(bytes: number): string {
 }
 
 export function SupportResources({ resources }: SupportResourcesProps): React.JSX.Element {
+	const t = useTranslations("SupportResources");
+
 	async function handleDownload(resourceId: string): Promise<void> {
 		try {
 			const res = await fetch(`/api/support/resource-url?resourceId=${resourceId}`);
@@ -21,7 +24,7 @@ export function SupportResources({ resources }: SupportResourcesProps): React.JS
 			const { url } = await res.json();
 			window.open(url, "_blank");
 		} catch {
-			alert("자료를 여는 중 오류가 발생했습니다.");
+			alert(t("openError"));
 		}
 	}
 
@@ -31,7 +34,7 @@ export function SupportResources({ resources }: SupportResourcesProps): React.JS
 				<div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-imsg-surface">
 					<FolderOpen size={20} className="text-imsg-secondary" />
 				</div>
-				<p className="text-base font-medium text-[#0f172a]">등록된 자료가 없어요</p>
+				<p className="text-base font-medium text-[#0f172a]">{t("empty")}</p>
 			</div>
 		);
 	}

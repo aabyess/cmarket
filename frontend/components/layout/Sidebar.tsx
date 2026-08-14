@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import {
 	LayoutDashboard, ListTodo, Mail, MessageSquare,
@@ -21,27 +22,28 @@ type SidebarProps = {
 };
 
 const BUYER_MENU_ITEMS = [
-	{ label: "대시보드", key: "dashboard", icon: LayoutDashboard, href: "/buyer/dashboard", badge: null },
-	{ label: "견적 등록", key: "post-listing", icon: FilePlus, href: "/buyer/post-listing", badge: null },
-	{ label: "나의 견적", key: "listings", icon: ListTodo, href: "/buyer/order-list", badge: null },
-	{ label: "받은 견적", key: "quotes", icon: Mail, href: "/buyer/quote-review", badge: null },
-	{ label: "채팅", key: "chat", icon: MessageSquare, href: "/buyer/chat", badge: null },
-	{ label: "계약 관리", key: "contract", icon: FileCheck, href: "/buyer/contract", badge: null },
-	{ label: "기업 홈페이지", key: "profile", icon: Building2, href: "/buyer/profile/edit", badge: null },
-	{ label: "지원센터", key: "support", icon: HelpCircle, href: "/support", badge: null },
+	{ labelKey: "dashboard", key: "dashboard", icon: LayoutDashboard, href: "/buyer/dashboard", badge: null },
+	{ labelKey: "postListing", key: "post-listing", icon: FilePlus, href: "/buyer/post-listing", badge: null },
+	{ labelKey: "myListings", key: "listings", icon: ListTodo, href: "/buyer/order-list", badge: null },
+	{ labelKey: "receivedQuotes", key: "quotes", icon: Mail, href: "/buyer/quote-review", badge: null },
+	{ labelKey: "chat", key: "chat", icon: MessageSquare, href: "/buyer/chat", badge: null },
+	{ labelKey: "contract", key: "contract", icon: FileCheck, href: "/buyer/contract", badge: null },
+	{ labelKey: "profile", key: "profile", icon: Building2, href: "/buyer/profile/edit", badge: null },
+	{ labelKey: "support", key: "support", icon: HelpCircle, href: "/support", badge: null },
 ];
 
 const SELLER_MENU_ITEMS = [
-	{ label: "대시보드", key: "dashboard", icon: LayoutDashboard, href: "/seller/dashboard", badge: null },
-	{ label: "견적요청 보기", key: "browse", icon: Search, href: "/seller/listing-browse", badge: null },
-	{ label: "보낸 견적", key: "quotes", icon: Send, href: "/seller/quote-submit", badge: null },
-	{ label: "채팅", key: "chat", icon: MessageSquare, href: "/seller/chat", badge: null },
-	{ label: "계약 관리", key: "contract", icon: FileCheck, href: "/seller/contract", badge: null },
-	{ label: "기업 홈페이지", key: "profile", icon: Building2, href: "/seller/profile/edit", badge: null },
-	{ label: "지원센터", key: "support", icon: HelpCircle, href: "/support", badge: null },
+	{ labelKey: "dashboard", key: "dashboard", icon: LayoutDashboard, href: "/seller/dashboard", badge: null },
+	{ labelKey: "browseListings", key: "browse", icon: Search, href: "/seller/listing-browse", badge: null },
+	{ labelKey: "sentQuotes", key: "quotes", icon: Send, href: "/seller/quote-submit", badge: null },
+	{ labelKey: "chat", key: "chat", icon: MessageSquare, href: "/seller/chat", badge: null },
+	{ labelKey: "contract", key: "contract", icon: FileCheck, href: "/seller/contract", badge: null },
+	{ labelKey: "profile", key: "profile", icon: Building2, href: "/seller/profile/edit", badge: null },
+	{ labelKey: "support", key: "support", icon: HelpCircle, href: "/support", badge: null },
 ];
 
 export function Sidebar({ role, companyName, name }: SidebarProps) {
+	const t = useTranslations("Sidebar");
 	const pathname = usePathname();
 	const router = useRouter();
 	const menuItems = role === "seller" ? SELLER_MENU_ITEMS : BUYER_MENU_ITEMS;
@@ -109,7 +111,7 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 										className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#374151] hover:bg-[#F3F4F6] transition-colors"
 									>
 										<User size={14} />
-										내 프로필
+										{t("dropdown.myProfile")}
 									</Link>
 								</div>
 								<div className="border-t border-[#F3F4F6] py-1">
@@ -118,7 +120,7 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 										className="flex w-full items-center gap-2.5 px-4 py-2 text-sm text-red-600 hover:bg-[#FEF2F2] transition-colors"
 									>
 										<LogOut size={14} />
-										로그아웃
+										{t("dropdown.logout")}
 									</button>
 								</div>
 							</div>
@@ -134,7 +136,7 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 			{/* 메뉴 */}
 			<nav className="flex-1 px-3 py-4 overflow-y-auto">
 				<p className="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-sidebar-foreground/40">
-					메뉴
+					{t("menuHeading")}
 				</p>
 				<div className="space-y-0.5">
 				{menuItems.map((item) => {
@@ -158,7 +160,7 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 									isActive ? "text-[#111827]" : "text-[#9CA3AF]",
 								)}
 							/>
-							<span className="flex-1">{item.label}</span>
+							<span className="flex-1">{t(`menu.${item.labelKey}`)}</span>
 							{item.badge && (
 								<span className="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-semibold bg-white/20 text-white">
 									{item.badge}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "@/i18n/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { Bell, Mail, MessageSquare, X } from "lucide-react";
@@ -22,6 +23,7 @@ function formatTime(iso: string): string {
 }
 
 export function NotificationBell(): React.ReactNode {
+	const t = useTranslations("NotificationBell");
 	const router = useRouter();
 	const pathname = usePathname();
 	const queryClient = useQueryClient();
@@ -112,10 +114,10 @@ export function NotificationBell(): React.ReactNode {
 			{isOpen && (
 				<div className="absolute left-0 mt-2 w-80 bg-white border border-[#E5E7EB] rounded-lg shadow-lg overflow-hidden z-50">
 					<div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E7EB]">
-						<p className="text-sm font-semibold text-[#1F2937]">알림</p>
+						<p className="text-sm font-semibold text-[#1F2937]">{t("title")}</p>
 						{unreadCount > 0 && (
 							<button onClick={handleMarkAllRead} className="text-xs text-imsg-blue hover:underline">
-								모두 읽음
+								{t("markAllRead")}
 							</button>
 						)}
 					</div>
@@ -124,7 +126,7 @@ export function NotificationBell(): React.ReactNode {
 						{notifications.length === 0 ? (
 							<div className="flex flex-col items-center justify-center py-10 text-center">
 								<MessageSquare size={24} className="mb-2 text-[#D1D5DB]" />
-								<p className="text-sm text-[#9CA3AF]">알림이 없어요</p>
+								<p className="text-sm text-[#9CA3AF]">{t("emptyText")}</p>
 							</div>
 						) : (
 							notifications.map((n) => (

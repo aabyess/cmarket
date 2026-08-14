@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { GoogleMap, Marker, Autocomplete, useJsApiLoader } from "@react-google-maps/api";
 import { X } from "lucide-react";
@@ -25,6 +26,7 @@ export default function ListingLocationPickerModal({
 	initialSearchQuery,
 	onConfirm,
 }: ListingLocationPickerModalProps) {
+	const t = useTranslations("ListingLocationPickerModal");
 	const { isLoaded } = useJsApiLoader({
 		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
 		libraries: LIBRARIES,
@@ -90,7 +92,7 @@ export default function ListingLocationPickerModal({
 				<DialogPanel className="w-full max-w-2xl rounded-2xl bg-white p-5">
 					<div className="mb-3 flex items-center justify-between">
 						<DialogTitle className="text-sm font-semibold text-[#1F2937]">
-							배송지 위치 확인
+							{t("title")}
 						</DialogTitle>
 						<button onClick={onClose} className="text-[#9CA3AF] hover:text-[#374151]">
 							<X size={18} />
@@ -99,7 +101,7 @@ export default function ListingLocationPickerModal({
 
 					{!isLoaded ? (
 						<div className="flex h-96 items-center justify-center text-sm text-[#9CA3AF]">
-							지도를 불러오는 중...
+							{t("mapLoading")}
 						</div>
 					) : (
 						<>
@@ -111,7 +113,7 @@ export default function ListingLocationPickerModal({
 							>
 								<input
 									type="text"
-									placeholder="주소 또는 장소명 검색"
+									placeholder={t("searchPlaceholder")}
 									className="mb-3 w-full rounded-lg border border-[#E2E8F0] px-4 py-2.5 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 								/>
 							</Autocomplete>
@@ -136,7 +138,7 @@ export default function ListingLocationPickerModal({
 							</GoogleMap>
 
 							<p className="mt-2 text-xs text-[#9CA3AF]">
-								지도를 클릭하거나 핀을 드래그해서 정확한 위치를 지정해주세요.
+								{t("mapHint")}
 							</p>
 						</>
 					)}
@@ -146,14 +148,14 @@ export default function ListingLocationPickerModal({
 							onClick={onClose}
 							className="rounded-lg px-4 py-2 text-sm font-medium text-[#374151] transition-colors hover:bg-[#F3F4F6]"
 						>
-							취소
+							{t("cancel")}
 						</button>
 						<button
 							onClick={handleConfirm}
 							disabled={!isLoaded}
 							className="rounded-lg bg-imsg-blue px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-50"
 						>
-							이 위치로 확정
+							{t("confirm")}
 						</button>
 					</div>
 				</DialogPanel>

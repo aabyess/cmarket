@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { cva } from "class-variance-authority";
 import { LayoutGrid, List } from "lucide-react";
 import type { QuoteStatus } from "@/features/seller/types";
@@ -7,12 +8,7 @@ import type { QuoteStatus } from "@/features/seller/types";
 export type MyQuotesFilter = "all" | QuoteStatus;
 export type MyQuotesViewMode = "grid" | "list";
 
-const FILTERS: { value: MyQuotesFilter; label: string }[] = [
-	{ value: "all", label: "전체" },
-	{ value: "pending", label: "검토 중" },
-	{ value: "awarded", label: "계약 확정" },
-	{ value: "rejected", label: "미선정" },
-];
+const FILTER_VALUES: MyQuotesFilter[] = ["all", "pending", "awarded", "rejected"];
 
 type MyQuotesFilterBarProps = {
 	filter: MyQuotesFilter;
@@ -62,19 +58,25 @@ export function MyQuotesFilterBar({
 	onFilterChange,
 	onViewModeChange,
 }: MyQuotesFilterBarProps): React.JSX.Element {
+	const t = useTranslations("MyQuotesFilterBar");
+	const filterLabels: Record<MyQuotesFilter, string> = {
+		all: t("filterAll"),
+		pending: t("filterPending"),
+		awarded: t("filterAwarded"),
+		rejected: t("filterRejected"),
+	};
+
 	return (
 		<div className="mb-4 flex items-center justify-between gap-2">
 			<div className="flex flex-wrap items-center gap-1 rounded-xl border border-[#E5E7EB] bg-white p-1">
-				{FILTERS.map((item) => (
+				{FILTER_VALUES.map((value) => (
 					<button
-						key={item.value}
+						key={value}
 						type="button"
-						onClick={() => onFilterChange(item.value)}
-						className={filterButton({ active: filter === item.value })}>
-						{item.label}
-						<span className={countText({ active: filter === item.value })}>
-							{counts[item.value]}
-						</span>
+						onClick={() => onFilterChange(value)}
+						className={filterButton({ active: filter === value })}>
+						{filterLabels[value]}
+						<span className={countText({ active: filter === value })}>{counts[value]}</span>
 					</button>
 				))}
 			</div>
@@ -83,14 +85,14 @@ export function MyQuotesFilterBar({
 				<button
 					type="button"
 					onClick={() => onViewModeChange("grid")}
-					aria-label="카드로 보기"
+					aria-label={t("gridViewAriaLabel")}
 					className={viewButton({ active: viewMode === "grid" })}>
 					<LayoutGrid size={15} />
 				</button>
 				<button
 					type="button"
 					onClick={() => onViewModeChange("list")}
-					aria-label="목록으로 보기"
+					aria-label={t("listViewAriaLabel")}
 					className={viewButton({ active: viewMode === "list" })}>
 					<List size={15} />
 				</button>

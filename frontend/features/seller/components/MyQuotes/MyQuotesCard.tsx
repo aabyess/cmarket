@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Building2, Truck, Clock } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { Currency } from "@/features/buyer/types";
@@ -11,10 +12,10 @@ const CURRENCY_SYMBOL: Record<Currency, string> = {
 	KRW: "₩",
 };
 
-const STATUS_CONFIG: Record<QuoteStatus, { label: string; className: string }> = {
-	pending: { label: "검토 중", className: "bg-[#EFF6FF] text-imsg-blue" },
-	awarded: { label: "계약 확정", className: "bg-[#ECFDF5] text-[#059669]" },
-	rejected: { label: "미선정", className: "bg-[#F3F4F6] text-[#6B7280]" },
+const STATUS_CLASS_NAME: Record<QuoteStatus, string> = {
+	pending: "bg-[#EFF6FF] text-imsg-blue",
+	awarded: "bg-[#ECFDF5] text-[#059669]",
+	rejected: "bg-[#F3F4F6] text-[#6B7280]",
 };
 
 function formatDate(iso: string): string {
@@ -29,7 +30,13 @@ type MyQuotesCardProps = {
 };
 
 export function MyQuotesCard({ quote, onViewListing, onGoToChat }: MyQuotesCardProps) {
-	const status = STATUS_CONFIG[quote.status];
+	const t = useTranslations("MyQuotesCard");
+	const statusLabels: Record<QuoteStatus, string> = {
+		pending: t("statusPending"),
+		awarded: t("statusAwarded"),
+		rejected: t("statusRejected"),
+	};
+	const statusClassName = STATUS_CLASS_NAME[quote.status];
 	const symbol = CURRENCY_SYMBOL[quote.currency];
 	const isAwarded = quote.status === "awarded";
 
@@ -41,8 +48,8 @@ export function MyQuotesCard({ quote, onViewListing, onGoToChat }: MyQuotesCardP
 			)}
 		>
 			<div className="mb-2 flex items-start justify-between gap-2">
-				<span className={cn("rounded-full px-2 py-0.5 text-xs font-medium", status.className)}>
-					{status.label}
+				<span className={cn("whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium", statusClassName)}>
+					{statusLabels[quote.status]}
 				</span>
 				<span className="flex shrink-0 items-center gap-1 text-xs text-[#9CA3AF]">
 					<Clock size={11} />
@@ -61,7 +68,7 @@ export function MyQuotesCard({ quote, onViewListing, onGoToChat }: MyQuotesCardP
 
 			<div className="mt-3 grid grid-cols-2 gap-2 border-t border-[#F3F4F6] pt-3">
 				<div className="min-w-0">
-					<p className="text-xs text-[#9CA3AF]">내 견적가</p>
+					<p className="text-xs text-[#9CA3AF]">{t("priceLabel")}</p>
 					<p className="mt-0.5 truncate text-sm font-medium text-[#1F2937]">
 						{symbol} {quote.price.toLocaleString()}
 					</p>
@@ -69,10 +76,10 @@ export function MyQuotesCard({ quote, onViewListing, onGoToChat }: MyQuotesCardP
 				<div className="min-w-0">
 					<p className="flex items-center gap-1 text-xs text-[#9CA3AF]">
 						<Truck size={11} />
-						납품
+						{t("deliveryLabel")}
 					</p>
 					<p className="mt-0.5 text-sm font-medium text-[#1F2937]">
-						{quote.deliveryDays}일
+						{t("daysSuffix", { days: quote.deliveryDays })}
 					</p>
 				</div>
 			</div>
@@ -82,14 +89,14 @@ export function MyQuotesCard({ quote, onViewListing, onGoToChat }: MyQuotesCardP
 					onClick={onViewListing}
 					className="flex-1 rounded-lg border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#374151] transition-colors hover:bg-gray-50"
 				>
-					견적요청 보기
+					{t("viewListingButton")}
 				</button>
 				{isAwarded && (
 					<button
 						onClick={onGoToChat}
 						className="flex-1 rounded-lg bg-imsg-blue py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#2563EB]"
 					>
-						대화하기
+						{t("chatButton")}
 					</button>
 				)}
 			</div>

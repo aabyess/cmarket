@@ -1,5 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import { ChevronLeft, FileText } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { PublicSiteIdentity } from "@/features/siteBuilder/components/PublicSite/PublicSiteIdentity";
 import { SiteRenderer } from "@/features/siteBuilder/components/SiteRenderer";
 import type { PublicSite } from "@/features/siteBuilder/types";
@@ -10,7 +11,13 @@ type PublicSiteProps = {
 	backLabel: string;
 };
 
-export function PublicSiteView({ site, backHref, backLabel }: PublicSiteProps): React.JSX.Element {
+export async function PublicSiteView({
+	site,
+	backHref,
+	backLabel,
+}: PublicSiteProps): Promise<React.JSX.Element> {
+	const t = await getTranslations("PublicSite");
+
 	return (
 		<div className="mx-auto max-w-[1200px] px-6 py-6 lg:px-8 xl:px-10">
 			<Link
@@ -35,11 +42,8 @@ export function PublicSiteView({ site, backHref, backLabel }: PublicSiteProps): 
 						<div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-imsg-surface">
 							<FileText size={20} className="text-imsg-secondary" />
 						</div>
-						<p className="text-base font-medium text-[#0f172a]">아직 회사 소개 페이지가 없어요</p>
-						<p className="mt-1 text-sm text-imsg-secondary">
-							이 기업은 소개 페이지를 등록하지 않았습니다. 위의 사업자 정보로 확인하시거나, 견적
-							화면에서 직접 문의해 보세요.
-						</p>
+						<p className="text-base font-medium text-[#0f172a]">{t("emptyTitle")}</p>
+						<p className="mt-1 text-sm text-imsg-secondary">{t("emptyDescription")}</p>
 					</section>
 				</div>
 			)}

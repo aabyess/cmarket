@@ -1,11 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { cn } from "@/utils/cn";
 
 const COUNTRY_CONFIG = {
-	indonesia: { flagUrl: "https://flagcdn.com/w80/id.png", label: "인도네시아" },
-	korea: { flagUrl: "https://flagcdn.com/w80/kr.png", label: "대한민국" },
+	indonesia: { flagUrl: "https://flagcdn.com/w80/id.png" },
+	korea: { flagUrl: "https://flagcdn.com/w80/kr.png" },
 } as const;
 
 type UserBadgeProps = {
@@ -15,7 +16,9 @@ type UserBadgeProps = {
 };
 
 export function UserBadge({ country, size = "sm", className }: UserBadgeProps) {
-	const { flagUrl, label } = COUNTRY_CONFIG[country];
+	const t = useTranslations("UserBadge");
+	const { flagUrl } = COUNTRY_CONFIG[country];
+	const label = t(country);
 
 	const SIZE_MAP = {
 		sm: { width: 24, height: 18 },

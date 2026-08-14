@@ -1,5 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import { ChevronLeft } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { QuoteReview } from "@/features/buyer/components/QuoteReview";
 import { QuoteReviewListingPicker } from "@/features/buyer/components/QuoteReview/QuoteReviewListingPicker";
 import { getListingsWithQuoteCount, getQuotesByListing } from "@/features/buyer/apis";
@@ -10,6 +11,7 @@ type QuoteReviewPageProps = {
 
 export default async function QuoteReviewPage({ searchParams }: QuoteReviewPageProps) {
 	const { listingId } = await searchParams;
+	const t = await getTranslations("BuyerQuoteReviewPage");
 
 	if (!listingId) {
 		const listings = await getListingsWithQuoteCount();
@@ -17,8 +19,8 @@ export default async function QuoteReviewPage({ searchParams }: QuoteReviewPageP
 		return (
 			<div className="px-8 py-6 xl:px-12">
 				<div className="mb-5">
-					<h1 className="text-2xl font-bold text-[#1F2937]">받은 견적</h1>
-					<p className="mt-1 text-sm text-[#6B7280]">공고를 선택해 견적을 확인하세요</p>
+					<h1 className="text-2xl font-bold text-[#1F2937]">{t("title")}</h1>
+					<p className="mt-1 text-sm text-[#6B7280]">{t("subtitle")}</p>
 				</div>
 
 				<QuoteReviewListingPicker listings={listings} />
@@ -40,14 +42,14 @@ export default async function QuoteReviewPage({ searchParams }: QuoteReviewPageP
 				className="mb-4 inline-flex items-center gap-1.5 text-sm text-[#6B7280] transition-colors hover:text-[#374151]"
 			>
 				<ChevronLeft size={16} />
-				공고 목록으로
+				{t("backToList")}
 			</Link>
 
 			<div className="mb-5">
 				<h1 className="text-2xl font-bold text-[#1F2937]">
-					{currentListing?.title ?? "받은 견적"}
+					{currentListing?.title ?? t("title")}
 				</h1>
-				<p className="mt-1 text-sm text-[#6B7280]">견적 {quotes.length}건 · 가격 낮은 순</p>
+				<p className="mt-1 text-sm text-[#6B7280]">{t("quoteCount", { count: quotes.length })}</p>
 			</div>
 
 			<QuoteReview quotes={quotes} backHref={`/buyer/quote-review?listingId=${listingId}`} />
