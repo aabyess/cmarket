@@ -21,7 +21,7 @@ const STATUS_LABEL: Record<ContractStatus, string> = {
 };
 
 const STATUS_STYLE: Record<ContractStatus, string> = {
-	ongoing: "bg-[#EFF6FF] text-[#3B82F6]",
+	ongoing: "bg-[#EFF6FF] text-imsg-blue",
 	completed: "bg-[#F0FDF4] text-[#16A34A]",
 	cancelled: "bg-[#FEF2F2] text-[#DC2626]",
 };
@@ -191,7 +191,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 
 						{/* Buyer: 영수증 업로드 대기 배너 */}
 						{role === "buyer" && contract.paymentReceiptUrl && !contract.paymentConfirmedAt && (
-							<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#EFF6FF] px-3.5 py-2.5 text-xs font-medium text-[#3B82F6]">
+							<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#EFF6FF] px-3.5 py-2.5 text-xs font-medium text-imsg-blue">
 								<CheckCircle2 size={14} />
 								영수증 업로드 완료 · 공급기업 확인 대기 중
 							</div>
@@ -233,7 +233,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 											<>
 												<button
 													onClick={() => handleViewReceipt(contract.id)}
-													className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] py-2.5 text-xs font-medium text-[#3B82F6] transition-colors hover:bg-[#DBEAFE]"
+													className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] py-2.5 text-xs font-medium text-imsg-blue transition-colors hover:bg-[#DBEAFE]"
 												>
 													<FileText size={14} />
 													영수증 보기
@@ -251,7 +251,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 											<button
 												onClick={() => fileInputRefs.current[contract.id]?.click()}
 												disabled={uploadingId === contract.id}
-												className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#3B82F6] py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
+												className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-imsg-blue py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
 											>
 												<Upload size={14} />
 												{uploadingId === contract.id ? "업로드 중..." : "송금 영수증 업로드"}
@@ -273,7 +273,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 										{contract.paymentReceiptUrl && (
 											<button
 												onClick={() => handleViewReceipt(contract.id)}
-												className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] py-2.5 text-xs font-medium text-[#3B82F6] transition-colors hover:bg-[#DBEAFE]"
+												className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] py-2.5 text-xs font-medium text-imsg-blue transition-colors hover:bg-[#DBEAFE]"
 											>
 												<FileText size={14} />
 												영수증 확인

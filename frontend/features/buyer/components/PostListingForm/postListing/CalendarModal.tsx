@@ -95,7 +95,7 @@ export default function CalendarModal({ isOpen, onClose, value, onSelect }: Cale
 								key={day}
 								className={cn(
 									"py-1.5 text-xs font-medium",
-									i === 0 ? "text-[#DC2626]" : i === 6 ? "text-[#3B82F6]" : "text-[#9CA3AF]",
+									i === 0 ? "text-[#DC2626]" : i === 6 ? "text-imsg-blue" : "text-[#9CA3AF]",
 								)}
 							>
 								{day}
@@ -116,7 +116,7 @@ export default function CalendarModal({ isOpen, onClose, value, onSelect }: Cale
 									className={cn(
 										"flex h-9 items-center justify-center rounded-lg text-sm transition-colors",
 										isSelected
-											? "bg-[#3B82F6] font-semibold text-white"
+											? "bg-imsg-blue font-semibold text-white"
 											: isPast
 												? "text-[#D1D5DB]"
 												: "text-[#374151] hover:bg-[#F3F4F6]",

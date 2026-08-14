@@ -55,7 +55,7 @@ export function OrderListFilterBar({
 					className={cn(
 						"flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors",
 						isAllActive
-							? "bg-[#3B82F6] text-white"
+							? "bg-imsg-blue text-white"
 							: "text-[#374151] hover:bg-[#F9FAFB]",
 					)}
 				>
@@ -73,7 +73,7 @@ export function OrderListFilterBar({
 							className={cn(
 								"flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors",
 								isActive
-									? "bg-[#3B82F6] text-white"
+									? "bg-imsg-blue text-white"
 									: "text-[#374151] hover:bg-[#F9FAFB]",
 							)}
 						>
@@ -107,7 +107,7 @@ export function OrderListFilterBar({
 							className={cn(
 								"rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors",
 								sort === option
-									? "bg-[#3B82F6] text-white"
+									? "bg-imsg-blue text-white"
 									: "text-[#374151] hover:bg-[#F9FAFB]",
 							)}
 						>
@@ -122,7 +122,7 @@ export function OrderListFilterBar({
 					onClick={() => onViewModeChange("grid")}
 					className={cn(
 						"flex size-8 items-center justify-center rounded-lg transition-colors",
-						viewMode === "grid" ? "bg-[#3B82F6] text-white" : "text-[#9CA3AF] hover:bg-[#F9FAFB]",
+						viewMode === "grid" ? "bg-imsg-blue text-white" : "text-[#9CA3AF] hover:bg-[#F9FAFB]",
 					)}
 				>
 					<LayoutGrid size={15} />
@@ -131,7 +131,7 @@ export function OrderListFilterBar({
 					onClick={() => onViewModeChange("list")}
 					className={cn(
 						"flex size-8 items-center justify-center rounded-lg transition-colors",
-						viewMode === "list" ? "bg-[#3B82F6] text-white" : "text-[#9CA3AF] hover:bg-[#F9FAFB]",
+						viewMode === "list" ? "bg-imsg-blue text-white" : "text-[#9CA3AF] hover:bg-[#F9FAFB]",
 					)}
 				>
 					<List size={15} />

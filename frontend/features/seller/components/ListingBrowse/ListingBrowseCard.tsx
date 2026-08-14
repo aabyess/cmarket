@@ -48,7 +48,7 @@ export function ListingBrowseCard({ listing, onClick }: ListingBrowseCardProps) 
 							? "bg-[#F3F4F6] text-[#6B7280]"
 							: remaining.isUrgent
 								? "bg-[#FEF2F2] text-[#DC2626]"
-								: "bg-[#EFF6FF] text-[#3B82F6]",
+								: "bg-[#EFF6FF] text-imsg-blue",
 					)}
 				>
 					<Clock size={11} />

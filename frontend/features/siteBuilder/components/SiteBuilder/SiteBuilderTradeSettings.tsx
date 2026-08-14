@@ -26,7 +26,7 @@ type SiteBuilderTradeSettingsProps = {
 const categoryButton = cva("rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors", {
 	variants: {
 		selected: {
-			true: "border-[#3B82F6] bg-[#EFF6FF] text-[#3B82F6]",
+			true: "border-imsg-blue bg-[#EFF6FF] text-imsg-blue",
 			false: "border-[#E5E7EB] text-[#6B7280] hover:bg-gray-50",
 		},
 	},
@@ -230,7 +230,7 @@ export function SiteBuilderTradeSettings({
 										bankAccount: { ...settings.bankAccount, currency: e.target.value },
 									})
 								}
-								className="w-full rounded-lg border border-[#E5E7EB] px-3.5 py-2.5 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]">
+								className="w-full rounded-lg border border-[#E5E7EB] px-3.5 py-2.5 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue">
 								{CURRENCY_OPTIONS.map((currency) => (
 									<option key={currency} value={currency}>
 										{currency}
@@ -272,7 +272,7 @@ export function SiteBuilderTradeSettings({
 				type="button"
 				onClick={onSave}
 				disabled={isSaving}
-				className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#3B82F6] py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60">
+				className="flex w-full items-center justify-center gap-2 rounded-xl bg-imsg-blue py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60">
 				{isSaving && <Loader2 size={15} className="animate-spin" />}
 				설정 저장
 			</button>

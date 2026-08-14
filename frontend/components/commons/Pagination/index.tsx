@@ -26,7 +26,7 @@ export function Pagination({
 			<select
 				value={pageSize}
 				onChange={(e) => onPageSizeChange(Number(e.target.value))}
-				className="absolute left-0 rounded-lg border border-[#E2E8F0] py-1.5 pl-3 text-xs text-[#374151] focus:border-[#3B82F6] focus:outline-none"
+				className="absolute left-0 rounded-lg border border-[#E2E8F0] py-1.5 pl-3 text-xs text-[#374151] focus:border-imsg-blue focus:outline-none"
 			>
 				{pageSizeOptions.map((size) => (
 					<option key={size} value={size}>

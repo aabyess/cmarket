@@ -72,7 +72,7 @@ export function ConfirmModal({
                                             "flex-1 rounded-lg py-3 text-sm font-semibold text-white transition-colors disabled:opacity-60",
                                             variant === "danger"
                                                 ? "bg-[#DC2626] hover:bg-[#B91C1C]"
-                                                : "bg-[#3B82F6] hover:bg-[#2563EB]",
+                                                : "bg-imsg-blue hover:bg-[#2563EB]",
                                         )}
                                     >
                                         {isLoading ? "처리 중..." : confirmLabel}

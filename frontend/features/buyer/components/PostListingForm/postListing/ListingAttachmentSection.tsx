@@ -98,12 +98,12 @@ export default function ListingAttachmentSection({ form, onChange }: ListingAtta
                 onDrop={handleDrop}
                 className={`flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border py-10 text-center transition-colors ${
                     isDragging
-                        ? "border-dashed border-[#3B82F6] bg-[#EFF6FF]"
-                        : "border-[#E2E8F0] bg-[#F9FAFB] hover:border-dashed hover:border-[#3B82F6]"
+                        ? "border-dashed border-imsg-blue bg-[#EFF6FF]"
+                        : "border-[#E2E8F0] bg-[#F9FAFB] hover:border-dashed hover:border-imsg-blue"
                 }`}
             >
 				{isUploading ? (
-					<Loader2 size={20} className="animate-spin text-[#3B82F6]" />
+					<Loader2 size={20} className="animate-spin text-imsg-blue" />
 				) : (
 					<Upload size={20} className="text-[#9CA3AF]" />
 				)}

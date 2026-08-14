@@ -112,7 +112,7 @@ export default function ListingLocationPickerModal({
 								<input
 									type="text"
 									placeholder="주소 또는 장소명 검색"
-									className="mb-3 w-full rounded-lg border border-[#E2E8F0] px-4 py-2.5 text-sm focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
+									className="mb-3 w-full rounded-lg border border-[#E2E8F0] px-4 py-2.5 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 								/>
 							</Autocomplete>
 
@@ -151,7 +151,7 @@ export default function ListingLocationPickerModal({
 						<button
 							onClick={handleConfirm}
 							disabled={!isLoaded}
-							className="rounded-lg bg-[#3B82F6] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-50"
+							className="rounded-lg bg-imsg-blue px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-50"
 						>
 							이 위치로 확정
 						</button>

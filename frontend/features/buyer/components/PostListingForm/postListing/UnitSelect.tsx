@@ -58,7 +58,7 @@ export default function UnitSelect({ value, onChange }: UnitSelectProps): React.
 				onChange={(e) => onChange(e.target.value)}
 				onFocus={() => setIsOpen(true)}
 				placeholder="단위"
-				className="w-full rounded border border-[#E2E8F0] px-2 py-1.5 text-sm text-[#374151] focus:border-[#3B82F6] focus:outline-none"
+				className="w-full rounded border border-[#E2E8F0] px-2 py-1.5 text-sm text-[#374151] focus:border-imsg-blue focus:outline-none"
 			/>
 
 			{isOpen && (
@@ -77,14 +77,14 @@ export default function UnitSelect({ value, onChange }: UnitSelectProps): React.
 								<span
 									className={cn(
 										"block text-sm font-medium",
-										value === option.value ? "text-[#3B82F6]" : "text-[#1F2937]",
+										value === option.value ? "text-imsg-blue" : "text-[#1F2937]",
 									)}
 								>
 									{option.value}
 								</span>
 								<span className="block text-xs text-[#9CA3AF]">{option.desc}</span>
 							</span>
-							{value === option.value && <Check size={14} className="shrink-0 text-[#3B82F6]" />}
+							{value === option.value && <Check size={14} className="shrink-0 text-imsg-blue" />}
 						</button>
 					))}
 				</div>

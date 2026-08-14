@@ -7,7 +7,7 @@ export default function NotFound() {
 			style={{ backgroundColor: "#F0F5FF" }}
 		>
 			<div className="text-center space-y-3">
-				<p className="text-8xl font-bold text-[#3B82F6]">404</p>
+				<p className="text-8xl font-bold text-imsg-blue">404</p>
 				<h1 className="text-2xl font-bold text-[#1F2937]">페이지를 찾을 수 없습니다</h1>
 				<p className="text-sm text-[#6B7280]">
 					요청하신 페이지가 존재하지 않거나 준비 중입니다.
@@ -15,7 +15,7 @@ export default function NotFound() {
 			</div>
 			<Link
 				href="/"
-				className="px-6 py-3 rounded-xl bg-[#3B82F6] hover:bg-[#2563EB] text-white font-semibold text-sm transition-colors"
+				className="px-6 py-3 rounded-xl bg-imsg-blue hover:bg-[#2563EB] text-white font-semibold text-sm transition-colors"
 			>
 				홈으로 돌아가기
 			</Link>

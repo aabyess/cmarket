@@ -34,7 +34,7 @@ export function ListingExtendDropdown({ listingId }: ListingExtendDropdownProps)
 			<select
 				value={days}
 				onChange={(e) => setDays(Number(e.target.value))}
-				className="rounded-lg border border-[#E2E8F0] px-3 py-2 text-sm text-[#374151] focus:border-[#3B82F6] focus:outline-none"
+				className="rounded-lg border border-[#E2E8F0] px-3 py-2 text-sm text-[#374151] focus:border-imsg-blue focus:outline-none"
 			>
 				{EXTEND_OPTIONS.map((option) => (
 					<option key={option} value={option}>
@@ -45,7 +45,7 @@ export function ListingExtendDropdown({ listingId }: ListingExtendDropdownProps)
 			<button
 				onClick={handleExtend}
 				disabled={isLoading}
-				className="flex items-center gap-1.5 rounded-lg bg-[#3B82F6] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
+				className="flex items-center gap-1.5 rounded-lg bg-imsg-blue px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
 			>
 				<Clock size={14} />
 				{isLoading ? "처리 중..." : "연장하기"}

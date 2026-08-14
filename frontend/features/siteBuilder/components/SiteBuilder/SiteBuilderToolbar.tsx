@@ -82,7 +82,7 @@ export function SiteBuilderToolbar({
 					type="button"
 					onClick={onPublish}
 					disabled={isPublishing}
-					className="flex items-center gap-1.5 rounded-lg bg-[#3B82F6] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60">
+					className="flex items-center gap-1.5 rounded-lg bg-imsg-blue px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60">
 					{isPublishing ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
 					발행하기
 				</button>

@@ -7,7 +7,7 @@ import { uploadImage } from "@/features/siteBuilder/upload";
 import { cn } from "@/utils/cn";
 
 const INPUT_CLASS =
-	"w-full rounded-lg border border-[#E5E7EB] px-3.5 py-2.5 text-sm text-[#1F2937] placeholder:text-[#9CA3AF] focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]";
+	"w-full rounded-lg border border-[#E5E7EB] px-3.5 py-2.5 text-sm text-[#1F2937] placeholder:text-[#9CA3AF] focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue";
 
 const LABEL_CLASS = "mb-1.5 block text-xs font-medium text-[#374151]";
 
@@ -109,7 +109,7 @@ export function SiteBuilderTagField({
 				<button
 					type="button"
 					onClick={handleAdd}
-					className="shrink-0 rounded-lg bg-[#3B82F6] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#2563EB]">
+					className="shrink-0 rounded-lg bg-imsg-blue px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#2563EB]">
 					추가
 				</button>
 			</div>
@@ -117,7 +117,7 @@ export function SiteBuilderTagField({
 				{values.map((value) => (
 					<span
 						key={value}
-						className="flex items-center gap-1.5 rounded-full bg-[#EFF6FF] px-3 py-1 text-xs font-medium text-[#3B82F6]">
+						className="flex items-center gap-1.5 rounded-full bg-[#EFF6FF] px-3 py-1 text-xs font-medium text-imsg-blue">
 						{value}
 						<button type="button" onClick={() => onChange(values.filter((v) => v !== value))}>
 							<X size={12} />
@@ -162,7 +162,7 @@ export function SiteBuilderImageField({
 		<div>
 			<label className={LABEL_CLASS}>{label}</label>
 			<div className="flex items-center gap-3">
-				<label className="flex size-16 cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-[#E5E7EB] bg-[#F9FAFB] transition-colors hover:border-[#3B82F6]">
+				<label className="flex size-16 cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-[#E5E7EB] bg-[#F9FAFB] transition-colors hover:border-imsg-blue">
 					{isUploading ? (
 						<Loader2 size={18} className="animate-spin text-[#9CA3AF]" />
 					) : value ? (
@@ -230,7 +230,7 @@ export function SiteBuilderImageListField({
 						</button>
 					</div>
 				))}
-				<label className="flex size-16 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-[#E5E7EB] bg-white transition-colors hover:border-[#3B82F6]">
+				<label className="flex size-16 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-[#E5E7EB] bg-white transition-colors hover:border-imsg-blue">
 					{isUploading ? (
 						<Loader2 size={16} className="animate-spin text-[#9CA3AF]" />
 					) : (

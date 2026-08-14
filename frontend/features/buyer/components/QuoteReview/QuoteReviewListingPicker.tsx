@@ -80,7 +80,7 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 				</p>
 				<button
 					onClick={() => router.push("/buyer/post-listing")}
-					className="mt-5 rounded-lg bg-[#3B82F6] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB]"
+					className="mt-5 rounded-lg bg-imsg-blue px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB]"
 				>
 					첫 공고 올리기
 				</button>
@@ -137,7 +137,7 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 													? "bg-[#F3F4F6] text-[#6B7280]"
 													: remaining.isUrgent
 														? "bg-[#FEF2F2] text-[#DC2626]"
-														: "bg-[#EFF6FF] text-[#3B82F6]",
+														: "bg-[#EFF6FF] text-imsg-blue",
 											)}
 										>
 											<Clock size={11} />
@@ -146,7 +146,7 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 									)}
 
 									{hasQuotes && (
-										<span className="shrink-0 text-xs font-semibold text-[#3B82F6]">
+										<span className="shrink-0 text-xs font-semibold text-imsg-blue">
 											견적 {listing.quoteCount}
 										</span>
 									)}

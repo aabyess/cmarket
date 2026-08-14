@@ -87,7 +87,7 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 				</p>
 				<button
 					onClick={() => router.push("/buyer/post-listing")}
-					className="mt-5 rounded-lg bg-[#3B82F6] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB]"
+					className="mt-5 rounded-lg bg-imsg-blue px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB]"
 				>
 					첫 견적요청 올리기
 				</button>

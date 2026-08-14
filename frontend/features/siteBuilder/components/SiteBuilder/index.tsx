@@ -32,7 +32,7 @@ type Feedback = { kind: "SUCCESS" | "ERROR"; message: string };
 const tabButton = cva("rounded-lg px-4 py-2 text-sm font-medium transition-colors", {
 	variants: {
 		active: {
-			true: "bg-[#EFF6FF] text-[#3B82F6]",
+			true: "bg-[#EFF6FF] text-imsg-blue",
 			false: "text-[#6B7280] hover:bg-gray-50",
 		},
 	},
@@ -205,7 +205,7 @@ export function SiteBuilder({
 
 					{data.isSeeded && (
 						<div className="flex items-start gap-2.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] px-4 py-3">
-							<Sparkles size={15} className="mt-0.5 shrink-0 text-[#3B82F6]" />
+							<Sparkles size={15} className="mt-0.5 shrink-0 text-imsg-blue" />
 							<p className="text-sm text-[#1D4ED8]">
 								기존에 입력해 둔 기업 프로필 정보로 초안을 만들어 뒀어요. 내용을 확인하고 수정한 뒤
 								저장해주세요. <span className="font-medium">저장하기 전까지는 반영되지 않습니다.</span>

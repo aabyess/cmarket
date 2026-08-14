@@ -61,11 +61,11 @@ export function SignupCountrySelectorCard({
       transition={{ duration: 0.2 }}
       className={cn(
         "relative flex flex-col items-center gap-4 rounded-2xl border p-8 bg-white transition-colors duration-200",
-        isSelected ? "border-[#3B82F6] border-2" : "border-[#E2E8F0] hover:border-[#D1D5DB]",
+        isSelected ? "border-imsg-blue border-2" : "border-[#E2E8F0] hover:border-[#D1D5DB]",
       )}
     >
       <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
-        <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-[#3B82F6] bg-[#EFF6FF] border border-[#BFDBFE]">
+        <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-imsg-blue bg-[#EFF6FF] border border-[#BFDBFE]">
           {badge}
         </span>
       </div>
@@ -73,7 +73,7 @@ export function SignupCountrySelectorCard({
       <SignupCountrySelectorCheckmark isSelected={isSelected} />
 
       <div className="mt-4 flex items-center justify-center w-14 h-14 rounded-xl bg-[#EFF6FF]">
-        <Icon className="w-7 h-7 text-[#3B82F6]" />
+        <Icon className="w-7 h-7 text-imsg-blue" />
       </div>
 
       {!imageError ? (

@@ -79,7 +79,7 @@ export function SignupTerms() {
                 className={cn(
                   "w-5 h-5 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0",
                   isAllChecked
-                    ? "bg-[#3B82F6] border-[#3B82F6]"
+                    ? "bg-imsg-blue border-imsg-blue"
                     : "border-[#D1D5DB] bg-white",
                 )}
               >
@@ -112,7 +112,7 @@ export function SignupTerms() {
                       className={cn(
                         "w-5 h-5 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0",
                         checked[term.id]
-                          ? "bg-[#3B82F6] border-[#3B82F6]"
+                          ? "bg-imsg-blue border-imsg-blue"
                           : "border-[#D1D5DB] bg-white",
                       )}
                     >
@@ -132,7 +132,7 @@ export function SignupTerms() {
                       <span
                         className={cn(
                           "font-medium mr-1",
-                          term.required ? "text-[#3B82F6]" : "text-[#9CA3AF]",
+                          term.required ? "text-imsg-blue" : "text-[#9CA3AF]",
                         )}
                       >
                         {term.required ? text.required : text.optional}
@@ -158,7 +158,7 @@ export function SignupTerms() {
             className={cn(
               "w-full h-12 rounded-xl font-semibold text-base flex items-center justify-center gap-2 transition-all",
               isRequiredChecked
-                ? "bg-[#3B82F6] hover:bg-[#2563EB] text-white"
+                ? "bg-imsg-blue hover:bg-[#2563EB] text-white"
                 : "bg-[#D1D5DB] text-[#6B7280] cursor-not-allowed",
             )}
           >

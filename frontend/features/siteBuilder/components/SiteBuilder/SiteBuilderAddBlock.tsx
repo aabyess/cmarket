@@ -30,8 +30,8 @@ export function SiteBuilderAddBlock({ onAdd }: SiteBuilderAddBlockProps): React.
 							key={type}
 							type="button"
 							onClick={() => onAdd(type)}
-							className="rounded-xl border border-[#E5E7EB] p-3 text-left transition-colors hover:border-[#3B82F6] hover:bg-[#EFF6FF]">
-							<Icon size={16} className="mb-2 text-[#3B82F6]" />
+							className="rounded-xl border border-[#E5E7EB] p-3 text-left transition-colors hover:border-imsg-blue hover:bg-[#EFF6FF]">
+							<Icon size={16} className="mb-2 text-imsg-blue" />
 							<p className="text-xs font-semibold text-[#374151]">{BLOCK_LABELS[type]}</p>
 							<p className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-[#9CA3AF]">
 								{BLOCK_DESCRIPTIONS[type]}

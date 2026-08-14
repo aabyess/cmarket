@@ -36,7 +36,7 @@ export default function TableMenu({ editor }: TableMenuProps): React.ReactNode {
 				onClick={() => setIsOpen((prev) => !prev)}
 				className={cn(
 					"flex size-7 items-center justify-center rounded transition-colors",
-					isOpen || isInTable ? "bg-[#EFF6FF] text-[#3B82F6]" : "text-[#6B7280] hover:bg-[#F3F4F6]",
+					isOpen || isInTable ? "bg-[#EFF6FF] text-imsg-blue" : "text-[#6B7280] hover:bg-[#F3F4F6]",
 				)}
 			>
 				<Table size={15} />
