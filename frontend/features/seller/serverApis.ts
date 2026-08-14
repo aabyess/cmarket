@@ -4,6 +4,7 @@ import type { MyQuote } from "@/features/seller/types";
 import type { ListingDetail, MyQuoteSummary, OpenListing } from "@/features/seller/types";
 import type { Currency } from "@/features/buyer/types";
 import { getExchangeRates, convertCurrency } from "@/libs/exchangeRate";
+import { formatRelativeTime } from "@/utils/formatRelativeTime";
 
 export async function getSellerCompanyName(): Promise<string> {
 	const supabase = await createServerSupabaseClient();
@@ -34,24 +35,32 @@ export async function getSellerDashboardData(): Promise<SellerDashboardData> {
 		};
 	}
 
-	const { count: openListingCount } = await supabase
-		.from("listings")
-		.select("*", { count: "exact", head: true })
-		.eq("status", "active");
-
-	const { data: quotes } = await supabase
-		.from("quotes")
-		.select("status")
-		.eq("seller_id", user.id);
+	const [{ count: openListingCount }, { data: quotes }, { count: contractCount }, { data: recentQuotes }] =
+		await Promise.all([
+			supabase.from("listings").select("*", { count: "exact", head: true }).eq("status", "active"),
+			supabase.from("quotes").select("status").eq("seller_id", user.id),
+			supabase.from("contracts").select("*", { count: "exact", head: true }).eq("seller_id", user.id),
+			supabase
+				.from("quotes")
+				.select("status, created_at, listings(title)")
+				.eq("seller_id", user.id)
+				.order("created_at", { ascending: false })
+				.limit(5),
+		]);
 
 	const quoteCount = quotes?.length ?? 0;
 	const pendingQuoteCount = quotes?.filter((q) => q.status === "pending").length ?? 0;
 	const awardedQuoteCount = quotes?.filter((q) => q.status === "awarded").length ?? 0;
 
-	const { count: contractCount } = await supabase
-		.from("contracts")
-		.select("*", { count: "exact", head: true })
-		.eq("seller_id", user.id);
+	const activities = (recentQuotes ?? []).map((row) => {
+		const listing = row.listings as unknown as { title: string } | null;
+		const title =
+			row.status === "awarded"
+				? `${listing?.title ?? ""} · 계약이 확정됐어요`
+				: `${listing?.title ?? ""} · 견적을 제출했어요`;
+
+		return { title, timeText: formatRelativeTime(row.created_at) };
+	});
 
 	return {
 		openListingCount: openListingCount ?? 0,
@@ -59,7 +68,7 @@ export async function getSellerDashboardData(): Promise<SellerDashboardData> {
 		pendingQuoteCount,
 		awardedQuoteCount,
 		contractCount: contractCount ?? 0,
-		activities: [],
+		activities,
 	};
 }
 
