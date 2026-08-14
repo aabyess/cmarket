@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Globe, Check } from "lucide-react";
 import { usePathname, useRouter } from "@/i18n/navigation";
@@ -12,6 +13,7 @@ export function LanguageSwitcher(): React.JSX.Element {
 	const locale = useLocale();
 	const t = useTranslations("Locales");
 	const pathname = usePathname();
+	const searchParams = useSearchParams();
 	const router = useRouter();
 	const [isOpen, setIsOpen] = useState(false);
 	const ref = useRef<HTMLDivElement>(null);
@@ -26,7 +28,9 @@ export function LanguageSwitcher(): React.JSX.Element {
 
 	function handleSelect(nextLocale: string): void {
 		setIsOpen(false);
-		router.replace(pathname, { locale: nextLocale });
+		const query = searchParams.toString();
+		const href = query ? `${pathname}?${query}` : pathname;
+		router.replace(href, { locale: nextLocale });
 	}
 
 	return (

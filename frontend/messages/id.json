@@ -1,8 +1,4 @@
 {
-	"Common": {
-		"appName": "MitraPay",
-		"languageSwitcher": "Bahasa"
-	},
 	"Locales": {
 		"ko": "한국어",
 		"id": "Bahasa Indonesia",
