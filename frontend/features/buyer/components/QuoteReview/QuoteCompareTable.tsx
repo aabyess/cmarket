@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { MessageSquare, Building2, CheckCircle2, ExternalLink } from "lucide-react";
 import { SafeImage } from "@/components/commons/SafeImage";
@@ -24,6 +24,7 @@ type QuoteCompareTableProps = {
 
 export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 	const t = useTranslations("QuoteCompareTable");
+	const locale = useLocale();
 	const router = useRouter();
 	const [startingId, setStartingId] = useState<string | null>(null);
 	const [awardingId, setAwardingId] = useState<string | null>(null);
@@ -52,7 +53,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 			await fetch("/api/chat/generate-quote-pdf", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ quoteId }),
+				body: JSON.stringify({ quoteId, locale }),
 			});
 			await startChat(quoteId, {
 				price: quote?.price ?? 0,

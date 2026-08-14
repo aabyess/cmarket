@@ -143,7 +143,7 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 			{isLoading ? (
 				<div className="flex-1 bg-imsg-surface" />
 			) : (
-				<ChatMessageList messages={messages} myId={myId} />
+				<ChatMessageList messages={messages} myId={myId} quoteId={room.quoteId} />
 			)}
 
 			{/* 입력창 */}

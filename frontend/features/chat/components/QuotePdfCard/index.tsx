@@ -1,34 +1,61 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { FileText, Loader2 } from "lucide-react";
 
 type QuotePdfCardProps = {
-	attachmentUrl: string;
+	quoteId: string;
+	docType: "quote" | "invoice";
 	attachmentName: string | null;
 	isMine: boolean;
 };
 
-export function QuotePdfCard({ attachmentUrl, attachmentName, isMine }: QuotePdfCardProps): React.ReactNode {
+const GENERATE_ENDPOINT: Record<QuotePdfCardProps["docType"], string> = {
+	quote: "/api/chat/generate-quote-pdf",
+	invoice: "/api/chat/generate-invoice-pdf",
+};
+
+type ResolvedDoc = {
+	signedUrl: string;
+	attachmentName: string;
+};
+
+export function QuotePdfCard({ quoteId, docType, attachmentName, isMine }: QuotePdfCardProps): React.ReactNode {
 	const t = useTranslations("QuotePdfCard");
+	const locale = useLocale();
+	const [resolvedDoc, setResolvedDoc] = useState<ResolvedDoc | null>(null);
 	const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
 	const [thumbnailFailed, setThumbnailFailed] = useState(false);
 	const [isOpening, setIsOpening] = useState(false);
+
+	async function resolveDoc(): Promise<ResolvedDoc | null> {
+		const res = await fetch(GENERATE_ENDPOINT[docType], {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ quoteId, locale }),
+		});
+		const data = await res.json();
+		if (!res.ok) return null;
+		return { signedUrl: data.signedUrl, attachmentName: data.attachmentName };
+	}
 
 	useEffect(() => {
 		let cancelled = false;
 
 		async function loadThumbnail(): Promise<void> {
 			try {
-				const res = await fetch(`/api/chat/quote-pdf-url?path=${encodeURIComponent(attachmentUrl)}`);
-				const data = await res.json();
-				if (!res.ok || cancelled) return;
+				const doc = await resolveDoc();
+				if (!doc || cancelled) {
+					if (!cancelled) setThumbnailFailed(true);
+					return;
+				}
+				if (!cancelled) setResolvedDoc(doc);
 
 				const pdfjs = await import("pdfjs-dist");
 				pdfjs.GlobalWorkerOptions.workerSrc = "/pdf-worker/pdf.worker.min.mjs";
 
-				const pdf = await pdfjs.getDocument({ url: data.url }).promise;
+				const pdf = await pdfjs.getDocument({ url: doc.signedUrl }).promise;
 				const page = await pdf.getPage(1);
 				const viewport = page.getViewport({ scale: 0.5 });
 
@@ -50,15 +77,17 @@ export function QuotePdfCard({ attachmentUrl, attachmentName, isMine }: QuotePdf
 		return () => {
 			cancelled = true;
 		};
-	}, [attachmentUrl]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [quoteId, docType, locale]);
 
 	async function handleOpen(): Promise<void> {
 		setIsOpening(true);
 		try {
-			const res = await fetch(`/api/chat/quote-pdf-url?path=${encodeURIComponent(attachmentUrl)}`);
-			const data = await res.json();
-			if (res.ok) {
-				window.open(data.url, "_blank", "noopener,noreferrer");
+			const doc = resolvedDoc ?? (await resolveDoc());
+			if (doc) {
+				window.open(doc.signedUrl, "_blank", "noopener,noreferrer");
+			} else {
+				alert(t("loadError"));
 			}
 		} finally {
 			setIsOpening(false);
@@ -95,7 +124,9 @@ export function QuotePdfCard({ attachmentUrl, attachmentName, isMine }: QuotePdf
 					<FileText size={14} />
 				</div>
 				<div className="min-w-0">
-					<p className="truncate text-xs font-medium">{attachmentName ?? t("defaultFileName")}</p>
+					<p className="truncate text-xs font-medium">
+						{resolvedDoc?.attachmentName ?? attachmentName ?? t("defaultFileName")}
+					</p>
 					<p className={isMine ? "text-xs text-white/70" : "text-xs text-black/50"}>
 						{isOpening ? t("opening") : t("openHint")}
 					</p>

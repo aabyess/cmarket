@@ -87,6 +87,41 @@ const styles = StyleSheet.create({
 	footer: { marginTop: 24, fontSize: 8, color: "#9CA3AF", textAlign: "center" },
 });
 
+export type InvoicePdfLabels = {
+	title: string;
+	issuedLine: (date: string) => string;
+	invoiceNumberLabel: (number: string) => string;
+	billToLabel: string;
+	billFromLabel: string;
+	representativeLabel: string;
+	addressLabel: string;
+	businessTypeItemLabel: string;
+	itemsSectionTitle: string;
+	itemNameColumn: string;
+	itemSpecColumn: string;
+	itemQtyColumn: string;
+	paymentInfoSectionTitle: string;
+	listingTitleLabel: string;
+	deliveryDaysLabel: string;
+	deliveryDaysValue: (days: number) => string;
+	paymentMethodLabel: string;
+	paymentMethodValue: string;
+	amountDueLabel: string;
+	paymentDueLabel: string;
+	paymentDueValue: (date: string) => string;
+	bankInfoTitle: string;
+	bankNameLabel: string;
+	accountNumberLabel: string;
+	accountHolderLabel: string;
+	swiftCodeLabel: string;
+	receivingCurrencyLabel: string;
+	footer: string;
+};
+
+type InvoicePdfDocumentProps = InvoicePdfData & {
+	labels: InvoicePdfLabels;
+};
+
 function formatDate(iso: string): string {
 	const d = new Date(iso);
 	return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
@@ -101,40 +136,50 @@ export function InvoicePdfDocument({
 	buyerCompany,
 	sellerCompany,
 	bankAccount,
-}: InvoicePdfData) {
+	labels,
+}: InvoicePdfDocumentProps) {
 	const symbol = CURRENCY_SYMBOL[quote.currency] ?? quote.currency;
 
 	return (
 		<Document>
 			<Page size="A4" style={styles.page}>
-				<Text style={styles.title}>인보이스 (Invoice)</Text>
-				<Text style={styles.subtitle}>MitraPay · {formatDate(issuedAt)} 발행</Text>
-				<Text style={styles.invoiceNumber}>인보이스 번호: {invoiceNumber}</Text>
+				<Text style={styles.title}>{labels.title}</Text>
+				<Text style={styles.subtitle}>{labels.issuedLine(formatDate(issuedAt))}</Text>
+				<Text style={styles.invoiceNumber}>{labels.invoiceNumberLabel(invoiceNumber)}</Text>
 
 				<View style={styles.companyRow}>
 					<View style={styles.companyBox}>
-						<Text style={styles.companyTitle}>청구 대상 (Bill To)</Text>
+						<Text style={styles.companyTitle}>{labels.billToLabel}</Text>
 						<Text style={styles.companyName}>{buyerCompany.companyName || "-"}</Text>
-						<Text>대표자: {buyerCompany.representative || "-"}</Text>
-						<Text>주소: {buyerCompany.address || "-"}</Text>
+						<Text>
+							{labels.representativeLabel}: {buyerCompany.representative || "-"}
+						</Text>
+						<Text>
+							{labels.addressLabel}: {buyerCompany.address || "-"}
+						</Text>
 					</View>
 					<View style={styles.companyBox}>
-						<Text style={styles.companyTitle}>공급기업 (Bill From)</Text>
+						<Text style={styles.companyTitle}>{labels.billFromLabel}</Text>
 						<Text style={styles.companyName}>{sellerCompany.companyName || "-"}</Text>
 						<Text>
-							업태/종목: {[sellerCompany.businessType, sellerCompany.businessItem].filter(Boolean).join(" / ") || "-"}
+							{labels.businessTypeItemLabel}:{" "}
+							{[sellerCompany.businessType, sellerCompany.businessItem].filter(Boolean).join(" / ") || "-"}
 						</Text>
-						<Text>대표자: {sellerCompany.representative || "-"}</Text>
-						<Text>주소: {sellerCompany.address || "-"}</Text>
+						<Text>
+							{labels.representativeLabel}: {sellerCompany.representative || "-"}
+						</Text>
+						<Text>
+							{labels.addressLabel}: {sellerCompany.address || "-"}
+						</Text>
 					</View>
 				</View>
 
-				<Text style={styles.sectionTitle}>공급 품목</Text>
+				<Text style={styles.sectionTitle}>{labels.itemsSectionTitle}</Text>
 				<View style={styles.table}>
 					<View style={styles.tableHeader}>
-						<Text style={styles.colName}>품목명</Text>
-						<Text style={styles.colSpec}>규격</Text>
-						<Text style={styles.colQty}>수량</Text>
+						<Text style={styles.colName}>{labels.itemNameColumn}</Text>
+						<Text style={styles.colSpec}>{labels.itemSpecColumn}</Text>
+						<Text style={styles.colQty}>{labels.itemQtyColumn}</Text>
 					</View>
 					{listing.items.map((item, i) => (
 						<View key={i} style={styles.tableRow}>
@@ -147,63 +192,61 @@ export function InvoicePdfDocument({
 					))}
 				</View>
 
-				<Text style={styles.sectionTitle}>결제 정보</Text>
+				<Text style={styles.sectionTitle}>{labels.paymentInfoSectionTitle}</Text>
 				<View style={styles.row}>
-					<Text style={styles.label}>공고명</Text>
+					<Text style={styles.label}>{labels.listingTitleLabel}</Text>
 					<Text style={styles.value}>{listing.title}</Text>
 				</View>
 				<View style={styles.row}>
-					<Text style={styles.label}>납품 소요</Text>
-					<Text style={styles.value}>{quote.deliveryDays}일</Text>
+					<Text style={styles.label}>{labels.deliveryDaysLabel}</Text>
+					<Text style={styles.value}>{labels.deliveryDaysValue(quote.deliveryDays)}</Text>
 				</View>
 				<View style={styles.row}>
-					<Text style={styles.label}>결제 방식</Text>
-					<Text style={styles.value}>T/T 송금 (전신환)</Text>
+					<Text style={styles.label}>{labels.paymentMethodLabel}</Text>
+					<Text style={styles.value}>{labels.paymentMethodValue}</Text>
 				</View>
 
 				<View style={styles.priceBox}>
-					<Text style={styles.priceLabel}>청구 금액</Text>
+					<Text style={styles.priceLabel}>{labels.amountDueLabel}</Text>
 					<Text style={styles.priceValue}>
 						{symbol} {quote.price.toLocaleString()}
 					</Text>
 				</View>
 
 				<View style={styles.dueDateBox}>
-					<Text style={styles.dueDateLabel}>결제 기한</Text>
-					<Text style={styles.dueDateValue}>{formatDate(paymentDueDate)} (발행일로부터 30일)</Text>
+					<Text style={styles.dueDateLabel}>{labels.paymentDueLabel}</Text>
+					<Text style={styles.dueDateValue}>{labels.paymentDueValue(formatDate(paymentDueDate))}</Text>
 				</View>
 
 				{bankAccount && (
 					<View style={styles.bankBox}>
-						<Text style={styles.bankTitle}>송금 계좌 정보 (Wire Transfer Details)</Text>
+						<Text style={styles.bankTitle}>{labels.bankInfoTitle}</Text>
 						<View style={styles.bankRow}>
-							<Text style={styles.bankLabel}>은행명</Text>
+							<Text style={styles.bankLabel}>{labels.bankNameLabel}</Text>
 							<Text style={styles.bankValue}>{bankAccount.bankName}</Text>
 						</View>
 						<View style={styles.bankRow}>
-							<Text style={styles.bankLabel}>계좌번호</Text>
+							<Text style={styles.bankLabel}>{labels.accountNumberLabel}</Text>
 							<Text style={styles.bankValue}>{bankAccount.accountNumber}</Text>
 						</View>
 						<View style={styles.bankRow}>
-							<Text style={styles.bankLabel}>예금주</Text>
+							<Text style={styles.bankLabel}>{labels.accountHolderLabel}</Text>
 							<Text style={styles.bankValue}>{bankAccount.accountHolder}</Text>
 						</View>
 						{bankAccount.swiftCode && (
 							<View style={styles.bankRow}>
-								<Text style={styles.bankLabel}>SWIFT 코드</Text>
+								<Text style={styles.bankLabel}>{labels.swiftCodeLabel}</Text>
 								<Text style={styles.bankValue}>{bankAccount.swiftCode}</Text>
 							</View>
 						)}
 						<View style={styles.bankRow}>
-							<Text style={styles.bankLabel}>수취 통화</Text>
+							<Text style={styles.bankLabel}>{labels.receivingCurrencyLabel}</Text>
 							<Text style={styles.bankValue}>{bankAccount.currency}</Text>
 						</View>
 					</View>
 				)}
 
-				<Text style={styles.footer}>
-					본 인보이스는 MitraPay를 통해 자동 생성되었습니다. 문의: support@mitrapay.com
-				</Text>
+				<Text style={styles.footer}>{labels.footer}</Text>
 			</Page>
 		</Document>
 	);
