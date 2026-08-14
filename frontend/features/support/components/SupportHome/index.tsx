@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ArrowRight, FileText, FolderOpen, HelpCircle, Mail } from "lucide-react";
 import { cva } from "class-variance-authority";
 import type { Notice, SupportResource } from "@/features/support/types";

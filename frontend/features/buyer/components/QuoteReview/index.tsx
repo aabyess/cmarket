@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { Mail } from "lucide-react";
 import { QuoteReviewQuoteCard } from "@/features/buyer/components/QuoteReview/QuoteReviewQuoteCard";
 import { ConfirmModal } from "@/components/ui/confirm-modal";

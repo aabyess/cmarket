@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { Send } from "lucide-react";
 import { MyQuotesCard } from "@/features/seller/components/MyQuotes/MyQuotesCard";
 import { MyQuotesFilterBar } from "@/features/seller/components/MyQuotes/MyQuotesFilterBar";

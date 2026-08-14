@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ChevronLeft, FileText } from "lucide-react";
 import { PublicSiteIdentity } from "@/features/siteBuilder/components/PublicSite/PublicSiteIdentity";
 import { SiteRenderer } from "@/features/siteBuilder/components/SiteRenderer";

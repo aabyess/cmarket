@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { ArrowRight, Bell, Building2, Clock, MessageSquare, Search } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { OpenListing, SellerDashboardData } from "@/features/seller/types";

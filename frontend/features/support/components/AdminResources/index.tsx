@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { Loader2, Trash2, Upload } from "lucide-react";
 import type { SupportResource } from "@/features/support/types";
 

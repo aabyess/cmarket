@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { Mail, Clock, TrendingDown, Truck, CheckCircle2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import {

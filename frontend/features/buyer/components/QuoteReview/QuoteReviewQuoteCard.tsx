@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { cva } from "class-variance-authority";
 import { SafeImage } from "@/components/commons/SafeImage";
 import {

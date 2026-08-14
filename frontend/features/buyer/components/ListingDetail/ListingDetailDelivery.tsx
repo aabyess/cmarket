@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { CalendarClock, ExternalLink, MapPin, Ship, User } from "lucide-react";
 import { DELIVERY_METHOD_LABELS } from "@/features/buyer/constants";
 import type { ListingDetailData } from "@/features/buyer/components/ListingDetail/types";

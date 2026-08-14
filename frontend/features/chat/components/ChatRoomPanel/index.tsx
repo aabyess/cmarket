@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { ArrowUp, ChevronLeft } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { ChatMessageList } from "@/features/chat/components/ChatMessageList";

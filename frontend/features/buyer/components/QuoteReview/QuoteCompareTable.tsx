@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { MessageSquare, Building2, CheckCircle2, ExternalLink } from "lucide-react";
 import { SafeImage } from "@/components/commons/SafeImage";
 import { cn } from "@/utils/cn";
