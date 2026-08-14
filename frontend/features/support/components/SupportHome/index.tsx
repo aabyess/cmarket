@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { ArrowRight, FileText, FolderOpen, HelpCircle, Mail } from "lucide-react";
 import { cva } from "class-variance-authority";
+import { SupportHomeResourceList } from "@/features/support/components/SupportHome/SupportHomeResourceList";
 import type { Notice, SupportResource } from "@/features/support/types";
 
 type SupportHomeProps = {
@@ -60,7 +61,7 @@ const menuIcon = cva("flex size-10 shrink-0 items-center justify-center rounded-
 		tone: {
 			notice: "text-[#4F46E5]",
 			resource: "text-[#EA580C]",
-			faq: "text-[#3B82F6]",
+			faq: "text-imsg-blue",
 			inquiry: "text-[#059669]",
 		},
 	},
@@ -161,20 +162,7 @@ export function SupportHome({
 					{resources.length === 0 ? (
 						<p className="py-10 text-center text-sm text-imsg-secondary">등록된 자료가 없어요</p>
 					) : (
-						<ul className="p-2">
-							{resources.map((resource) => (
-								<li
-									key={resource.id}
-									className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors duration-200 hover:bg-imsg-surface">
-									<span className="min-w-0 flex-1 truncate text-sm text-[#0f172a]">
-										{resource.title}
-									</span>
-									<span className="shrink-0 text-xs text-imsg-secondary">
-										{formatDate(resource.publishedAt)}
-									</span>
-								</li>
-							))}
-						</ul>
+						<SupportHomeResourceList resources={resources} formatDate={formatDate} />
 					)}
 				</section>
 			</div>

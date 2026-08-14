@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
-import { ChevronLeft, ChevronRight, Eye, EyeOff, MapPin } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { useEffect } from "react";
 import { checkUsernameAvailable } from "@/features/auth/apis";
@@ -103,7 +103,7 @@ function inputCn(hasError: boolean): string {
     "focus:outline-none focus:ring-1 transition-colors bg-white",
     hasError
       ? "border-red-400 focus:border-red-400 focus:ring-red-400"
-      : "border-[#E2E8F0] focus:border-[#3B82F6] focus:ring-[#3B82F6]",
+      : "border-[#E2E8F0] focus:border-imsg-blue focus:ring-imsg-blue",
   );
 }
 
@@ -120,7 +120,7 @@ function Field({ label, required, error, hint, children }: FieldProps) {
     <div className="space-y-1.5">
       <label className="text-sm font-medium text-[#374151]">
         {label}
-        {required && <span className="text-[#3B82F6] ml-1">*</span>}
+        {required && <span className="text-imsg-blue ml-1">*</span>}
       </label>
       {children}
       {hint && !error && <p className="text-xs text-muted-foreground">{hint}</p>}
@@ -165,14 +165,14 @@ function PhoneRow({ label, required, code, num1, num2, onCodeChange, onNum1Chang
     <div className="flex items-center gap-2">
       <span className="text-sm text-[#374151] w-12 flex-shrink-0">
         {label}
-        {required && <span className="text-[#3B82F6] ml-0.5">*</span>}
+        {required && <span className="text-imsg-blue ml-0.5">*</span>}
       </span>
       <select
         value={code}
         onChange={(e) => onCodeChange(e.target.value)}
         className={cn(
           "px-2 py-3 border rounded-lg text-sm text-[#1F2937] focus:outline-none focus:ring-1 transition-colors bg-white w-24",
-          hasError ? "border-red-400" : "border-[#E2E8F0] focus:border-[#3B82F6] focus:ring-[#3B82F6]",
+          hasError ? "border-red-400" : "border-[#E2E8F0] focus:border-imsg-blue focus:ring-imsg-blue",
         )}
       >
         {PHONE_AREA_CODES.map((c) => <option key={c} value={c}>{c}</option>)}
@@ -188,7 +188,7 @@ function PhoneRow({ label, required, code, num1, num2, onCodeChange, onNum1Chang
           "w-20 px-3 py-3 border rounded-lg text-sm text-center placeholder:text-[#D1D5DB]",
           "focus:outline-none focus:ring-1 transition-colors",
           isDisabled ? "bg-[#F9FAFB] border-[#E2E8F0] text-[#9CA3AF]" :
-          hasError ? "border-red-400 bg-white" : "border-[#E2E8F0] focus:border-[#3B82F6] focus:ring-[#3B82F6] bg-white",
+          hasError ? "border-red-400 bg-white" : "border-[#E2E8F0] focus:border-imsg-blue focus:ring-imsg-blue bg-white",
         )}
       />
       <span className="text-[#9CA3AF]">-</span>
@@ -202,7 +202,7 @@ function PhoneRow({ label, required, code, num1, num2, onCodeChange, onNum1Chang
           "w-20 px-3 py-3 border rounded-lg text-sm text-center placeholder:text-[#D1D5DB]",
           "focus:outline-none focus:ring-1 transition-colors",
           isDisabled ? "bg-[#F9FAFB] border-[#E2E8F0] text-[#9CA3AF]" :
-          hasError ? "border-red-400 bg-white" : "border-[#E2E8F0] focus:border-[#3B82F6] focus:ring-[#3B82F6] bg-white",
+          hasError ? "border-red-400 bg-white" : "border-[#E2E8F0] focus:border-imsg-blue focus:ring-imsg-blue bg-white",
         )}
       />
     </div>
@@ -372,7 +372,7 @@ export function SignupInfoIndonesia() {
                   type="button"
                   onClick={handleCheckUsername}
                   disabled={usernameStatus === "checking" || form.username.length < 4}
-                  className="px-4 py-3 rounded-lg border text-sm font-medium whitespace-nowrap transition-colors disabled:opacity-50 disabled:cursor-not-allowed border-[#3B82F6] text-[#3B82F6] hover:bg-[#EFF6FF]"
+                  className="px-4 py-3 rounded-lg border text-sm font-medium whitespace-nowrap transition-colors disabled:opacity-50 disabled:cursor-not-allowed border-imsg-blue text-imsg-blue hover:bg-[#EFF6FF]"
                 >
                   {usernameStatus === "checking" ? "확인 중..." : "중복확인"}
                 </button>
@@ -458,7 +458,7 @@ export function SignupInfoIndonesia() {
                         "focus:outline-none focus:ring-1 transition-colors bg-white",
                         passwordMatch ? "border-green-400 focus:border-green-400 focus:ring-green-400" :
                         passwordMismatch ? "border-red-400 focus:border-red-400 focus:ring-red-400" :
-                        "border-[#E2E8F0] focus:border-[#3B82F6] focus:ring-[#3B82F6]",
+                        "border-[#E2E8F0] focus:border-imsg-blue focus:ring-imsg-blue",
                       )}
                     />
                     <button
@@ -650,23 +650,13 @@ export function SignupInfoIndonesia() {
                       className={inputCn(!!errors.city)}
                     />
                   </div>
-                  {/* 주소 검색 버튼 */}
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={form.addressBase}
-                      onChange={(e) => handleChange("addressBase", e.target.value)}
-                      placeholder="기본 주소"
-                      className={cn(inputCn(!!errors.addressBase), "flex-1")}
-                    />
-                    <button
-                      type="button"
-                      className="flex items-center gap-1.5 px-4 py-3 rounded-lg border border-[#E2E8F0] bg-white text-sm text-[#374151] hover:bg-[#F9FAFB] transition-colors whitespace-nowrap"
-                    >
-                      <MapPin className="w-4 h-4 text-[#3B82F6]" />
-                      주소 검색
-                    </button>
-                  </div>
+                  <input
+                    type="text"
+                    value={form.addressBase}
+                    onChange={(e) => handleChange("addressBase", e.target.value)}
+                    placeholder="기본 주소"
+                    className={inputCn(!!errors.addressBase)}
+                  />
                   <input
                     type="text"
                     value={form.addressDetail}
@@ -706,7 +696,7 @@ export function SignupInfoIndonesia() {
           <button
             onClick={handleNext}
             disabled={isPending}
-            className="w-full h-12 rounded-xl font-semibold text-base flex items-center justify-center gap-2 bg-[#3B82F6] hover:bg-[#2563EB] text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full h-12 rounded-xl font-semibold text-base flex items-center justify-center gap-2 bg-imsg-blue hover:bg-[#2563EB] text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {isPending ? "처리 중..." : "회원가입 완료"}
             {!isPending && <ChevronRight className="w-4 h-4" />}

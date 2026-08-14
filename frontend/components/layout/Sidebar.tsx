@@ -5,7 +5,7 @@ import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import {
 	LayoutDashboard, ListTodo, Mail, MessageSquare,
 	FileCheck, HelpCircle, Search, Send, Building2,
-	LogOut, User, Settings, FileText, Shield, FilePlus,
+	LogOut, User, FilePlus,
 } from "lucide-react";
 import { NotificationBell } from "@/features/notifications/components/NotificationBell";
 import { LanguageSwitcher } from "@/components/commons/LanguageSwitcher";
@@ -110,30 +110,6 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 									>
 										<User size={14} />
 										내 프로필
-									</Link>
-									<Link
-										href="#"
-										onClick={() => setDropdownOpen(false)}
-										className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#374151] hover:bg-[#F3F4F6] transition-colors"
-									>
-										<Settings size={14} />
-										환경설정
-									</Link>
-									<Link
-										href="#"
-										onClick={() => setDropdownOpen(false)}
-										className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#374151] hover:bg-[#F3F4F6] transition-colors"
-									>
-										<FileText size={14} />
-										이용약관
-									</Link>
-									<Link
-										href="#"
-										onClick={() => setDropdownOpen(false)}
-										className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#374151] hover:bg-[#F3F4F6] transition-colors"
-									>
-										<Shield size={14} />
-										개인정보 처리방침
 									</Link>
 								</div>
 								<div className="border-t border-[#F3F4F6] py-1">

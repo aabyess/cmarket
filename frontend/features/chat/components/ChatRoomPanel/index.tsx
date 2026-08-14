@@ -16,9 +16,10 @@ type ChatRoomPanelProps = {
 	room: ChatRoom;
 	myId: string;
 	myRole: ChatRole;
+	onBack: () => void;
 };
 
-export function ChatRoomPanel({ room, myId, myRole }: ChatRoomPanelProps): React.ReactNode {
+export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps): React.ReactNode {
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { data: messages = [], isLoading } = useMessages(room.quoteId);
@@ -89,7 +90,11 @@ export function ChatRoomPanel({ room, myId, myRole }: ChatRoomPanelProps): React
 		<section className="flex min-h-0 flex-1 flex-col bg-imsg-surface">
 			{/* 헤더 */}
 			<header className="flex items-center justify-between border-b border-[#E5E7EB]/60 bg-white/80 px-4 py-2.5 backdrop-blur-xl">
-				<button className="flex size-9 items-center justify-center rounded-full text-imsg-blue transition-colors hover:bg-imsg-surface">
+				<button
+					onClick={onBack}
+					aria-label="목록으로 돌아가기"
+					className="flex size-9 items-center justify-center rounded-full text-imsg-blue transition-colors hover:bg-imsg-surface"
+				>
 					<ChevronLeft className="size-6" strokeWidth={2.5} />
 				</button>
 				<div className="flex flex-col items-center">
