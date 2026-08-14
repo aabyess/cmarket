@@ -56,7 +56,7 @@ export function QuoteReviewFilterBar({
 						onClick={() => onHasFilterChange(value)}
 						className={cn(
 							"flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors",
-							isActive ? "bg-[#3B82F6] text-white" : "text-[#374151] hover:bg-[#F9FAFB]",
+							isActive ? "bg-imsg-blue text-white" : "text-[#374151] hover:bg-[#F9FAFB]",
 						)}
 					>
 						{hasFilterLabels[value]}

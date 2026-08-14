@@ -51,7 +51,7 @@ export function LanguageSwitcher(): React.JSX.Element {
 							className={cn(
 								"flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors",
 								loc === locale
-									? "bg-[#EFF6FF] font-medium text-[#3B82F6]"
+									? "bg-[#EFF6FF] font-medium text-imsg-blue"
 									: "text-[#374151] hover:bg-[#F9FAFB]",
 							)}
 						>

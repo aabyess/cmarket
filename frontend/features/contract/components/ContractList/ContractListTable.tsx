@@ -12,7 +12,7 @@ const CURRENCY_SYMBOL: Record<string, string> = {
 };
 
 const STATUS_STYLE: Record<ContractStatus, string> = {
-	ongoing: "bg-[#EFF6FF] text-[#3B82F6]",
+	ongoing: "bg-[#EFF6FF] text-imsg-blue",
 	completed: "bg-[#F0FDF4] text-[#16A34A]",
 	cancelled: "bg-[#FEF2F2] text-[#DC2626]",
 };
@@ -98,7 +98,7 @@ export function ContractListTable({
 														<button
 															onClick={() => onViewReceipt(contract.id)}
 															title={t("viewReceiptTitle")}
-															className="flex size-8 items-center justify-center rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] text-[#3B82F6] transition-colors hover:bg-[#DBEAFE]"
+															className="flex size-8 items-center justify-center rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] text-imsg-blue transition-colors hover:bg-[#DBEAFE]"
 														>
 															<FileText size={14} />
 														</button>
@@ -119,7 +119,7 @@ export function ContractListTable({
 														<button
 															onClick={() => onViewReceipt(contract.id)}
 															title={t("confirmReceiptTitle")}
-															className="flex size-8 items-center justify-center rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] text-[#3B82F6] transition-colors hover:bg-[#DBEAFE]"
+															className="flex size-8 items-center justify-center rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] text-imsg-blue transition-colors hover:bg-[#DBEAFE]"
 														>
 															<FileText size={14} />
 														</button>
