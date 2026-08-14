@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useRouter } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { Pencil, Trash2 } from "lucide-react";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { deleteListing } from "@/features/buyer/mutations";

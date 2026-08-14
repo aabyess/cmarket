@@ -1,7 +1,7 @@
 "use client";
 
 import { cva } from "class-variance-authority";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ExternalLink, Eye, Loader2, Save, Send } from "lucide-react";
 
 export type SiteBuilderPublishState = "NEVER_PUBLISHED" | "UNPUBLISHED_CHANGES" | "SYNCED";

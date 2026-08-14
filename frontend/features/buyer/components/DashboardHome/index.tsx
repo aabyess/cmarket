@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { Mail, ArrowRight, Clock, Bell, MessageSquare } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { BuyerDashboardData, BuyerTodo, BuyerTradeSummary } from "@/features/buyer/types";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname } from "@/i18n/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { Bell, Mail, MessageSquare, X } from "lucide-react";
 import { useNotifications, NOTIFICATION_QUERY_KEYS } from "@/features/notifications/queries";

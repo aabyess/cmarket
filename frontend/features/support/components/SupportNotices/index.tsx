@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { FileText } from "lucide-react";
 import type { Notice } from "@/features/support/types";
 

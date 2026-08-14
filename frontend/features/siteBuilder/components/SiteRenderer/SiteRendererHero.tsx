@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { cva } from "class-variance-authority";
 import { Building2 } from "lucide-react";
 import { SafeImage } from "@/components/commons/SafeImage";

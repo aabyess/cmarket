@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { cva } from "class-variance-authority";
 import { Mail } from "lucide-react";
 import { INQUIRY_CATEGORY_LABELS, INQUIRY_STATUS_LABELS } from "@/features/support/constants";

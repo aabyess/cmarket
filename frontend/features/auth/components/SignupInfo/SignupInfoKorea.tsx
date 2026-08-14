@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { ChevronLeft, ChevronRight, Eye, EyeOff, MapPin } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { checkUsernameAvailable } from "@/features/auth/apis";

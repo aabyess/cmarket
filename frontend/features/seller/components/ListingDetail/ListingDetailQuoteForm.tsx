@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { CheckCircle2, Pencil, Clock } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { postQuote, updateQuote } from "@/features/seller/mutations";

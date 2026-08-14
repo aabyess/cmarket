@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import ListingCategorySection from "@/features/buyer/components/PostListingForm/postListing/ListingCategorySection";
 import ListingBasicSection from "@/features/buyer/components/PostListingForm/postListing/ListingBasicSection";
 import ListingNoteSection from "@/features/buyer/components/PostListingForm/postListing/ListingNoteSection";

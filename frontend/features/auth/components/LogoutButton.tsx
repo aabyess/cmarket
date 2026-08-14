@@ -1,7 +1,7 @@
 // features/auth/components/LogoutButton.tsx
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { LogOut } from "lucide-react";
 import { useLogout } from "@/features/auth/mutations";
 import { cn } from "@/utils/cn";

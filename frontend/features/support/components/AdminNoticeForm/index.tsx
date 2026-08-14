@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { Loader2, Trash2 } from "lucide-react";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import type { Notice } from "@/features/support/types";

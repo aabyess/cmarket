@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import dynamic from "next/dynamic";
 import { CheckCircle2 } from "lucide-react";
 import checkmarkAnimation from "@/public/animations/checkmark.json";

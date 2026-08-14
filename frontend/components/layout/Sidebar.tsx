@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import {
 	LayoutDashboard, ListTodo, Mail, MessageSquare,
 	FileCheck, HelpCircle, Search, Send, Building2,
 	LogOut, User, Settings, FileText, Shield, FilePlus,
 } from "lucide-react";
 import { NotificationBell } from "@/features/notifications/components/NotificationBell";
+import { LanguageSwitcher } from "@/components/commons/LanguageSwitcher";
 import { cn } from "@/utils/cn";
 import { createClient } from "@/libs/supabase";
 
@@ -149,7 +149,8 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 						)}
 					</div>
 
-					{/* 알림 - 프로필과 분리된 독립 영역 */}
+					{/* 알림/언어 - 프로필과 분리된 독립 영역 */}
+					<LanguageSwitcher />
 					<NotificationBell />
 				</div>
 			</div>

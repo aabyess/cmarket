@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { cva } from "class-variance-authority";
 import { Headset, Loader2, User } from "lucide-react";
 import { INQUIRY_CATEGORY_LABELS, INQUIRY_STATUS_LABELS } from "@/features/support/constants";
