@@ -130,7 +130,7 @@ export default function LoginPage() {
 						<span
 							className={cn(
 								"flex h-4 w-4 items-center justify-center rounded border transition-colors",
-								saveUsername ? "bg-[#3B82F6] border-[#3B82F6]" : "border-[#D1D5DB] bg-white",
+								saveUsername ? "bg-imsg-blue border-imsg-blue" : "border-[#D1D5DB] bg-white",
 							)}
 						>
 							{saveUsername && (

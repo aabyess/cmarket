@@ -17,7 +17,7 @@ export function ViewModeToggle({ value, onChange }: ViewModeToggleProps): React.
 				onClick={() => onChange("grid")}
 				className={cn(
 					"flex size-8 items-center justify-center rounded-lg transition-colors",
-					value === "grid" ? "bg-[#3B82F6] text-white" : "text-[#9CA3AF] hover:bg-[#F9FAFB]",
+					value === "grid" ? "bg-imsg-blue text-white" : "text-[#9CA3AF] hover:bg-[#F9FAFB]",
 				)}
 			>
 				<LayoutGrid size={15} />
@@ -26,7 +26,7 @@ export function ViewModeToggle({ value, onChange }: ViewModeToggleProps): React.
 				onClick={() => onChange("list")}
 				className={cn(
 					"flex size-8 items-center justify-center rounded-lg transition-colors",
-					value === "list" ? "bg-[#3B82F6] text-white" : "text-[#9CA3AF] hover:bg-[#F9FAFB]",
+					value === "list" ? "bg-imsg-blue text-white" : "text-[#9CA3AF] hover:bg-[#F9FAFB]",
 				)}
 			>
 				<List size={15} />
