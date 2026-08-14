@@ -8,7 +8,7 @@ import checkmarkAnimation from "@/public/animations/checkmark.json";
 
 const Lottie = dynamic(() => import("lottie-react"), {
 	ssr: false,
-	loading: () => <CheckCircle2 className="size-full text-[#3B82F6]" />,
+	loading: () => <CheckCircle2 className="size-full text-imsg-blue" />,
 });
 
 type SignupCompleteProps = {
@@ -30,9 +30,9 @@ export function SignupComplete({ role }: SignupCompleteProps) {
 	
 	useEffect(() => {
 		if (countdown === 0) {
-			router.push("/login");
+			router.push(homePath);
 		}
-	}, [countdown, router]);
+	}, [countdown, router, homePath]);
 
 	return (
 		<main
@@ -58,7 +58,7 @@ export function SignupComplete({ role }: SignupCompleteProps) {
 
 				<button
 					onClick={() => router.push(homePath)}
-					className="w-full h-12 rounded-xl font-semibold text-base bg-[#3B82F6] hover:bg-[#2563EB] text-white transition-colors"
+					className="w-full h-12 rounded-xl font-semibold text-base bg-imsg-blue hover:bg-[#2563EB] text-white transition-colors"
 				>
 					바로 시작하기
 				</button>

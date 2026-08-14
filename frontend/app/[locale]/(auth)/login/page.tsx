@@ -58,7 +58,7 @@ export default function LoginPage() {
 				<div className="flex justify-center mb-4">
 				<Image
 					src="/images/MitraPay.png"
-					alt="SantaraPay 로고"
+					alt="MitraPay 로고"
 					width={140}
 					height={140}
 					priority
@@ -77,7 +77,7 @@ export default function LoginPage() {
 							onChange={(e) => setUsername(e.target.value)}
 							onKeyDown={handleKeyDown}
 							placeholder="아이디를 입력하세요"
-							className="w-full px-4 py-3 border border-[#E5E7EB] rounded-lg text-sm text-[#1F2937] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] transition-colors"
+							className="w-full px-4 py-3 border border-[#E5E7EB] rounded-lg text-sm text-[#1F2937] placeholder:text-[#9CA3AF] focus:outline-none focus:border-imsg-blue focus:ring-1 focus:ring-imsg-blue transition-colors"
 						/>
 					</div>
 
@@ -90,7 +90,7 @@ export default function LoginPage() {
 								onChange={(e) => setPassword(e.target.value)}
 								onKeyDown={handleKeyDown}
 								placeholder="비밀번호를 입력하세요"
-								className="w-full px-4 py-3 pr-11 border border-[#E5E7EB] rounded-lg text-sm text-[#1F2937] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] transition-colors"
+								className="w-full px-4 py-3 pr-11 border border-[#E5E7EB] rounded-lg text-sm text-[#1F2937] placeholder:text-[#9CA3AF] focus:outline-none focus:border-imsg-blue focus:ring-1 focus:ring-imsg-blue transition-colors"
 							/>
 							<button
 								onClick={() => setShowPassword(!showPassword)}
@@ -108,7 +108,7 @@ export default function LoginPage() {
 						disabled={isLoading || !username || !password}
 						className={cn(
 							"w-full py-3 rounded-lg font-semibold text-sm transition-all",
-							"bg-[#3B82F6] text-white hover:bg-[#2563EB]",
+							"bg-imsg-blue text-white hover:bg-[#2563EB]",
 							"disabled:opacity-50 disabled:cursor-not-allowed",
 						)}
 					>
@@ -131,7 +131,7 @@ export default function LoginPage() {
 
 				<p className="text-center text-xs text-[#9CA3AF] mt-6">
 					솔루션 문의는 전문 컨설턴트가 도와드립니다.{" "}
-					<span className="text-[#3B82F6] font-medium">고객센터 02-742-9217</span>
+					<span className="text-imsg-blue font-medium">고객센터 02-742-9217</span>
 				</p>
 			</div>
 		</div>
