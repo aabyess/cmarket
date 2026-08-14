@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { cva } from "class-variance-authority";
 import { ArrowDown, ArrowUp, ChevronDown, Trash2 } from "lucide-react";
 import { SiteBuilderBlockEditor } from "@/features/siteBuilder/components/SiteBuilder/SiteBuilderBlockEditor";
+import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { BLOCK_DESCRIPTIONS, BLOCK_ICONS, BLOCK_LABELS } from "@/features/siteBuilder/constants";
 import { cn } from "@/utils/cn";
 import type { Block } from "@/features/siteBuilder/types";
@@ -42,12 +44,13 @@ export function SiteBuilderBlockCard({
 	onRemove,
 }: SiteBuilderBlockCardProps): React.JSX.Element {
 	const Icon = BLOCK_ICONS[block.type];
+	const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
 	return (
 		<div className="overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white">
 			<div className="flex items-center gap-3 px-4 py-3">
 				<span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#EFF6FF]">
-					<Icon size={16} className="text-[#3B82F6]" />
+					<Icon size={16} className="text-imsg-blue" />
 				</span>
 
 				<button
@@ -90,7 +93,7 @@ export function SiteBuilderBlockCard({
 					</button>
 					<button
 						type="button"
-						onClick={onRemove}
+						onClick={() => setIsConfirmOpen(true)}
 						title="블록 삭제"
 						aria-label="블록 삭제"
 						className={cn(ICON_BUTTON_CLASS, "hover:text-[#DC2626]")}>
@@ -104,6 +107,19 @@ export function SiteBuilderBlockCard({
 					<SiteBuilderBlockEditor block={block} onChange={onChange} />
 				</div>
 			)}
+
+			<ConfirmModal
+				isOpen={isConfirmOpen}
+				title="이 블록을 삭제할까요?"
+				description="삭제하면 되돌릴 수 없습니다."
+				confirmLabel="삭제"
+				variant="danger"
+				onConfirm={() => {
+					onRemove();
+					setIsConfirmOpen(false);
+				}}
+				onClose={() => setIsConfirmOpen(false)}
+			/>
 		</div>
 	);
 }
