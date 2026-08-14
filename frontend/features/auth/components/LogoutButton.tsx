@@ -3,6 +3,7 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { LogOut } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useLogout } from "@/features/auth/mutations";
 import { cn } from "@/utils/cn";
 
@@ -11,6 +12,7 @@ type LogoutButtonProps = {
 };
 
 export function LogoutButton({ className }: LogoutButtonProps): React.JSX.Element {
+	const t = useTranslations("LogoutButton");
 	const router = useRouter();
 	const { mutate: logout, isPending } = useLogout();
 
@@ -31,7 +33,7 @@ export function LogoutButton({ className }: LogoutButtonProps): React.JSX.Elemen
 			)}
 		>
 			<LogOut size={17} className="shrink-0" />
-			로그아웃
+			{t("logout")}
 		</button>
 	);
 }

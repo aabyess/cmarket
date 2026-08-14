@@ -1,4 +1,5 @@
 import { Building2 } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { SafeImage } from "@/components/commons/SafeImage";
 import type { SiteCompanyInfo } from "@/features/siteBuilder/types";
 
@@ -9,23 +10,24 @@ type PublicSiteIdentityProps = {
 	withHeading?: boolean;
 };
 
-export function PublicSiteIdentity({
+export async function PublicSiteIdentity({
 	company,
 	logoUrl,
 	withHeading = false,
-}: PublicSiteIdentityProps): React.JSX.Element {
+}: PublicSiteIdentityProps): Promise<React.JSX.Element> {
+	const t = await getTranslations("PublicSiteIdentity");
 	const rows = [
-		{ label: "대표자", value: company.representative },
-		{ label: "업태", value: company.businessType },
-		{ label: "종목", value: company.businessItem },
-		{ label: "사업자등록번호", value: company.businessNumber },
-		{ label: "소재지", value: company.address },
+		{ label: t("representativeLabel"), value: company.representative },
+		{ label: t("businessTypeLabel"), value: company.businessType },
+		{ label: t("businessItemLabel"), value: company.businessItem },
+		{ label: t("businessNumberLabel"), value: company.businessNumber },
+		{ label: t("addressLabel"), value: company.address },
 	].filter((row) => row.value);
 
 	return (
 		<section className="rounded-2xl bg-white p-6 shadow-sm">
 			{withHeading && (
-				<h2 className="mb-4 text-base font-semibold text-[#0f172a]">사업자 정보</h2>
+				<h2 className="mb-4 text-base font-semibold text-[#0f172a]">{t("heading")}</h2>
 			)}
 
 			<div className="flex items-center gap-4">
@@ -49,7 +51,7 @@ export function PublicSiteIdentity({
 					</h1>
 					<p className="mt-0.5 text-sm text-imsg-secondary">
 						{[company.businessType, company.businessItem].filter(Boolean).join(" · ") ||
-							"업종 미등록"}
+							t("businessTypeUnknown")}
 					</p>
 				</div>
 			</div>

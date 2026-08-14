@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { ShoppingCart, Package } from "lucide-react";
 import { motion } from "motion/react";
 import { cn } from "@/utils/cn";
@@ -18,17 +19,11 @@ const COUNTRY_CONFIG = {
   indonesia: {
     flagUrl: "https://flagcdn.com/w160/id.png",
     flagEmoji: "🇮🇩",
-    name: "인도네시아",
-    badge: "구매 · 발주",
-    description: "상품/서비스를 구매하는 기업",
     Icon: ShoppingCart,
   },
   korea: {
     flagUrl: "https://flagcdn.com/w160/kr.png",
     flagEmoji: "🇰🇷",
-    name: "대한민국",
-    badge: "판매 · 견적",
-    description: "상품/서비스를 판매하는 기업",
     Icon: Package,
   },
 } as const;
@@ -38,8 +33,12 @@ export function SignupCountrySelectorCard({
   isSelected,
   onSelect,
 }: SignupCountrySelectorCardProps): React.ReactNode {
+  const t = useTranslations("SignupCountrySelector");
   const [imageError, setImageError] = useState(false);
-  const { flagUrl, flagEmoji, name, badge, description, Icon } = COUNTRY_CONFIG[country];
+  const { flagUrl, flagEmoji, Icon } = COUNTRY_CONFIG[country];
+  const name = t(`cards.${country}.name`);
+  const badge = t(`cards.${country}.badge`);
+  const description = t(`cards.${country}.description`);
 
   function handleSelect(): void {
     onSelect(country);
@@ -79,7 +78,7 @@ export function SignupCountrySelectorCard({
       {!imageError ? (
         <motion.img
           src={flagUrl}
-          alt={`${name} 국기`}
+          alt={t("flagAlt", { name })}
           className="w-30 h-24 rounded-lg object-cover border border-[#E2E8F0]"
           crossOrigin="anonymous"
           onError={handleImageError}

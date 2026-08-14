@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { cva } from "class-variance-authority";
 import { Building2, MessageSquare } from "lucide-react";
 import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
@@ -11,13 +12,7 @@ type MyQuotesTableProps = {
 	onGoToChat: (quoteId: string) => void;
 };
 
-const STATUS_LABELS: Record<QuoteStatus, string> = {
-	pending: "검토 중",
-	awarded: "계약 확정",
-	rejected: "미선정",
-};
-
-const statusChip = cva("rounded-full px-2 py-0.5 text-xs font-semibold", {
+const statusChip = cva("whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold", {
 	variants: {
 		status: {
 			pending: "bg-[#EFF6FF] text-imsg-blue",
@@ -33,18 +28,25 @@ export function MyQuotesTable({
 	onViewListing,
 	onGoToChat,
 }: MyQuotesTableProps): React.JSX.Element {
+	const t = useTranslations("MyQuotesTable");
+	const statusLabels: Record<QuoteStatus, string> = {
+		pending: t("statusPending"),
+		awarded: t("statusAwarded"),
+		rejected: t("statusRejected"),
+	};
+
 	return (
 		<div className="overflow-hidden rounded-2xl bg-white shadow-sm">
 			<div className="overflow-x-auto">
 				<table className="w-full text-left text-sm">
 					<thead className="bg-[#FAFAFC]">
 						<tr className="text-xs text-imsg-secondary">
-							<th className="whitespace-nowrap px-4 py-3 font-medium">상태</th>
-							<th className="px-4 py-3 font-medium">견적요청</th>
-							<th className="px-4 py-3 font-medium">발주기업</th>
-							<th className="whitespace-nowrap px-4 py-3 text-right font-medium">내 견적가</th>
-							<th className="whitespace-nowrap px-4 py-3 text-right font-medium">납품</th>
-							<th className="whitespace-nowrap px-4 py-3 text-right font-medium">제출일</th>
+							<th className="whitespace-nowrap px-4 py-3 font-medium">{t("columnStatus")}</th>
+							<th className="px-4 py-3 font-medium">{t("columnListing")}</th>
+							<th className="px-4 py-3 font-medium">{t("columnBuyer")}</th>
+							<th className="whitespace-nowrap px-4 py-3 text-right font-medium">{t("columnPrice")}</th>
+							<th className="whitespace-nowrap px-4 py-3 text-right font-medium">{t("columnDelivery")}</th>
+							<th className="whitespace-nowrap px-4 py-3 text-right font-medium">{t("columnSubmittedAt")}</th>
 							<th className="px-4 py-3" />
 						</tr>
 					</thead>
@@ -53,7 +55,7 @@ export function MyQuotesTable({
 							<tr key={quote.id} className="border-t border-[#F2F2F7] hover:bg-imsg-surface">
 								<td className="whitespace-nowrap px-4 py-3">
 									<span className={statusChip({ status: quote.status })}>
-										{STATUS_LABELS[quote.status]}
+										{statusLabels[quote.status]}
 									</span>
 								</td>
 								<td className="px-4 py-3">
@@ -74,7 +76,7 @@ export function MyQuotesTable({
 									{CURRENCY_SYMBOL[quote.currency]} {quote.price.toLocaleString()}
 								</td>
 								<td className="whitespace-nowrap px-4 py-3 text-right text-[#374151]">
-									{quote.deliveryDays}일
+									{t("daysSuffix", { days: quote.deliveryDays })}
 								</td>
 								<td className="whitespace-nowrap px-4 py-3 text-right text-imsg-secondary">
 									{new Date(quote.createdAt).toLocaleDateString("ko-KR")}
@@ -86,7 +88,7 @@ export function MyQuotesTable({
 											onClick={() => onGoToChat(quote.id)}
 											className="inline-flex items-center gap-1 rounded-lg bg-imsg-blue px-3 py-1.5 text-xs font-semibold text-white transition-colors duration-200 hover:bg-blue-600">
 											<MessageSquare size={12} />
-											대화하기
+											{t("chatButton")}
 										</button>
 									)}
 								</td>

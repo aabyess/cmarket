@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { ArrowRight, Bell, Building2, Clock, MessageSquare, Search } from "lucide-react";
 import { cn } from "@/utils/cn";
@@ -16,6 +17,7 @@ export function DashboardHome({
 	data,
 	recommendedListings,
 }: DashboardHomeProps): React.JSX.Element {
+	const t = useTranslations("SellerDashboard");
 	const router = useRouter();
 
 	function handleNavigate(href: string): void {
@@ -24,37 +26,37 @@ export function DashboardHome({
 
 	const summaryBlocks = [
 		{
-			label: "견적요청",
+			label: t("summaryListingsLabel"),
 			total: data.openListingCount,
-			subItems: [{ label: "내 카테고리 추천", value: `${recommendedListings.length}건` }],
+			subItems: [{ label: t("summaryListingsSubLabel"), value: t("totalCount", { count: recommendedListings.length }) }],
 		},
 		{
-			label: "보낸 견적",
+			label: t("summaryQuotesLabel"),
 			total: data.quoteCount,
 			subItems: [
-				{ label: "검토 대기", value: `${data.pendingQuoteCount}건` },
-				{ label: "낙찰", value: `${data.awardedQuoteCount}건` },
+				{ label: t("summaryQuotesPendingLabel"), value: t("totalCount", { count: data.pendingQuoteCount }) },
+				{ label: t("summaryQuotesAwardedLabel"), value: t("totalCount", { count: data.awardedQuoteCount }) },
 			],
 		},
 		{
-			label: "계약",
+			label: t("summaryContractsLabel"),
 			total: data.contractCount,
-			subItems: [{ label: "낙찰된 견적", value: `${data.awardedQuoteCount}건` }],
+			subItems: [{ label: t("summaryContractsAwardedLabel"), value: t("totalCount", { count: data.awardedQuoteCount }) }],
 		},
 	];
 
 	const quickLinks = [
 		{
-			label: "견적 탐색",
-			sub: `${data.openListingCount}건`,
+			label: t("shortcutBrowseLabel"),
+			sub: t("shortcutBrowseSub", { count: data.openListingCount }),
 			icon: Search,
 			iconBg: "bg-blue-50",
 			color: "text-imsg-blue",
 			href: "/seller/listing-browse",
 		},
 		{
-			label: "채팅",
-			sub: "확인하기",
+			label: t("shortcutChatLabel"),
+			sub: t("shortcutChatSub"),
 			icon: MessageSquare,
 			iconBg: "bg-amber-50",
 			color: "text-amber-500",
@@ -69,21 +71,21 @@ export function DashboardHome({
 				<div>
 					<p className="text-sm font-medium text-imsg-secondary">MitraPay</p>
 					<h1 className="mt-1 text-2xl font-bold tracking-tight text-[#0f172a]">
-						{companyName}님, 환영합니다
+						{t("welcome", { companyName })}
 					</h1>
 				</div>
 				<button
 					onClick={() => handleNavigate("/seller/listing-browse")}
 					className="flex shrink-0 items-center gap-1.5 rounded-full bg-imsg-blue px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-blue-600 active:scale-95">
 					<Search size={15} strokeWidth={2.5} />
-					견적요청 탐색
+					{t("exploreButton")}
 				</button>
 			</div>
 
 			{/* 나의 거래 요약 */}
 			<div className="mb-6">
 				<div className="mb-3 flex items-center justify-between">
-					<h2 className="text-base font-semibold text-[#0f172a]">나의 거래 요약</h2>
+					<h2 className="text-base font-semibold text-[#0f172a]">{t("tradeSummaryTitle")}</h2>
 				</div>
 				<div className="rounded-2xl bg-white p-6 shadow-sm">
 					<div className="grid grid-cols-1 divide-y divide-[#F2F2F7] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
@@ -93,7 +95,7 @@ export function DashboardHome({
 								className="px-0 py-4 first:pt-0 last:pb-0 sm:px-6 sm:py-0 sm:first:pl-0 sm:last:pr-0">
 								<div className="flex items-baseline justify-between">
 									<p className="text-sm font-medium text-imsg-secondary">{block.label}</p>
-									<p className="text-3xl font-bold text-[#0f172a]">{block.total}건</p>
+									<p className="text-3xl font-bold text-[#0f172a]">{t("totalCount", { count: block.total })}</p>
 								</div>
 								<div className="mt-3 space-y-2">
 									{block.subItems.map((sub) => (
@@ -116,17 +118,17 @@ export function DashboardHome({
 					<div className="rounded-2xl bg-white shadow-sm">
 						<div className="flex items-center justify-between px-5 py-4">
 							<div className="flex items-center gap-2">
-								<h2 className="text-base font-semibold text-[#0f172a]">추천 견적</h2>
+								<h2 className="text-base font-semibold text-[#0f172a]">{t("recommendedTitle")}</h2>
 								{recommendedListings.length > 0 && (
 									<span className="rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold text-imsg-blue">
-										{recommendedListings.length}건
+										{t("totalCount", { count: recommendedListings.length })}
 									</span>
 								)}
 							</div>
 							<button
 								onClick={() => handleNavigate("/seller/listing-browse")}
 								className="text-sm font-medium text-imsg-blue hover:underline">
-								모두 보기
+								{t("viewAll")}
 							</button>
 						</div>
 
@@ -137,14 +139,14 @@ export function DashboardHome({
 								<div className="mb-3 flex size-12 items-center justify-center rounded-full bg-imsg-surface">
 									<Search size={20} className="text-imsg-secondary" />
 								</div>
-								<p className="text-base font-medium text-[#0f172a]">추천할 견적이 없어요</p>
+								<p className="text-base font-medium text-[#0f172a]">{t("recommendedEmptyTitle")}</p>
 								<p className="mt-1 text-sm text-imsg-secondary">
-									거래 설정에서 취급 카테고리를 지정하면 맞춤 견적을 추천해드려요.
+									{t("recommendedEmptyDescription")}
 								</p>
 								<button
 									onClick={() => handleNavigate("/seller/profile/edit?tab=settings")}
 									className="mt-4 rounded-full border border-[#E5E7EB] px-4 py-2 text-sm font-medium text-[#0f172a] transition-colors duration-200 hover:bg-imsg-surface">
-									취급 카테고리 설정하기
+									{t("recommendedEmptyAction")}
 								</button>
 							</div>
 						) : (
@@ -160,7 +162,7 @@ export function DashboardHome({
 														{listing.title}
 													</h3>
 													<span className="shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold text-imsg-blue">
-														내 취급 카테고리
+														{t("myCategoryBadge")}
 													</span>
 												</div>
 												<p className="mt-0.5 text-sm text-imsg-secondary">
@@ -170,14 +172,14 @@ export function DashboardHome({
 												</p>
 												<div className="mt-1.5 flex items-center gap-1 text-sm text-imsg-secondary">
 													<Clock size={11} />
-													<span>마감 {new Date(listing.endDate).toLocaleDateString("ko-KR")}</span>
+													<span>{t("deadlinePrefix")} {new Date(listing.endDate).toLocaleDateString("ko-KR")}</span>
 												</div>
 											</div>
 
 											<button
 												onClick={() => handleNavigate(`/seller/listing-browse/${listing.id}`)}
 												className="flex shrink-0 items-center gap-1 rounded-full bg-imsg-surface px-3.5 py-1.5 text-sm font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-[#E5E7EB]">
-												견적 보내기
+												{t("sendQuoteAction")}
 												<ArrowRight size={12} />
 											</button>
 										</div>
@@ -197,7 +199,7 @@ export function DashboardHome({
 					{/* 바로가기 */}
 					<div className="rounded-2xl bg-white p-4 shadow-sm">
 						<h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-imsg-secondary">
-							바로가기
+							{t("shortcutsTitle")}
 						</h2>
 						<div className="grid grid-cols-2 gap-2">
 							{quickLinks.map((link) => (
@@ -225,14 +227,14 @@ export function DashboardHome({
 								<Building2 size={16} className="text-imsg-blue" />
 							</span>
 							<div className="min-w-0 flex-1">
-								<p className="text-sm font-semibold text-[#0f172a]">기업 홈페이지 만들기</p>
+								<p className="text-sm font-semibold text-[#0f172a]">{t("companyPageTitle")}</p>
 								<p className="mt-0.5 text-sm text-imsg-secondary">
-									바이어에게 신뢰를 주는 첫걸음이에요
+									{t("companyPageDescription")}
 								</p>
 								<button
 									onClick={() => handleNavigate("/seller/profile/edit")}
 									className="mt-2 flex items-center gap-1 text-sm font-semibold text-imsg-blue hover:underline">
-									홈페이지 편집하기
+									{t("companyPageAction")}
 									<ArrowRight size={11} />
 								</button>
 							</div>
@@ -243,13 +245,13 @@ export function DashboardHome({
 					<div className="rounded-2xl bg-white shadow-sm">
 						<div className="flex items-center gap-2 px-4 py-3">
 							<h2 className="text-sm font-semibold uppercase tracking-wider text-imsg-secondary">
-								최근 활동
+								{t("recentActivityTitle")}
 							</h2>
 						</div>
 						<div className="h-px bg-[#F2F2F7]" />
 						<ul className="p-2">
 							{data.activities.length === 0 ? (
-								<li className="py-8 text-center text-sm text-imsg-secondary">아직 활동이 없어요</li>
+								<li className="py-8 text-center text-sm text-imsg-secondary">{t("recentActivityEmpty")}</li>
 							) : (
 								data.activities.map((activity, i) => (
 									<li

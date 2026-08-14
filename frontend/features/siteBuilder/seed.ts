@@ -1,6 +1,35 @@
-import { CATEGORY_LABELS } from "@/features/buyer/constants";
+import { getCategoryLabels } from "@/features/buyer/constants";
 import type { ListingCategory } from "@/features/buyer/types";
 import type { Block } from "@/features/siteBuilder/types";
+
+type LabelTranslator = (key: string) => string;
+
+type SeedTranslations = {
+	categoryLabels: Record<ListingCategory, string>;
+	introHeading: string;
+	productsHeading: string;
+	certificationsHeading: string;
+	statsHeading: string;
+	establishedLabel: string;
+	employeeLabel: string;
+	contactHeading: string;
+};
+
+export function buildSeedTranslations(
+	tCategory: LabelTranslator,
+	tSeed: LabelTranslator,
+): SeedTranslations {
+	return {
+		categoryLabels: getCategoryLabels(tCategory),
+		introHeading: tSeed("introHeading"),
+		productsHeading: tSeed("productsHeading"),
+		certificationsHeading: tSeed("certificationsHeading"),
+		statsHeading: tSeed("statsHeading"),
+		establishedLabel: tSeed("establishedLabel"),
+		employeeLabel: tSeed("employeeLabel"),
+		contactHeading: tSeed("contactHeading"),
+	};
+}
 
 export type LegacyProfile = {
 	companyName: string;
@@ -29,15 +58,15 @@ export type LegacyProduct = {
 	imageUrls: string[];
 };
 
-function toCategoryLabel(category: string): string {
-	return CATEGORY_LABELS[category as ListingCategory] ?? category;
-}
-
 /**
  * 기존 기업 프로필(company_profiles · products · contacts)로 첫 초안을 만든다.
  * 블록 id 는 고정값이다 — 저장 전에는 새로고침해도 같은 초안이 나와야 하기 때문이다.
  */
-export function buildSeedBlocks(profile: LegacyProfile): Block[] {
+export function buildSeedBlocks(profile: LegacyProfile, translations: SeedTranslations): Block[] {
+	function toCategoryLabel(category: string): string {
+		return translations.categoryLabels[category as ListingCategory] ?? category;
+	}
+
 	const blocks: Block[] = [
 		{
 			id: "seed-hero",
@@ -60,7 +89,7 @@ export function buildSeedBlocks(profile: LegacyProfile): Block[] {
 		blocks.push({
 			id: "seed-text",
 			type: "TEXT",
-			props: { heading: "회사 소개", body: profile.description },
+			props: { heading: translations.introHeading, body: profile.description },
 		});
 	}
 
@@ -68,7 +97,7 @@ export function buildSeedBlocks(profile: LegacyProfile): Block[] {
 		blocks.push({
 			id: "seed-products",
 			type: "PRODUCTS",
-			props: { heading: "주요 제품", items: profile.products },
+			props: { heading: translations.productsHeading, items: profile.products },
 		});
 	}
 
@@ -76,17 +105,17 @@ export function buildSeedBlocks(profile: LegacyProfile): Block[] {
 		blocks.push({
 			id: "seed-certifications",
 			type: "CERTIFICATIONS",
-			props: { heading: "인증 및 수상", items: profile.certifications },
+			props: { heading: translations.certificationsHeading, items: profile.certifications },
 		});
 	}
 
 	const stats = [
-		{ id: "seed-stat-year", value: profile.establishedYear?.toString() ?? "", label: "설립" },
-		{ id: "seed-stat-employee", value: profile.employeeCount, label: "임직원" },
+		{ id: "seed-stat-year", value: profile.establishedYear?.toString() ?? "", label: translations.establishedLabel },
+		{ id: "seed-stat-employee", value: profile.employeeCount, label: translations.employeeLabel },
 	].filter((stat) => stat.value);
 
 	if (stats.length > 0) {
-		blocks.push({ id: "seed-stats", type: "STATS", props: { heading: "한눈에 보기", items: stats } });
+		blocks.push({ id: "seed-stats", type: "STATS", props: { heading: translations.statsHeading, items: stats } });
 	}
 
 	const hasContact =
@@ -101,7 +130,7 @@ export function buildSeedBlocks(profile: LegacyProfile): Block[] {
 			id: "seed-contact",
 			type: "CONTACT",
 			props: {
-				heading: "문의처",
+				heading: translations.contactHeading,
 				managerName: profile.contactName || profile.representative,
 				email: profile.contactEmail,
 				phone: profile.contactPhone,

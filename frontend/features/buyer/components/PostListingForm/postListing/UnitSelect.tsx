@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { cn } from "@/utils/cn";
 
@@ -32,6 +33,7 @@ type UnitSelectProps = {
 };
 
 export default function UnitSelect({ value, onChange }: UnitSelectProps): React.ReactNode {
+	const t = useTranslations("UnitSelect");
 	const [isOpen, setIsOpen] = useState(false);
 	const ref = useRef<HTMLDivElement>(null);
 
@@ -57,7 +59,7 @@ export default function UnitSelect({ value, onChange }: UnitSelectProps): React.
 				value={value}
 				onChange={(e) => onChange(e.target.value)}
 				onFocus={() => setIsOpen(true)}
-				placeholder="단위"
+				placeholder={t("placeholder")}
 				className="w-full rounded border border-[#E2E8F0] px-2 py-1.5 text-sm text-[#374151] focus:border-imsg-blue focus:outline-none"
 			/>
 

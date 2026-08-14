@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
 import type { SellerDashboardData } from "@/features/seller/types";
 import type { MyQuote } from "@/features/seller/types";
@@ -52,14 +53,19 @@ export async function getSellerDashboardData(): Promise<SellerDashboardData> {
 	const pendingQuoteCount = quotes?.filter((q) => q.status === "pending").length ?? 0;
 	const awardedQuoteCount = quotes?.filter((q) => q.status === "awarded").length ?? 0;
 
+	const [t, tRelative] = await Promise.all([
+		getTranslations("SellerDashboardData"),
+		getTranslations("RelativeTime"),
+	]);
+
 	const activities = (recentQuotes ?? []).map((row) => {
 		const listing = row.listings as unknown as { title: string } | null;
 		const title =
 			row.status === "awarded"
-				? `${listing?.title ?? ""} · 계약이 확정됐어요`
-				: `${listing?.title ?? ""} · 견적을 제출했어요`;
+				? t("contractConfirmedActivity", { title: listing?.title ?? "" })
+				: t("quoteSubmittedActivity", { title: listing?.title ?? "" });
 
-		return { title, timeText: formatRelativeTime(row.created_at) };
+		return { title, timeText: formatRelativeTime(row.created_at, tRelative) };
 	});
 
 	return {

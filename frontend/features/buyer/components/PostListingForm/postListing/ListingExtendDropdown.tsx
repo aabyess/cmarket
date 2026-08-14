@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Clock } from "lucide-react";
 import { extendListingDeadline } from "@/features/buyer/mutations";
@@ -12,6 +13,7 @@ type ListingExtendDropdownProps = {
 };
 
 export function ListingExtendDropdown({ listingId }: ListingExtendDropdownProps): React.ReactNode {
+	const t = useTranslations("ListingExtendDropdown");
 	const router = useRouter();
 	const [days, setDays] = useState(7);
 	const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +25,7 @@ export function ListingExtendDropdown({ listingId }: ListingExtendDropdownProps)
 			router.refresh();
 		} catch (err) {
 			console.error(err);
-			alert("연장 처리 중 오류가 발생했습니다.");
+			alert(t("extendFailed"));
 		} finally {
 			setIsLoading(false);
 		}
@@ -38,7 +40,7 @@ export function ListingExtendDropdown({ listingId }: ListingExtendDropdownProps)
 			>
 				{EXTEND_OPTIONS.map((option) => (
 					<option key={option} value={option}>
-						{option}일 연장
+						{t("extendDays", { days: option })}
 					</option>
 				))}
 			</select>
@@ -48,7 +50,7 @@ export function ListingExtendDropdown({ listingId }: ListingExtendDropdownProps)
 				className="flex items-center gap-1.5 rounded-lg bg-imsg-blue px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
 			>
 				<Clock size={14} />
-				{isLoading ? "처리 중..." : "연장하기"}
+				{isLoading ? t("processing") : t("extend")}
 			</button>
 		</div>
 	);

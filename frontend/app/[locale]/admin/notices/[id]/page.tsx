@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { AdminNoticeForm } from "@/features/support/components/AdminNoticeForm";
 import { getNotice } from "@/features/support/serverApis";
 
@@ -14,6 +15,7 @@ export default async function EditNoticePage({
 	const { id } = await params;
 	const notice = await getNotice(id);
 	if (!notice) notFound();
+	const t = await getTranslations("AdminNoticeDetailPage");
 
 	return (
 		<div className="mx-auto max-w-[900px] px-6 py-6 lg:px-8">
@@ -21,10 +23,10 @@ export default async function EditNoticePage({
 				href="/admin/notices"
 				className="mb-4 inline-flex items-center gap-1.5 text-sm text-imsg-secondary transition-colors duration-200 hover:text-[#374151]">
 				<ChevronLeft size={16} />
-				공지 목록으로
+				{t("backToList")}
 			</Link>
 
-			<h1 className="mb-5 text-2xl font-bold tracking-tight text-[#0f172a]">공지 수정</h1>
+			<h1 className="mb-5 text-2xl font-bold tracking-tight text-[#0f172a]">{t("title")}</h1>
 			<AdminNoticeForm notice={notice} />
 		</div>
 	);

@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const DEFAULT_PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 
@@ -21,6 +22,8 @@ export function Pagination({
 	onPageSizeChange,
 	pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS,
 }: PaginationProps): React.ReactNode {
+	const t = useTranslations("Pagination");
+
 	return (
 		<div className="relative mt-4 flex items-center justify-center">
 			<select
@@ -30,7 +33,7 @@ export function Pagination({
 			>
 				{pageSizeOptions.map((size) => (
 					<option key={size} value={size}>
-						{size}개
+						{t("perPage", { size })}
 					</option>
 				))}
 			</select>

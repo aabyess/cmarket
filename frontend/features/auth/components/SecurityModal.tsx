@@ -1,12 +1,15 @@
 "use client";
 
 import { Shield } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type SecurityModalProps = {
 	step: "connecting" | "verifying";
 };
 
 export function SecurityModal({ step }: SecurityModalProps) {
+	const t = useTranslations("SecurityModal");
+
 	return (
 		<div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
 			<div className="bg-white rounded-2xl p-10 flex flex-col items-center gap-4 w-80 shadow-xl">
@@ -22,13 +25,13 @@ export function SecurityModal({ step }: SecurityModalProps) {
 				<div className="flex flex-col items-center gap-1 text-center">
 					{step === "connecting" ? (
 						<>
-							<p className="font-semibold text-[#1F2937]">보안 연결을 수립하는 중입니다</p>
-							<p className="text-sm text-blue-500">안전하게 로그인하고 있어요</p>
+							<p className="font-semibold text-[#1F2937]">{t("connectingTitle")}</p>
+							<p className="text-sm text-blue-500">{t("subtitle")}</p>
 						</>
 					) : (
 						<>
-							<p className="font-semibold text-[#1F2937]">입력하신 정보를 확인하고 있어요</p>
-							<p className="text-sm text-blue-500">안전하게 로그인하고 있어요</p>
+							<p className="font-semibold text-[#1F2937]">{t("verifyingTitle")}</p>
+							<p className="text-sm text-blue-500">{t("subtitle")}</p>
 						</>
 					)}
 				</div>
@@ -36,7 +39,7 @@ export function SecurityModal({ step }: SecurityModalProps) {
 				{/* SSL 표시 */}
 				<div className="flex items-center gap-1.5 text-xs text-[#9CA3AF]">
 					<Shield size={12} />
-					<span>SSL 암호화 보안 접속</span>
+					<span>{t("sslLabel")}</span>
 				</div>
 			</div>
 		</div>

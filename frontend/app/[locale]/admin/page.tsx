@@ -1,13 +1,15 @@
 import { Link } from "@/i18n/navigation";
 import { ArrowRight, FileText, FolderOpen, Mail } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { getAllNotices, getAllResources } from "@/features/support/serverApis";
 import { getAllInquiries } from "@/features/support/inquiryApis";
 
 export default async function AdminHomePage(): Promise<React.JSX.Element> {
-	const [notices, resources, inquiries] = await Promise.all([
+	const [notices, resources, inquiries, t] = await Promise.all([
 		getAllNotices(),
 		getAllResources(),
 		getAllInquiries(),
+		getTranslations("AdminDashboardPage"),
 	]);
 
 	const openCount = inquiries.filter((inquiry) => inquiry.status === "OPEN").length;
@@ -15,25 +17,25 @@ export default async function AdminHomePage(): Promise<React.JSX.Element> {
 	const cards = [
 		{
 			href: "/admin/inquiries",
-			label: "답변 대기 문의",
-			value: `${openCount}건`,
-			sub: `전체 ${inquiries.length}건`,
+			label: t("pendingInquiries"),
+			value: t("countUnit", { count: openCount }),
+			sub: t("totalCount", { count: inquiries.length }),
 			icon: Mail,
 			accent: openCount > 0,
 		},
 		{
 			href: "/admin/notices",
-			label: "공지사항",
-			value: `${notices.filter((n) => n.publishedAt).length}건 발행`,
-			sub: `임시저장 ${notices.filter((n) => !n.publishedAt).length}건`,
+			label: t("notices"),
+			value: t("publishedCount", { count: notices.filter((n) => n.publishedAt).length }),
+			sub: t("draftCount", { count: notices.filter((n) => !n.publishedAt).length }),
 			icon: FileText,
 			accent: false,
 		},
 		{
 			href: "/admin/resources",
-			label: "자료실",
-			value: `${resources.filter((r) => r.publishedAt).length}건 발행`,
-			sub: `임시저장 ${resources.filter((r) => !r.publishedAt).length}건`,
+			label: t("resources"),
+			value: t("publishedCount", { count: resources.filter((r) => r.publishedAt).length }),
+			sub: t("draftCount", { count: resources.filter((r) => !r.publishedAt).length }),
 			icon: FolderOpen,
 			accent: false,
 		},
@@ -42,8 +44,8 @@ export default async function AdminHomePage(): Promise<React.JSX.Element> {
 	return (
 		<div className="mx-auto max-w-[1100px] px-6 py-6 lg:px-8">
 			<div className="mb-6">
-				<h1 className="text-2xl font-bold tracking-tight text-[#0f172a]">운영자 대시보드</h1>
-				<p className="mt-1 text-sm text-imsg-secondary">지원센터 콘텐츠와 문의를 관리합니다</p>
+				<h1 className="text-2xl font-bold tracking-tight text-[#0f172a]">{t("title")}</h1>
+				<p className="mt-1 text-sm text-imsg-secondary">{t("subtitle")}</p>
 			</div>
 
 			<div className="grid grid-cols-1 gap-3 sm:grid-cols-3">

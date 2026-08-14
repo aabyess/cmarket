@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { cn } from "@/utils/cn";
 
-const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
+const WEEKDAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 
 type CalendarModalProps = {
 	isOpen: boolean;
@@ -19,6 +20,7 @@ function toISODate(year: number, month: number, day: number): string {
 }
 
 export default function CalendarModal({ isOpen, onClose, value, onSelect }: CalendarModalProps) {
+	const t = useTranslations("CalendarModal");
 	const initial = value ? new Date(value) : new Date();
 	const [viewYear, setViewYear] = useState(initial.getFullYear());
 	const [viewMonth, setViewMonth] = useState(initial.getMonth());
@@ -53,7 +55,7 @@ export default function CalendarModal({ isOpen, onClose, value, onSelect }: Cale
 			<div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 			<div className="fixed inset-0 flex items-center justify-center p-4">
 				<DialogPanel className="w-full max-w-sm rounded-2xl bg-white p-5">
-					<DialogTitle className="sr-only">납기일 선택</DialogTitle>
+					<DialogTitle className="sr-only">{t("title")}</DialogTitle>
 
 					<div className="mb-4 flex items-center justify-between">
 						<div className="flex items-center gap-1">
@@ -71,7 +73,7 @@ export default function CalendarModal({ isOpen, onClose, value, onSelect }: Cale
 							</button>
 						</div>
 						<p className="text-sm font-semibold text-[#1F2937]">
-							{viewYear}년 {viewMonth + 1}월
+							{t("yearMonth", { year: viewYear, month: viewMonth + 1 })}
 						</p>
 						<div className="flex items-center gap-1">
 							<button
@@ -90,15 +92,15 @@ export default function CalendarModal({ isOpen, onClose, value, onSelect }: Cale
 					</div>
 
 					<div className="grid grid-cols-7 gap-1 text-center">
-						{WEEKDAYS.map((day, i) => (
+						{WEEKDAY_KEYS.map((key, i) => (
 							<span
-								key={day}
+								key={key}
 								className={cn(
 									"py-1.5 text-xs font-medium",
 									i === 0 ? "text-[#DC2626]" : i === 6 ? "text-imsg-blue" : "text-[#9CA3AF]",
 								)}
 							>
-								{day}
+								{t(`weekday_${key}`)}
 							</span>
 						))}
 						{cells.map((day, i) => {

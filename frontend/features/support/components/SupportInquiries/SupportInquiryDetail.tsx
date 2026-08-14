@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { cva } from "class-variance-authority";
 import { Headset, Loader2, User } from "lucide-react";
-import { INQUIRY_CATEGORY_LABELS, INQUIRY_STATUS_LABELS } from "@/features/support/constants";
+import { getInquiryCategoryLabels, getInquiryStatusLabels } from "@/features/support/constants";
 import type { Inquiry } from "@/features/support/types";
 
 type SupportInquiryDetailProps = {
@@ -13,7 +14,7 @@ type SupportInquiryDetailProps = {
 	isAdmin: boolean;
 };
 
-const statusChip = cva("rounded-full px-2.5 py-1 text-xs font-semibold", {
+const statusChip = cva("whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold", {
 	variants: {
 		status: {
 			OPEN: "bg-[#FFFBEB] text-[#D97706]",
@@ -48,6 +49,9 @@ export function SupportInquiryDetail({
 	inquiry,
 	isAdmin,
 }: SupportInquiryDetailProps): React.JSX.Element {
+	const t = useTranslations("SupportInquiryDetail");
+	const inquiryStatusLabels = getInquiryStatusLabels(useTranslations("InquiryStatusLabel"));
+	const inquiryCategoryLabels = getInquiryCategoryLabels(useTranslations("InquiryCategoryLabel"));
 	const router = useRouter();
 	const [content, setContent] = useState("");
 	const [isSaving, setIsSaving] = useState(false);
@@ -63,7 +67,7 @@ export function SupportInquiryDetail({
 
 			if (!res.ok) {
 				const { error } = await res.json();
-				alert(error ?? "등록에 실패했습니다.");
+				alert(error ?? t("submitFailed"));
 				return;
 			}
 
@@ -79,10 +83,10 @@ export function SupportInquiryDetail({
 			<article className="rounded-2xl bg-white p-6 shadow-sm">
 				<div className="mb-2 flex flex-wrap items-center gap-2">
 					<span className={statusChip({ status: inquiry.status })}>
-						{INQUIRY_STATUS_LABELS[inquiry.status]}
+						{inquiryStatusLabels[inquiry.status]}
 					</span>
 					<span className="rounded-full bg-imsg-surface px-2.5 py-1 text-xs font-medium text-imsg-secondary">
-						{INQUIRY_CATEGORY_LABELS[inquiry.category]}
+						{inquiryCategoryLabels[inquiry.category]}
 					</span>
 					<span className="text-xs text-imsg-secondary">{formatDateTime(inquiry.createdAt)}</span>
 				</div>
@@ -112,7 +116,7 @@ export function SupportInquiryDetail({
 							)}
 						</span>
 						<span className="text-sm font-semibold text-[#0f172a]">
-							{reply.isStaff ? "MitraPay 운영팀" : "추가 문의"}
+							{reply.isStaff ? t("staffLabel") : t("additionalInquiry")}
 						</span>
 						<span className="text-xs text-imsg-secondary">{formatDateTime(reply.createdAt)}</span>
 					</div>
@@ -124,13 +128,13 @@ export function SupportInquiryDetail({
 
 			<div className="rounded-2xl bg-white p-5 shadow-sm">
 				<label className="mb-1.5 block text-xs font-medium text-[#374151]">
-					{isAdmin ? "답변 작성" : "추가 문의"}
+					{isAdmin ? t("writeReply") : t("additionalInquiry")}
 				</label>
 				<textarea
 					value={content}
 					onChange={(e) => setContent(e.target.value)}
 					rows={5}
-					placeholder={isAdmin ? "답변을 입력해주세요." : "덧붙일 내용이 있으면 적어 주세요."}
+					placeholder={isAdmin ? t("replyPlaceholder") : t("additionalPlaceholder")}
 					className="w-full resize-none rounded-lg border border-[#E5E7EB] px-3.5 py-2.5 text-sm leading-relaxed text-[#0f172a] placeholder:text-[#9CA3AF] focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 				/>
 				<button
@@ -139,7 +143,7 @@ export function SupportInquiryDetail({
 					disabled={content.trim().length === 0 || isSaving}
 					className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-imsg-blue py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-blue-600 disabled:opacity-40">
 					{isSaving && <Loader2 size={15} className="animate-spin" />}
-					{isAdmin ? "답변 등록" : "추가 문의 등록"}
+					{isAdmin ? t("submitReply") : t("submitAdditionalInquiry")}
 				</button>
 			</div>
 		</div>

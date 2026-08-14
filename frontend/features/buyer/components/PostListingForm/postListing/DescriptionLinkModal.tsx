@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 
 type DescriptionLinkModalProps = {
@@ -10,6 +11,7 @@ type DescriptionLinkModalProps = {
 };
 
 export default function DescriptionLinkModal({ isOpen, onClose, onSubmit }: DescriptionLinkModalProps) {
+	const t = useTranslations("DescriptionLinkModal");
 	const [url, setUrl] = useState("");
 
 	function handleSubmit(): void {
@@ -30,7 +32,7 @@ export default function DescriptionLinkModal({ isOpen, onClose, onSubmit }: Desc
 			<div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 			<div className="fixed inset-0 flex items-center justify-center p-4">
 				<DialogPanel className="w-full max-w-sm rounded-2xl bg-white p-5">
-					<DialogTitle className="text-sm font-semibold text-[#1F2937]">링크 삽입</DialogTitle>
+					<DialogTitle className="text-sm font-semibold text-[#1F2937]">{t("title")}</DialogTitle>
 					<input
 						type="text"
 						autoFocus
@@ -47,14 +49,14 @@ export default function DescriptionLinkModal({ isOpen, onClose, onSubmit }: Desc
 							onClick={handleClose}
 							className="rounded-lg px-4 py-2 text-sm font-medium text-[#374151] transition-colors hover:bg-[#F3F4F6]"
 						>
-							취소
+							{t("cancel")}
 						</button>
 						<button
 							onClick={handleSubmit}
 							disabled={!url.trim()}
 							className="rounded-lg bg-imsg-blue px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-50"
 						>
-							삽입
+							{t("insert")}
 						</button>
 					</div>
 				</DialogPanel>

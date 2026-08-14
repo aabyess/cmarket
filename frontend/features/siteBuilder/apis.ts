@@ -1,7 +1,8 @@
+import { getTranslations } from "next-intl/server";
 import { createServerAdminClient, createServerSupabaseClient } from "@/libs/supabaseServer";
 import { SITE_PAGE_LOCALE, SITE_PAGE_SLUG } from "@/features/siteBuilder/constants";
 import { isBlockArray, normalizeBlocks } from "@/features/siteBuilder/utils";
-import { buildSeedBlocks } from "@/features/siteBuilder/seed";
+import { buildSeedBlocks, buildSeedTranslations } from "@/features/siteBuilder/seed";
 import type {
 	Block,
 	PublicSite,
@@ -109,6 +110,11 @@ export async function getSiteEditorData(): Promise<SiteEditorData | null> {
 			.eq("profile_id", user.id)
 			.order("sort_order", { ascending: true });
 
+		const seedTranslations = buildSeedTranslations(
+			await getTranslations("ListingCategory"),
+			await getTranslations("SiteBuilderSeed"),
+		);
+
 		blocks = buildSeedBlocks({
 			companyName: company.company_name ?? "",
 			representative: company.representative ?? "",
@@ -132,7 +138,7 @@ export async function getSiteEditorData(): Promise<SiteEditorData | null> {
 				priceRange: product.price_range ?? "",
 				imageUrls: product.image_urls ?? [],
 			})),
-		});
+		}, seedTranslations);
 
 		isSeeded = true;
 	}

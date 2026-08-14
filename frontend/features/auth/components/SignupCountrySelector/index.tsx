@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { ChevronLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { SignupCountrySelectorCard } from "./SignupCountrySelectorCard";
 type Country = "indonesia" | "korea";
 
 export function SignupCountrySelector() {
+  const t = useTranslations("SignupCountrySelector");
   const router = useRouter();
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
 
@@ -34,16 +36,16 @@ export function SignupCountrySelector() {
             className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-muted-foreground transition-colors"
           >
             <ChevronLeft className="h-4 w-4" />
-            이전
+            {t("back")}
           </button>
-          <div className="text-sm font-semibold text-foreground">1 / 4</div>
+          <div className="text-sm font-semibold text-foreground">{t("step")}</div>
         </div>
       </header>
 
       <div className="flex flex-1 flex-col items-center justify-center px-4 py-8 sm:px-6">
         <div className="w-full max-w-2xl space-y-8">
           <p className="text-center text-sm text-muted-foreground">
-            국적에 따라 발주기관 또는 공급기업으로 가입됩니다.
+            {t("description")}
           </p>
 
           <div className="grid gap-6 sm:grid-cols-2">
@@ -64,7 +66,7 @@ export function SignupCountrySelector() {
             disabled={!selectedCountry}
             className="w-full h-12 font-semibold text-base bg-imsg-blue hover:bg-[#2563EB] text-white disabled:bg-[#D1D5DB] disabled:text-[#6B7280] flex items-center justify-center group"
           >
-            다음으로 넘어가기
+            {t("next")}
             <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
           </Button>
         </div>

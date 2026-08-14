@@ -1,16 +1,20 @@
 import { Link } from "@/i18n/navigation";
+import { getTranslations } from "next-intl/server";
 import type { ContactProps } from "@/features/siteBuilder/types";
 
 type SiteRendererContactProps = {
 	props: ContactProps;
 };
 
-export function SiteRendererContact({ props }: SiteRendererContactProps): React.JSX.Element {
+export async function SiteRendererContact({
+	props,
+}: SiteRendererContactProps): Promise<React.JSX.Element> {
+	const t = await getTranslations("SiteRendererContact");
 	const items = [
-		{ label: "담당자", value: props.managerName },
-		{ label: "이메일", value: props.email },
-		{ label: "전화", value: props.phone },
-		{ label: "주소", value: props.address },
+		{ label: t("managerLabel"), value: props.managerName },
+		{ label: t("emailLabel"), value: props.email },
+		{ label: t("phoneLabel"), value: props.phone },
+		{ label: t("addressLabel"), value: props.address },
 	].filter((item) => item.value);
 
 	return (
@@ -29,7 +33,7 @@ export function SiteRendererContact({ props }: SiteRendererContactProps): React.
 
 				{props.website && (
 					<div>
-						<p className="text-[11px] text-[#9CA3AF]">홈페이지</p>
+						<p className="text-[11px] text-[#9CA3AF]">{t("websiteLabel")}</p>
 						<Link
 							href={props.website}
 							target="_blank"

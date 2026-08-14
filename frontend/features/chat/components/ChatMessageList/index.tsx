@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/utils/cn";
 import { QuotePdfCard } from "@/features/chat/components/QuotePdfCard";
 import type { ChatMessage } from "@/features/chat/types";
@@ -10,17 +11,13 @@ function formatTime(iso: string): string {
 	return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 }
 
-function formatDateLabel(iso: string): string {
-	const date = new Date(iso);
-	return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
-}
-
 type ChatMessageListProps = {
 	messages: ChatMessage[];
 	myId: string;
 };
 
 export function ChatMessageList({ messages, myId }: ChatMessageListProps): React.ReactNode {
+	const t = useTranslations("ChatMessageList");
 	const bottomRef = useRef<HTMLDivElement>(null);
 	const prevLengthRef = useRef(0);
 	const isInitialRef = useRef(true);
@@ -48,7 +45,12 @@ export function ChatMessageList({ messages, myId }: ChatMessageListProps): React
 			<div className="mx-auto flex min-h-full max-w-2xl flex-col justify-end">
 				{messages.map((message, i) => {
 					const isMine = message.senderId === myId;
-					const dateLabel = formatDateLabel(message.createdAt);
+					const createdAt = new Date(message.createdAt);
+					const dateLabel = t("dateLabel", {
+						year: createdAt.getFullYear(),
+						month: createdAt.getMonth() + 1,
+						day: createdAt.getDate(),
+					});
 					const showDate = dateLabel !== lastDate;
 					lastDate = dateLabel;
 
@@ -79,25 +81,24 @@ export function ChatMessageList({ messages, myId }: ChatMessageListProps): React
 										isMine={isMine}
 									/>
 								) : (
-									<div
-										className={cn(
-											"w-fit rounded-[20px] px-3.5 py-2 text-sm leading-snug",
-											isMine
-												? "bg-imsg-blue text-white"
-												: "bg-[#E9E9EB] text-black",
-										)}
-									>
-										{/* 번역이 있으면 번역 먼저, 원문 나중 */}
-										{hasTranslation ? (
-											<>
-												<p className="whitespace-pre-wrap break-words">{message.translatedContent}</p>
-												<div className="my-1.5 border-t border-black/10" />
-												<p className="whitespace-pre-wrap break-words text-xs italic text-black/50">
-													{message.content}
-												</p>
-											</>
-										) : (
-											<p className="whitespace-pre-wrap break-words">{message.content}</p>
+									<div className={cn("flex flex-col gap-1", isMine ? "items-end" : "items-start")}>
+										<div
+											className={cn(
+												"w-fit rounded-[20px] px-3.5 py-2 text-sm leading-snug",
+												isMine
+													? "bg-imsg-blue text-white"
+													: "bg-[#E9E9EB] text-black",
+											)}
+										>
+											<p className="whitespace-pre-wrap break-words">
+												{hasTranslation ? message.translatedContent : message.content}
+											</p>
+										</div>
+										{/* 번역 원문은 별도의 옅은 말풍선으로 분리 */}
+										{hasTranslation && (
+											<div className="w-fit rounded-[16px] bg-black/5 px-3 py-1.5 text-xs italic text-imsg-secondary">
+												<p className="whitespace-pre-wrap break-words">{message.content}</p>
+											</div>
 										)}
 									</div>
 								)}
@@ -105,7 +106,7 @@ export function ChatMessageList({ messages, myId }: ChatMessageListProps): React
 								{/* 시간 + 읽음 */}
 								<div className="flex shrink-0 items-center gap-1 pb-0.5">
 									{isLastMine && (
-										<span className="text-xs font-medium text-imsg-blue">읽음</span>
+										<span className="text-xs font-medium text-imsg-blue">{t("read")}</span>
 									)}
 									{showTime && (
 										<span className="text-xs text-imsg-secondary">

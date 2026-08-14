@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { ImageIcon, Loader2, Plus, X } from "lucide-react";
 import { SafeImage } from "@/components/commons/SafeImage";
 import { uploadImage } from "@/features/siteBuilder/upload";
@@ -80,6 +81,7 @@ export function SiteBuilderTagField({
 	placeholder,
 	onChange,
 }: SiteBuilderTagFieldProps): React.JSX.Element {
+	const t = useTranslations("SiteBuilderFields");
 	const [draft, setDraft] = useState("");
 
 	function handleAdd(): void {
@@ -110,7 +112,7 @@ export function SiteBuilderTagField({
 					type="button"
 					onClick={handleAdd}
 					className="shrink-0 rounded-lg bg-imsg-blue px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#2563EB]">
-					추가
+					{t("add")}
 				</button>
 			</div>
 			<div className="flex flex-wrap gap-2">
@@ -142,6 +144,7 @@ export function SiteBuilderImageField({
 	hint,
 	onChange,
 }: SiteBuilderImageFieldProps): React.JSX.Element {
+	const t = useTranslations("SiteBuilderFields");
 	const [isUploading, setIsUploading] = useState(false);
 
 	async function handleUpload(e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
@@ -152,7 +155,7 @@ export function SiteBuilderImageField({
 		try {
 			onChange(await uploadImage(file, "product-images", "site"));
 		} catch {
-			alert("이미지 업로드 중 오류가 발생했습니다.");
+			alert(t("uploadError"));
 		} finally {
 			setIsUploading(false);
 		}
@@ -179,7 +182,7 @@ export function SiteBuilderImageField({
 							type="button"
 							onClick={() => onChange("")}
 							className="mt-1 text-xs text-[#DC2626] hover:underline">
-							이미지 제거
+							{t("removeImage")}
 						</button>
 					)}
 				</div>
@@ -199,6 +202,7 @@ export function SiteBuilderImageListField({
 	values,
 	onChange,
 }: SiteBuilderImageListFieldProps): React.JSX.Element {
+	const t = useTranslations("SiteBuilderFields");
 	const [isUploading, setIsUploading] = useState(false);
 
 	async function handleUpload(e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
@@ -209,7 +213,7 @@ export function SiteBuilderImageListField({
 		try {
 			onChange([...values, await uploadImage(file, "product-images", "site")]);
 		} catch {
-			alert("이미지 업로드 중 오류가 발생했습니다.");
+			alert(t("uploadError"));
 		} finally {
 			setIsUploading(false);
 		}

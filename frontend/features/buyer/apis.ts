@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
 import type { ListingWithQuotes, ReceivedQuote, ListingSummary, BuyerDashboardData, BuyerTradeSummary, BuyerTodo, BuyerActivity, ListingFormData, ListingStatus, Currency } from "@/features/buyer/types";
 import { getExchangeRates, convertCurrency } from "@/libs/exchangeRate";
@@ -25,6 +26,10 @@ export async function getBuyerCompanyName(): Promise<string> {
 
 export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 	const { supabase, user } = await getSessionUser();
+	const [t, tRelative] = await Promise.all([
+		getTranslations("BuyerDashboardData"),
+		getTranslations("RelativeTime"),
+	]);
 
 	const empty: BuyerDashboardData = {
 		listingCount: 0,
@@ -95,10 +100,10 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 					id: row.id,
 					listingId: row.id,
 					title: row.title,
-					description: `견적 ${quotes.length}건 · 최저가 ${symbol}${lowestPrice.toLocaleString()}`,
-					deadlineText: daysLeft > 0 ? `마감까지 ${daysLeft}일` : "마감",
-					actionLabel: "견적 비교하고 선택하기",
-					highlights: isUrgent ? [{ label: "마감임박", value: `D-${daysLeft}` }] : [],
+					description: t("quotesSummary", { count: quotes.length, price: `${symbol}${lowestPrice.toLocaleString()}` }),
+					deadlineText: daysLeft > 0 ? t("deadlineDays", { days: daysLeft }) : t("deadlineClosed"),
+					actionLabel: t("compareAction"),
+					highlights: isUrgent ? [{ label: t("urgentLabel"), value: `D-${daysLeft}` }] : [],
 				} satisfies BuyerTodo,
 			};
 		})
@@ -111,7 +116,7 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 		type: row.type === "quote" ? "quote" : "document",
 		title: row.title,
 		description: row.content,
-		timeText: formatRelativeTime(row.created_at),
+		timeText: formatRelativeTime(row.created_at, tRelative),
 	}));
 
 	return {
@@ -126,11 +131,12 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 
 export async function getBuyerTradeSummary(): Promise<BuyerTradeSummary> {
 	const { supabase, user } = await getSessionUser();
+	const t = await getTranslations("BuyerDashboardData");
 
 	const empty: BuyerTradeSummary = {
-		inProgress: { total: 0, subItems: [{ label: "견적", value: 0 }, { label: "공고", value: 0 }] },
-		closed: { total: 0, subItems: [{ label: "견적", value: 0 }, { label: "공고", value: 0 }] },
-		contracts: { total: 0, subItems: [{ label: "입금 확인 대기", value: 0 }, { label: "입금 확인 완료", value: 0 }] },
+		inProgress: { total: 0, subItems: [{ label: t("quoteLabel"), value: 0 }, { label: t("listingLabel"), value: 0 }] },
+		closed: { total: 0, subItems: [{ label: t("quoteLabel"), value: 0 }, { label: t("listingLabel"), value: 0 }] },
+		contracts: { total: 0, subItems: [{ label: t("pendingPaymentLabel"), value: 0 }, { label: t("confirmedPaymentLabel"), value: 0 }] },
 	};
 
 	if (!user) return empty;
@@ -175,22 +181,22 @@ export async function getBuyerTradeSummary(): Promise<BuyerTradeSummary> {
 		inProgress: {
 			total: activeListingIds.length,
 			subItems: [
-				{ label: "견적", value: activeQuoteCount },
-				{ label: "공고", value: activeListingIds.length },
+				{ label: t("quoteLabel"), value: activeQuoteCount },
+				{ label: t("listingLabel"), value: activeListingIds.length },
 			],
 		},
 		closed: {
 			total: closedListingIds.length,
 			subItems: [
-				{ label: "견적", value: closedQuoteCount },
-				{ label: "공고", value: closedListingIds.length },
+				{ label: t("quoteLabel"), value: closedQuoteCount },
+				{ label: t("listingLabel"), value: closedListingIds.length },
 			],
 		},
 		contracts: {
 			total: (contracts ?? []).length,
 			subItems: [
-				{ label: "입금 확인 대기", value: pendingCount },
-				{ label: "입금 확인 완료", value: confirmedCount },
+				{ label: t("pendingPaymentLabel"), value: pendingCount },
+				{ label: t("confirmedPaymentLabel"), value: confirmedCount },
 			],
 		},
 	};

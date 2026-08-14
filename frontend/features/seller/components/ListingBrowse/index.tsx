@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Search, FileSearch } from "lucide-react";
 import { cn } from "@/utils/cn";
@@ -9,20 +10,23 @@ import type { OpenListing } from "@/features/seller/types";
 
 type StatusTab = "all" | "active" | "closed";
 
-const TABS: { value: StatusTab; label: string }[] = [
-	{ value: "all", label: "전체" },
-	{ value: "active", label: "진행중" },
-	{ value: "closed", label: "마감" },
-];
+const TAB_VALUES: StatusTab[] = ["all", "active", "closed"];
 
 type ListingBrowseProps = {
 	listings: OpenListing[];
 };
 
 export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode {
+	const t = useTranslations("ListingBrowse");
 	const router = useRouter();
 	const [keyword, setKeyword] = useState("");
 	const [statusTab, setStatusTab] = useState<StatusTab>("all");
+
+	const tabLabels: Record<StatusTab, string> = {
+		all: t("tabAll"),
+		active: t("tabActive"),
+		closed: t("tabClosed"),
+	};
 
 	const trimmedKeyword = keyword.trim().toLowerCase();
 
@@ -57,24 +61,24 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 					type="text"
 					value={keyword}
 					onChange={(e) => setKeyword(e.target.value)}
-					placeholder="품목명, 공고 제목으로 검색"
+					placeholder={t("searchPlaceholder")}
 					className="w-full rounded-xl border border-[#E2E8F0] bg-white py-3.5 pl-11 pr-4 text-sm text-[#1F2937] placeholder:text-[#9CA3AF] focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 				/>
 			</div>
 
 			<div className="mb-4 flex w-fit gap-1 rounded-xl border border-[#E5E7EB] bg-white p-1">
-				{TABS.map((tab) => (
+				{TAB_VALUES.map((value) => (
 					<button
-						key={tab.value}
-						onClick={() => setStatusTab(tab.value)}
+						key={value}
+						onClick={() => setStatusTab(value)}
 						className={cn(
 							"rounded-lg px-4 py-1.5 text-xs font-medium transition-colors",
-							statusTab === tab.value
+							statusTab === value
 								? "bg-imsg-blue text-white"
 								: "text-[#6B7280] hover:bg-[#F9FAFB]",
 						)}
 					>
-						{tab.label}
+						{tabLabels[value]}
 					</button>
 				))}
 			</div>
@@ -85,12 +89,12 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 						<FileSearch size={26} className="text-[#9CA3AF]" />
 					</div>
 					<p className="text-base font-medium text-[#1F2937]">
-						{trimmedKeyword ? "검색 결과가 없어요" : "해당하는 공고가 없어요"}
+						{trimmedKeyword ? t("emptySearchTitle") : t("emptyDefaultTitle")}
 					</p>
 					<p className="mt-1 text-sm text-[#6B7280]">
 						{trimmedKeyword
-							? "다른 키워드로 검색해보세요."
-							: "새 공고가 올라오면 알려드릴게요."}
+							? t("emptySearchDescription")
+							: t("emptyDefaultDescription")}
 					</p>
 				</div>
 			) : (

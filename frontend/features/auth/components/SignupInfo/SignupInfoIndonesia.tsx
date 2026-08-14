@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { ChevronLeft, ChevronRight, Eye, EyeOff } from "lucide-react";
@@ -74,27 +75,27 @@ function formatNpwp(value: string): string {
     .replace(/(\d{2}\.\d{3}\.\d{3}\.\d-\d{3})(\d)/, "$1.$2");
 }
 
-type PasswordRule = { label: string; test: (pw: string) => boolean };
+type PasswordRule = { labelKey: string; test: (pw: string) => boolean };
 
 const PASSWORD_RULES: PasswordRule[] = [
-  { label: "8자 이상", test: (pw) => pw.length >= 8 },
-  { label: "대문자 포함", test: (pw) => /[A-Z]/.test(pw) },
-  { label: "숫자 포함", test: (pw) => /[0-9]/.test(pw) },
-  { label: "특수문자 포함", test: (pw) => /[^A-Za-z0-9]/.test(pw) },
+  { labelKey: "passwordRuleLength", test: (pw) => pw.length >= 8 },
+  { labelKey: "passwordRuleUppercase", test: (pw) => /[A-Z]/.test(pw) },
+  { labelKey: "passwordRuleNumber", test: (pw) => /[0-9]/.test(pw) },
+  { labelKey: "passwordRuleSpecial", test: (pw) => /[^A-Za-z0-9]/.test(pw) },
 ];
 
-function getPasswordStrength(pw: string): { level: number; label: string; color: string } {
-  if (pw.length === 0) return { level: 0, label: "", color: "" };
+function getPasswordStrength(pw: string): { level: number; color: string } {
+  if (pw.length === 0) return { level: 0, color: "" };
   let score = 0;
   if (pw.length >= 8) score++;
   if (pw.length >= 12) score++;
   if (/[A-Z]/.test(pw)) score++;
   if (/[0-9]/.test(pw)) score++;
   if (/[^A-Za-z0-9]/.test(pw)) score++;
-  if (score <= 1) return { level: 1, label: "약함", color: "bg-red-400" };
-  if (score <= 2) return { level: 2, label: "보통", color: "bg-yellow-400" };
-  if (score <= 3) return { level: 3, label: "강함", color: "bg-blue-400" };
-  return { level: 4, label: "매우 강함", color: "bg-green-400" };
+  if (score <= 1) return { level: 1, color: "bg-red-400" };
+  if (score <= 2) return { level: 2, color: "bg-yellow-400" };
+  if (score <= 3) return { level: 3, color: "bg-blue-400" };
+  return { level: 4, color: "bg-green-400" };
 }
 
 function inputCn(hasError: boolean): string {
@@ -160,6 +161,7 @@ type PhoneRowProps = {
 };
 
 function PhoneRow({ label, required, code, num1, num2, onCodeChange, onNum1Change, onNum2Change, hasError }: PhoneRowProps) {
+  const t = useTranslations("SignupInfoIndonesia");
   const isDisabled = code === "없음";
   return (
     <div className="flex items-center gap-2">
@@ -175,7 +177,9 @@ function PhoneRow({ label, required, code, num1, num2, onCodeChange, onNum1Chang
           hasError ? "border-red-400" : "border-[#E2E8F0] focus:border-imsg-blue focus:ring-imsg-blue",
         )}
       >
-        {PHONE_AREA_CODES.map((c) => <option key={c} value={c}>{c}</option>)}
+        {PHONE_AREA_CODES.map((c) => (
+          <option key={c} value={c}>{c === "없음" ? t("noneOption") : c}</option>
+        ))}
       </select>
       <span className="text-[#9CA3AF]">-</span>
       <input
@@ -210,6 +214,8 @@ function PhoneRow({ label, required, code, num1, num2, onCodeChange, onNum1Chang
 }
 
 export function SignupInfoIndonesia() {
+  const t = useTranslations("SignupInfoIndonesia");
+  const tCommon = useTranslations("Common");
   const router = useRouter();
   const searchParams = useSearchParams();
   const country = searchParams.get("country");
@@ -249,7 +255,7 @@ export function SignupInfoIndonesia() {
 
   async function handleCheckUsername() {
     if (form.username.length < 4) {
-      setErrors((prev) => ({ ...prev, username: "아이디는 4자 이상 입력해주세요." }));
+      setErrors((prev) => ({ ...prev, username: t("errors.checkUsernameMinLength") }));
       return;
     }
     setUsernameStatus("checking");
@@ -263,21 +269,21 @@ export function SignupInfoIndonesia() {
 
   function validate(): boolean {
     const newErrors: FieldError = {};
-    if (!form.username || form.username.length < 4) newErrors.username = "아이디는 6자 이상 입력해주세요.";
-    else if (usernameStatus !== "available") newErrors.username = "아이디 중복확인을 해주세요.";
-    if (!form.password || form.password.length < 8) newErrors.password = "비밀번호는 8자 이상 입력해주세요.";
-    if (passwordMismatch || !form.passwordConfirm) newErrors.passwordConfirm = "비밀번호가 일치하지 않습니다.";
-    if (!form.managerName) newErrors.managerName = "담당자 성명을 입력해주세요.";
-    if (form.mobileCode !== "없음" && (!form.mobile1 || !form.mobile2)) newErrors.mobile1 = "핸드폰 번호를 입력해주세요.";
-    if (!form.emailId) newErrors.emailId = "이메일을 입력해주세요.";
-    if (!form.npwp || form.npwp.replace(/\D/g, "").length < 15) newErrors.npwp = "NPWP 15자리를 입력해주세요.";
-    if (!form.nib) newErrors.nib = "NIB를 입력해주세요.";
-    if (!form.companyName) newErrors.companyName = "회사명을 입력해주세요.";
-    if (!form.representativeName) newErrors.representativeName = "대표자 성명을 입력해주세요.";
-    if (!form.provinsi) newErrors.provinsi = "주(Provinsi)를 선택해주세요.";
-    if (!form.city) newErrors.city = "시/군을 입력해주세요.";
-    if (!form.addressBase) newErrors.addressBase = "기본 주소를 입력해주세요.";
-    if (!form.businessCategory) newErrors.businessCategory = "사업 분야를 선택해주세요.";
+    if (!form.username || form.username.length < 4) newErrors.username = t("errors.usernameMin");
+    else if (usernameStatus !== "available") newErrors.username = t("errors.usernameCheck");
+    if (!form.password || form.password.length < 8) newErrors.password = t("errors.passwordMin");
+    if (passwordMismatch || !form.passwordConfirm) newErrors.passwordConfirm = t("errors.passwordConfirmRequired");
+    if (!form.managerName) newErrors.managerName = t("errors.managerNameRequired");
+    if (form.mobileCode !== "없음" && (!form.mobile1 || !form.mobile2)) newErrors.mobile1 = t("errors.mobileRequired");
+    if (!form.emailId) newErrors.emailId = t("errors.emailRequired");
+    if (!form.npwp || form.npwp.replace(/\D/g, "").length < 15) newErrors.npwp = t("errors.npwpRequired");
+    if (!form.nib) newErrors.nib = t("errors.nibRequired");
+    if (!form.companyName) newErrors.companyName = t("errors.companyNameRequired");
+    if (!form.representativeName) newErrors.representativeName = t("errors.representativeNameRequired");
+    if (!form.provinsi) newErrors.provinsi = t("errors.provinsiRequired");
+    if (!form.city) newErrors.city = t("errors.cityRequired");
+    if (!form.addressBase) newErrors.addressBase = t("errors.addressBaseRequired");
+    if (!form.businessCategory) newErrors.businessCategory = t("errors.categoryRequired");
     console.log("validation errors:", newErrors);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -342,30 +348,30 @@ export function SignupInfoIndonesia() {
             className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-muted-foreground transition-colors"
           >
             <ChevronLeft className="h-4 w-4" />
-            이전
+            {t("back")}
           </button>
-          <div className="text-sm font-semibold text-foreground">3 / 4</div>
+          <div className="text-sm font-semibold text-foreground">{t("step")}</div>
         </div>
       </header>
 
       <div className="flex flex-1 flex-col items-center px-4 py-8 sm:px-6">
         <div className="w-full max-w-2xl space-y-6">
           <div className="text-center space-y-2">
-            <h1 className="text-2xl font-bold text-[#1F2937]">정보 입력</h1>
-            <p className="text-sm text-muted-foreground">발주기관 정보를 입력해 주세요.</p>
+            <h1 className="text-2xl font-bold text-[#1F2937]">{t("title")}</h1>
+            <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
           </div>
 
           {/* 계정 생성 */}
           <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 space-y-5">
-            <Section title="계정 생성" description="로그인 정보를 입력해 주세요.">
-            <Field label="아이디" required error={errors.username}>
+            <Section title={t("accountSectionTitle")} description={t("accountSectionDescription")}>
+            <Field label={t("idLabel")} required error={errors.username}>
               <div className="flex gap-2">
                 <input
                   type="text"
                   autoComplete="off"
                   value={form.username}
                   onChange={(e) => handleChange("username", e.target.value)}
-                  placeholder="4자 이상 영문/숫자"
+                  placeholder={t("idPlaceholder")}
                   className={cn(inputCn(!!errors.username), "flex-1")}
                 />
                 <button
@@ -374,27 +380,27 @@ export function SignupInfoIndonesia() {
                   disabled={usernameStatus === "checking" || form.username.length < 4}
                   className="px-4 py-3 rounded-lg border text-sm font-medium whitespace-nowrap transition-colors disabled:opacity-50 disabled:cursor-not-allowed border-imsg-blue text-imsg-blue hover:bg-[#EFF6FF]"
                 >
-                  {usernameStatus === "checking" ? "확인 중..." : "중복확인"}
+                  {usernameStatus === "checking" ? t("checking") : t("duplicateCheck")}
                 </button>
               </div>
               {usernameStatus === "available" && (
-                <p className="text-xs text-green-500">사용 가능한 아이디입니다.</p>
+                <p className="text-xs text-green-500">{t("idAvailable")}</p>
               )}
               {usernameStatus === "taken" && (
-                <p className="text-xs text-red-500">이미 사용 중인 아이디입니다.</p>
+                <p className="text-xs text-red-500">{t("idTaken")}</p>
               )}
             </Field>
 
               <div className="grid grid-cols-2 gap-3">
                 {/* 비밀번호 */}
-                <Field label="비밀번호" required error={errors.password}>
+                <Field label={t("passwordLabel")} required error={errors.password}>
                   <div className="relative">
                     <input
                       type={showPassword ? "text" : "password"}
                       autoComplete="new-password"
                       value={form.password}
                       onChange={(e) => handleChange("password", e.target.value)}
-                      placeholder="비밀번호 입력"
+                      placeholder={t("passwordPlaceholder")}
                       className={cn(inputCn(!!errors.password), "pr-10")}
                     />
                     <button
@@ -420,7 +426,13 @@ export function SignupInfoIndonesia() {
                         passwordStrength.level === 2 ? "text-yellow-500" :
                         passwordStrength.level === 3 ? "text-blue-500" : "text-green-500",
                       )}>
-                        강도: {passwordStrength.label}
+                        {t("passwordStrengthLabel", {
+                          strength:
+                            passwordStrength.level === 1 ? t("passwordStrengthWeak") :
+                            passwordStrength.level === 2 ? t("passwordStrengthMedium") :
+                            passwordStrength.level === 3 ? t("passwordStrengthStrong") :
+                            t("passwordStrengthVeryStrong"),
+                        })}
                       </p>
                     </div>
                   )}
@@ -429,7 +441,7 @@ export function SignupInfoIndonesia() {
                     {PASSWORD_RULES.map((rule) => {
                       const passed = rule.test(form.password);
                       return (
-                        <p key={rule.label} className={cn(
+                        <p key={rule.labelKey} className={cn(
                           "text-xs flex items-center gap-1 transition-colors",
                           form.password.length === 0 ? "text-[#9CA3AF]" :
                           passed ? "text-green-500" : "text-red-400",
@@ -437,7 +449,7 @@ export function SignupInfoIndonesia() {
                           <span className="w-3 h-3 flex items-center justify-center flex-shrink-0">
                             {form.password.length === 0 ? "·" : passed ? "✓" : "✗"}
                           </span>
-                          {rule.label}
+                          {t(rule.labelKey)}
                         </p>
                       );
                     })}
@@ -445,14 +457,14 @@ export function SignupInfoIndonesia() {
                 </Field>
 
                 {/* 비밀번호 확인 */}
-                <Field label="비밀번호 확인" required error={errors.passwordConfirm}>
+                <Field label={t("passwordConfirmLabel")} required error={errors.passwordConfirm}>
                   <div className="relative">
                     <input
                       type={showPasswordConfirm ? "text" : "password"}
                       autoComplete="new-password"
                       value={form.passwordConfirm}
                       onChange={(e) => handleChange("passwordConfirm", e.target.value)}
-                      placeholder="비밀번호 재입력"
+                      placeholder={t("passwordConfirmPlaceholder")}
                       className={cn(
                         "w-full px-4 py-3 pr-10 border rounded-lg text-sm text-[#1F2937] placeholder:text-[#9CA3AF]",
                         "focus:outline-none focus:ring-1 transition-colors bg-white",
@@ -469,10 +481,10 @@ export function SignupInfoIndonesia() {
                     </button>
                   </div>
                   {passwordMatch && (
-                    <p className="text-xs text-green-500 flex items-center gap-1 mt-1">✓ 비밀번호가 일치합니다.</p>
+                    <p className="text-xs text-green-500 flex items-center gap-1 mt-1">✓ {t("passwordMatch")}</p>
                   )}
                   {passwordMismatch && (
-                    <p className="text-xs text-red-500 flex items-center gap-1 mt-1">✗ 비밀번호가 일치하지 않습니다.</p>
+                    <p className="text-xs text-red-500 flex items-center gap-1 mt-1">✗ {t("passwordMismatch")}</p>
                   )}
                 </Field>
               </div>
@@ -481,21 +493,21 @@ export function SignupInfoIndonesia() {
 
           {/* 담당자 */}
           <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 space-y-5">
-            <Section title="담당자" description="실무 담당자 정보를 입력해 주세요.">
-              <Field label="성명 및 직책" required error={errors.managerName}>
+            <Section title={t("managerSectionTitle")} description={t("managerSectionDescription")}>
+              <Field label={t("nameAndTitleLabel")} required error={errors.managerName}>
                 <div className="grid grid-cols-2 gap-3">
                   <input
                     type="text"
                     value={form.managerName}
                     onChange={(e) => handleChange("managerName", e.target.value)}
-                    placeholder="성명"
+                    placeholder={t("namePlaceholder")}
                     className={inputCn(!!errors.managerName)}
                   />
                   <input
                     type="text"
                     value={form.managerTitle}
                     onChange={(e) => handleChange("managerTitle", e.target.value)}
-                    placeholder="직위"
+                    placeholder={t("titlePlaceholder")}
                     className={inputCn(false)}
                   />
                 </div>
@@ -503,16 +515,16 @@ export function SignupInfoIndonesia() {
                   type="text"
                   value={form.managerDept}
                   onChange={(e) => handleChange("managerDept", e.target.value)}
-                  placeholder="부서"
+                  placeholder={t("deptPlaceholder")}
                   className={cn(inputCn(false), "mt-2")}
                 />
               </Field>
 
               {/* 연락처 3개 */}
-              <Field label="연락처" required error={errors.mobile1}>
+              <Field label={t("contactLabel")} required error={errors.mobile1}>
                 <div className="space-y-3">
                   <PhoneRow
-                    label="핸드폰"
+                    label={t("mobileLabel")}
                     required
                     code={form.mobileCode}
                     num1={form.mobile1}
@@ -523,7 +535,7 @@ export function SignupInfoIndonesia() {
                     hasError={!!errors.mobile1}
                   />
                   <PhoneRow
-                    label="전화"
+                    label={t("phoneLabel")}
                     required
                     code={form.phoneCode}
                     num1={form.phone1}
@@ -533,7 +545,7 @@ export function SignupInfoIndonesia() {
                     onNum2Change={(v) => handleChange("phone2", v)}
                   />
                   <PhoneRow
-                    label="팩스"
+                    label={t("faxLabel")}
                     code={form.faxCode}
                     num1={form.fax1}
                     num2={form.fax2}
@@ -544,13 +556,13 @@ export function SignupInfoIndonesia() {
                 </div>
               </Field>
 
-              <Field label="이메일" required error={errors.emailId}>
+              <Field label={t("emailLabel")} required error={errors.emailId}>
                 <div className="flex gap-2 items-center">
                   <input
                     type="text"
                     value={form.emailId}
                     onChange={(e) => handleChange("emailId", e.target.value)}
-                    placeholder="아이디"
+                    placeholder={t("emailIdPlaceholder")}
                     className={cn(inputCn(!!errors.emailId), "flex-1")}
                   />
                   <span className="text-[#9CA3AF] text-sm flex-shrink-0">@</span>
@@ -559,7 +571,7 @@ export function SignupInfoIndonesia() {
                       type="text"
                       value={form.emailDomainCustom}
                       onChange={(e) => handleChange("emailDomainCustom", e.target.value)}
-                      placeholder="도메인 입력"
+                      placeholder={t("domainPlaceholder")}
                       className={cn(inputCn(false), "flex-1")}
                     />
                   ) : (
@@ -574,7 +586,7 @@ export function SignupInfoIndonesia() {
                   className={cn(inputCn(false), "mt-2")}
                 >
                   {EMAIL_DOMAINS.map((d) => (
-                    <option key={d} value={d}>{d}</option>
+                    <option key={d} value={d}>{d === "직접 입력" ? t("customOption") : d}</option>
                   ))}
                 </select>
               </Field>
@@ -583,9 +595,9 @@ export function SignupInfoIndonesia() {
 
           {/* 사업자 정보 */}
           <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 space-y-5">
-            <Section title="사업자 정보 입력" description="발주기관 구분을 선택하고 정보를 입력해 주세요.">
-              <Field label="NPWP (세금번호)" required error={errors.npwp}
-                hint="인도네시아 국세청(DJP)에서 발급된 15자리 세금번호">
+            <Section title={t("businessSectionTitle")} description={t("businessSectionDescription")}>
+              <Field label={t("npwpLabel")} required error={errors.npwp}
+                hint={t("npwpHint")}>
                 <input
                   type="text"
                   value={form.npwp}
@@ -595,8 +607,8 @@ export function SignupInfoIndonesia() {
                 />
               </Field>
 
-              <Field label="NIB (사업등록번호)" required error={errors.nib}
-                hint="OSS(Online Single Submission)에서 발급된 13자리 번호">
+              <Field label={t("nibLabel")} required error={errors.nib}
+                hint={t("nibHint")}>
                 <input
                   type="text"
                   value={form.nib}
@@ -608,28 +620,28 @@ export function SignupInfoIndonesia() {
               </Field>
 
               <div className="grid grid-cols-2 gap-3">
-                <Field label="회사명 (Nama Perusahaan)" required error={errors.companyName}>
+                <Field label={t("companyNameLabel")} required error={errors.companyName}>
                   <input
                     type="text"
                     value={form.companyName}
                     onChange={(e) => handleChange("companyName", e.target.value)}
-                    placeholder="PT. 회사명"
+                    placeholder={t("companyNamePlaceholder")}
                     className={inputCn(!!errors.companyName)}
                   />
                 </Field>
-                <Field label="대표자 성명" required error={errors.representativeName}>
+                <Field label={t("representativeLabel")} required error={errors.representativeName}>
                   <input
                     type="text"
                     value={form.representativeName}
                     onChange={(e) => handleChange("representativeName", e.target.value)}
-                    placeholder="대표자 성명"
+                    placeholder={t("representativePlaceholder")}
                     className={inputCn(!!errors.representativeName)}
                   />
                 </Field>
               </div>
 
               {/* 사업장 소재지 */}
-              <Field label="사업장 소재지" required error={errors.provinsi || errors.city || errors.addressBase}>
+              <Field label={t("addressLabel")} required error={errors.provinsi || errors.city || errors.addressBase}>
                 <div className="space-y-2">
                   <div className="grid grid-cols-2 gap-3">
                     <select
@@ -637,7 +649,7 @@ export function SignupInfoIndonesia() {
                       onChange={(e) => handleChange("provinsi", e.target.value)}
                       className={inputCn(!!errors.provinsi)}
                     >
-                      <option value="">주(Provinsi) 선택</option>
+                      <option value="">{t("provinsiPlaceholder")}</option>
                       {PROVINSI_LIST.map((p) => (
                         <option key={p} value={p}>{p}</option>
                       ))}
@@ -646,7 +658,7 @@ export function SignupInfoIndonesia() {
                       type="text"
                       value={form.city}
                       onChange={(e) => handleChange("city", e.target.value)}
-                      placeholder="시/군 (Kota/Kabupaten)"
+                      placeholder={t("cityPlaceholder")}
                       className={inputCn(!!errors.city)}
                     />
                   </div>
@@ -654,38 +666,38 @@ export function SignupInfoIndonesia() {
                     type="text"
                     value={form.addressBase}
                     onChange={(e) => handleChange("addressBase", e.target.value)}
-                    placeholder="기본 주소"
+                    placeholder={t("addressBasePlaceholder")}
                     className={inputCn(!!errors.addressBase)}
                   />
                   <input
                     type="text"
                     value={form.addressDetail}
                     onChange={(e) => handleChange("addressDetail", e.target.value)}
-                    placeholder="상세주소를 입력해주세요 (선택)"
+                    placeholder={t("addressDetailPlaceholder")}
                     className={inputCn(false)}
                   />
                 </div>
               </Field>
 
               <div className="grid grid-cols-2 gap-3">
-                <Field label="업태" error={errors.businessCategory}>
+                <Field label={t("categoryLabel")} error={errors.businessCategory}>
                   <select
                     value={form.businessCategory}
                     onChange={(e) => handleChange("businessCategory", e.target.value)}
                     className={inputCn(!!errors.businessCategory)}
                   >
-                    <option value="">예: 서비스업</option>
+                    <option value="">{t("categoryPlaceholder")}</option>
                     {BUSINESS_CATEGORIES.map((cat) => (
                       <option key={cat} value={cat}>{cat}</option>
                     ))}
                   </select>
                 </Field>
-                <Field label="종목">
+                <Field label={t("itemLabel")}>
                   <input
                     type="text"
                     value={form.businessItem}
                     onChange={(e) => handleChange("businessItem", e.target.value)}
-                    placeholder="예: 소프트웨어 개발"
+                    placeholder={t("itemPlaceholder")}
                     className={inputCn(false)}
                   />
                 </Field>
@@ -698,12 +710,12 @@ export function SignupInfoIndonesia() {
             disabled={isPending}
             className="w-full h-12 rounded-xl font-semibold text-base flex items-center justify-center gap-2 bg-imsg-blue hover:bg-[#2563EB] text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            {isPending ? "처리 중..." : "회원가입 완료"}
+            {isPending ? t("submitting") : t("submit")}
             {!isPending && <ChevronRight className="w-4 h-4" />}
           </button>
 
           <footer className="py-2 text-center text-xs text-[#9CA3AF]">
-            © 2003 Cmarket Corp. All rights reserved.
+            {tCommon("copyright")}
           </footer>
         </div>
       </div>

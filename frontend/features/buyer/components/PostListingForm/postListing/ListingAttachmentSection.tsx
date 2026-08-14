@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Upload, FileText, X, Loader2 } from "lucide-react";
 import SectionWrapper from "@/features/buyer/components/PostListingForm/postListing/SectionWrapper";
 import type { ListingAttachment, ListingFormData } from "@/features/buyer/types";
@@ -19,6 +20,7 @@ type ListingAttachmentSectionProps = {
 };
 
 export default function ListingAttachmentSection({ form, onChange }: ListingAttachmentSectionProps) {
+	const t = useTranslations("ListingAttachmentSection");
 	const [isUploading, setIsUploading] = useState(false);
 	const [isDragging, setIsDragging] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -26,7 +28,7 @@ export default function ListingAttachmentSection({ form, onChange }: ListingAtta
 	async function uploadFiles(files: FileList): Promise<void> {
 		const remaining = MAX_FILES - form.attachments.length;
 		if (remaining <= 0) {
-			alert(`파일은 최대 ${MAX_FILES}개까지 첨부할 수 있어요.`);
+			alert(t("maxFilesError", { max: MAX_FILES }));
 			return;
 		}
 
@@ -38,7 +40,7 @@ export default function ListingAttachmentSection({ form, onChange }: ListingAtta
 
 			for (const file of targets) {
 				if (file.size > MAX_FILE_SIZE) {
-                    alert(`${file.name}은(는) 5MB를 초과해 건너뜁니다.`);
+                    alert(t("fileTooLarge", { fileName: file.name }));
                     continue;
                 }
 
@@ -52,7 +54,7 @@ export default function ListingAttachmentSection({ form, onChange }: ListingAtta
 
 				if (!res.ok) {
 					const { error } = await res.json();
-					alert(`${file.name} 업로드 실패: ${error}`);
+					alert(t("uploadFailed", { fileName: file.name, error }));
 					continue;
 				}
 
@@ -85,8 +87,8 @@ export default function ListingAttachmentSection({ form, onChange }: ListingAtta
 
 	return (
 		<SectionWrapper
-            title="첨부파일"
-            subtitle="공급사가 견적 작성에 참고할 파일을 첨부해주세요. (선택, 최대 10개·파일당 5MB)"
+            title={t("title")}
+            subtitle={t("subtitle")}
         >
 			<div
                 onClick={() => inputRef.current?.click()}
@@ -107,8 +109,8 @@ export default function ListingAttachmentSection({ form, onChange }: ListingAtta
 				) : (
 					<Upload size={20} className="text-[#9CA3AF]" />
 				)}
-				<p className="text-sm text-[#374151]">파일 첨부 : 클릭하거나 파일을 드래그 하세요</p>
-				<p className="text-xs text-[#9CA3AF]">최대 5MB</p>
+				<p className="text-sm text-[#374151]">{t("dropzoneText")}</p>
+				<p className="text-xs text-[#9CA3AF]">{t("maxSize")}</p>
 				<input
 					ref={inputRef}
 					type="file"

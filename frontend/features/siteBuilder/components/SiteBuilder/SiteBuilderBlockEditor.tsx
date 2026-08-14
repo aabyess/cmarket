@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Plus, X } from "lucide-react";
 import {
 	SiteBuilderImageField,
@@ -28,6 +29,8 @@ export function SiteBuilderBlockEditor({
 	block,
 	onChange,
 }: SiteBuilderBlockEditorProps): React.JSX.Element {
+	const t = useTranslations("SiteBuilderBlockEditor");
+
 	switch (block.type) {
 		case "HERO": {
 			const current = block;
@@ -46,43 +49,43 @@ export function SiteBuilderBlockEditor({
 			return (
 				<div className="space-y-4">
 					<SiteBuilderTextField
-						label="상단 작은 문구"
+						label={t("heroEyebrowLabel")}
 						value={current.props.eyebrow}
-						placeholder="예: 정밀 가공 전문"
+						placeholder={t("heroEyebrowPlaceholder")}
 						onChange={(eyebrow) => onChange({ ...current, props: { ...current.props, eyebrow } })}
 					/>
 					<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 						<SiteBuilderTextField
-							label="제목"
+							label={t("heroTitleLabel")}
 							value={current.props.title}
-							placeholder="예: 대한정밀공업"
+							placeholder={t("heroTitlePlaceholder")}
 							onChange={(title) => onChange({ ...current, props: { ...current.props, title } })}
 						/>
 						<SiteBuilderTextField
-							label="제목 강조 부분"
+							label={t("heroTitleAccentLabel")}
 							value={current.props.titleAccent}
-							placeholder="제목 뒤에 강조 색으로 붙습니다"
+							placeholder={t("heroTitleAccentPlaceholder")}
 							onChange={(titleAccent) =>
 								onChange({ ...current, props: { ...current.props, titleAccent } })
 							}
 						/>
 					</div>
 					<SiteBuilderTextField
-						label="한 줄 소개"
+						label={t("heroSubtitleLabel")}
 						value={current.props.subtitle}
-						placeholder="방문자가 30초 안에 이해할 설명을 적어주세요"
+						placeholder={t("heroSubtitlePlaceholder")}
 						onChange={(subtitle) => onChange({ ...current, props: { ...current.props, subtitle } })}
 					/>
 
 					<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 						<SiteBuilderImageField
-							label="로고"
+							label={t("heroLogoLabel")}
 							value={current.props.logoUrl}
-							hint="정사각형 권장"
+							hint={t("heroLogoHint")}
 							onChange={(logoUrl) => onChange({ ...current, props: { ...current.props, logoUrl } })}
 						/>
 						<SiteBuilderSelectField
-							label="배경 어둡기"
+							label={t("heroOverlayLabel")}
 							value={current.props.overlay}
 							options={HERO_OVERLAY_OPTIONS}
 							onChange={(overlay) => onChange({ ...current, props: { ...current.props, overlay } })}
@@ -90,41 +93,41 @@ export function SiteBuilderBlockEditor({
 					</div>
 
 					<SiteBuilderImageListField
-						label="배경 이미지"
+						label={t("heroImagesLabel")}
 						values={current.props.images}
 						onChange={(images) => onChange({ ...current, props: { ...current.props, images } })}
 					/>
 
 					<SiteBuilderTagField
-						label="강조 태그"
+						label={t("heroChipsLabel")}
 						values={current.props.chips}
-						placeholder="예: 산업기계, 수출 12개국"
+						placeholder={t("heroChipsPlaceholder")}
 						onChange={(chips) => onChange({ ...current, props: { ...current.props, chips } })}
 					/>
 
 					<div className="space-y-2.5">
-						<p className="text-xs font-medium text-[#374151]">버튼</p>
+						<p className="text-xs font-medium text-[#374151]">{t("heroButtonsLabel")}</p>
 						{ctas.map((cta, index) => (
 							<div key={index} className="flex items-end gap-2">
 								<div className="flex-1">
 									<SiteBuilderTextField
-										label="버튼 문구"
+										label={t("heroCtaLabelLabel")}
 										value={cta.label}
-										placeholder="예: 문의하기"
+										placeholder={t("heroCtaLabelPlaceholder")}
 										onChange={(label) => updateCta(index, { label })}
 									/>
 								</div>
 								<div className="flex-1">
 									<SiteBuilderTextField
-										label="링크"
+										label={t("heroCtaHrefLabel")}
 										value={cta.href}
-										placeholder="예: #contact"
+										placeholder={t("heroCtaHrefPlaceholder")}
 										onChange={(href) => updateCta(index, { href })}
 									/>
 								</div>
 								<div className="w-28">
 									<SiteBuilderSelectField
-										label="강조"
+										label={t("heroCtaEmphasisLabel")}
 										value={cta.emphasis}
 										options={HERO_CTA_EMPHASIS_OPTIONS}
 										onChange={(emphasis) => updateCta(index, { emphasis })}
@@ -156,7 +159,7 @@ export function SiteBuilderBlockEditor({
 							}
 							className={ADD_BUTTON_CLASS}>
 							<Plus size={13} />
-							버튼 추가
+							{t("heroAddButton")}
 						</button>
 					</div>
 				</div>
@@ -167,15 +170,15 @@ export function SiteBuilderBlockEditor({
 			return (
 				<div className="space-y-4">
 					<SiteBuilderTextField
-						label="소제목"
+						label={t("textHeadingLabel")}
 						value={block.props.heading}
-						placeholder="예: 회사 소개"
+						placeholder={t("textHeadingPlaceholder")}
 						onChange={(heading) => onChange({ ...block, props: { ...block.props, heading } })}
 					/>
 					<SiteBuilderTextAreaField
-						label="본문"
+						label={t("textBodyLabel")}
 						value={block.props.body}
-						placeholder="회사 연혁, 생산 역량, 주요 납품 실적 등을 자유롭게 작성하세요"
+						placeholder={t("textBodyPlaceholder")}
 						onChange={(body) => onChange({ ...block, props: { ...block.props, body } })}
 					/>
 				</div>
@@ -198,9 +201,9 @@ export function SiteBuilderBlockEditor({
 			return (
 				<div className="space-y-4">
 					<SiteBuilderTextField
-						label="소제목"
+						label={t("productsHeadingLabel")}
 						value={block.props.heading}
-						placeholder="예: 주요 제품"
+						placeholder={t("productsHeadingPlaceholder")}
 						onChange={(heading) => onChange({ ...block, props: { ...block.props, heading } })}
 					/>
 
@@ -210,9 +213,9 @@ export function SiteBuilderBlockEditor({
 								<div className="flex items-start gap-2">
 									<div className="flex-1">
 										<SiteBuilderTextField
-											label="제품명"
+											label={t("productsNameLabel")}
 											value={item.name}
-											placeholder="예: 정밀 베어링 하우징"
+											placeholder={t("productsNamePlaceholder")}
 											onChange={(name) => updateItem(item.id, { name })}
 										/>
 									</div>
@@ -229,26 +232,26 @@ export function SiteBuilderBlockEditor({
 									</button>
 								</div>
 								<SiteBuilderTextField
-									label="설명"
+									label={t("productsDescriptionLabel")}
 									value={item.description}
-									placeholder="예: SUS304 · 오차 ±0.01mm"
+									placeholder={t("productsDescriptionPlaceholder")}
 									onChange={(description) => updateItem(item.id, { description })}
 								/>
 								<SiteBuilderTextField
-									label="가격대"
+									label={t("productsPriceLabel")}
 									value={item.priceRange}
-									placeholder="예: 100만원~500만원 / 문의"
+									placeholder={t("productsPricePlaceholder")}
 									onChange={(priceRange) => updateItem(item.id, { priceRange })}
 								/>
 								<SiteBuilderImageListField
-									label="제품 이미지"
+									label={t("productsImagesLabel")}
 									values={item.imageUrls}
 									onChange={(imageUrls) => updateItem(item.id, { imageUrls })}
 								/>
 							</div>
 						))}
 						{items.length === 0 && (
-							<p className="py-3 text-center text-sm text-[#9CA3AF]">제품을 추가해주세요</p>
+							<p className="py-3 text-center text-sm text-[#9CA3AF]">{t("productsEmpty")}</p>
 						)}
 					</div>
 
@@ -268,7 +271,7 @@ export function SiteBuilderBlockEditor({
 						}
 						className={ADD_BUTTON_CLASS}>
 						<Plus size={13} />
-						제품 추가
+						{t("productsAddButton")}
 					</button>
 				</div>
 			);
@@ -278,15 +281,15 @@ export function SiteBuilderBlockEditor({
 			return (
 				<div className="space-y-4">
 					<SiteBuilderTextField
-						label="소제목"
+						label={t("certificationsHeadingLabel")}
 						value={block.props.heading}
-						placeholder="예: 인증 및 수상"
+						placeholder={t("certificationsHeadingPlaceholder")}
 						onChange={(heading) => onChange({ ...block, props: { ...block.props, heading } })}
 					/>
 					<SiteBuilderTagField
-						label="인증 · 수상 항목"
+						label={t("certificationsItemsLabel")}
 						values={block.props.items}
-						placeholder="예: ISO 9001, 이노비즈"
+						placeholder={t("certificationsItemsPlaceholder")}
 						onChange={(items) => onChange({ ...block, props: { ...block.props, items } })}
 					/>
 				</div>
@@ -296,42 +299,42 @@ export function SiteBuilderBlockEditor({
 			return (
 				<div className="space-y-4">
 					<SiteBuilderTextField
-						label="소제목"
+						label={t("contactHeadingLabel")}
 						value={block.props.heading}
-						placeholder="예: 문의처"
+						placeholder={t("contactHeadingPlaceholder")}
 						onChange={(heading) => onChange({ ...block, props: { ...block.props, heading } })}
 					/>
 					<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 						<SiteBuilderTextField
-							label="담당자"
+							label={t("contactManagerLabel")}
 							value={block.props.managerName}
-							placeholder="예: 김수출 / 해외영업팀 과장"
+							placeholder={t("contactManagerPlaceholder")}
 							onChange={(managerName) =>
 								onChange({ ...block, props: { ...block.props, managerName } })
 							}
 						/>
 						<SiteBuilderTextField
-							label="이메일"
+							label={t("contactEmailLabel")}
 							value={block.props.email}
-							placeholder="예: export@example.com"
+							placeholder={t("contactEmailPlaceholder")}
 							onChange={(email) => onChange({ ...block, props: { ...block.props, email } })}
 						/>
 						<SiteBuilderTextField
-							label="전화"
+							label={t("contactPhoneLabel")}
 							value={block.props.phone}
-							placeholder="예: +82-31-123-4567"
+							placeholder={t("contactPhonePlaceholder")}
 							onChange={(phone) => onChange({ ...block, props: { ...block.props, phone } })}
 						/>
 						<SiteBuilderTextField
-							label="주소"
+							label={t("contactAddressLabel")}
 							value={block.props.address}
-							placeholder="예: 경기도 안산시 단원구 산단로 123"
+							placeholder={t("contactAddressPlaceholder")}
 							onChange={(address) => onChange({ ...block, props: { ...block.props, address } })}
 						/>
 						<SiteBuilderTextField
-							label="홈페이지"
+							label={t("contactWebsiteLabel")}
 							value={block.props.website}
-							placeholder="예: https://example.com"
+							placeholder={t("contactWebsitePlaceholder")}
 							onChange={(website) => onChange({ ...block, props: { ...block.props, website } })}
 						/>
 					</div>
@@ -342,13 +345,13 @@ export function SiteBuilderBlockEditor({
 			return (
 				<div className="space-y-4">
 					<SiteBuilderTextField
-						label="소제목"
+						label={t("galleryHeadingLabel")}
 						value={block.props.heading}
-						placeholder="예: 생산 시설"
+						placeholder={t("galleryHeadingPlaceholder")}
 						onChange={(heading) => onChange({ ...block, props: { ...block.props, heading } })}
 					/>
 					<SiteBuilderImageListField
-						label="이미지"
+						label={t("galleryImagesLabel")}
 						values={block.props.imageUrls}
 						onChange={(imageUrls) => onChange({ ...block, props: { ...block.props, imageUrls } })}
 					/>
@@ -372,9 +375,9 @@ export function SiteBuilderBlockEditor({
 			return (
 				<div className="space-y-4">
 					<SiteBuilderTextField
-						label="소제목"
+						label={t("statsHeadingLabel")}
 						value={block.props.heading}
-						placeholder="예: 한눈에 보기"
+						placeholder={t("statsHeadingPlaceholder")}
 						onChange={(heading) => onChange({ ...block, props: { ...block.props, heading } })}
 					/>
 
@@ -383,17 +386,17 @@ export function SiteBuilderBlockEditor({
 							<div key={item.id} className="flex items-end gap-2">
 								<div className="flex-1">
 									<SiteBuilderTextField
-										label="숫자"
+										label={t("statsValueLabel")}
 										value={item.value}
-										placeholder="예: 1994"
+										placeholder={t("statsValuePlaceholder")}
 										onChange={(value) => updateItem(item.id, { value })}
 									/>
 								</div>
 								<div className="flex-1">
 									<SiteBuilderTextField
-										label="항목명"
+										label={t("statsLabelLabel")}
 										value={item.label}
-										placeholder="예: 설립"
+										placeholder={t("statsLabelPlaceholder")}
 										onChange={(label) => updateItem(item.id, { label })}
 									/>
 								</div>
@@ -411,7 +414,7 @@ export function SiteBuilderBlockEditor({
 							</div>
 						))}
 						{items.length === 0 && (
-							<p className="py-3 text-center text-sm text-[#9CA3AF]">항목을 추가해주세요</p>
+							<p className="py-3 text-center text-sm text-[#9CA3AF]">{t("statsEmpty")}</p>
 						)}
 					</div>
 
@@ -428,7 +431,7 @@ export function SiteBuilderBlockEditor({
 						}
 						className={ADD_BUTTON_CLASS}>
 						<Plus size={13} />
-						항목 추가
+						{t("statsAddButton")}
 					</button>
 				</div>
 			);
@@ -438,32 +441,32 @@ export function SiteBuilderBlockEditor({
 			return (
 				<div className="space-y-4">
 					<SiteBuilderTextField
-						label="제목"
+						label={t("ctaHeadingLabel")}
 						value={block.props.heading}
-						placeholder="예: 필요한 부품이 있으신가요?"
+						placeholder={t("ctaHeadingPlaceholder")}
 						onChange={(heading) => onChange({ ...block, props: { ...block.props, heading } })}
 					/>
 					<SiteBuilderTextField
-						label="설명"
+						label={t("ctaDescriptionLabel")}
 						value={block.props.description}
-						placeholder="예: 견적 요청을 남기시면 영업일 기준 1일 내 회신드립니다."
+						placeholder={t("ctaDescriptionPlaceholder")}
 						onChange={(description) =>
 							onChange({ ...block, props: { ...block.props, description } })
 						}
 					/>
 					<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 						<SiteBuilderTextField
-							label="버튼 문구"
+							label={t("ctaButtonLabelLabel")}
 							value={block.props.buttonLabel}
-							placeholder="예: 견적 문의하기"
+							placeholder={t("ctaButtonLabelPlaceholder")}
 							onChange={(buttonLabel) =>
 								onChange({ ...block, props: { ...block.props, buttonLabel } })
 							}
 						/>
 						<SiteBuilderTextField
-							label="버튼 링크"
+							label={t("ctaButtonHrefLabel")}
 							value={block.props.buttonHref}
-							placeholder="비우면 버튼이 표시만 됩니다"
+							placeholder={t("ctaButtonHrefPlaceholder")}
 							onChange={(buttonHref) =>
 								onChange({ ...block, props: { ...block.props, buttonHref } })
 							}

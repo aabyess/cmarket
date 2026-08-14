@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
 import type { ListingDetailData } from "@/features/buyer/components/ListingDetail/types";
 
@@ -22,7 +23,11 @@ function daysUntil(endDate: string): number {
 	return Math.round((endDay - todayDay) / 86_400_000);
 }
 
-function buildCells(listing: ListingDetailData, quoteCount: number): SummaryCell[] {
+function buildCells(
+	listing: ListingDetailData,
+	quoteCount: number,
+	t: Awaited<ReturnType<typeof getTranslations>>,
+): SummaryCell[] {
 	const symbol = CURRENCY_SYMBOL[listing.currency] ?? "";
 	const remaining = daysUntil(listing.endDate);
 	const totalQuantity = listing.items.reduce((sum, item) => sum + item.quantity, 0);
@@ -30,37 +35,48 @@ function buildCells(listing: ListingDetailData, quoteCount: number): SummaryCell
 
 	return [
 		{
-			label: "예산",
-			value: listing.budgetPublic ? `${symbol} ${listing.totalBudget.toLocaleString()}` : "비공개",
-			sub: listing.budgetPublic ? listing.currency : "공급기업에게 보이지 않아요",
+			label: t("budgetLabel"),
+			value: listing.budgetPublic
+				? `${symbol} ${listing.totalBudget.toLocaleString()}`
+				: t("private"),
+			sub: listing.budgetPublic ? listing.currency : t("budgetHiddenNote"),
 			accent: false,
 		},
 		{
-			label: "견적 마감",
+			label: t("deadlineLabel"),
 			value: new Date(listing.endDate).toLocaleDateString("ko-KR"),
-			sub: remaining > 0 ? `${remaining}일 남음` : remaining === 0 ? "오늘 마감" : "마감됨",
+			sub:
+				remaining > 0
+					? t("daysRemaining", { count: remaining })
+					: remaining === 0
+						? t("dueToday")
+						: t("closed"),
 			accent: remaining >= 0 && remaining <= 3,
 		},
 		{
-			label: "요청 품목",
-			value: `${listing.items.length}종`,
-			sub: units.size === 1 ? `총 ${totalQuantity.toLocaleString()} ${[...units][0]}` : null,
+			label: t("itemsLabel"),
+			value: t("itemCount", { count: listing.items.length }),
+			sub:
+				units.size === 1
+					? t("totalQuantity", { quantity: totalQuantity.toLocaleString(), unit: [...units][0] })
+					: null,
 			accent: false,
 		},
 		{
-			label: "받은 견적",
-			value: `${quoteCount}건`,
-			sub: quoteCount > 0 ? "가격 낮은 순" : "아직 없어요",
+			label: t("quotesLabel"),
+			value: t("quoteCount", { count: quoteCount }),
+			sub: quoteCount > 0 ? t("sortedByLowestPrice") : t("noneYet"),
 			accent: quoteCount > 0,
 		},
 	];
 }
 
-export function ListingDetailSummary({
+export async function ListingDetailSummary({
 	listing,
 	quoteCount,
-}: ListingDetailSummaryProps): React.JSX.Element {
-	const cells = buildCells(listing, quoteCount);
+}: ListingDetailSummaryProps): Promise<React.JSX.Element> {
+	const t = await getTranslations("ListingDetailSummary");
+	const cells = buildCells(listing, quoteCount, t);
 
 	return (
 		<div className="rounded-2xl bg-white p-6 shadow-sm">

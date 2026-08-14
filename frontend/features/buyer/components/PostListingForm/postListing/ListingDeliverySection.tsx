@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { MapPin } from "lucide-react";
 import SectionWrapper from "@/features/buyer/components/PostListingForm/postListing/SectionWrapper";
 import ListingLocationPickerModal from "@/features/buyer/components/PostListingForm/postListing/ListingLocationPickerModal";
 import { cn } from "@/utils/cn";
 import { getProvinces, getRegencies, type WilayahOption } from "@/libs/wilayah";
 import type { ListingFormData } from "@/features/buyer/types";
-import { DELIVERY_METHOD_LABELS, DELIVERY_METHOD_OPTIONS } from "@/features/buyer/constants";
+import { getDeliveryMethodLabels, DELIVERY_METHOD_OPTIONS } from "@/features/buyer/constants";
 
 type ListingDeliverySectionProps = {
 	form: ListingFormData;
@@ -15,6 +16,8 @@ type ListingDeliverySectionProps = {
 };
 
 export default function ListingDeliverySection({ form, onChange }: ListingDeliverySectionProps) {
+	const t = useTranslations("ListingDeliverySection");
+	const deliveryMethodLabels = getDeliveryMethodLabels(useTranslations("DeliveryMethod"));
 	const [provinces, setProvinces] = useState<WilayahOption[]>([]);
 	const [regencies, setRegencies] = useState<WilayahOption[]>([]);
 	const [isLoadingRegencies, setIsLoadingRegencies] = useState(false);
@@ -50,12 +53,12 @@ export default function ListingDeliverySection({ form, onChange }: ListingDelive
 
 	return (
 		<SectionWrapper
-			title="납품 장소 및 조건"
-			subtitle="공급사가 견적을 산정할 기준 주소예요. 정확한 배송지를 입력해주세요."
+			title={t("title")}
+			subtitle={t("subtitle")}
 		>
 			<div className="space-y-4">
 				<div>
-					<label className="mb-2 block text-sm font-medium text-[#374151]">배송 방식</label>
+					<label className="mb-2 block text-sm font-medium text-[#374151]">{t("deliveryMethodLabel")}</label>
 					<div className="flex flex-wrap gap-1.5">
 						{DELIVERY_METHOD_OPTIONS.map((method) => (
 							<button
@@ -69,7 +72,7 @@ export default function ListingDeliverySection({ form, onChange }: ListingDelive
 										: "border-[#E2E8F0] bg-white text-[#374151] hover:bg-[#F9FAFB]",
 								)}
 							>
-								{DELIVERY_METHOD_LABELS[method]}
+								{deliveryMethodLabels[method]}
 							</button>
 						))}
 					</div>
@@ -82,7 +85,7 @@ export default function ListingDeliverySection({ form, onChange }: ListingDelive
 							onChange={(e) => handleProvinceChange(e.target.value)}
 							className="rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 						>
-							<option value="">주(Provinsi) 선택</option>
+							<option value="">{t("provinceSelect")}</option>
 							{provinces.map((province) => (
 								<option key={province.code} value={province.name}>
 									{province.name}
@@ -96,7 +99,7 @@ export default function ListingDeliverySection({ form, onChange }: ListingDelive
 							className="rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue disabled:bg-[#F9FAFB] disabled:text-[#9CA3AF]"
 						>
 							<option value="">
-								{isLoadingRegencies ? "불러오는 중..." : "시/군(Kota/Kabupaten) 선택"}
+								{isLoadingRegencies ? t("loading") : t("citySelect")}
 							</option>
 							{regencies.map((regency) => (
 								<option key={regency.code} value={regency.name}>
@@ -113,13 +116,13 @@ export default function ListingDeliverySection({ form, onChange }: ListingDelive
 							className="flex items-center justify-center gap-1.5 rounded-lg border border-imsg-blue px-4 py-3 text-sm font-medium text-imsg-blue transition-colors hover:bg-[#EFF6FF]"
 						>
 							<MapPin size={15} />
-							{form.deliveryLat ? "지도에서 위치 다시 확인" : "지도에서 위치 확인"}
+							{form.deliveryLat ? t("recheckLocation") : t("checkLocation")}
 						</button>
 						<input
 							type="text"
 							value={form.deliveryAddress}
 							onChange={(e) => onChange({ deliveryAddress: e.target.value })}
-							placeholder="상세 주소"
+							placeholder={t("addressPlaceholder")}
 							className="rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 						/>
 					</div>
@@ -128,7 +131,7 @@ export default function ListingDeliverySection({ form, onChange }: ListingDelive
 						type="text"
 						value={form.deliveryAddressDetail}
 						onChange={(e) => onChange({ deliveryAddressDetail: e.target.value })}
-						placeholder="상세 정보 (건물명, 층수, 호수 등)"
+						placeholder={t("addressDetailPlaceholder")}
 						className="w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 					/>
 				</div>

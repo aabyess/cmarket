@@ -1,0 +1,161 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+import { CheckCircle2, FileText, Upload } from "lucide-react";
+import { cn } from "@/utils/cn";
+import type { Contract, ContractStatus } from "@/features/contract/types";
+
+const CURRENCY_SYMBOL: Record<string, string> = {
+	USD: "$",
+	IDR: "Rp",
+	KRW: "₩",
+};
+
+const STATUS_STYLE: Record<ContractStatus, string> = {
+	ongoing: "bg-[#EFF6FF] text-[#3B82F6]",
+	completed: "bg-[#F0FDF4] text-[#16A34A]",
+	cancelled: "bg-[#FEF2F2] text-[#DC2626]",
+};
+
+type ContractListTableProps = {
+	contracts: Contract[];
+	role: "buyer" | "seller";
+	loadingId: string | null;
+	uploadingId: string | null;
+	onUploadClick: (contractId: string) => void;
+	onViewReceipt: (contractId: string) => void;
+	onRequestConfirm: (contractId: string) => void;
+	onRequestCancel: (contractId: string) => void;
+};
+
+export function ContractListTable({
+	contracts,
+	role,
+	loadingId,
+	uploadingId,
+	onUploadClick,
+	onViewReceipt,
+	onRequestConfirm,
+	onRequestCancel,
+}: ContractListTableProps): React.ReactNode {
+	const t = useTranslations("ContractListTable");
+	const statusLabels: Record<ContractStatus, string> = {
+		ongoing: t("statusOngoing"),
+		completed: t("statusCompleted"),
+		cancelled: t("statusCancelled"),
+	};
+
+	return (
+		<div className="overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white">
+			<div className="overflow-x-auto">
+				<table className="w-full border-collapse text-sm">
+					<thead>
+						<tr className="border-b border-[#E5E7EB] bg-[#F9FAFB] text-left text-xs font-medium text-[#9CA3AF]">
+							<th className="px-4 py-3">{t("columnStatus")}</th>
+							<th className="px-4 py-3">{t("columnTitle")}</th>
+							<th className="px-4 py-3">{t("columnPartner")}</th>
+							<th className="px-4 py-3">{t("columnAmount")}</th>
+							<th className="px-4 py-3">{t("columnDelivery")}</th>
+							<th className="px-4 py-3">{t("columnContractDate")}</th>
+							<th className="px-4 py-3 text-right">{t("columnAction")}</th>
+						</tr>
+					</thead>
+					<tbody className="divide-y divide-[#F3F4F6]">
+						{contracts.map((contract) => (
+							<tr
+								key={contract.id}
+								className={cn("transition-colors", contract.status !== "ongoing" && "opacity-75")}
+							>
+								<td className="whitespace-nowrap px-4 py-3">
+									<span
+										className={cn(
+											"whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium",
+											STATUS_STYLE[contract.status],
+										)}
+									>
+										{statusLabels[contract.status]}
+									</span>
+								</td>
+								<td className="max-w-[200px] truncate px-4 py-3 font-medium text-[#1F2937]">
+									{contract.listing.title}
+								</td>
+								<td className="max-w-[160px] truncate px-4 py-3 text-[#6B7280]">
+									{contract.partnerCompanyName || t("noPartnerCompanyName")}
+								</td>
+								<td className="px-4 py-3 text-[#1F2937]">
+									{CURRENCY_SYMBOL[contract.quote.currency]} {contract.quote.price.toLocaleString()}
+								</td>
+								<td className="px-4 py-3 text-[#6B7280]">{t("days", { count: contract.quote.deliveryDays })}</td>
+								<td className="px-4 py-3 text-[#9CA3AF]">
+									{new Date(contract.createdAt).toLocaleDateString("ko-KR")}
+								</td>
+								<td className="px-4 py-3">
+									{contract.status === "ongoing" ? (
+										<div className="flex flex-wrap justify-end gap-1">
+											{role === "buyer" && (
+												<>
+													{contract.paymentReceiptUrl ? (
+														<button
+															onClick={() => onViewReceipt(contract.id)}
+															title={t("viewReceiptTitle")}
+															className="flex size-8 items-center justify-center rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] text-[#3B82F6] transition-colors hover:bg-[#DBEAFE]"
+														>
+															<FileText size={14} />
+														</button>
+													) : null}
+													<button
+														onClick={() => onUploadClick(contract.id)}
+														disabled={uploadingId === contract.id}
+														title={contract.paymentReceiptUrl ? t("reuploadReceiptTitle") : t("uploadReceiptTitle")}
+														className="flex size-8 items-center justify-center rounded-lg border border-[#E5E7EB] text-[#374151] transition-colors hover:bg-[#F9FAFB] disabled:opacity-60"
+													>
+														<Upload size={14} />
+													</button>
+												</>
+											)}
+											{role === "seller" && (
+												<>
+													{contract.paymentReceiptUrl && (
+														<button
+															onClick={() => onViewReceipt(contract.id)}
+															title={t("confirmReceiptTitle")}
+															className="flex size-8 items-center justify-center rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] text-[#3B82F6] transition-colors hover:bg-[#DBEAFE]"
+														>
+															<FileText size={14} />
+														</button>
+													)}
+													<button
+														onClick={() => onRequestConfirm(contract.id)}
+														disabled={loadingId === contract.id || !contract.paymentReceiptUrl}
+														title={t("confirmPaymentTitle")}
+														className={cn(
+															"flex size-8 items-center justify-center rounded-lg transition-colors disabled:opacity-60",
+															contract.paymentReceiptUrl
+																? "bg-[#16A34A] text-white hover:bg-[#15803D]"
+																: "border border-[#E5E7EB] text-[#9CA3AF]",
+														)}
+													>
+														<CheckCircle2 size={14} />
+													</button>
+												</>
+											)}
+											<button
+												onClick={() => onRequestCancel(contract.id)}
+												disabled={loadingId === contract.id}
+												className="rounded-lg border border-[#E5E7EB] px-2.5 py-1.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60"
+											>
+												{t("cancelContract")}
+											</button>
+										</div>
+									) : (
+										<span className="block text-right text-xs text-[#9CA3AF]">-</span>
+									)}
+								</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	);
+}

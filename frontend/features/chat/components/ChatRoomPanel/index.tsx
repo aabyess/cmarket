@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { ArrowUp, ChevronLeft } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -20,6 +21,7 @@ type ChatRoomPanelProps = {
 };
 
 export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps): React.ReactNode {
+	const t = useTranslations("ChatRoomPanel");
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { data: messages = [], isLoading } = useMessages(room.quoteId);
@@ -98,7 +100,7 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 					<ChevronLeft className="size-6" strokeWidth={2.5} />
 				</button>
 				<div className="flex flex-col items-center">
-					<span className="text-base font-semibold leading-tight text-[#0f172a]">
+					<span className="text-base font-semibold leading-tight text-foreground">
 						{room.partnerName}
 					</span>
 					<span className="text-xs text-imsg-secondary">{room.listingTitle}</span>
@@ -106,18 +108,18 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 				{myRole === "buyer" ? (
 					room.quoteStatus === "awarded" ? (
 						<span className="rounded-full bg-imsg-blue/10 px-3 py-1.5 text-xs font-semibold text-imsg-blue">
-							계약 확정
+							{t("statusAwarded")}
 						</span>
 					) : room.quoteStatus === "rejected" ? (
 						<span className="rounded-full bg-[#F3F4F6] px-3 py-1.5 text-xs font-semibold text-[#9CA3AF]">
-							마감
+							{t("statusRejected")}
 						</span>
 					) : (
 						<button
 							onClick={() => setIsAwardModalOpen(true)}
 							className="rounded-full bg-imsg-blue px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-600"
 						>
-							확정
+							{t("awardButton")}
 						</button>
 					)
 				) : (
@@ -126,14 +128,14 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 			</header>
 
 			{/* 견적 정보 */}
-			<div className="flex justify-center gap-6 border-b border-[#E5E7EB]/60 bg-white/60 px-4 py-2 backdrop-blur-xl">
-				<span className="text-xs text-imsg-secondary">
-					견적가 <span className="font-semibold text-[#0f172a]">
+			<div className="flex justify-center gap-2 border-b border-[#E5E7EB]/60 bg-white/60 px-4 py-2 backdrop-blur-xl">
+				<span className="flex items-center gap-1 rounded-full bg-imsg-surface px-3 py-1 text-xs text-imsg-secondary">
+					{t("quotePriceLabel")} <span className="font-semibold text-foreground">
 						{room.currency} {room.price.toLocaleString()}
 					</span>
 				</span>
-				<span className="text-xs text-imsg-secondary">
-					납품 <span className="font-semibold text-[#0f172a]">{room.deliveryDays}일</span>
+				<span className="flex items-center gap-1 rounded-full bg-imsg-surface px-3 py-1 text-xs text-imsg-secondary">
+					{t("deliveryLabel")} <span className="font-semibold text-foreground">{t("deliveryDays", { days: room.deliveryDays })}</span>
 				</span>
 			</div>
 
@@ -157,7 +159,7 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 									handleSend();
 								}
 							}}
-							placeholder="메시지를 입력하세요"
+							placeholder={t("messagePlaceholder")}
 							rows={1}
 							className="max-h-32 w-full resize-none bg-transparent text-sm outline-none placeholder:text-imsg-secondary"
 						/>
@@ -174,9 +176,9 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 
 			<ConfirmModal
 				isOpen={isAwardModalOpen}
-				title="이 기업으로 확정할까요?"
-				description={`${room.partnerName}을(를) 최종 공급기업으로 확정합니다. 다른 견적은 자동으로 미선정 처리되며, 확정 후에는 변경할 수 없어요.`}
-				confirmLabel="확정하기"
+				title={t("awardModalTitle")}
+				description={t("awardModalDescription", { partnerName: room.partnerName })}
+				confirmLabel={t("awardModalConfirm")}
 				isLoading={isAwarding}
 				onConfirm={handleConfirmAward}
 				onClose={() => setIsAwardModalOpen(false)}

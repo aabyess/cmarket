@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { FileText } from "lucide-react";
 import { OrderListCard } from "@/features/buyer/components/OrderList/OrderListCard";
@@ -18,6 +19,7 @@ type OrderListProps = {
 };
 
 export function OrderList({ listings }: OrderListProps): React.ReactNode {
+	const t = useTranslations("OrderList");
 	const router = useRouter();
 	const [search, setSearch] = useState("");
 	const [sort, setSort] = useState<SortOption>("newest");
@@ -81,15 +83,15 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 				<div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F3F4F6]">
 					<FileText size={26} className="text-[#9CA3AF]" />
 				</div>
-				<p className="text-base font-medium text-[#1F2937]">등록한 견적요청이 없어요</p>
+				<p className="text-base font-medium text-[#1F2937]">{t("emptyTitle")}</p>
 				<p className="mt-1 text-sm text-[#6B7280]">
-					첫 견적요청을 올리면 한국 공급기업들이 견적을 보내드려요.
+					{t("emptyDescription")}
 				</p>
 				<button
 					onClick={() => router.push("/buyer/post-listing")}
 					className="mt-5 rounded-lg bg-imsg-blue px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB]"
 				>
-					첫 견적요청 올리기
+					{t("emptyAction")}
 				</button>
 			</div>
 		);
@@ -113,8 +115,8 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 
 			{filteredListings.length === 0 ? (
 				<div className="rounded-2xl border border-[#E5E7EB] bg-white p-12 text-center">
-					<p className="text-sm font-medium text-[#1F2937]">조건에 맞는 견적요청이 없어요</p>
-					<p className="mt-1 text-sm text-[#6B7280]">검색어나 필터를 조정해보세요.</p>
+					<p className="text-sm font-medium text-[#1F2937]">{t("noResultsTitle")}</p>
+					<p className="mt-1 text-sm text-[#6B7280]">{t("noResultsDescription")}</p>
 				</div>
 			) : (
 				<>

@@ -1,10 +1,11 @@
 import { Link } from "@/i18n/navigation";
 import { ChevronLeft, FileText } from "lucide-react";
 import { cva } from "class-variance-authority";
+import { getTranslations } from "next-intl/server";
 import { ListingDetailActions } from "@/features/buyer/components/ListingDetailActions";
 import { ListingDetailSummary } from "@/features/buyer/components/ListingDetail/ListingDetailSummary";
 import { ListingInfo } from "@/features/shared/components/ListingInfo";
-import { CATEGORY_LABELS, LISTING_STATUS_LABELS } from "@/features/buyer/constants";
+import { getCategoryLabels, getListingStatusLabels } from "@/features/buyer/constants";
 import type { ListingDetailData } from "@/features/buyer/components/ListingDetail/types";
 
 type ListingDetailProps = {
@@ -12,7 +13,7 @@ type ListingDetailProps = {
 	quoteCount: number;
 };
 
-const statusChip = cva("rounded-full px-2.5 py-1 text-xs font-semibold", {
+const statusChip = cva("whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold", {
 	variants: {
 		status: {
 			active: "bg-[#EFF6FF] text-imsg-blue",
@@ -23,7 +24,16 @@ const statusChip = cva("rounded-full px-2.5 py-1 text-xs font-semibold", {
 	defaultVariants: { status: "active" },
 });
 
-export function ListingDetail({ listing, quoteCount }: ListingDetailProps): React.JSX.Element {
+export async function ListingDetail({
+	listing,
+	quoteCount,
+}: ListingDetailProps): Promise<React.JSX.Element> {
+	const t = await getTranslations("ListingDetail");
+	const [categoryLabels, listingStatusLabels] = await Promise.all([
+		getTranslations("ListingCategory").then(getCategoryLabels),
+		getTranslations("ListingStatusLabel").then(getListingStatusLabels),
+	]);
+
 	return (
 		<div className="space-y-5">
 			<div>
@@ -31,20 +41,20 @@ export function ListingDetail({ listing, quoteCount }: ListingDetailProps): Reac
 					href="/buyer/order-list"
 					className="mb-4 inline-flex items-center gap-1.5 text-sm text-imsg-secondary transition-colors duration-200 hover:text-[#374151]">
 					<ChevronLeft size={16} />
-					나의 견적으로
+					{t("backToList")}
 				</Link>
 
 				<div className="flex items-start justify-between gap-4">
 					<div className="min-w-0">
 						<div className="mb-2 flex flex-wrap items-center gap-2">
 							<span className={statusChip({ status: listing.status })}>
-								{LISTING_STATUS_LABELS[listing.status]}
+								{listingStatusLabels[listing.status]}
 							</span>
 							<span className="rounded-full bg-imsg-surface px-2.5 py-1 text-xs font-medium text-imsg-secondary">
-								{CATEGORY_LABELS[listing.category]}
+								{categoryLabels[listing.category]}
 							</span>
 							<span className="text-xs text-imsg-secondary">
-								{new Date(listing.createdAt).toLocaleDateString("ko-KR")} 등록
+								{t("registeredOn", { date: new Date(listing.createdAt).toLocaleDateString("ko-KR") })}
 							</span>
 						</div>
 						<h1 className="text-2xl font-bold tracking-tight text-[#0f172a]">{listing.title}</h1>
@@ -60,7 +70,7 @@ export function ListingDetail({ listing, quoteCount }: ListingDetailProps): Reac
 				<section className="rounded-2xl bg-white p-6 shadow-sm">
 					<h2 className="mb-4 flex items-center gap-2 text-base font-semibold text-[#0f172a]">
 						<FileText size={16} className="text-imsg-secondary" />
-						상세 설명
+						{t("descriptionTitle")}
 					</h2>
 					{/* 설명은 에디터가 만든 HTML 이다. 작성자는 로그인한 발주기업 본인이고
 					    저장 경로가 서버를 거치므로 그대로 렌더한다. */}

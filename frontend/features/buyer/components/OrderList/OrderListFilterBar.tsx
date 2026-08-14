@@ -1,22 +1,18 @@
 "use client";
 
-import { LayoutGrid, List, Search } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
+import { ArrowUpDown, Search } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import type { ListingStatus } from "@/features/buyer/types";
 
 export type SortOption = "newest" | "deadline";
-export type ViewMode = "grid" | "list";
+export type { ViewMode };
 
-const STATUS_OPTIONS: { value: ListingStatus; label: string }[] = [
-	{ value: "active", label: "진행 중" },
-	{ value: "closed", label: "마감" },
-	{ value: "awarded", label: "계약 확정" },
-];
+const STATUS_VALUES: ListingStatus[] = ["active", "closed", "awarded"];
 
-const SORT_LABEL: Record<SortOption, string> = {
-	newest: "최신순",
-	deadline: "마감순",
-};
+const SORT_VALUES: SortOption[] = ["newest", "deadline"];
 
 type OrderListFilterBarProps = {
 	search: string;
@@ -45,7 +41,19 @@ export function OrderListFilterBar({
 	viewMode,
 	onViewModeChange,
 }: OrderListFilterBarProps): React.ReactNode {
+	const t = useTranslations("OrderList");
 	const isAllActive = statusFilter === null;
+
+	const statusLabels: Record<ListingStatus, string> = {
+		active: t("statusActive"),
+		closed: t("statusClosed"),
+		awarded: t("statusAwarded"),
+	};
+
+	const sortLabels: Record<SortOption, string> = {
+		newest: t("sortNewest"),
+		deadline: t("sortDeadline"),
+	};
 
 	return (
 		<div className="mb-4 flex items-center justify-between gap-2">
@@ -59,17 +67,17 @@ export function OrderListFilterBar({
 							: "text-[#374151] hover:bg-[#F9FAFB]",
 					)}
 				>
-					전체
+					{t("statusAll")}
 					<span className={cn("text-xs", isAllActive ? "text-white/70" : "text-[#9CA3AF]")}>
 						{totalCount}
 					</span>
 				</button>
-				{STATUS_OPTIONS.map((option) => {
-					const isActive = statusFilter === option.value;
+				{STATUS_VALUES.map((value) => {
+					const isActive = statusFilter === value;
 					return (
 						<button
-							key={option.value}
-							onClick={() => onSelectStatus(option.value)}
+							key={value}
+							onClick={() => onSelectStatus(value)}
 							className={cn(
 								"flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors",
 								isActive
@@ -77,9 +85,9 @@ export function OrderListFilterBar({
 									: "text-[#374151] hover:bg-[#F9FAFB]",
 							)}
 						>
-							{option.label}
+							{statusLabels[value]}
 							<span className={cn("text-xs", isActive ? "text-white/70" : "text-[#9CA3AF]")}>
-								{statusCounts[option.value]}
+								{statusCounts[value]}
 							</span>
 						</button>
 					);
@@ -88,55 +96,43 @@ export function OrderListFilterBar({
 				<div className="mx-1 h-6 w-px bg-[#E5E7EB]" />
 
 				<div className="flex items-center gap-2 px-2 py-1">
-					<Search size={16} className="text-[#9CA3AF]" />
+					<Search size={16} className="shrink-0 text-[#9CA3AF]" />
 					<input
 						value={search}
 						onChange={(e) => onSearchChange(e.target.value)}
-						placeholder="견적요청 검색"
-						className="w-36 bg-transparent text-sm leading-none outline-none placeholder:text-[#9CA3AF]"
+						placeholder={t("searchPlaceholder")}
+						className="w-32 bg-transparent text-sm leading-none outline-none placeholder:text-[#9CA3AF]"
 					/>
 				</div>
 
 				<div className="mx-1 h-6 w-px bg-[#E5E7EB]" />
 
-				<div className="flex items-center gap-1">
-					{(Object.keys(SORT_LABEL) as SortOption[]).map((option) => (
-						<button
-							key={option}
-							onClick={() => onSortChange(option)}
-							className={cn(
-								"rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors",
-								sort === option
-									? "bg-imsg-blue text-white"
-									: "text-[#374151] hover:bg-[#F9FAFB]",
-							)}
-						>
-							{SORT_LABEL[option]}
-						</button>
-					))}
-				</div>
+				<Popover className="relative">
+					<PopoverButton className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
+						<ArrowUpDown size={14} />
+						{sortLabels[sort]}
+					</PopoverButton>
+
+					<PopoverPanel className="absolute right-0 z-20 mt-2 w-40 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
+						{SORT_VALUES.map((option) => (
+							<button
+								key={option}
+								onClick={() => onSortChange(option)}
+								className={cn(
+									"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
+									sort === option
+										? "bg-[#EFF6FF] text-imsg-blue"
+										: "text-[#374151] hover:bg-[#F9FAFB]",
+								)}
+							>
+								{sortLabels[option]}
+							</button>
+						))}
+					</PopoverPanel>
+				</Popover>
 			</div>
 
-			<div className="flex shrink-0 items-center gap-1 rounded-xl border border-[#E5E7EB] bg-white p-1">
-				<button
-					onClick={() => onViewModeChange("grid")}
-					className={cn(
-						"flex size-8 items-center justify-center rounded-lg transition-colors",
-						viewMode === "grid" ? "bg-imsg-blue text-white" : "text-[#9CA3AF] hover:bg-[#F9FAFB]",
-					)}
-				>
-					<LayoutGrid size={15} />
-				</button>
-				<button
-					onClick={() => onViewModeChange("list")}
-					className={cn(
-						"flex size-8 items-center justify-center rounded-lg transition-colors",
-						viewMode === "list" ? "bg-imsg-blue text-white" : "text-[#9CA3AF] hover:bg-[#F9FAFB]",
-					)}
-				>
-					<List size={15} />
-				</button>
-			</div>
+			<ViewModeToggle value={viewMode} onChange={onViewModeChange} />
 		</div>
 	);
 }

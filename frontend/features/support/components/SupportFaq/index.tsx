@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { cva } from "class-variance-authority";
 import { ChevronDown } from "lucide-react";
 import { FAQ_ITEMS } from "@/features/support/faq";
-import { FAQ_CATEGORY_LABELS, FAQ_CATEGORY_OPTIONS } from "@/features/support/constants";
+import { getFaqCategoryLabels, FAQ_CATEGORY_OPTIONS } from "@/features/support/constants";
 import type { FaqCategory } from "@/features/support/types";
 
 const categoryButton = cva(
@@ -28,6 +29,8 @@ const chevron = cva("shrink-0 text-imsg-secondary transition-transform duration-
 });
 
 export function SupportFaq(): React.JSX.Element {
+	const t = useTranslations("SupportFaq");
+	const faqCategoryLabels = getFaqCategoryLabels(useTranslations("FaqCategoryLabel"));
 	const [category, setCategory] = useState<FaqCategory | null>(null);
 	const [openId, setOpenId] = useState<string | null>(null);
 
@@ -40,7 +43,7 @@ export function SupportFaq(): React.JSX.Element {
 					type="button"
 					onClick={() => setCategory(null)}
 					className={categoryButton({ active: category === null })}>
-					전체 {FAQ_ITEMS.length}
+					{t("all", { count: FAQ_ITEMS.length })}
 				</button>
 				{FAQ_CATEGORY_OPTIONS.map((option) => (
 					<button
@@ -48,7 +51,7 @@ export function SupportFaq(): React.JSX.Element {
 						type="button"
 						onClick={() => setCategory(option)}
 						className={categoryButton({ active: category === option })}>
-						{FAQ_CATEGORY_LABELS[option]}{" "}
+						{faqCategoryLabels[option]}{" "}
 						{FAQ_ITEMS.filter((item) => item.category === option).length}
 					</button>
 				))}
@@ -63,7 +66,7 @@ export function SupportFaq(): React.JSX.Element {
 							aria-expanded={openId === item.id}
 							className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors duration-200 hover:bg-imsg-surface">
 							<span className="shrink-0 rounded-full bg-imsg-surface px-2 py-0.5 text-xs font-medium text-imsg-secondary">
-								{FAQ_CATEGORY_LABELS[item.category]}
+								{faqCategoryLabels[item.category]}
 							</span>
 							<span className="min-w-0 flex-1 text-sm font-medium text-[#0f172a]">
 								{item.question}

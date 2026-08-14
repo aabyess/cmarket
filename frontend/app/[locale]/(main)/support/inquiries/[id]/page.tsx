@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { SupportInquiryDetail } from "@/features/support/components/SupportInquiries/SupportInquiryDetail";
 import { getInquiry } from "@/features/support/inquiryApis";
 import { getIsAdmin } from "@/features/support/serverApis";
@@ -15,6 +16,7 @@ export default async function InquiryDetailPage({
 	const { id } = await params;
 	const [inquiry, isAdmin] = await Promise.all([getInquiry(id), getIsAdmin()]);
 	if (!inquiry) notFound();
+	const t = await getTranslations("SupportInquiryDetailPage");
 
 	return (
 		<div className="mx-auto max-w-[900px] px-6 py-6 lg:px-8 xl:px-10">
@@ -22,7 +24,7 @@ export default async function InquiryDetailPage({
 				href="/support/inquiries"
 				className="mb-4 inline-flex items-center gap-1.5 text-sm text-imsg-secondary transition-colors duration-200 hover:text-[#374151]">
 				<ChevronLeft size={16} />
-				문의 내역으로
+				{t("backToList")}
 			</Link>
 
 			<SupportInquiryDetail inquiry={inquiry} isAdmin={isAdmin} />

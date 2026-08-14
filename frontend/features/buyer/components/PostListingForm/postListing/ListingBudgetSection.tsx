@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Calendar } from "lucide-react";
 import SectionWrapper from "@/features/buyer/components/PostListingForm/postListing/SectionWrapper";
 import CalendarModal from "@/features/buyer/components/PostListingForm/postListing/CalendarModal";
@@ -13,17 +14,18 @@ type ListingBudgetSectionProps = {
 };
 
 export default function ListingBudgetSection({ form, onChange }: ListingBudgetSectionProps) {
+	const t = useTranslations("ListingBudgetSection");
 	const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
 	return (
 		<SectionWrapper
-			title="견적요청 조건"
-			subtitle="예산과 희망 납기일을 설정해주세요"
+			title={t("title")}
+			subtitle={t("subtitle")}
 		>
 			<div className="space-y-5">
 				<div>
 					<div className="flex items-center justify-between">
-						<label className="text-sm font-medium text-[#374151]">예산</label>
+						<label className="text-sm font-medium text-[#374151]">{t("budgetLabel")}</label>
 						<div className="flex gap-1">
 							<button
 								onClick={() => onChange({ budgetPublic: false, currency: "IDR" })}
@@ -34,7 +36,7 @@ export default function ListingBudgetSection({ form, onChange }: ListingBudgetSe
 										: "bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]",
 								)}
 							>
-								예산 비공개
+								{t("budgetPrivate")}
 							</button>
 							<button
 								onClick={() => onChange({ budgetPublic: true, currency: "IDR" })}
@@ -45,7 +47,7 @@ export default function ListingBudgetSection({ form, onChange }: ListingBudgetSe
 										: "bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]",
 								)}
 							>
-								예산 공개
+								{t("budgetPublic")}
 							</button>
 						</div>
 					</div>
@@ -61,7 +63,7 @@ export default function ListingBudgetSection({ form, onChange }: ListingBudgetSe
 									const numeric = Number(e.target.value.replace(/[^0-9]/g, ""));
 									onChange({ totalBudget: numeric });
 								}}
-								placeholder="예산 금액 (원)"
+								placeholder={t("budgetPlaceholder")}
 								className="flex-1 rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 							/>
 						</div>
@@ -70,7 +72,7 @@ export default function ListingBudgetSection({ form, onChange }: ListingBudgetSe
 
 				<div>
 					<div className="flex items-center justify-between">
-						<label className="text-sm font-medium text-[#374151]">희망 납기일</label>
+						<label className="text-sm font-medium text-[#374151]">{t("deadlineLabel")}</label>
 						<div className="flex gap-1">
 							<button
 								onClick={() => onChange({ deliveryTimingMode: "negotiate", deliveryDeadlineDate: null })}
@@ -81,7 +83,7 @@ export default function ListingBudgetSection({ form, onChange }: ListingBudgetSe
 										: "bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]",
 								)}
 							>
-								협의 가능
+								{t("negotiable")}
 							</button>
 							<button
 								onClick={() => onChange({ deliveryTimingMode: "specific" })}
@@ -92,7 +94,7 @@ export default function ListingBudgetSection({ form, onChange }: ListingBudgetSe
 										: "bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]",
 								)}
 							>
-								구체적 일정
+								{t("specificSchedule")}
 							</button>
 						</div>
 					</div>
@@ -103,7 +105,7 @@ export default function ListingBudgetSection({ form, onChange }: ListingBudgetSe
 							className="mt-3 flex w-full items-center gap-2 rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm text-[#374151] transition-colors hover:bg-[#F9FAFB]"
 						>
 							<Calendar size={15} className="text-[#9CA3AF]" />
-							{form.deliveryDeadlineDate ?? "납기일을 선택해주세요"}
+							{form.deliveryDeadlineDate ?? t("selectDeadline")}
 						</button>
 					)}
 				</div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { ArrowUpDown, Search } from "lucide-react";
 import { cn } from "@/utils/cn";
@@ -7,18 +8,9 @@ import { cn } from "@/utils/cn";
 export type QuoteSortOption = "deadline" | "newest" | "quoteCount" | "lowestPrice";
 export type QuoteHasFilter = "all" | "has" | "none";
 
-const SORT_LABEL: Record<QuoteSortOption, string> = {
-	deadline: "마감순",
-	newest: "최신등록순",
-	quoteCount: "견적 많은순",
-	lowestPrice: "최저가순",
-};
+const SORT_VALUES: QuoteSortOption[] = ["deadline", "newest", "quoteCount", "lowestPrice"];
 
-const HAS_FILTER_OPTIONS: { value: QuoteHasFilter; label: string }[] = [
-	{ value: "all", label: "전체" },
-	{ value: "has", label: "견적 있음" },
-	{ value: "none", label: "견적 없음" },
-];
+const HAS_FILTER_VALUES: QuoteHasFilter[] = ["all", "has", "none"];
 
 type QuoteReviewFilterBarProps = {
 	search: string;
@@ -27,6 +19,7 @@ type QuoteReviewFilterBarProps = {
 	onSortChange: (value: QuoteSortOption) => void;
 	hasFilter: QuoteHasFilter;
 	onHasFilterChange: (value: QuoteHasFilter) => void;
+	hasFilterCounts: Record<QuoteHasFilter, number>;
 };
 
 export function QuoteReviewFilterBar({
@@ -36,48 +29,66 @@ export function QuoteReviewFilterBar({
 	onSortChange,
 	hasFilter,
 	onHasFilterChange,
+	hasFilterCounts,
 }: QuoteReviewFilterBarProps): React.ReactNode {
+	const t = useTranslations("QuoteReviewFilterBar");
+
+	const sortLabels: Record<QuoteSortOption, string> = {
+		deadline: t("sortDeadline"),
+		newest: t("sortNewest"),
+		quoteCount: t("sortQuoteCount"),
+		lowestPrice: t("sortLowestPrice"),
+	};
+
+	const hasFilterLabels: Record<QuoteHasFilter, string> = {
+		all: t("filterAll"),
+		has: t("filterHas"),
+		none: t("filterNone"),
+	};
+
 	return (
-		<div className="mb-4 flex w-fit items-center rounded-xl border border-[#E5E7EB] bg-white">
-			<div className="flex items-center gap-2 px-3.5 py-2.5">
-				<Search size={16} className="text-[#9CA3AF]" />
+		<div className="flex flex-wrap items-center gap-1 rounded-xl border border-[#E5E7EB] bg-white p-1">
+			{HAS_FILTER_VALUES.map((value) => {
+				const isActive = hasFilter === value;
+				return (
+					<button
+						key={value}
+						onClick={() => onHasFilterChange(value)}
+						className={cn(
+							"flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors",
+							isActive ? "bg-[#3B82F6] text-white" : "text-[#374151] hover:bg-[#F9FAFB]",
+						)}
+					>
+						{hasFilterLabels[value]}
+						<span className={cn("text-xs", isActive ? "text-white/70" : "text-[#9CA3AF]")}>
+							{hasFilterCounts[value]}
+						</span>
+					</button>
+				);
+			})}
+
+			<div className="mx-1 h-6 w-px bg-[#E5E7EB]" />
+
+			<div className="flex items-center gap-2 px-2 py-1">
+				<Search size={16} className="shrink-0 text-[#9CA3AF]" />
 				<input
 					value={search}
 					onChange={(e) => onSearchChange(e.target.value)}
-					placeholder="공고 검색"
-					className="w-40 bg-transparent text-sm outline-none placeholder:text-[#9CA3AF]"
+					placeholder={t("searchPlaceholder")}
+					className="w-32 bg-transparent text-sm leading-none outline-none placeholder:text-[#9CA3AF]"
 				/>
 			</div>
 
-			<div className="h-6 w-px bg-[#E5E7EB]" />
-
-			<div className="flex items-center gap-1 px-2 py-1.5">
-				{HAS_FILTER_OPTIONS.map((option) => (
-					<button
-						key={option.value}
-						onClick={() => onHasFilterChange(option.value)}
-						className={cn(
-							"rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors",
-							hasFilter === option.value
-								? "bg-imsg-blue text-white"
-								: "text-[#374151] hover:bg-[#F9FAFB]",
-						)}
-					>
-						{option.label}
-					</button>
-				))}
-			</div>
-
-			<div className="h-6 w-px bg-[#E5E7EB]" />
+			<div className="mx-1 h-6 w-px bg-[#E5E7EB]" />
 
 			<Popover className="relative">
-				<PopoverButton className="flex items-center gap-1.5 px-3.5 py-2.5 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
+				<PopoverButton className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
 					<ArrowUpDown size={14} />
-					{SORT_LABEL[sort]}
+					{sortLabels[sort]}
 				</PopoverButton>
 
-				<PopoverPanel className="absolute right-0 z-20 mt-2 w-40 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
-					{(Object.keys(SORT_LABEL) as QuoteSortOption[]).map((option) => (
+				<PopoverPanel className="absolute right-0 z-20 mt-2 w-44 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
+					{SORT_VALUES.map((option) => (
 						<button
 							key={option}
 							onClick={() => onSortChange(option)}
@@ -88,7 +99,7 @@ export function QuoteReviewFilterBar({
 									: "text-[#374151] hover:bg-[#F9FAFB]",
 							)}
 						>
-							{SORT_LABEL[option]}
+							{sortLabels[option]}
 						</button>
 					))}
 				</PopoverPanel>

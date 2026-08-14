@@ -1,14 +1,15 @@
 import { Building2, FileText } from "lucide-react";
 import { cva } from "class-variance-authority";
+import { getTranslations } from "next-intl/server";
 import { ListingInfo } from "@/features/shared/components/ListingInfo";
-import { CATEGORY_LABELS, CURRENCY_SYMBOL } from "@/features/buyer/constants";
+import { getCategoryLabels, CURRENCY_SYMBOL } from "@/features/buyer/constants";
 import type { ListingDetail } from "@/features/seller/types";
 
 type ListingDetailInfoProps = {
 	listing: ListingDetail;
 };
 
-const statusChip = cva("rounded-full px-2.5 py-1 text-xs font-semibold", {
+const statusChip = cva("whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold", {
 	variants: {
 		state: {
 			open: "bg-[#EFF6FF] text-imsg-blue",
@@ -29,7 +30,9 @@ function daysUntil(endDate: string): number {
 	);
 }
 
-export function ListingDetailInfo({ listing }: ListingDetailInfoProps): React.JSX.Element {
+export async function ListingDetailInfo({ listing }: ListingDetailInfoProps): Promise<React.JSX.Element> {
+	const t = await getTranslations("ListingDetailInfo");
+	const categoryLabels = getCategoryLabels(await getTranslations("ListingCategory"));
 	const symbol = CURRENCY_SYMBOL[listing.currency] ?? "";
 	const remaining = daysUntil(listing.endDate);
 	const totalQuantity = listing.items.reduce((sum, item) => sum + item.quantity, 0);
@@ -37,26 +40,26 @@ export function ListingDetailInfo({ listing }: ListingDetailInfoProps): React.JS
 
 	const summary = [
 		{
-			label: "예산",
-			value: listing.budgetPublic ? `${symbol} ${listing.totalBudget.toLocaleString()}` : "비공개",
+			label: t("budgetLabel"),
+			value: listing.budgetPublic ? `${symbol} ${listing.totalBudget.toLocaleString()}` : t("budgetPrivate"),
 			sub:
 				listing.budgetPublic && listing.budgetInKrw !== null && listing.currency !== "KRW"
-					? `약 ₩ ${Math.round(listing.budgetInKrw).toLocaleString()}`
+					? t("aboutKrw", { value: Math.round(listing.budgetInKrw).toLocaleString() })
 					: listing.budgetPublic
 						? listing.currency
-						: "발주기업이 공개하지 않았어요",
+						: t("budgetPrivateNote"),
 			accent: false,
 		},
 		{
-			label: "견적 마감",
+			label: t("deadlineLabel"),
 			value: new Date(listing.endDate).toLocaleDateString("ko-KR"),
-			sub: remaining > 0 ? `${remaining}일 남음` : remaining === 0 ? "오늘 마감" : "마감됨",
+			sub: remaining > 0 ? t("daysLeft", { days: remaining }) : remaining === 0 ? t("closingToday") : t("closed"),
 			accent: remaining >= 0 && remaining <= 3,
 		},
 		{
-			label: "요청 품목",
-			value: `${listing.items.length}종`,
-			sub: units.size === 1 ? `총 ${totalQuantity.toLocaleString()} ${[...units][0]}` : null,
+			label: t("itemsLabel"),
+			value: t("itemsCount", { count: listing.items.length }),
+			sub: units.size === 1 ? t("totalQuantity", { quantity: totalQuantity.toLocaleString(), unit: [...units][0] }) : null,
 			accent: false,
 		},
 	];
@@ -69,20 +72,20 @@ export function ListingDetailInfo({ listing }: ListingDetailInfoProps): React.JS
 						className={statusChip({
 							state: remaining < 0 ? "closed" : remaining <= 3 ? "closing" : "open",
 						})}>
-						{remaining < 0 ? "마감됨" : remaining === 0 ? "오늘 마감" : `${remaining}일 남음`}
+						{remaining < 0 ? t("closed") : remaining === 0 ? t("closingToday") : t("daysLeft", { days: remaining })}
 					</span>
 					<span className="rounded-full bg-imsg-surface px-2.5 py-1 text-xs font-medium text-imsg-secondary">
-						{CATEGORY_LABELS[listing.category]}
+						{categoryLabels[listing.category]}
 					</span>
 					<span className="text-xs text-imsg-secondary">
-						{new Date(listing.createdAt).toLocaleDateString("ko-KR")} 등록
+						{t("registeredOn", { date: new Date(listing.createdAt).toLocaleDateString("ko-KR") })}
 					</span>
 				</div>
 
 				<h1 className="text-2xl font-bold tracking-tight text-[#0f172a]">{listing.title}</h1>
 				<p className="mt-1.5 flex items-center gap-1.5 text-sm text-imsg-secondary">
 					<Building2 size={14} />
-					{listing.companyName || "발주기업"}
+					{listing.companyName || t("companyFallback")}
 				</p>
 
 				<div className="mt-5 grid grid-cols-1 divide-y divide-[#F2F2F7] border-t border-[#F2F2F7] pt-5 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
@@ -107,7 +110,7 @@ export function ListingDetailInfo({ listing }: ListingDetailInfoProps): React.JS
 				<section className="rounded-2xl bg-white p-6 shadow-sm">
 					<h2 className="mb-4 flex items-center gap-2 text-base font-semibold text-[#0f172a]">
 						<FileText size={16} className="text-imsg-secondary" />
-						상세 설명
+						{t("descriptionTitle")}
 					</h2>
 					<div
 						className="prose prose-sm max-w-none text-[#374151] [&_table]:w-full [&_td]:border [&_td]:border-[#E5E7EB] [&_td]:p-2 [&_th]:border [&_th]:border-[#E5E7EB] [&_th]:bg-[#F9FAFB] [&_th]:p-2"

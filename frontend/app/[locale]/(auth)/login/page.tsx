@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { useLogin } from "@/features/auth/mutations";
@@ -10,15 +11,35 @@ import Image from "next/image";
 import { getUserRole } from "@/features/auth/apis";
 import { LanguageSwitcher } from "@/components/commons/LanguageSwitcher";
 
+const SAVED_USERNAME_KEY = "saved_username";
+
 export default function LoginPage() {
+	const t = useTranslations("Login");
 	const router = useRouter();
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
+	const [saveUsername, setSaveUsername] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const { mutateAsync: login } = useLogin();
 	const [securityStep, setSecurityStep] = useState<"connecting" | "verifying" | null>(null);
 	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		const saved = localStorage.getItem(SAVED_USERNAME_KEY);
+		if (saved) {
+			setUsername(saved);
+			setSaveUsername(true);
+		}
+	}, []);
+
+	useEffect(() => {
+		if (saveUsername) {
+			localStorage.setItem(SAVED_USERNAME_KEY, username);
+		} else {
+			localStorage.removeItem(SAVED_USERNAME_KEY);
+		}
+	}, [username, saveUsername]);
 
 	async function handleSubmit() {
 		setIsLoading(true);
@@ -35,7 +56,7 @@ export default function LoginPage() {
 			router.push(role === "seller" ? "/seller/dashboard" : "/buyer/dashboard");
 		} catch {
 			setSecurityStep(null);
-			setError("아이디 또는 비밀번호가 올바르지 않습니다.");
+			setError(t("errorInvalid"));
 		} finally {
 			setIsLoading(false);
 		}
@@ -65,31 +86,31 @@ export default function LoginPage() {
 				/>
 				</div>
 
-				<h1 className="text-2xl font-bold text-center text-[#1F2937] mb-6">로그인</h1>
+				<h1 className="text-2xl font-bold text-center text-[#1F2937] mb-6">{t("title")}</h1>
 
 				<div className="space-y-5">
 					<div className="space-y-1.5">
-						<label className="text-sm font-medium text-[#374151]">아이디</label>
+						<label className="text-sm font-medium text-[#374151]">{t("idLabel")}</label>
 						<input
 							type="text"
 							autoComplete="username"
 							value={username}
 							onChange={(e) => setUsername(e.target.value)}
 							onKeyDown={handleKeyDown}
-							placeholder="아이디를 입력하세요"
+							placeholder={t("idPlaceholder")}
 							className="w-full px-4 py-3 border border-[#E5E7EB] rounded-lg text-sm text-[#1F2937] placeholder:text-[#9CA3AF] focus:outline-none focus:border-imsg-blue focus:ring-1 focus:ring-imsg-blue transition-colors"
 						/>
 					</div>
 
 					<div className="space-y-1.5">
-						<label className="text-sm font-medium text-[#374151]">비밀번호</label>
+						<label className="text-sm font-medium text-[#374151]">{t("passwordLabel")}</label>
 						<div className="relative">
 							<input
 								type={showPassword ? "text" : "password"}
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
 								onKeyDown={handleKeyDown}
-								placeholder="비밀번호를 입력하세요"
+								placeholder={t("passwordPlaceholder")}
 								className="w-full px-4 py-3 pr-11 border border-[#E5E7EB] rounded-lg text-sm text-[#1F2937] placeholder:text-[#9CA3AF] focus:outline-none focus:border-imsg-blue focus:ring-1 focus:ring-imsg-blue transition-colors"
 							/>
 							<button
@@ -100,6 +121,32 @@ export default function LoginPage() {
 							</button>
 						</div>
 					</div>
+
+					<button
+						type="button"
+						onClick={() => setSaveUsername((prev) => !prev)}
+						className="flex items-center gap-2"
+					>
+						<span
+							className={cn(
+								"flex h-4 w-4 items-center justify-center rounded border transition-colors",
+								saveUsername ? "bg-[#3B82F6] border-[#3B82F6]" : "border-[#D1D5DB] bg-white",
+							)}
+						>
+							{saveUsername && (
+								<svg width="8" height="6" viewBox="0 0 10 8" fill="none">
+									<path
+										d="M1 4L3.5 6.5L9 1"
+										stroke="white"
+										strokeWidth="1.5"
+										strokeLinecap="round"
+										strokeLinejoin="round"
+									/>
+								</svg>
+							)}
+						</span>
+						<span className="text-sm text-[#374151]">{t("rememberUsername")}</span>
+					</button>
 
 					{error && <p className="text-sm text-red-500">{error}</p>}
 
@@ -112,12 +159,12 @@ export default function LoginPage() {
 							"disabled:opacity-50 disabled:cursor-not-allowed",
 						)}
 					>
-						{isLoading ? "로그인 중..." : "로그인"}
+						{isLoading ? t("submitting") : t("submit")}
 					</button>
 
 					<div className="flex items-center gap-3 py-1">
 						<div className="flex-1 h-px bg-[#E5E7EB]"></div>
-						<span className="text-xs text-[#9CA3AF]">계정이 없으신가요?</span>
+						<span className="text-xs text-[#9CA3AF]">{t("noAccount")}</span>
 						<div className="flex-1 h-px bg-[#E5E7EB]"></div>
 					</div>
 
@@ -125,13 +172,13 @@ export default function LoginPage() {
 						onClick={() => router.push("/signup")}
 						className="w-full py-3 border border-[#E5E7EB] rounded-lg font-medium text-sm text-[#374151] hover:bg-gray-50 transition-colors"
 					>
-						회원가입하기
+						{t("signup")}
 					</button>
 				</div>
 
 				<p className="text-center text-xs text-[#9CA3AF] mt-6">
-					솔루션 문의는 전문 컨설턴트가 도와드립니다.{" "}
-					<span className="text-imsg-blue font-medium">고객센터 02-742-9217</span>
+					{t("supportNotice")}{" "}
+					<span className="text-imsg-blue font-medium">{t("supportPhone")}</span>
 				</p>
 			</div>
 		</div>

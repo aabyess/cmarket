@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { cva } from "class-variance-authority";
 import { ArrowDown, ArrowUp, ChevronDown, Trash2 } from "lucide-react";
 import { SiteBuilderBlockEditor } from "@/features/siteBuilder/components/SiteBuilder/SiteBuilderBlockEditor";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
-import { BLOCK_DESCRIPTIONS, BLOCK_ICONS, BLOCK_LABELS } from "@/features/siteBuilder/constants";
+import { BLOCK_ICONS } from "@/features/siteBuilder/constants";
 import { cn } from "@/utils/cn";
 import type { Block } from "@/features/siteBuilder/types";
 
@@ -43,6 +44,7 @@ export function SiteBuilderBlockCard({
 	onMove,
 	onRemove,
 }: SiteBuilderBlockCardProps): React.JSX.Element {
+	const t = useTranslations("SiteBuilderBlockCard");
 	const Icon = BLOCK_ICONS[block.type];
 	const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
@@ -60,14 +62,14 @@ export function SiteBuilderBlockCard({
 					className="flex min-w-0 flex-1 items-center gap-2 text-left">
 					<span className="min-w-0 flex-1">
 						<span className="block text-sm font-semibold text-[#1F2937]">
-							{BLOCK_LABELS[block.type]}
+							{t(`labels.${block.type}`)}
 						</span>
 						<span className="block truncate text-xs text-[#9CA3AF]">
-							{BLOCK_DESCRIPTIONS[block.type]}
+							{t(`descriptions.${block.type}`)}
 						</span>
 					</span>
 					<ChevronDown size={16} className={toggleChevron({ open: isOpen })} />
-					<span className="shrink-0 text-xs text-[#9CA3AF]">{isOpen ? "접기" : "펼치기"}</span>
+					<span className="shrink-0 text-xs text-[#9CA3AF]">{isOpen ? t("collapse") : t("expand")}</span>
 				</button>
 
 				<span className="h-6 w-px shrink-0 bg-[#F3F4F6]" />
@@ -77,8 +79,8 @@ export function SiteBuilderBlockCard({
 						type="button"
 						onClick={() => onMove(-1)}
 						disabled={isFirst}
-						title="위로 이동"
-						aria-label="블록을 위로 이동"
+						title={t("moveUpTitle")}
+						aria-label={t("moveUpAria")}
 						className={ICON_BUTTON_CLASS}>
 						<ArrowUp size={15} />
 					</button>
@@ -86,16 +88,16 @@ export function SiteBuilderBlockCard({
 						type="button"
 						onClick={() => onMove(1)}
 						disabled={isLast}
-						title="아래로 이동"
-						aria-label="블록을 아래로 이동"
+						title={t("moveDownTitle")}
+						aria-label={t("moveDownAria")}
 						className={ICON_BUTTON_CLASS}>
 						<ArrowDown size={15} />
 					</button>
 					<button
 						type="button"
 						onClick={() => setIsConfirmOpen(true)}
-						title="블록 삭제"
-						aria-label="블록 삭제"
+						title={t("removeTitle")}
+						aria-label={t("removeTitle")}
 						className={cn(ICON_BUTTON_CLASS, "hover:text-[#DC2626]")}>
 						<Trash2 size={15} />
 					</button>
@@ -110,9 +112,9 @@ export function SiteBuilderBlockCard({
 
 			<ConfirmModal
 				isOpen={isConfirmOpen}
-				title="이 블록을 삭제할까요?"
-				description="삭제하면 되돌릴 수 없습니다."
-				confirmLabel="삭제"
+				title={t("deleteConfirmTitle")}
+				description={t("deleteConfirmDescription")}
+				confirmLabel={t("deleteConfirmButton")}
 				variant="danger"
 				onConfirm={() => {
 					onRemove();

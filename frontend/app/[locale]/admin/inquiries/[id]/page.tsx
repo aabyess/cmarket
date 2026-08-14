@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { SupportInquiryDetail } from "@/features/support/components/SupportInquiries/SupportInquiryDetail";
 import { getInquiry } from "@/features/support/inquiryApis";
 
@@ -14,6 +15,7 @@ export default async function AdminInquiryDetailPage({
 	const { id } = await params;
 	const inquiry = await getInquiry(id);
 	if (!inquiry) notFound();
+	const t = await getTranslations("AdminInquiryDetailPage");
 
 	return (
 		<div className="mx-auto max-w-[900px] px-6 py-6 lg:px-8">
@@ -21,7 +23,7 @@ export default async function AdminInquiryDetailPage({
 				href="/admin/inquiries"
 				className="mb-4 inline-flex items-center gap-1.5 text-sm text-imsg-secondary transition-colors duration-200 hover:text-[#374151]">
 				<ChevronLeft size={16} />
-				문의 목록으로
+				{t("backToList")}
 			</Link>
 
 			{/* 이 페이지는 레이아웃에서 운영자만 통과시킨다. */}

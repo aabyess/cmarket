@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Mail } from "lucide-react";
 import { QuoteReviewQuoteCard } from "@/features/buyer/components/QuoteReview/QuoteReviewQuoteCard";
+import { QuoteCompareTable } from "@/features/buyer/components/QuoteReview/QuoteCompareTable";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
+import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import { startChat } from "@/features/chat/mutations";
 import type { ReceivedQuote } from "@/features/buyer/types";
 
@@ -15,10 +18,12 @@ type QuoteReviewProps = {
 };
 
 export function QuoteReview({ quotes, backHref }: QuoteReviewProps): React.JSX.Element {
+	const t = useTranslations("QuoteReview");
 	const router = useRouter();
 	const [startingId, setStartingId] = useState<string | null>(null);
 	const [awardingId, setAwardingId] = useState<string | null>(null);
 	const [confirmQuoteId, setConfirmQuoteId] = useState<string | null>(null);
+	const [viewMode, setViewMode] = useState<ViewMode>("list");
 
 	const comparablePrices = quotes.map((q) => q.priceInIdr).filter((p): p is number => p !== null);
 	const lowestPriceInIdr = comparablePrices.length > 0 ? Math.min(...comparablePrices) : null;
@@ -66,7 +71,7 @@ export function QuoteReview({ quotes, backHref }: QuoteReviewProps): React.JSX.E
 			router.push(`/buyer/chat?quoteId=${quoteId}`);
 		} catch (err) {
 			console.error(err);
-			alert("계약 확정 처리 중 오류가 발생했습니다.");
+			alert(t("awardErrorMessage"));
 		} finally {
 			setAwardingId(null);
 			setConfirmQuoteId(null);
@@ -79,36 +84,44 @@ export function QuoteReview({ quotes, backHref }: QuoteReviewProps): React.JSX.E
 				<div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-imsg-surface">
 					<Mail size={24} className="text-imsg-secondary" />
 				</div>
-				<p className="text-base font-medium text-[#0f172a]">아직 견적이 없어요</p>
-				<p className="mt-1 text-sm text-imsg-secondary">보통 2~3일 안에 첫 견적이 도착해요.</p>
+				<p className="text-base font-medium text-[#0f172a]">{t("emptyTitle")}</p>
+				<p className="mt-1 text-sm text-imsg-secondary">{t("emptyDescription")}</p>
 			</div>
 		);
 	}
 
 	return (
 		<>
-			<div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-				{quotes.map((quote) => (
-					<QuoteReviewQuoteCard
-						key={quote.id}
-						quote={quote}
-						backHref={backHref}
-						isLowestPrice={lowestPriceInIdr !== null && quote.priceInIdr === lowestPriceInIdr}
-						isFastest={quote.deliveryDays === fastestDays}
-						isAwardDisabled={hasAwardedQuote}
-						isStartingChat={startingId === quote.id}
-						isAwarding={awardingId === quote.id}
-						onStartChat={handleStartChat}
-						onRequestAward={setConfirmQuoteId}
-					/>
-				))}
+			<div className="mb-4 flex justify-end">
+				<ViewModeToggle value={viewMode} onChange={setViewMode} />
 			</div>
+
+			{viewMode === "grid" ? (
+				<div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+					{quotes.map((quote) => (
+						<QuoteReviewQuoteCard
+							key={quote.id}
+							quote={quote}
+							backHref={backHref}
+							isLowestPrice={lowestPriceInIdr !== null && quote.priceInIdr === lowestPriceInIdr}
+							isFastest={quote.deliveryDays === fastestDays}
+							isAwardDisabled={hasAwardedQuote}
+							isStartingChat={startingId === quote.id}
+							isAwarding={awardingId === quote.id}
+							onStartChat={handleStartChat}
+							onRequestAward={setConfirmQuoteId}
+						/>
+					))}
+				</div>
+			) : (
+				<QuoteCompareTable quotes={quotes} />
+			)}
 
 			<ConfirmModal
 				isOpen={confirmQuoteId !== null}
-				title="이 견적으로 계약을 확정할까요?"
-				description="확정하면 다른 견적은 선택할 수 없고, 공급기업에게 계약 사실이 통보됩니다."
-				confirmLabel="계약 확정"
+				title={t("confirmTitle")}
+				description={t("confirmDescription")}
+				confirmLabel={t("confirmLabel")}
 				variant="default"
 				isLoading={awardingId === confirmQuoteId}
 				onConfirm={() => confirmQuoteId && handleAward(confirmQuoteId)}

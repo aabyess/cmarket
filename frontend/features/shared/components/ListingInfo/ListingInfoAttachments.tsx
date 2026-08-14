@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Download, Paperclip } from "lucide-react";
 import type { ListingAttachment } from "@/features/buyer/types";
 
@@ -18,6 +19,8 @@ export function ListingInfoAttachments({
 	listingId,
 	attachments,
 }: ListingInfoAttachmentsProps): React.JSX.Element | null {
+	const t = useTranslations("ListingInfoAttachments");
+
 	if (attachments.length === 0) return null;
 
 	async function handleOpen(storagePath: string): Promise<void> {
@@ -29,7 +32,7 @@ export function ListingInfoAttachments({
 			const { url } = await res.json();
 			window.open(url, "_blank");
 		} catch {
-			alert("첨부파일을 여는 중 오류가 발생했습니다.");
+			alert(t("openError"));
 		}
 	}
 
@@ -37,7 +40,7 @@ export function ListingInfoAttachments({
 		<section className="rounded-2xl bg-white p-6 shadow-sm">
 			<h2 className="mb-4 flex items-center gap-2 text-base font-semibold text-[#0f172a]">
 				<Paperclip size={16} className="text-imsg-secondary" />
-				첨부파일
+				{t("heading")}
 				<span className="rounded-full bg-imsg-surface px-2 py-0.5 text-xs font-medium text-imsg-secondary">
 					{attachments.length}
 				</span>

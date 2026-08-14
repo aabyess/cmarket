@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Mail, ArrowRight, Clock, Bell, MessageSquare } from "lucide-react";
 import { cn } from "@/utils/cn";
@@ -12,6 +13,7 @@ type DashboardHomeProps = {
 };
 
 export function DashboardHome({ companyName, data, tradeSummary }: DashboardHomeProps) {
+	const t = useTranslations("BuyerDashboard");
 	const router = useRouter();
 
 	function handleNavigate(href: string) {
@@ -31,7 +33,7 @@ export function DashboardHome({ companyName, data, tradeSummary }: DashboardHome
 				<div>
 					<p className="text-sm font-medium text-imsg-secondary">MitraPay</p>
 					<h1 className="mt-1 text-2xl font-bold tracking-tight text-[#0f172a]">
-						{companyName}님, 환영합니다
+						{t("welcome", { companyName })}
 					</h1>
 				</div>
 			</div>
@@ -39,19 +41,19 @@ export function DashboardHome({ companyName, data, tradeSummary }: DashboardHome
 			{/* 나의 거래 요약 */}
 			<div className="mb-6">
 				<div className="mb-3 flex items-center justify-between">
-					<h2 className="text-base font-semibold text-[#0f172a]">나의 거래 요약</h2>
+					<h2 className="text-base font-semibold text-[#0f172a]">{t("tradeSummaryTitle")}</h2>
 				</div>
 				<div className="rounded-2xl bg-white p-6 shadow-sm">
 					<div className="grid grid-cols-1 divide-y divide-[#F2F2F7] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
 						{[
-							{ label: "진행중", ...tradeSummary.inProgress },
-							{ label: "전체 마감", ...tradeSummary.closed },
-							{ label: "총 계약 건", ...tradeSummary.contracts },
+							{ label: t("summaryInProgress"), ...tradeSummary.inProgress },
+							{ label: t("summaryClosed"), ...tradeSummary.closed },
+							{ label: t("summaryContracts"), ...tradeSummary.contracts },
 						].map((block) => (
 							<div key={block.label} className="px-0 py-4 first:pt-0 last:pb-0 sm:px-6 sm:py-0 sm:first:pl-0 sm:last:pr-0">
 								<div className="flex items-baseline justify-between">
 									<p className="text-sm font-medium text-imsg-secondary">{block.label}</p>
-									<p className="text-3xl font-bold text-[#0f172a]">{block.total}건</p>
+									<p className="text-3xl font-bold text-[#0f172a]">{t("totalCount", { count: block.total })}</p>
 								</div>
 								<div className="mt-3 space-y-2">
 									{block.subItems.map((sub) => (
@@ -74,10 +76,10 @@ export function DashboardHome({ companyName, data, tradeSummary }: DashboardHome
 					<div className="rounded-2xl bg-white shadow-sm">
 						<div className="flex items-center justify-between px-5 py-4">
 							<div className="flex items-center gap-2">
-								<h2 className="text-base font-semibold text-[#0f172a]">할 일</h2>
+								<h2 className="text-base font-semibold text-[#0f172a]">{t("todoTitle")}</h2>
 								{urgentTodos.length > 0 && (
 									<span className="rounded-full bg-red-50 px-2 py-0.5 text-sm font-semibold text-red-500">
-										{urgentTodos.length} 긴급
+										{t("urgentCount", { count: urgentTodos.length })}
 									</span>
 								)}
 							</div>
@@ -85,7 +87,7 @@ export function DashboardHome({ companyName, data, tradeSummary }: DashboardHome
 								onClick={() => handleNavigate("/buyer/order-list")}
 								className="text-sm font-medium text-imsg-blue hover:underline"
 							>
-								모두 보기
+								{t("viewAll")}
 							</button>
 						</div>
 
@@ -96,15 +98,15 @@ export function DashboardHome({ companyName, data, tradeSummary }: DashboardHome
 								<div className="mb-3 flex size-12 items-center justify-center rounded-full bg-imsg-surface">
 									<Clock size={20} className="text-imsg-secondary" />
 								</div>
-								<p className="text-base font-medium text-[#0f172a]">지금은 할 일이 없어요</p>
+								<p className="text-base font-medium text-[#0f172a]">{t("todoEmptyTitle")}</p>
 								<p className="mt-1 text-sm text-imsg-secondary">
-									공고 {data.listingCount}건이 진행 중이에요. 견적이 도착하면 알려드릴게요.
+									{t("todoEmptyDescription", { count: data.listingCount })}
 								</p>
 								<button
 									onClick={() => handleNavigate("/buyer/order-list")}
 									className="mt-4 rounded-full border border-[#E5E7EB] px-4 py-2 text-sm font-medium text-[#0f172a] transition-colors hover:bg-imsg-surface"
 								>
-									진행 중인 공고 보기
+									{t("todoEmptyAction")}
 								</button>
 							</div>
 						) : (
@@ -125,7 +127,7 @@ export function DashboardHome({ companyName, data, tradeSummary }: DashboardHome
 												</h3>
 												{todo.highlights.length > 0 && (
 													<span className="shrink-0 rounded-full bg-red-50 px-2 py-0.5 text-sm font-semibold text-red-500">
-														긴급
+														{t("urgentBadge")}
 													</span>
 												)}
 											</div>
@@ -163,21 +165,21 @@ export function DashboardHome({ companyName, data, tradeSummary }: DashboardHome
 					{/* 바로가기 */}
 					<div className="rounded-2xl bg-white p-4 shadow-sm">
 						<h2 className="mb-3 text-sm font-semibold text-imsg-secondary uppercase tracking-wider">
-							바로가기
+							{t("shortcutsTitle")}
 						</h2>
 						<div className="grid grid-cols-2 gap-2">
 							{[
 								{
-									label: "받은 견적",
-									sub: `${data.badges.quotes}건`,
+									label: t("shortcutQuotesLabel"),
+									sub: t("shortcutQuotesSub", { count: data.badges.quotes }),
 									icon: Mail,
 									iconBg: "bg-amber-50",
 									color: "text-amber-500",
 									href: "/buyer/quote-review",
 								},
 								{
-									label: "채팅",
-									sub: `${data.badges.chats}건 읽지 않음`,
+									label: t("shortcutChatLabel"),
+									sub: t("shortcutChatSub", { count: data.badges.chats }),
 									icon: MessageSquare,
 									iconBg: "bg-blue-50",
 									color: "text-imsg-blue",
@@ -207,14 +209,14 @@ export function DashboardHome({ companyName, data, tradeSummary }: DashboardHome
 					<div className="rounded-2xl bg-white shadow-sm">
 						<div className="flex items-center gap-2 px-4 py-3">
 							<h2 className="text-sm font-semibold text-imsg-secondary uppercase tracking-wider">
-								최근 활동
+								{t("recentActivityTitle")}
 							</h2>
 						</div>
 						<div className="h-px bg-[#F2F2F7]" />
 						<ul className="p-2">
 							{data.activities.length === 0 ? (
 								<li className="py-8 text-center text-sm text-imsg-secondary">
-									아직 활동이 없어요
+									{t("recentActivityEmpty")}
 								</li>
 							) : (
 								data.activities.map((activity, i) => (

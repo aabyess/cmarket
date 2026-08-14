@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { cva } from "class-variance-authority";
 import { Building2, CreditCard, ImageIcon, Loader2, Tag, User } from "lucide-react";
 import {
@@ -7,7 +8,7 @@ import {
 	SiteBuilderTextField,
 } from "@/features/siteBuilder/components/SiteBuilder/SiteBuilderFields";
 import { CURRENCY_OPTIONS } from "@/features/siteBuilder/constants";
-import { CATEGORY_LABELS, CATEGORY_OPTIONS } from "@/features/buyer/constants";
+import { getCategoryLabels, CATEGORY_OPTIONS } from "@/features/buyer/constants";
 import type {
 	SiteCompanyInfo,
 	SiteContactInfo,
@@ -44,6 +45,9 @@ export function SiteBuilderTradeSettings({
 	onChange,
 	onSave,
 }: SiteBuilderTradeSettingsProps): React.JSX.Element {
+	const t = useTranslations("SiteBuilderTradeSettings");
+	const categoryLabels = getCategoryLabels(useTranslations("ListingCategory"));
+
 	function updateCompany(patch: Partial<SiteCompanyInfo>): void {
 		onChange({ ...settings, company: { ...settings.company, ...patch } });
 	}
@@ -57,50 +61,49 @@ export function SiteBuilderTradeSettings({
 			<div className={SECTION_CLASS}>
 				<h2 className={HEADING_CLASS}>
 					<Building2 size={16} className="text-[#6B7280]" />
-					사업자 정보
+					{t("businessInfoTitle")}
 				</h2>
 				<p className={HINT_CLASS}>
-					사업자등록번호는 계약서·인보이스에 기재되는 정보라 변경할 수 없습니다. 정정이 필요하면
-					지원센터로 문의해주세요.
+					{t("businessInfoHint")}
 				</p>
 
 				<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 					<SiteBuilderTextField
-						label="기업명"
+						label={t("companyNameLabel")}
 						value={settings.company.companyName}
-						placeholder="예: 대한정밀공업"
+						placeholder={t("companyNamePlaceholder")}
 						onChange={(companyName) => updateCompany({ companyName })}
 					/>
 					<SiteBuilderTextField
-						label="대표자"
+						label={t("representativeLabel")}
 						value={settings.company.representative}
-						placeholder="예: 김대한"
+						placeholder={t("representativePlaceholder")}
 						onChange={(representative) => updateCompany({ representative })}
 					/>
 					<SiteBuilderTextField
-						label="업태"
+						label={t("businessTypeLabel")}
 						value={settings.company.businessType}
-						placeholder="예: 제조업"
+						placeholder={t("businessTypePlaceholder")}
 						onChange={(businessType) => updateCompany({ businessType })}
 					/>
 					<SiteBuilderTextField
-						label="종목"
+						label={t("businessItemLabel")}
 						value={settings.company.businessItem}
-						placeholder="예: 정밀기계부품"
+						placeholder={t("businessItemPlaceholder")}
 						onChange={(businessItem) => updateCompany({ businessItem })}
 					/>
 					<div className="sm:col-span-2">
 						<SiteBuilderTextField
-							label="주소"
+							label={t("addressLabel")}
 							value={settings.company.address}
-							placeholder="예: 경기도 안산시 단원구 산단로 123"
+							placeholder={t("addressPlaceholder")}
 							onChange={(address) => updateCompany({ address })}
 						/>
 					</div>
 					<div className="sm:col-span-2">
 						<label className="mb-1.5 block text-xs font-medium text-[#374151]">
-							사업자등록번호
-							<span className="ml-1 text-[#9CA3AF]">(변경 불가)</span>
+							{t("businessNumberLabel")}
+							<span className="ml-1 text-[#9CA3AF]">{t("businessNumberUnchangeable")}</span>
 						</label>
 						<p className="rounded-lg border border-[#F3F4F6] bg-[#F9FAFB] px-3.5 py-2.5 text-sm text-[#6B7280]">
 							{settings.company.businessNumber || "-"}
@@ -112,45 +115,45 @@ export function SiteBuilderTradeSettings({
 			<div className={SECTION_CLASS}>
 				<h2 className={HEADING_CLASS}>
 					<User size={16} className="text-[#6B7280]" />
-					담당자 정보
+					{t("contactInfoTitle")}
 				</h2>
-				<p className={HINT_CLASS}>견적·계약 진행 시 상대 기업에게 전달되는 연락처입니다.</p>
+				<p className={HINT_CLASS}>{t("contactInfoHint")}</p>
 
 				<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 					<SiteBuilderTextField
-						label="이름"
+						label={t("nameLabel")}
 						value={settings.contact.name}
-						placeholder="예: 김수출"
+						placeholder={t("namePlaceholder")}
 						onChange={(name) => updateContact({ name })}
 					/>
 					<SiteBuilderTextField
-						label="직함"
+						label={t("titleLabel")}
 						value={settings.contact.title}
-						placeholder="예: 과장"
+						placeholder={t("titlePlaceholder")}
 						onChange={(title) => updateContact({ title })}
 					/>
 					<SiteBuilderTextField
-						label="부서"
+						label={t("departmentLabel")}
 						value={settings.contact.department}
-						placeholder="예: 해외영업팀"
+						placeholder={t("departmentPlaceholder")}
 						onChange={(department) => updateContact({ department })}
 					/>
 					<SiteBuilderTextField
-						label="이메일"
+						label={t("emailLabel")}
 						value={settings.contact.email}
-						placeholder="예: export@example.com"
+						placeholder={t("emailPlaceholder")}
 						onChange={(email) => updateContact({ email })}
 					/>
 					<SiteBuilderTextField
-						label="휴대폰"
+						label={t("mobileLabel")}
 						value={settings.contact.mobile}
-						placeholder="예: 010-1234-5678"
+						placeholder={t("mobilePlaceholder")}
 						onChange={(mobile) => updateContact({ mobile })}
 					/>
 					<SiteBuilderTextField
-						label="유선 전화"
+						label={t("phoneLabel")}
 						value={settings.contact.phone}
-						placeholder="예: 031-123-4567"
+						placeholder={t("phonePlaceholder")}
 						onChange={(phone) => updateContact({ phone })}
 					/>
 				</div>
@@ -160,10 +163,10 @@ export function SiteBuilderTradeSettings({
 				<div className={SECTION_CLASS}>
 					<h2 className={HEADING_CLASS}>
 						<Tag size={16} className="text-[#6B7280]" />
-						취급 카테고리
+						{t("categoryTitle")}
 					</h2>
 					<p className={HINT_CLASS}>
-						선택한 카테고리를 기준으로 맞춤 견적요청을 추천해드립니다.
+						{t("categoryHint")}
 					</p>
 
 					<div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -180,7 +183,7 @@ export function SiteBuilderTradeSettings({
 									})
 								}
 								className={categoryButton({ selected: settings.categories.includes(category) })}>
-								{CATEGORY_LABELS[category]}
+								{categoryLabels[category]}
 							</button>
 						))}
 					</div>
@@ -190,13 +193,13 @@ export function SiteBuilderTradeSettings({
 			<div className={SECTION_CLASS}>
 				<h2 className={HEADING_CLASS}>
 					<ImageIcon size={16} className="text-[#6B7280]" />
-					기업 로고
+					{t("logoTitle")}
 				</h2>
-				<p className={HINT_CLASS}>견적 비교 화면 등 상대 기업에게 보이는 곳에 표시됩니다.</p>
+				<p className={HINT_CLASS}>{t("logoHint")}</p>
 				<SiteBuilderImageField
 					label=""
 					value={settings.logoUrl}
-					hint="정사각형 이미지를 권장합니다"
+					hint={t("logoFieldHint")}
 					onChange={(logoUrl) => onChange({ ...settings, logoUrl })}
 				/>
 			</div>
@@ -205,23 +208,23 @@ export function SiteBuilderTradeSettings({
 				<div className={SECTION_CLASS}>
 					<h2 className={HEADING_CLASS}>
 						<CreditCard size={16} className="text-[#6B7280]" />
-						계좌 정보
+						{t("bankTitle")}
 					</h2>
 					<p className={HINT_CLASS}>
-						인보이스 발행 시 바이어에게 표시됩니다. 국제 송금(T/T) 기준으로 입력해주세요.
+						{t("bankHint")}
 					</p>
 
 					<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 						<SiteBuilderTextField
-							label="은행명"
+							label={t("bankNameLabel")}
 							value={settings.bankAccount.bankName}
-							placeholder="예: 국민은행"
+							placeholder={t("bankNamePlaceholder")}
 							onChange={(bankName) =>
 								onChange({ ...settings, bankAccount: { ...settings.bankAccount, bankName } })
 							}
 						/>
 						<div>
-							<label className="mb-1.5 block text-xs font-medium text-[#374151]">수취 통화</label>
+							<label className="mb-1.5 block text-xs font-medium text-[#374151]">{t("currencyLabel")}</label>
 							<select
 								value={settings.bankAccount.currency}
 								onChange={(e) =>
@@ -239,26 +242,26 @@ export function SiteBuilderTradeSettings({
 							</select>
 						</div>
 						<SiteBuilderTextField
-							label="계좌번호"
+							label={t("accountNumberLabel")}
 							value={settings.bankAccount.accountNumber}
-							placeholder="예: 123-456-789012"
+							placeholder={t("accountNumberPlaceholder")}
 							onChange={(accountNumber) =>
 								onChange({ ...settings, bankAccount: { ...settings.bankAccount, accountNumber } })
 							}
 						/>
 						<SiteBuilderTextField
-							label="예금주"
+							label={t("accountHolderLabel")}
 							value={settings.bankAccount.accountHolder}
-							placeholder="예: 대한정밀공업"
+							placeholder={t("accountHolderPlaceholder")}
 							onChange={(accountHolder) =>
 								onChange({ ...settings, bankAccount: { ...settings.bankAccount, accountHolder } })
 							}
 						/>
 						<div className="sm:col-span-2">
 							<SiteBuilderTextField
-								label="SWIFT 코드"
+								label={t("swiftCodeLabel")}
 								value={settings.bankAccount.swiftCode}
-								placeholder="예: CZNBKRSE"
+								placeholder={t("swiftCodePlaceholder")}
 								onChange={(swiftCode) =>
 									onChange({ ...settings, bankAccount: { ...settings.bankAccount, swiftCode } })
 								}
@@ -274,7 +277,7 @@ export function SiteBuilderTradeSettings({
 				disabled={isSaving}
 				className="flex w-full items-center justify-center gap-2 rounded-xl bg-imsg-blue py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60">
 				{isSaving && <Loader2 size={15} className="animate-spin" />}
-				설정 저장
+				{t("saveButton")}
 			</button>
 		</div>
 	);

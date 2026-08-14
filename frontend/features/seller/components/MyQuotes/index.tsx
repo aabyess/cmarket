@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Send } from "lucide-react";
 import { MyQuotesCard } from "@/features/seller/components/MyQuotes/MyQuotesCard";
@@ -24,6 +25,7 @@ type MyQuotesProps = {
 };
 
 export function MyQuotes({ quotes }: MyQuotesProps) {
+	const t = useTranslations("MyQuotes");
 	const router = useRouter();
 	const [filter, setFilter] = useState<MyQuotesFilter>("all");
 	const [viewMode, setViewMode] = useState<MyQuotesViewMode>("grid");
@@ -46,15 +48,15 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 				<div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F3F4F6]">
 					<Send size={26} className="text-[#9CA3AF]" />
 				</div>
-				<p className="text-base font-medium text-[#1F2937]">보낸 견적이 없어요</p>
+				<p className="text-base font-medium text-[#1F2937]">{t("emptyTitle")}</p>
 				<p className="mt-1 text-sm text-[#6B7280]">
-					열려 있는 공고를 찾아 첫 견적을 보내보세요.
+					{t("emptyDescription")}
 				</p>
 				<button
 					onClick={() => router.push("/seller/listing-browse")}
 					className="mt-5 rounded-lg bg-imsg-blue px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB]"
 				>
-					견적요청 둘러보기
+					{t("emptyCta")}
 				</button>
 			</div>
 		);
@@ -72,7 +74,7 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 
 			{filteredQuotes.length === 0 ? (
 				<div className="rounded-2xl border border-[#E5E7EB] bg-white p-10 text-center">
-					<p className="text-sm text-[#6B7280]">해당하는 견적이 없어요.</p>
+					<p className="text-sm text-[#6B7280]">{t("filteredEmpty")}</p>
 				</div>
 			) : viewMode === "grid" ? (
 				<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
