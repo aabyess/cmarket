@@ -9,13 +9,6 @@ Font.register({
 	],
 });
 
-const CATEGORY_LABEL: Record<string, string> = {
-	office: "사무용품",
-	lab: "연구장비",
-	machinery: "산업기계",
-	chemical: "화학약품",
-};
-
 const CURRENCY_SYMBOL: Record<string, string> = {
 	USD: "$",
 	IDR: "Rp",
@@ -106,53 +99,92 @@ export type QuotePdfData = {
 	};
 };
 
+export type QuotePdfLabels = {
+	title: string;
+	issuedLine: (date: string) => string;
+	buyerCompanyLabel: string;
+	sellerCompanyLabel: string;
+	representativeLabel: string;
+	addressLabel: string;
+	businessTypeItemLabel: string;
+	listingInfoSectionTitle: string;
+	listingTitleLabel: string;
+	categoryLabel: string;
+	deadlineLabel: string;
+	deliveryAddressLabel: string;
+	itemsSectionTitle: string;
+	itemNameColumn: string;
+	itemSpecColumn: string;
+	itemQtyColumn: string;
+	quoteInfoSectionTitle: string;
+	deliveryDaysLabel: string;
+	deliveryDaysValue: (days: number) => string;
+	noteLabel: string;
+	priceLabel: string;
+	footer: string;
+};
+
+type QuotePdfDocumentProps = QuotePdfData & {
+	labels: QuotePdfLabels;
+	categoryLabels: Record<string, string>;
+};
+
 function formatDate(iso: string): string {
 	const d = new Date(iso);
 	return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
 }
 
-export function QuotePdfDocument({ listing, quote, buyerCompany, sellerCompany }: QuotePdfData) {
+export function QuotePdfDocument({ listing, quote, buyerCompany, sellerCompany, labels, categoryLabels }: QuotePdfDocumentProps) {
 	const symbol = CURRENCY_SYMBOL[quote.currency] ?? quote.currency;
 
 	return (
 		<Document>
 			<Page size="A4" style={styles.page}>
-				<Text style={styles.title}>견적서</Text>
-				<Text style={styles.subtitle}>MitraPay · {formatDate(quote.createdAt)} 발행</Text>
+				<Text style={styles.title}>{labels.title}</Text>
+				<Text style={styles.subtitle}>{labels.issuedLine(formatDate(quote.createdAt))}</Text>
 
 				<View style={styles.companyRow}>
 					<View style={styles.companyBox}>
-						<Text style={styles.companyTitle}>발주기업 (Buyer)</Text>
+						<Text style={styles.companyTitle}>{labels.buyerCompanyLabel}</Text>
 						<Text style={styles.companyName}>{buyerCompany.companyName || "-"}</Text>
-						<Text>대표자: {buyerCompany.representative || "-"}</Text>
-						<Text>주소: {buyerCompany.address || "-"}</Text>
+						<Text>
+							{labels.representativeLabel}: {buyerCompany.representative || "-"}
+						</Text>
+						<Text>
+							{labels.addressLabel}: {buyerCompany.address || "-"}
+						</Text>
 					</View>
 					<View style={styles.companyBox}>
-						<Text style={styles.companyTitle}>공급기업 (Seller)</Text>
+						<Text style={styles.companyTitle}>{labels.sellerCompanyLabel}</Text>
 						<Text style={styles.companyName}>{sellerCompany.companyName || "-"}</Text>
 						<Text>
-							업태/종목: {[sellerCompany.businessType, sellerCompany.businessItem].filter(Boolean).join(" / ") || "-"}
+							{labels.businessTypeItemLabel}:{" "}
+							{[sellerCompany.businessType, sellerCompany.businessItem].filter(Boolean).join(" / ") || "-"}
 						</Text>
-						<Text>대표자: {sellerCompany.representative || "-"}</Text>
-						<Text>주소: {sellerCompany.address || "-"}</Text>
+						<Text>
+							{labels.representativeLabel}: {sellerCompany.representative || "-"}
+						</Text>
+						<Text>
+							{labels.addressLabel}: {sellerCompany.address || "-"}
+						</Text>
 					</View>
 				</View>
 
-				<Text style={styles.sectionTitle}>공고 정보</Text>
+				<Text style={styles.sectionTitle}>{labels.listingInfoSectionTitle}</Text>
 				<View style={styles.row}>
-					<Text style={styles.label}>공고명</Text>
+					<Text style={styles.label}>{labels.listingTitleLabel}</Text>
 					<Text style={styles.value}>{listing.title}</Text>
 				</View>
 				<View style={styles.row}>
-					<Text style={styles.label}>카테고리</Text>
-					<Text style={styles.value}>{CATEGORY_LABEL[listing.category] ?? listing.category}</Text>
+					<Text style={styles.label}>{labels.categoryLabel}</Text>
+					<Text style={styles.value}>{categoryLabels[listing.category] ?? listing.category}</Text>
 				</View>
 				<View style={styles.row}>
-					<Text style={styles.label}>마감일</Text>
+					<Text style={styles.label}>{labels.deadlineLabel}</Text>
 					<Text style={styles.value}>{formatDate(listing.endDate)}</Text>
 				</View>
 				<View style={styles.row}>
-					<Text style={styles.label}>배송지</Text>
+					<Text style={styles.label}>{labels.deliveryAddressLabel}</Text>
 					<Text style={styles.value}>
 						{[listing.deliveryProvinsi, listing.deliveryCity, listing.deliveryAddress]
 							.filter(Boolean)
@@ -160,12 +192,12 @@ export function QuotePdfDocument({ listing, quote, buyerCompany, sellerCompany }
 					</Text>
 				</View>
 
-				<Text style={styles.sectionTitle}>품목 내역</Text>
+				<Text style={styles.sectionTitle}>{labels.itemsSectionTitle}</Text>
 				<View style={styles.table}>
 					<View style={styles.tableHeader}>
-						<Text style={styles.colName}>품목명</Text>
-						<Text style={styles.colSpec}>규격</Text>
-						<Text style={styles.colQty}>수량</Text>
+						<Text style={styles.colName}>{labels.itemNameColumn}</Text>
+						<Text style={styles.colSpec}>{labels.itemSpecColumn}</Text>
+						<Text style={styles.colQty}>{labels.itemQtyColumn}</Text>
 					</View>
 					{listing.items.map((item, i) => (
 						<View key={i} style={styles.tableRow}>
@@ -178,26 +210,26 @@ export function QuotePdfDocument({ listing, quote, buyerCompany, sellerCompany }
 					))}
 				</View>
 
-				<Text style={styles.sectionTitle}>견적 정보</Text>
+				<Text style={styles.sectionTitle}>{labels.quoteInfoSectionTitle}</Text>
 				<View style={styles.row}>
-					<Text style={styles.label}>납품 소요</Text>
-					<Text style={styles.value}>{quote.deliveryDays}일</Text>
+					<Text style={styles.label}>{labels.deliveryDaysLabel}</Text>
+					<Text style={styles.value}>{labels.deliveryDaysValue(quote.deliveryDays)}</Text>
 				</View>
 				{quote.note && (
 					<View style={styles.row}>
-						<Text style={styles.label}>제안 메모</Text>
+						<Text style={styles.label}>{labels.noteLabel}</Text>
 						<Text style={styles.value}>{quote.note}</Text>
 					</View>
 				)}
 
 				<View style={styles.priceBox}>
-					<Text style={styles.priceLabel}>견적가</Text>
+					<Text style={styles.priceLabel}>{labels.priceLabel}</Text>
 					<Text style={styles.priceValue}>
 						{symbol} {quote.price.toLocaleString()}
 					</Text>
 				</View>
 
-				<Text style={styles.footer}>본 견적서는 MitraPay를 통해 자동 생성되었습니다.</Text>
+				<Text style={styles.footer}>{labels.footer}</Text>
 			</Page>
 		</Document>
 	);

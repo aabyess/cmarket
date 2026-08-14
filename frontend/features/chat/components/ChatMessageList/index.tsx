@@ -14,9 +14,10 @@ function formatTime(iso: string): string {
 type ChatMessageListProps = {
 	messages: ChatMessage[];
 	myId: string;
+	quoteId: string;
 };
 
-export function ChatMessageList({ messages, myId }: ChatMessageListProps): React.ReactNode {
+export function ChatMessageList({ messages, myId, quoteId }: ChatMessageListProps): React.ReactNode {
 	const t = useTranslations("ChatMessageList");
 	const bottomRef = useRef<HTMLDivElement>(null);
 	const prevLengthRef = useRef(0);
@@ -76,7 +77,8 @@ export function ChatMessageList({ messages, myId }: ChatMessageListProps): React
 								{/* 버블 + 번역 */}
 								{(message.messageType === "quote_pdf" || message.messageType === "invoice_pdf") && message.attachmentUrl ? (
 									<QuotePdfCard
-										attachmentUrl={message.attachmentUrl}
+										quoteId={quoteId}
+										docType={message.messageType === "invoice_pdf" ? "invoice" : "quote"}
 										attachmentName={message.attachmentName}
 										isMine={isMine}
 									/>

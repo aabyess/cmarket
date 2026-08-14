@@ -39,7 +39,13 @@ type InvoicePdfResult = InvoicePdfData & {
 	sellerId: string;
 };
 
-export async function getInvoicePdfData(quoteId: string): Promise<InvoicePdfResult | null> {
+export type InvoiceMeta = {
+	invoiceNumber: string;
+	issuedAt: string;
+	paymentDueDate: string;
+};
+
+export async function getInvoicePdfData(quoteId: string, meta?: InvoiceMeta): Promise<InvoicePdfResult | null> {
 	const admin = await createServerAdminClient();
 
 	const { data: quote, error: quoteError } = await admin
@@ -78,15 +84,18 @@ export async function getInvoicePdfData(quoteId: string): Promise<InvoicePdfResu
 		.maybeSingle();
 
 	const now = new Date();
-	const invoiceNumber = `INV-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-${quoteId.slice(0, 6).toUpperCase()}`;
-	const paymentDueDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+	const resolvedMeta =
+		meta ??
+		(() => {
+			const invoiceNumber = `INV-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-${quoteId.slice(0, 6).toUpperCase()}`;
+			const paymentDueDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+			return { invoiceNumber, issuedAt: now.toISOString(), paymentDueDate };
+		})();
 
 	return {
 		buyerId: listing.user_id,
 		sellerId: quote.seller_id,
-		invoiceNumber,
-		issuedAt: now.toISOString(),
-		paymentDueDate,
+		...resolvedMeta,
 		listing: {
 			title: listing.title,
 			items: listing.items ?? [],
