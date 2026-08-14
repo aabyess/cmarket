@@ -35,7 +35,7 @@ export function SiteRendererHero({ props }: SiteRendererHeroProps): React.JSX.El
 
 	return (
 		<section
-			className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1E3A8A] to-[#3B82F6] px-10 py-12 text-white"
+			className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1E3A8A] to-imsg-blue px-4 sm:px-10 py-12 text-white"
 			style={background ? { backgroundImage: `url(${background})`, backgroundSize: "cover" } : undefined}>
 			{background && <div className={overlayLayer({ level: props.overlay })} />}
 
