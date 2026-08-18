@@ -5,23 +5,23 @@ import { CHAT_QUERY_KEYS } from "@/features/chat/queries";
 import { translateField } from "@/utils/translateField";
 import type { ChatMessage } from "@/features/chat/types";
 
-export async function postMessage(quoteId: string, content: string): Promise<void> {
-	const supabase = createClient();
+export type PostMessageResult = {
+	limitExceeded: boolean;
+};
 
-	const { data: { user }, error: userError } = await supabase.auth.getUser();
-	if (userError || !user) throw new Error("로그인이 필요합니다.");
-
-	const translation = await translateField(content);
-
-	const { error } = await supabase.from("messages").insert({
-		quote_id: quoteId,
-		sender_id: user.id,
-		content,
-		source_lang: translation?.sourceLang ?? null,
-		translations: translation?.translations ?? null,
+export async function postMessage(quoteId: string, content: string): Promise<PostMessageResult> {
+	const res = await fetch("/api/chat/message", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ quoteId, content }),
 	});
 
-	if (error) throw error;
+	if (!res.ok) {
+		const { error } = await res.json();
+		throw new Error(error ?? "메시지 전송에 실패했습니다.");
+	}
+
+	return res.json();
 }
 
 export async function markMessagesRead(quoteId: string): Promise<void> {

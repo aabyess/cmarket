@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
 import { getAuthHeaders } from "@/utils/authHeaders";
+import type { Plan } from "@/constants/plan";
 
 export async function getServerUserRole(): Promise<"buyer" | "seller" | "admin" | null> {
 	const supabase = await createServerSupabaseClient();
@@ -22,6 +23,7 @@ export type UserSummary = {
 	companyName: string;
 	email: string;
 	name: string;
+	plan: Plan;
 };
 
 export async function getUserSummary(): Promise<UserSummary | null> {
@@ -42,7 +44,7 @@ export async function getUserSummary(): Promise<UserSummary | null> {
 	}
 
 	const [profileResult, companyResult, contactResult] = await Promise.all([
-		supabase.from("profiles").select("role, country").eq("id", userId).single(),
+		supabase.from("profiles").select("role, country, plan").eq("id", userId).single(),
 		supabase.from("companies").select("company_name").eq("profile_id", userId).single(),
 		supabase.from("contacts").select("name").eq("profile_id", userId).single(),
 	]);
@@ -55,5 +57,6 @@ export async function getUserSummary(): Promise<UserSummary | null> {
 		companyName: companyResult.data?.company_name ?? "",
 		email,
 		name: contactResult.data?.name ?? "",
+		plan: profileResult.data.plan ?? "free",
 	};
 }

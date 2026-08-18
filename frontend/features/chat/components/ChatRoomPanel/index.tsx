@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
-import { ArrowUp, ChevronLeft } from "lucide-react";
+import { Link, useRouter } from "@/i18n/navigation";
+import { ArrowUp, ChevronLeft, Sparkles } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { ChatMessageList } from "@/features/chat/components/ChatMessageList";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
@@ -30,6 +30,7 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 	const [input, setInput] = useState("");
 	const [isAwardModalOpen, setIsAwardModalOpen] = useState(false);
 	const [isAwarding, setIsAwarding] = useState(false);
+	const [limitExceeded, setLimitExceeded] = useState(false);
 
 	useEffect(() => {
 		markMessagesRead(room.quoteId);
@@ -72,7 +73,11 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 		const content = input.trim();
 		if (!content) return;
 		setInput("");
-		sendMessage(content);
+		sendMessage(content, {
+			onSuccess: (result) => {
+				if (result.limitExceeded) setLimitExceeded(true);
+			},
+		});
 	}
 
 	async function handleConfirmAward(): Promise<void> {
@@ -144,6 +149,17 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 				<div className="flex-1 bg-imsg-surface" />
 			) : (
 				<ChatMessageList messages={messages} myId={myId} quoteId={room.quoteId} />
+			)}
+
+			{/* 무료 요금제 번역 한도 안내 */}
+			{limitExceeded && (
+				<div className="flex items-center justify-center gap-2 border-t border-[#E5E7EB]/60 bg-amber-50 px-4 py-2 text-xs text-amber-700">
+					<Sparkles size={14} className="shrink-0" />
+					<span>{t("limitExceededBanner")}</span>
+					<Link href="/plans" className="font-semibold underline underline-offset-2">
+						{t("limitExceededBannerLink")}
+					</Link>
+				</div>
 			)}
 
 			{/* 입력창 */}
