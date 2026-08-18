@@ -6,7 +6,7 @@ import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import {
 	LayoutDashboard, ListTodo, Mail, MessageSquare,
 	FileCheck, HelpCircle, Search, Send, Building2,
-	LogOut, User, FilePlus,
+	LogOut, User, FilePlus, Sparkles,
 } from "lucide-react";
 import { NotificationBell } from "@/features/notifications/components/NotificationBell";
 import { LanguageSwitcher } from "@/components/commons/LanguageSwitcher";
@@ -29,6 +29,7 @@ const BUYER_MENU_ITEMS = [
 	{ labelKey: "chat", key: "chat", icon: MessageSquare, href: "/buyer/chat", badge: null },
 	{ labelKey: "contract", key: "contract", icon: FileCheck, href: "/buyer/contract", badge: null },
 	{ labelKey: "profile", key: "profile", icon: Building2, href: "/buyer/profile/edit", badge: null },
+	{ labelKey: "plans", key: "plans", icon: Sparkles, href: "/plans", badge: null },
 	{ labelKey: "support", key: "support", icon: HelpCircle, href: "/support", badge: null },
 ];
 
@@ -39,6 +40,7 @@ const SELLER_MENU_ITEMS = [
 	{ labelKey: "chat", key: "chat", icon: MessageSquare, href: "/seller/chat", badge: null },
 	{ labelKey: "contract", key: "contract", icon: FileCheck, href: "/seller/contract", badge: null },
 	{ labelKey: "profile", key: "profile", icon: Building2, href: "/seller/profile/edit", badge: null },
+	{ labelKey: "plans", key: "plans", icon: Sparkles, href: "/plans", badge: null },
 	{ labelKey: "support", key: "support", icon: HelpCircle, href: "/support", badge: null },
 ];
 

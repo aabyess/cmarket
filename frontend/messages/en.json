@@ -87,6 +87,7 @@
 			"chat": "Chat",
 			"contract": "Contracts",
 			"profile": "Company Page",
+			"plans": "Plans",
 			"support": "Support Center"
 		},
 		"dropdown": {
@@ -1283,7 +1284,9 @@
 		"messagePlaceholder": "Type a message",
 		"awardModalTitle": "Confirm the contract with this company?",
 		"awardModalDescription": "{partnerName} will be confirmed as the final supplier. Once confirmed, a contract is created and an invoice is automatically issued in the chat. Other quotes will be marked as not selected, and this cannot be undone.",
-		"awardModalConfirm": "Confirm Contract"
+		"awardModalConfirm": "Confirm Contract",
+		"limitExceededBanner": "You've reached this month's free translation limit. Messages will be sent without translation.",
+		"limitExceededBannerLink": "View Pro plan"
 	},
 	"ChatMessageList": {
 		"dateLabel": "{month}/{day}/{year}",
@@ -1365,6 +1368,41 @@
 	"ChatFab": {
 		"title": "Chat",
 		"comingSoon": "Chat feature is coming soon."
+	},
+	"PlanComparison": {
+		"title": "Plans",
+		"subtitle": "Chat includes real-time translation. Choose the plan that fits how much you chat.",
+		"usageLabel": "Chat usage this month",
+		"currentPlanButton": "Current Plan",
+		"upgradeComingSoonButton": "Coming Soon",
+		"free": {
+			"name": "Free",
+			"price": "Free",
+			"priceDescription": "Get started",
+			"feature1": "50 free translated chat messages per month",
+			"feature2": "Basic quote & contract management",
+			"feature3": "Quote & invoice PDF issuance"
+		},
+		"pro": {
+			"badge": "Popular",
+			"name": "Pro",
+			"price": "Monthly subscription",
+			"priceDescription": "For companies with heavy chat activity",
+			"feature1": "Unlimited chat translation",
+			"feature2": "Unlimited quote & invoice PDFs",
+			"feature3": "Priority message & quote notifications"
+		},
+		"max": {
+			"badge": "All features",
+			"name": "Max",
+			"price": "Monthly subscription",
+			"priceDescription": "For businesses seeking more deal opportunities",
+			"feature1": "Everything in Pro",
+			"feature2": "Priority placement for listings & quotes",
+			"feature3": "Invite team members & manage access",
+			"feature4": "Priority support from a dedicated manager",
+			"feature5": "Trade analytics dashboard"
+		}
 	},
 	"NotificationBell": {
 		"title": "Notifications",

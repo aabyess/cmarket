@@ -87,6 +87,7 @@
 			"chat": "Obrolan",
 			"contract": "Manajemen Kontrak",
 			"profile": "Halaman Perusahaan",
+			"plans": "Paket Langganan",
 			"support": "Pusat Bantuan"
 		},
 		"dropdown": {
@@ -257,7 +258,9 @@
 		"messagePlaceholder": "Ketik pesan",
 		"awardModalTitle": "Konfirmasi kontrak dengan perusahaan ini?",
 		"awardModalDescription": "{partnerName} akan dikonfirmasi sebagai pemasok akhir. Setelah dikonfirmasi, kontrak akan dibuat dan invoice (tagihan) akan otomatis diterbitkan di chat. Penawaran lainnya akan ditandai tidak terpilih, dan tindakan ini tidak dapat diubah.",
-		"awardModalConfirm": "Konfirmasi Kontrak"
+		"awardModalConfirm": "Konfirmasi Kontrak",
+		"limitExceededBanner": "Anda telah mencapai batas terjemahan gratis bulan ini. Pesan akan dikirim tanpa terjemahan.",
+		"limitExceededBannerLink": "Lihat Paket Pro"
 	},
 	"ChatMessageList": {
 		"dateLabel": "{day}/{month}/{year}",
@@ -339,6 +342,41 @@
 	"ChatFab": {
 		"title": "Chat",
 		"comingSoon": "Fitur chat akan segera hadir."
+	},
+	"PlanComparison": {
+		"title": "Paket Langganan",
+		"subtitle": "Chat sudah termasuk terjemahan otomatis. Pilih paket sesuai kebutuhan penggunaan Anda.",
+		"usageLabel": "Penggunaan chat bulan ini",
+		"currentPlanButton": "Paket Saat Ini",
+		"upgradeComingSoonButton": "Segera Hadir",
+		"free": {
+			"name": "Free",
+			"price": "Gratis",
+			"priceDescription": "Mulai dengan ringan",
+			"feature1": "50 pesan chat dengan terjemahan gratis per bulan",
+			"feature2": "Fitur dasar manajemen penawaran/kontrak",
+			"feature3": "Penerbitan PDF penawaran & invoice"
+		},
+		"pro": {
+			"badge": "Populer",
+			"name": "Pro",
+			"price": "Langganan Bulanan",
+			"priceDescription": "Untuk perusahaan dengan komunikasi chat yang intens",
+			"feature1": "Terjemahan chat tanpa batas",
+			"feature2": "PDF penawaran & invoice tanpa batas",
+			"feature3": "Prioritas notifikasi pesan & penawaran baru"
+		},
+		"max": {
+			"badge": "Semua Fitur",
+			"name": "Max",
+			"price": "Langganan Bulanan",
+			"priceDescription": "Untuk yang butuh lebih banyak peluang transaksi",
+			"feature1": "Semua fitur Pro termasuk",
+			"feature2": "Prioritas tampil untuk permintaan/penawaran",
+			"feature3": "Undang anggota tim & kelola akses",
+			"feature4": "Konsultasi prioritas dengan manajer khusus",
+			"feature5": "Dasbor analisis data transaksi ekspor-impor"
+		}
 	},
 	"NotificationBell": {
 		"title": "Notifikasi",
