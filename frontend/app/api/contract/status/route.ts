@@ -11,10 +11,11 @@ const CANCEL_ERROR_MESSAGES: Record<string, string> = {
 };
 
 export async function PATCH(req: NextRequest): Promise<NextResponse> {
-	const { contractId, status } = await req.json();
+	const { contractId, status, reason } = await req.json();
 	if (!contractId || !status) {
 		return NextResponse.json({ error: "필수 값이 없습니다." }, { status: 400 });
 	}
+	const cancelReason = typeof reason === "string" ? reason.trim().slice(0, 500) : "";
 
 	const authClient = await createServerSupabaseClient();
 	const {
@@ -68,12 +69,19 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
 			.from("quote-documents")
 			.remove(routing.locales.map((locale) => `invoices/${quoteId}/invoice-${locale}.pdf`));
 
-		await notifyPartnerOfCancellation(admin, {
-			partnerId: isBuyer ? contract.seller_id : contract.buyer_id,
-			cancellerId: user.id,
-			listingId: contract.listing_id,
-			quoteId: quoteId as string,
-		});
+		await Promise.all([
+			sendCancellationChatMessage(admin, {
+				quoteId: quoteId as string,
+				senderId: user.id,
+				reason: cancelReason,
+			}),
+			notifyPartnerOfCancellation(admin, {
+				partnerId: isBuyer ? contract.seller_id : contract.buyer_id,
+				cancellerId: user.id,
+				listingId: contract.listing_id,
+				quoteId: quoteId as string,
+			}),
+		]);
 
 		return NextResponse.json({ success: true });
 	}
@@ -98,6 +106,34 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
 }
 
 type AdminClient = Awaited<ReturnType<typeof createServerAdminClient>>;
+
+type CancellationChatMessage = {
+	quoteId: string;
+	senderId: string;
+	reason: string;
+};
+
+// 취소 사실(과 사유)을 해당 채팅방에 남긴다. DeepL 번역이 붙어 상대방 언어로 표시된다.
+// 실패해도 취소 자체를 되돌리지는 않는다.
+async function sendCancellationChatMessage(
+	admin: AdminClient,
+	{ quoteId, senderId, reason }: CancellationChatMessage,
+): Promise<void> {
+	const content = reason ? `계약이 취소되었습니다.\n사유: ${reason}` : "계약이 취소되었습니다.";
+	const translation = await translateFieldServer(content);
+
+	const { error } = await admin.from("messages").insert({
+		quote_id: quoteId,
+		sender_id: senderId,
+		content,
+		source_lang: translation?.sourceLang ?? null,
+		translations: translation?.translations ?? null,
+	});
+
+	if (error) {
+		console.error("cancel chat messageError:", error);
+	}
+}
 
 type CancellationNotice = {
 	partnerId: string;
