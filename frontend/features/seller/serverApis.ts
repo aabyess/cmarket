@@ -113,26 +113,33 @@ export async function getOpenListings(): Promise<OpenListing[]> {
 		myQuoteListingIds = new Set((myQuotes ?? []).map((q) => q.listing_id));
 	}
 
-	return data.map((row) => {
-		const totalBudget = Number(row.total_budget ?? 0);
+	return data
+		.map((row) => {
+			const totalBudget = Number(row.total_budget ?? 0);
 
-		return {
-			id: row.id,
-			title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
-			description: row.description ?? "",
-			items: row.items,
-			currency: row.currency,
-			totalBudget,
-			budgetInKrw: convertCurrency(totalBudget, row.currency as Currency, "KRW", rates),
-			budgetPublic: row.budget_public ?? false,
-			endDate: row.end_date,
-			deliveryProvinsi: row.delivery_provinsi ?? "",
-			deliveryCity: row.delivery_city ?? "",
-			createdAt: row.created_at,
-			status: row.status ?? "active",
-			hasMyQuote: myQuoteListingIds.has(row.id),
-		};
-	});
+			return {
+				id: row.id,
+				title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
+				description: row.description ?? "",
+				items: row.items,
+				currency: row.currency,
+				totalBudget,
+				budgetInKrw: convertCurrency(totalBudget, row.currency as Currency, "KRW", rates),
+				budgetPublic: row.budget_public ?? false,
+				endDate: row.end_date,
+				deliveryProvinsi: row.delivery_provinsi ?? "",
+				deliveryCity: row.delivery_city ?? "",
+				createdAt: row.created_at,
+				status: row.status ?? "active",
+				hasMyQuote: myQuoteListingIds.has(row.id),
+			};
+		})
+		.sort((a, b) => {
+			const aClosed = a.status !== "active" || new Date(a.endDate).getTime() <= Date.now();
+			const bClosed = b.status !== "active" || new Date(b.endDate).getTime() <= Date.now();
+			if (aClosed !== bClosed) return aClosed ? 1 : -1;
+			return new Date(a.endDate).getTime() - new Date(b.endDate).getTime();
+		});
 }
 
 export async function getListingDetail(listingId: string): Promise<ListingDetail | null> {
