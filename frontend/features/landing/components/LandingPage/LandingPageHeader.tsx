@@ -11,7 +11,7 @@ export async function LandingPageHeader(): Promise<React.JSX.Element> {
 			<div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
 				<Link href="/" className="flex items-center gap-1.5 text-lg font-bold tracking-tight">
 					MitraPay
-					<span aria-hidden className="bg-landing-seal mt-1 size-1.5 rounded-[1px]" />
+					<span aria-hidden className="bg-landing-gold mt-1 size-1.5 rounded-[1px]" />
 				</Link>
 				<div className="flex items-center gap-2">
 					<LanguageSwitcher />
@@ -22,7 +22,7 @@ export async function LandingPageHeader(): Promise<React.JSX.Element> {
 					</Link>
 					<Link
 						href="/signup"
-						className="bg-landing-ink text-landing-paper hover:bg-landing-ink/90 rounded-md px-4 py-2 text-sm font-semibold transition-colors">
+						className="bg-landing-accent hover:bg-landing-ink rounded-md px-4 py-2 text-sm font-semibold text-white transition-colors">
 						{t("headerSignup")}
 					</Link>
 				</div>

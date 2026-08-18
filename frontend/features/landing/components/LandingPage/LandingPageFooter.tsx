@@ -10,7 +10,7 @@ export async function LandingPageFooter(): Promise<React.JSX.Element> {
 			<div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-10 sm:flex-row">
 				<p className="flex items-center gap-1.5 text-sm font-bold tracking-tight">
 					MitraPay
-					<span aria-hidden className="bg-landing-seal mt-0.5 size-1.5 rounded-[1px]" />
+					<span aria-hidden className="bg-landing-gold mt-0.5 size-1.5 rounded-[1px]" />
 				</p>
 				<p className="font-landing-doc text-landing-dim text-xs">{tCommon("copyright")}</p>
 				<div className="text-landing-dim flex items-center gap-5 text-xs">

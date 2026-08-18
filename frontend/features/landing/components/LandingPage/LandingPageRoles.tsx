@@ -57,7 +57,7 @@ export async function LandingPageRoles(): Promise<React.JSX.Element> {
 								</ul>
 								<Link
 									href="/signup"
-									className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold transition-[gap] hover:gap-2.5">
+									className="text-landing-accent mt-6 inline-flex items-center gap-1.5 text-sm font-semibold transition-[gap] hover:gap-2.5">
 									{t("rolesCta")}
 									<ArrowRight size={14} />
 								</Link>

@@ -66,12 +66,13 @@
 	--color-imsg-surface: var(--imsg-surface);
 	--color-imsg-secondary: var(--imsg-secondary);
 
-	/* ─── Landing (무역 서류 컨셉 — 랜딩 전용) ─── */
-	--color-landing-ink: #1b2540;
-	--color-landing-paper: #fbfaf7;
-	--color-landing-line: #e2dfd5;
-	--color-landing-dim: #5e6678;
-	--color-landing-seal: #c2402f;
+	/* ─── Landing (무역 서류 컨셉 × 바틱 인디고 — 랜딩 전용) ─── */
+	--color-landing-ink: #1e2a5e;
+	--color-landing-paper: #f6f7fa;
+	--color-landing-line: #dde2ee;
+	--color-landing-dim: #5a6485;
+	--color-landing-accent: #3d52d5;
+	--color-landing-gold: #e8b94a;
 	--font-landing: var(--font-landing-sans), var(--font-sans), sans-serif;
 	--font-landing-doc: var(--font-landing-mono), var(--font-landing-sans), monospace;
 }

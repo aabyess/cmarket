@@ -13,7 +13,7 @@ export async function LandingPageHero(): Promise<React.JSX.Element> {
 				<LandingPageReveal>
 					<div>
 						<p className="font-landing-doc text-landing-dim flex items-center gap-2.5 text-xs font-medium tracking-[0.18em] uppercase">
-							<span aria-hidden className="bg-landing-seal size-1.5 rounded-[1px]" />
+							<span aria-hidden className="bg-landing-gold size-1.5 rounded-[1px]" />
 							{t("heroBadge")}
 						</p>
 						<h1 className="mt-5 text-4xl leading-[1.12] font-bold tracking-tight text-balance lg:text-[3.25rem]">
@@ -23,7 +23,7 @@ export async function LandingPageHero(): Promise<React.JSX.Element> {
 						{/* 시그니처 — 헤드라인이 상대국 언어로 자동 번역되어 도착하는 에코 라인 */}
 						<LandingPageReveal delay={0.55}>
 							<div className="mt-5 flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
-								<span className="font-landing-doc border-landing-seal/40 text-landing-seal inline-flex shrink-0 items-center gap-1 rounded-sm border px-1.5 py-0.5 text-[11px] font-medium">
+								<span className="font-landing-doc border-landing-accent/40 text-landing-accent inline-flex shrink-0 items-center gap-1 rounded-sm border px-1.5 py-0.5 text-[11px] font-medium">
 									<Languages size={11} />
 									{t("heroDemoTranslatedLabel")}
 								</span>
@@ -38,7 +38,7 @@ export async function LandingPageHero(): Promise<React.JSX.Element> {
 						<div className="mt-9 flex flex-col gap-3 sm:flex-row">
 							<Link
 								href="/signup"
-								className="bg-landing-ink text-landing-paper hover:bg-landing-ink/90 flex items-center justify-center gap-2 rounded-md px-6 py-3.5 text-sm font-semibold transition-colors">
+								className="bg-landing-accent hover:bg-landing-ink flex items-center justify-center gap-2 rounded-md px-6 py-3.5 text-sm font-semibold text-white transition-colors">
 								{t("heroCtaBuyer")}
 								<ArrowRight size={16} />
 							</Link>
