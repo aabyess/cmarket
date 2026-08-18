@@ -3,7 +3,18 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { FileCheck, Building2, Calendar, DollarSign, Upload, CheckCircle2, Clock, FileText, Truck } from "lucide-react";
+import {
+	FileCheck,
+	Building2,
+	Calendar,
+	DollarSign,
+	Upload,
+	CheckCircle2,
+	Clock,
+	FileText,
+	Truck,
+	PackageCheck,
+} from "lucide-react";
 import { cn } from "@/utils/cn";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { Pagination } from "@/components/commons/Pagination";
@@ -50,6 +61,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 	const [uploadingId, setUploadingId] = useState<string | null>(null);
 	const [confirmId, setConfirmId] = useState<string | null>(null);
 	const [cancelConfirmId, setCancelConfirmId] = useState<string | null>(null);
+	const [deliveryConfirmId, setDeliveryConfirmId] = useState<string | null>(null);
 	const [viewMode, setViewMode] = useState<ViewMode>("list");
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(10);
@@ -79,6 +91,28 @@ export function ContractList({ contracts, role }: ContractListProps) {
 			setLoadingId(null);
 			setConfirmId(null);
 			setCancelConfirmId(null);
+		}
+	}
+
+	async function handleDeliveryConfirm(contractId: string) {
+		setLoadingId(contractId);
+		try {
+			const res = await fetch("/api/contract/confirm-delivery", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ contractId }),
+			});
+			if (!res.ok) {
+				const { error } = await res.json();
+				throw new Error(error);
+			}
+			router.refresh();
+		} catch (err) {
+			console.error(err);
+			alert(t("genericErrorMessage"));
+		} finally {
+			setLoadingId(null);
+			setDeliveryConfirmId(null);
 		}
 	}
 
@@ -174,7 +208,9 @@ export function ContractList({ contracts, role }: ContractListProps) {
 				paginatedContracts.map((contract) => (
 					<input
 						key={contract.id}
-						ref={(el) => { fileInputRefs.current[contract.id] = el; }}
+						ref={(el) => {
+							fileInputRefs.current[contract.id] = el;
+						}}
 						type="file"
 						accept="image/*,.pdf"
 						className="hidden"
@@ -201,164 +237,189 @@ export function ContractList({ contracts, role }: ContractListProps) {
 					onViewReceipt={handleViewReceipt}
 					onRequestConfirm={setConfirmId}
 					onRequestCancel={setCancelConfirmId}
+					onRequestDeliveryConfirm={setDeliveryConfirmId}
 				/>
 			) : (
-			<div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-				{paginatedContracts.map((contract) => (
-					<div
-						key={contract.id}
-						className={cn(
-							"rounded-2xl border border-[#E5E7EB] bg-white p-6 transition-opacity",
-							contract.status !== "ongoing" && "opacity-75",
-						)}
-					>
-						{/* 헤더 */}
-						<div className="mb-4 flex items-start justify-between gap-4">
-							<div>
-								<p className="text-base font-semibold text-[#1F2937]">
-									{contract.listing.title}
-								</p>
-								<p className="mt-1 flex items-center gap-1.5 text-sm text-[#6B7280]">
-									<Building2 size={13} />
-									{contract.partnerCompanyName || t("noPartnerCompanyName")}
-								</p>
+				<div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+					{paginatedContracts.map((contract) => (
+						<div
+							key={contract.id}
+							className={cn(
+								"rounded-2xl border border-[#E5E7EB] bg-white p-6 transition-opacity",
+								contract.status !== "ongoing" && "opacity-75",
+							)}>
+							{/* 헤더 */}
+							<div className="mb-4 flex items-start justify-between gap-4">
+								<div>
+									<p className="text-base font-semibold text-[#1F2937]">{contract.listing.title}</p>
+									<p className="mt-1 flex items-center gap-1.5 text-sm text-[#6B7280]">
+										<Building2 size={13} />
+										{contract.partnerCompanyName || t("noPartnerCompanyName")}
+									</p>
+								</div>
+								<span
+									className={cn(
+										"shrink-0 rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap",
+										STATUS_STYLE[contract.status],
+									)}>
+									{statusLabels[contract.status]}
+								</span>
 							</div>
-							<span className={cn("shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium", STATUS_STYLE[contract.status])}>
-								{statusLabels[contract.status]}
-							</span>
-						</div>
 
-						{/* 메타 정보 */}
-						<div className="mb-4 flex flex-wrap gap-4 text-xs text-[#6B7280]">
-							<span className="flex items-center gap-1.5">
-								<DollarSign size={13} />
-								{CURRENCY_SYMBOL[contract.quote.currency]} {contract.quote.price.toLocaleString()}
-							</span>
-							<span className="flex items-center gap-1.5">
-								<Truck size={13} />
-								{t("deliveryDaysLabel", { days: contract.quote.deliveryDays })}
-							</span>
-							<span className="flex items-center gap-1.5">
-								<Calendar size={13} />
-								{t("contractedOn", { date: new Date(contract.createdAt).toLocaleDateString("ko-KR") })}
-							</span>
-						</div>
-
-						{/* 상태 배너 */}
-						{contract.paymentConfirmedAt && (
-							<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#F0FDF4] px-3.5 py-2.5 text-xs font-medium text-[#16A34A]">
-								<CheckCircle2 size={14} />
-								{t("paymentConfirmed", { date: new Date(contract.paymentConfirmedAt).toLocaleDateString("ko-KR") })}
+							{/* 메타 정보 */}
+							<div className="mb-4 flex flex-wrap gap-4 text-xs text-[#6B7280]">
+								<span className="flex items-center gap-1.5">
+									<DollarSign size={13} />
+									{CURRENCY_SYMBOL[contract.quote.currency]} {contract.quote.price.toLocaleString()}
+								</span>
+								<span className="flex items-center gap-1.5">
+									<Truck size={13} />
+									{t("deliveryDaysLabel", { days: contract.quote.deliveryDays })}
+								</span>
+								<span className="flex items-center gap-1.5">
+									<Calendar size={13} />
+									{t("contractedOn", {
+										date: new Date(contract.createdAt).toLocaleDateString("ko-KR"),
+									})}
+								</span>
 							</div>
-						)}
 
-						{/* Buyer: 영수증 업로드 대기 배너 */}
-						{role === "buyer" && contract.paymentReceiptUrl && !contract.paymentConfirmedAt && (
-							<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#EFF6FF] px-3.5 py-2.5 text-xs font-medium text-imsg-blue">
-								<CheckCircle2 size={14} />
-								{t("receiptUploadedWaiting")}
-							</div>
-						)}
+							{/* 상태 배너 */}
+							{contract.paymentConfirmedAt && (
+								<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#F0FDF4] px-3.5 py-2.5 text-xs font-medium text-[#16A34A]">
+									<CheckCircle2 size={14} />
+									{t("paymentConfirmed", {
+										date: new Date(contract.paymentConfirmedAt).toLocaleDateString("ko-KR"),
+									})}
+								</div>
+							)}
 
-						{/* Seller: 영수증 도착 배너 */}
-						{role === "seller" && contract.paymentReceiptUrl && !contract.paymentConfirmedAt && (
-							<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#FFFBEB] px-3.5 py-2.5 text-xs font-medium text-[#D97706]">
-								<FileText size={14} />
-								{t("receiptArrived")}
-							</div>
-						)}
+							{/* 물품 수령 확인 완료 배너 */}
+							{contract.deliveryConfirmedAt && (
+								<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#F0FDF4] px-3.5 py-2.5 text-xs font-medium text-[#16A34A]">
+									<PackageCheck size={14} />
+									{t("deliveryConfirmed", {
+										date: new Date(contract.deliveryConfirmedAt).toLocaleDateString("ko-KR"),
+									})}
+								</div>
+							)}
 
-						{/* Seller: 영수증 없을 때 안내 */}
-						{role === "seller" && !contract.paymentReceiptUrl && contract.status === "ongoing" && !contract.paymentConfirmedAt && (
-							<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#F9FAFB] px-3.5 py-2.5 text-xs text-[#9CA3AF]">
-								<Clock size={14} />
-								{t("waitingForReceipt")}
-							</div>
-						)}
+							{/* Buyer: 영수증 업로드 대기 배너 */}
+							{role === "buyer" && contract.paymentReceiptUrl && !contract.paymentConfirmedAt && (
+								<div className="text-imsg-blue mb-4 flex items-center gap-2 rounded-xl bg-[#EFF6FF] px-3.5 py-2.5 text-xs font-medium">
+									<CheckCircle2 size={14} />
+									{t("receiptUploadedWaiting")}
+								</div>
+							)}
 
-						{/* 액션 버튼 */}
-						{contract.status === "ongoing" && (
-							<div className="flex flex-wrap gap-2">
-								{/* Buyer 버튼 */}
-								{role === "buyer" && (
-									<>
-										{contract.paymentReceiptUrl ? (
-											<>
-												<button
-													onClick={() => handleViewReceipt(contract.id)}
-													className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] py-2.5 text-xs font-medium text-imsg-blue transition-colors hover:bg-[#DBEAFE]"
-												>
-													<FileText size={14} />
-													{t("viewReceipt")}
-												</button>
+							{/* Seller: 영수증 도착 배너 */}
+							{role === "seller" && contract.paymentReceiptUrl && !contract.paymentConfirmedAt && (
+								<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#FFFBEB] px-3.5 py-2.5 text-xs font-medium text-[#D97706]">
+									<FileText size={14} />
+									{t("receiptArrived")}
+								</div>
+							)}
+
+							{/* Seller: 영수증 없을 때 안내 */}
+							{role === "seller" &&
+								!contract.paymentReceiptUrl &&
+								contract.status === "ongoing" &&
+								!contract.paymentConfirmedAt && (
+									<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#F9FAFB] px-3.5 py-2.5 text-xs text-[#9CA3AF]">
+										<Clock size={14} />
+										{t("waitingForReceipt")}
+									</div>
+								)}
+
+							{/* 액션 버튼 */}
+							{contract.status === "ongoing" && (
+								<div className="flex flex-wrap gap-2">
+									{/* Buyer 버튼 */}
+									{role === "buyer" && (
+										<>
+											{contract.paymentReceiptUrl ? (
+												<>
+													<button
+														onClick={() => handleViewReceipt(contract.id)}
+														className="text-imsg-blue flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] py-2.5 text-xs font-medium transition-colors hover:bg-[#DBEAFE]">
+														<FileText size={14} />
+														{t("viewReceipt")}
+													</button>
+													<button
+														onClick={() => fileInputRefs.current[contract.id]?.click()}
+														disabled={uploadingId === contract.id}
+														className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB] disabled:opacity-60">
+														<Upload size={14} />
+														{uploadingId === contract.id ? t("uploading") : t("reupload")}
+													</button>
+												</>
+											) : (
 												<button
 													onClick={() => fileInputRefs.current[contract.id]?.click()}
 													disabled={uploadingId === contract.id}
-													className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB] disabled:opacity-60"
-												>
+													className="bg-imsg-blue flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60">
 													<Upload size={14} />
-													{uploadingId === contract.id ? t("uploading") : t("reupload")}
+													{uploadingId === contract.id ? t("uploading") : t("uploadReceipt")}
 												</button>
-											</>
-										) : (
-											<button
-												onClick={() => fileInputRefs.current[contract.id]?.click()}
-												disabled={uploadingId === contract.id}
-												className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-imsg-blue py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
-											>
-												<Upload size={14} />
-												{uploadingId === contract.id ? t("uploading") : t("uploadReceipt")}
-											</button>
-										)}
-										<button
-											onClick={() => setCancelConfirmId(contract.id)}
-											disabled={loadingId === contract.id}
-											className="flex-1 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60"
-										>
-											{t("cancelContract")}
-										</button>
-									</>
-								)}
-
-								{/* Seller 버튼 */}
-								{role === "seller" && (
-									<>
-										{contract.paymentReceiptUrl && (
-											<button
-												onClick={() => handleViewReceipt(contract.id)}
-												className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] py-2.5 text-xs font-medium text-imsg-blue transition-colors hover:bg-[#DBEAFE]"
-											>
-												<FileText size={14} />
-												{t("confirmReceipt")}
-											</button>
-										)}
-										<button
-											onClick={() => setConfirmId(contract.id)}
-											disabled={loadingId === contract.id}
-											className={cn(
-												"flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-semibold transition-colors disabled:opacity-60",
-												contract.paymentReceiptUrl
-													? "bg-[#16A34A] text-white hover:bg-[#15803D]"
-													: "border border-[#E5E7EB] bg-white text-[#9CA3AF]",
 											)}
-										>
-											<CheckCircle2 size={14} />
-											{loadingId === contract.id ? t("processing") : t("confirmPayment")}
-										</button>
-										<button
-											onClick={() => setCancelConfirmId(contract.id)}
-											disabled={loadingId === contract.id}
-											className="flex-1 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60"
-										>
-											{t("cancelContract")}
-										</button>
-									</>
+											<button
+												onClick={() => setCancelConfirmId(contract.id)}
+												disabled={loadingId === contract.id}
+												className="flex-1 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60">
+												{t("cancelContract")}
+											</button>
+										</>
+									)}
+
+									{/* Seller 버튼 */}
+									{role === "seller" && (
+										<>
+											{contract.paymentReceiptUrl && (
+												<button
+													onClick={() => handleViewReceipt(contract.id)}
+													className="text-imsg-blue flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] py-2.5 text-xs font-medium transition-colors hover:bg-[#DBEAFE]">
+													<FileText size={14} />
+													{t("confirmReceipt")}
+												</button>
+											)}
+											<button
+												onClick={() => setConfirmId(contract.id)}
+												disabled={loadingId === contract.id}
+												className={cn(
+													"flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-semibold transition-colors disabled:opacity-60",
+													contract.paymentReceiptUrl
+														? "bg-[#16A34A] text-white hover:bg-[#15803D]"
+														: "border border-[#E5E7EB] bg-white text-[#9CA3AF]",
+												)}>
+												<CheckCircle2 size={14} />
+												{loadingId === contract.id ? t("processing") : t("confirmPayment")}
+											</button>
+											<button
+												onClick={() => setCancelConfirmId(contract.id)}
+												disabled={loadingId === contract.id}
+												className="flex-1 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60">
+												{t("cancelContract")}
+											</button>
+										</>
+									)}
+								</div>
+							)}
+
+							{/* Buyer: 물품 수령 확인 (BAST) — 취소된 계약이 아니면 언제든 1회 가능 */}
+							{role === "buyer" &&
+								contract.status !== "cancelled" &&
+								!contract.deliveryConfirmedAt && (
+									<button
+										onClick={() => setDeliveryConfirmId(contract.id)}
+										disabled={loadingId === contract.id}
+										className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-[#BBF7D0] bg-[#F0FDF4] py-2.5 text-xs font-semibold text-[#16A34A] transition-colors hover:bg-[#DCFCE7] disabled:opacity-60">
+										<PackageCheck size={14} />
+										{loadingId === contract.id ? t("processing") : t("confirmDelivery")}
+									</button>
 								)}
-							</div>
-						)}
-					</div>
-				))}
-			</div>
+						</div>
+					))}
+				</div>
 			)}
 
 			{visibleContracts.length > 0 && (
@@ -380,6 +441,17 @@ export function ContractList({ contracts, role }: ContractListProps) {
 				isLoading={loadingId === confirmId}
 				onConfirm={() => confirmId && handleStatusChange(confirmId, "completed")}
 				onClose={() => setConfirmId(null)}
+			/>
+
+			<ConfirmModal
+				isOpen={deliveryConfirmId !== null}
+				title={t("confirmDeliveryModalTitle")}
+				description={t("confirmDeliveryModalDescription")}
+				confirmLabel={t("confirmDelivery")}
+				variant="default"
+				isLoading={loadingId === deliveryConfirmId}
+				onConfirm={() => deliveryConfirmId && handleDeliveryConfirm(deliveryConfirmId)}
+				onClose={() => setDeliveryConfirmId(null)}
 			/>
 
 			<ConfirmModal
