@@ -23,9 +23,6 @@
 		},
 		"dropdown": {
 			"myProfile": "내 프로필",
-			"settings": "환경설정",
-			"terms": "이용약관",
-			"privacy": "개인정보 처리방침",
 			"logout": "로그아웃"
 		}
 	},
@@ -125,6 +122,18 @@
 		"addressDetailPlaceholder": "상세주소를 입력해주세요 (선택)",
 		"categoryLabel": "업태",
 		"categoryPlaceholder": "예: 제조업",
+		"categories": {
+			"manufacturing": "제조업",
+			"construction": "건설업",
+			"tradeDistribution": "무역/유통",
+			"services": "서비스업",
+			"agriculture": "농업/어업",
+			"mining": "광업",
+			"itTech": "IT/기술",
+			"healthcare": "의료/보건",
+			"education": "교육",
+			"other": "기타"
+		},
 		"itemLabel": "종목",
 		"itemPlaceholder": "예: 사무기기 제조",
 		"submit": "회원가입 완료",
@@ -170,6 +179,7 @@
 		"invoicePdfPreview": "📄 인보이스"
 	},
 	"ChatRoomPanel": {
+		"backToListAria": "채팅 목록으로 돌아가기",
 		"statusAwarded": "계약 확정",
 		"statusRejected": "마감",
 		"awardButton": "확정",
@@ -753,7 +763,28 @@
 		"deleteTable": "표 삭제"
 	},
 	"UnitSelect": {
-		"placeholder": "단위"
+		"placeholder": "단위",
+		"descriptions": {
+			"EA": "개",
+			"SET": "세트",
+			"BOX": "박스",
+			"식": "전체",
+			"건": "사건/업무",
+			"명": "인원",
+			"회": "횟수",
+			"일": "날짜/기간",
+			"개월": "기간",
+			"조": "그룹/세트",
+			"벌": "옷/세트",
+			"권": "책/서류",
+			"부": "서류/인쇄물",
+			"포": "포장단위",
+			"KG": "킬로그램",
+			"TON": "톤",
+			"L": "리터",
+			"M": "미터",
+			"M2": "제곱미터"
+		}
 	},
 	"ListingBrowse": {
 		"tabAll": "전체",
@@ -898,6 +929,9 @@
 		"noticesEmpty": "등록된 공지가 없어요",
 		"resourcesEmpty": "등록된 자료가 없어요",
 		"pinnedBadge": "중요"
+	},
+	"SupportHomeResourceList": {
+		"openError": "자료를 여는 중 오류가 발생했습니다."
 	},
 	"SupportInquiries": {
 		"emptyTitle": "문의 내역이 없어요",
@@ -1400,6 +1434,18 @@
 		"addressDetailPlaceholder": "상세주소를 입력해주세요 (선택)",
 		"categoryLabel": "업태",
 		"categoryPlaceholder": "예: 서비스업",
+		"categories": {
+			"manufacturing": "제조업 (Manufaktur)",
+			"construction": "건설업 (Konstruksi)",
+			"tradeDistribution": "무역/유통 (Perdagangan)",
+			"services": "서비스업 (Jasa)",
+			"agriculture": "농업/어업 (Pertanian/Perikanan)",
+			"mining": "광업 (Pertambangan)",
+			"itTech": "IT/기술 (Teknologi)",
+			"healthcare": "의료/보건 (Kesehatan)",
+			"education": "교육 (Pendidikan)",
+			"other": "기타 (Lainnya)"
+		},
 		"itemLabel": "종목",
 		"itemPlaceholder": "예: 소프트웨어 개발",
 		"submit": "회원가입 완료",

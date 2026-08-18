@@ -23,9 +23,6 @@
 		},
 		"dropdown": {
 			"myProfile": "Profil Saya",
-			"settings": "Pengaturan",
-			"terms": "Syarat Layanan",
-			"privacy": "Kebijakan Privasi",
 			"logout": "Keluar"
 		}
 	},
@@ -125,6 +122,18 @@
 		"addressDetailPlaceholder": "Masukkan alamat detail (opsional)",
 		"categoryLabel": "Bidang Usaha",
 		"categoryPlaceholder": "Cth: Manufaktur",
+		"categories": {
+			"manufacturing": "Manufaktur",
+			"construction": "Konstruksi",
+			"tradeDistribution": "Perdagangan/Distribusi",
+			"services": "Jasa",
+			"agriculture": "Pertanian/Perikanan",
+			"mining": "Pertambangan",
+			"itTech": "IT/Teknologi",
+			"healthcare": "Kesehatan",
+			"education": "Pendidikan",
+			"other": "Lainnya"
+		},
 		"itemLabel": "Jenis Usaha",
 		"itemPlaceholder": "Cth: Produksi alat kantor",
 		"submit": "Selesaikan Pendaftaran",
@@ -170,6 +179,7 @@
 		"invoicePdfPreview": "📄 Invoice"
 	},
 	"ChatRoomPanel": {
+		"backToListAria": "Kembali ke daftar chat",
 		"statusAwarded": "Dikonfirmasi",
 		"statusRejected": "Ditutup",
 		"awardButton": "Konfirmasi",
@@ -766,7 +776,28 @@
 		"deleteTable": "Hapus Tabel"
 	},
 	"UnitSelect": {
-		"placeholder": "Satuan"
+		"placeholder": "Satuan",
+		"descriptions": {
+			"EA": "Buah",
+			"SET": "Set",
+			"BOX": "Kotak",
+			"식": "Keseluruhan",
+			"건": "Kasus/Tugas",
+			"명": "Orang",
+			"회": "Kali",
+			"일": "Hari/Periode",
+			"개월": "Bulan",
+			"조": "Kelompok/Set",
+			"벌": "Pakaian/Set",
+			"권": "Buku/Dokumen",
+			"부": "Dokumen/Cetakan",
+			"포": "Unit Kemasan",
+			"KG": "Kilogram",
+			"TON": "Ton",
+			"L": "Liter",
+			"M": "Meter",
+			"M2": "Meter Persegi"
+		}
 	},
 	"ListingBrowse": {
 		"tabAll": "Semua",
@@ -911,6 +942,9 @@
 		"noticesEmpty": "Belum ada pengumuman",
 		"resourcesEmpty": "Belum ada dokumen",
 		"pinnedBadge": "Penting"
+	},
+	"SupportHomeResourceList": {
+		"openError": "Terjadi kesalahan saat membuka dokumen."
 	},
 	"SupportInquiries": {
 		"emptyTitle": "Belum ada riwayat pertanyaan",
@@ -1413,6 +1447,18 @@
 		"addressDetailPlaceholder": "Masukkan alamat detail (opsional)",
 		"categoryLabel": "Bidang Usaha",
 		"categoryPlaceholder": "Cth: Jasa",
+		"categories": {
+			"manufacturing": "Manufaktur",
+			"construction": "Konstruksi",
+			"tradeDistribution": "Perdagangan/Distribusi",
+			"services": "Jasa",
+			"agriculture": "Pertanian/Perikanan",
+			"mining": "Pertambangan",
+			"itTech": "IT/Teknologi",
+			"healthcare": "Kesehatan",
+			"education": "Pendidikan",
+			"other": "Lainnya"
+		},
 		"itemLabel": "Jenis Usaha",
 		"itemPlaceholder": "Cth: Pengembangan perangkat lunak",
 		"submit": "Selesaikan Pendaftaran",

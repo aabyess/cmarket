@@ -9,9 +9,17 @@ import { cn } from "@/utils/cn";
 import { checkUsernameAvailable } from "@/features/auth/apis";
 import { useSignupKorea } from "@/features/auth/mutations";
 
-const BUSINESS_CATEGORIES = [
-	"제조업", "건설업", "무역/유통", "서비스업", "농업/어업",
-	"광업", "IT/기술", "의료/보건", "교육", "기타",
+const BUSINESS_CATEGORIES: { key: string; value: string }[] = [
+	{ key: "manufacturing", value: "제조업" },
+	{ key: "construction", value: "건설업" },
+	{ key: "tradeDistribution", value: "무역/유통" },
+	{ key: "services", value: "서비스업" },
+	{ key: "agriculture", value: "농업/어업" },
+	{ key: "mining", value: "광업" },
+	{ key: "itTech", value: "IT/기술" },
+	{ key: "healthcare", value: "의료/보건" },
+	{ key: "education", value: "교육" },
+	{ key: "other", value: "기타" },
 ];
 
 const EMAIL_DOMAINS = ["gmail.com", "naver.com", "daum.net", "직접 입력"];
@@ -597,7 +605,7 @@ export function SignupInfoKorea() {
 									>
 										<option value="">{t("categoryPlaceholder")}</option>
 										{BUSINESS_CATEGORIES.map((cat) => (
-											<option key={cat} value={cat}>{cat}</option>
+											<option key={cat.key} value={cat.value}>{t(`categories.${cat.key}`)}</option>
 										))}
 									</select>
 								</Field>

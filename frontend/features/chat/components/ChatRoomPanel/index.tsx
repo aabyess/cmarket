@@ -94,7 +94,7 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 			<header className="flex items-center justify-between border-b border-[#E5E7EB]/60 bg-white/80 px-4 py-2.5 backdrop-blur-xl">
 				<button
 					onClick={onBack}
-					aria-label="목록으로 돌아가기"
+					aria-label={t("backToListAria")}
 					className="flex size-9 items-center justify-center rounded-full text-imsg-blue transition-colors hover:bg-imsg-surface"
 				>
 					<ChevronLeft className="size-6" strokeWidth={2.5} />

@@ -1,6 +1,7 @@
 // features/support/components/SupportHome/SupportHomeResourceList.tsx
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { SupportResource } from "@/features/support/types";
 
 type SupportHomeResourceListProps = {
@@ -12,6 +13,8 @@ export function SupportHomeResourceList({
 	resources,
 	formatDate,
 }: SupportHomeResourceListProps): React.JSX.Element {
+	const t = useTranslations("SupportHomeResourceList");
+
 	async function handleDownload(resourceId: string): Promise<void> {
 		try {
 			const res = await fetch(`/api/support/resource-url?resourceId=${resourceId}`);
@@ -19,7 +22,7 @@ export function SupportHomeResourceList({
 			const { url } = await res.json();
 			window.open(url, "_blank");
 		} catch {
-			alert("자료를 여는 중 오류가 발생했습니다.");
+			alert(t("openError"));
 		}
 	}
 

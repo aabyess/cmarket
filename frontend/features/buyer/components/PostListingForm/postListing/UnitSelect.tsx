@@ -5,27 +5,27 @@ import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { cn } from "@/utils/cn";
 
-const UNIT_OPTIONS: { value: string; desc: string }[] = [
-	{ value: "EA", desc: "개" },
-	{ value: "SET", desc: "세트" },
-	{ value: "BOX", desc: "박스" },
-	{ value: "식", desc: "전체" },
-	{ value: "건", desc: "사건/업무" },
-	{ value: "명", desc: "인원" },
-	{ value: "회", desc: "횟수" },
-	{ value: "일", desc: "날짜/기간" },
-	{ value: "개월", desc: "기간" },
-	{ value: "조", desc: "그룹/세트" },
-	{ value: "벌", desc: "옷/세트" },
-	{ value: "권", desc: "책/서류" },
-	{ value: "부", desc: "서류/인쇄물" },
-	{ value: "포", desc: "포장단위" },
-	{ value: "KG", desc: "킬로그램" },
-	{ value: "TON", desc: "톤" },
-	{ value: "L", desc: "리터" },
-	{ value: "M", desc: "미터" },
-	{ value: "M2", desc: "제곱미터" },
-];
+const UNIT_VALUES = [
+	"EA",
+	"SET",
+	"BOX",
+	"식",
+	"건",
+	"명",
+	"회",
+	"일",
+	"개월",
+	"조",
+	"벌",
+	"권",
+	"부",
+	"포",
+	"KG",
+	"TON",
+	"L",
+	"M",
+	"M2",
+] as const;
 
 type UnitSelectProps = {
 	value: string;
@@ -65,28 +65,28 @@ export default function UnitSelect({ value, onChange }: UnitSelectProps): React.
 
 			{isOpen && (
 				<div className="absolute left-0 top-full z-20 mt-1 max-h-64 w-40 overflow-y-auto rounded-lg border border-[#E5E7EB] bg-white py-1 shadow-lg">
-					{UNIT_OPTIONS.map((option) => (
+					{UNIT_VALUES.map((unitValue) => (
 						<button
-							key={option.value}
+							key={unitValue}
 							type="button"
-							onClick={() => handleSelect(option.value)}
+							onClick={() => handleSelect(unitValue)}
 							className={cn(
 								"flex w-full items-center justify-between px-3 py-2 text-left transition-colors hover:bg-[#F9FAFB]",
-								value === option.value && "bg-[#EFF6FF]",
+								value === unitValue && "bg-[#EFF6FF]",
 							)}
 						>
 							<span>
 								<span
 									className={cn(
 										"block text-sm font-medium",
-										value === option.value ? "text-imsg-blue" : "text-[#1F2937]",
+										value === unitValue ? "text-imsg-blue" : "text-[#1F2937]",
 									)}
 								>
-									{option.value}
+									{unitValue}
 								</span>
-								<span className="block text-xs text-[#9CA3AF]">{option.desc}</span>
+								<span className="block text-xs text-[#9CA3AF]">{t(`descriptions.${unitValue}`)}</span>
 							</span>
-							{value === option.value && <Check size={14} className="shrink-0 text-imsg-blue" />}
+							{value === unitValue && <Check size={14} className="shrink-0 text-imsg-blue" />}
 						</button>
 					))}
 				</div>
