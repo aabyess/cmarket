@@ -23,9 +23,6 @@
 		},
 		"dropdown": {
 			"myProfile": "My Profile",
-			"settings": "Settings",
-			"terms": "Terms of Service",
-			"privacy": "Privacy Policy",
 			"logout": "Log out"
 		}
 	},
@@ -824,6 +821,9 @@
 		"noticesEmpty": "No notices yet",
 		"resourcesEmpty": "No resources yet",
 		"pinnedBadge": "Important"
+	},
+	"SupportHomeResourceList": {
+		"openError": "An error occurred while opening the resource."
 	},
 	"SupportInquiries": {
 		"emptyTitle": "No inquiries yet",

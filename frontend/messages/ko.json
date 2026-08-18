@@ -23,9 +23,6 @@
 		},
 		"dropdown": {
 			"myProfile": "내 프로필",
-			"settings": "환경설정",
-			"terms": "이용약관",
-			"privacy": "개인정보 처리방침",
 			"logout": "로그아웃"
 		}
 	},
@@ -930,6 +927,9 @@
 		"noticesEmpty": "등록된 공지가 없어요",
 		"resourcesEmpty": "등록된 자료가 없어요",
 		"pinnedBadge": "중요"
+	},
+	"SupportHomeResourceList": {
+		"openError": "자료를 여는 중 오류가 발생했습니다."
 	},
 	"SupportInquiries": {
 		"emptyTitle": "문의 내역이 없어요",

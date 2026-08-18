@@ -23,9 +23,6 @@
 		},
 		"dropdown": {
 			"myProfile": "Profil Saya",
-			"settings": "Pengaturan",
-			"terms": "Syarat Layanan",
-			"privacy": "Kebijakan Privasi",
 			"logout": "Keluar"
 		}
 	},
@@ -943,6 +940,9 @@
 		"noticesEmpty": "Belum ada pengumuman",
 		"resourcesEmpty": "Belum ada dokumen",
 		"pinnedBadge": "Penting"
+	},
+	"SupportHomeResourceList": {
+		"openError": "Terjadi kesalahan saat membuka dokumen."
 	},
 	"SupportInquiries": {
 		"emptyTitle": "Belum ada riwayat pertanyaan",
