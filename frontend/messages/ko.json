@@ -1129,6 +1129,8 @@
 		"cancelModalConfirmLabel": "취소 확정",
 		"cancelModalDescription": "취소하면 공고가 다시 진행 중 상태로 돌아가 견적을 다시 선택할 수 있게 되고, 상대 기업에게 취소 알림이 전송됩니다.",
 		"cancelModalTitle": "계약을 취소하시겠습니까?",
+		"cancelReasonLabel": "취소 사유 (선택)",
+		"cancelReasonPlaceholder": "상대 기업에게 전달할 취소 사유를 입력해주세요",
 		"confirmDelivery": "물품 수령 확인",
 		"confirmDeliveryModalDescription": "확인 후에는 되돌릴 수 없습니다. 실제로 물품을 수령한 후 진행해주세요.",
 		"confirmDeliveryModalTitle": "물품을 수령하셨나요?",

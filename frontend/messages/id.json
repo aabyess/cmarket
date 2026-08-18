@@ -1142,6 +1142,8 @@
 		"cancelModalConfirmLabel": "Konfirmasi Pembatalan",
 		"cancelModalDescription": "Jika dibatalkan, permintaan akan dibuka kembali sehingga penawaran dapat dipilih lagi, dan notifikasi pembatalan akan dikirim ke perusahaan mitra.",
 		"cancelModalTitle": "Batalkan kontrak ini?",
+		"cancelReasonLabel": "Alasan pembatalan (opsional)",
+		"cancelReasonPlaceholder": "Tulis alasan pembatalan untuk disampaikan ke perusahaan mitra",
 		"confirmDelivery": "Konfirmasi Penerimaan Barang",
 		"confirmDeliveryModalDescription": "Tindakan ini tidak dapat dibatalkan setelah dikonfirmasi. Pastikan barang benar-benar telah diterima sebelum melanjutkan.",
 		"confirmDeliveryModalTitle": "Sudah menerima barangnya?",
