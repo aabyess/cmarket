@@ -161,14 +161,13 @@ export function ContractListTable({
 												</button>
 											)}
 											{contract.deliveryConfirmedAt && (
-												<span
-													title={t("deliveryConfirmedTitle", {
+												<span className="flex items-center gap-1 text-xs font-medium whitespace-nowrap text-[#16A34A]">
+													<PackageCheck size={14} />
+													{t("deliveryConfirmedTitle", {
 														date: new Date(contract.deliveryConfirmedAt).toLocaleDateString(
 															"ko-KR",
 														),
 													})}
-													className="flex size-8 items-center justify-center text-[#16A34A]">
-													<PackageCheck size={14} />
 												</span>
 											)}
 										</div>
