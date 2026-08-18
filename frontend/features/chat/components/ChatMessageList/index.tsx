@@ -70,6 +70,7 @@ export function ChatMessageList({
 	}
 
 	const lastReadMineId = [...messages].reverse().find((m) => m.senderId === myId && m.isRead)?.id;
+	const firstQuotePdfId = messages.find((m) => m.messageType === "quote_pdf")?.id;
 
 	let lastDate = "";
 
@@ -126,7 +127,9 @@ export function ChatMessageList({
 										quoteId={quoteId}
 										docType={message.messageType === "invoice_pdf" ? "invoice" : "quote"}
 										attachmentName={message.attachmentName}
+										attachmentUrl={message.attachmentUrl}
 										isMine={isMine}
+										isOriginal={message.id === firstQuotePdfId}
 									/>
 								) : (
 									<div className={cn("flex flex-col gap-1", isMine ? "items-end" : "items-start")}>

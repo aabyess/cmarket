@@ -3,12 +3,17 @@
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { FileText, Loader2 } from "lucide-react";
+import { cn } from "@/utils/cn";
 
 type QuotePdfCardProps = {
 	quoteId: string;
 	docType: "quote" | "invoice";
 	attachmentName: string | null;
+	/** 원본 언어(견적서 PDF 스토리지 경로에 박혀 있는 언어)로 고정 표시할 때만 채워진다. */
+	attachmentUrl: string | null;
 	isMine: boolean;
+	/** 같은 견적에서 처음 전송된 견적서 PDF인지. quote 타입에서만 원본/번역본 라벨에 쓰인다. */
+	isOriginal: boolean;
 };
 
 const GENERATE_ENDPOINT: Record<QuotePdfCardProps["docType"], string> = {
@@ -21,9 +26,24 @@ type ResolvedDoc = {
 	attachmentName: string;
 };
 
-export function QuotePdfCard({ quoteId, docType, attachmentName, isMine }: QuotePdfCardProps): React.ReactNode {
+function extractDocLocale(attachmentUrl: string | null): string | null {
+	const match = attachmentUrl?.match(/quote-([a-z]{2,5})\.pdf$/);
+	return match?.[1] ?? null;
+}
+
+export function QuotePdfCard({
+	quoteId,
+	docType,
+	attachmentName,
+	attachmentUrl,
+	isMine,
+	isOriginal,
+}: QuotePdfCardProps): React.ReactNode {
 	const t = useTranslations("QuotePdfCard");
-	const locale = useLocale();
+	const viewerLocale = useLocale();
+	// 견적서(quote)는 전송 시점에 고정된 언어(원본/번역본)를 그대로 보여준다.
+	// 보는 사람 언어로 다시 바뀌면 원본/번역본 구분이 무의미해지기 때문이다.
+	const locale = docType === "quote" ? (extractDocLocale(attachmentUrl) ?? viewerLocale) : viewerLocale;
 	const [resolvedDoc, setResolvedDoc] = useState<ResolvedDoc | null>(null);
 	const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
 	const [thumbnailFailed, setThumbnailFailed] = useState(false);
@@ -95,43 +115,60 @@ export function QuotePdfCard({ quoteId, docType, attachmentName, isMine }: Quote
 	}
 
 	return (
-		<button
-			onClick={handleOpen}
-			disabled={isOpening}
-			className={
-				isMine
-					? "w-56 overflow-hidden rounded-[20px] bg-imsg-blue text-left text-white disabled:opacity-70"
-					: "w-56 overflow-hidden rounded-[20px] bg-[#E9E9EB] text-left text-black disabled:opacity-70"
-			}
-		>
-			<div className="flex h-40 items-center justify-center bg-white/90">
-				{thumbnailUrl ? (
-					<img src={thumbnailUrl} alt={t("previewAlt")} className="h-full w-full object-contain" />
-				) : thumbnailFailed ? (
-					<FileText size={28} className="text-[#9CA3AF]" />
-				) : (
-					<Loader2 size={20} className="animate-spin text-[#9CA3AF]" />
-				)}
-			</div>
-			<div className="flex items-center gap-2.5 px-3.5 py-3">
-				<div
-					className={
-						isMine
-							? "flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/20"
-							: "flex size-8 shrink-0 items-center justify-center rounded-lg bg-white"
-					}
+		<div className={cn("flex w-56 flex-col gap-1", isMine ? "items-end" : "items-start")}>
+			{docType === "quote" && (
+				<span
+					className={cn(
+						"rounded-full px-2.5 py-1 text-xs font-medium",
+						isOriginal ? "bg-imsg-blue/10 text-imsg-blue" : "bg-[#F3F4F6] text-[#6B7280]",
+					)}
 				>
-					<FileText size={14} />
+					{isOriginal ? t("originalBadge") : t("translationBadge")}
+				</span>
+			)}
+
+			<button
+				onClick={handleOpen}
+				disabled={isOpening}
+				className={
+					isMine
+						? "w-56 overflow-hidden rounded-[20px] bg-imsg-blue text-left text-white disabled:opacity-70"
+						: "w-56 overflow-hidden rounded-[20px] bg-[#E9E9EB] text-left text-black disabled:opacity-70"
+				}
+			>
+				<div className="flex h-40 items-center justify-center bg-white/90">
+					{thumbnailUrl ? (
+						<img src={thumbnailUrl} alt={t("previewAlt")} className="h-full w-full object-contain" />
+					) : thumbnailFailed ? (
+						<FileText size={28} className="text-[#9CA3AF]" />
+					) : (
+						<Loader2 size={20} className="animate-spin text-[#9CA3AF]" />
+					)}
 				</div>
-				<div className="min-w-0">
-					<p className="truncate text-xs font-medium">
-						{resolvedDoc?.attachmentName ?? attachmentName ?? t("defaultFileName")}
-					</p>
-					<p className={isMine ? "text-xs text-white/70" : "text-xs text-black/50"}>
-						{isOpening ? t("opening") : t("openHint")}
-					</p>
+				<div className="flex items-center gap-2.5 px-3.5 py-3">
+					<div
+						className={
+							isMine
+								? "flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/20"
+								: "flex size-8 shrink-0 items-center justify-center rounded-lg bg-white"
+						}
+					>
+						<FileText size={14} />
+					</div>
+					<div className="min-w-0">
+						<p className="truncate text-xs font-medium">
+							{resolvedDoc?.attachmentName ?? attachmentName ?? t("defaultFileName")}
+						</p>
+						<p className={isMine ? "text-xs text-white/70" : "text-xs text-black/50"}>
+							{isOpening ? t("opening") : t("openHint")}
+						</p>
+					</div>
 				</div>
-			</div>
-		</button>
+			</button>
+
+			{docType === "quote" && !isOriginal && (
+				<p className="max-w-56 text-xs text-[#9CA3AF]">{t("translationHint")}</p>
+			)}
+		</div>
 	);
 }

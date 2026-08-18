@@ -5,6 +5,7 @@ import { createServerSupabaseClient, createServiceRoleClient } from "@/libs/supa
 import { getQuotePdfData } from "@/features/chat/pdf/getQuotePdfData";
 import { QuotePdfDocument, type QuotePdfLabels } from "@/features/chat/pdf/QuotePdfDocument";
 import { getCategoryLabels } from "@/features/buyer/constants";
+import { countryToLocale } from "@/utils/countryToLocale";
 import { routing } from "@/i18n/routing";
 
 const BUCKET = "quote-documents";
@@ -30,7 +31,7 @@ async function ensureMessageRecorded(
 		.select("id")
 		.eq("quote_id", quoteId)
 		.eq("message_type", "quote_pdf")
-		.limit(1)
+		.eq("attachment_url", storagePath)
 		.maybeSingle();
 
 	if (existing) return;
@@ -45,31 +46,21 @@ async function ensureMessageRecorded(
 	});
 }
 
-export async function POST(req: NextRequest): Promise<NextResponse> {
-	const { quoteId, locale: rawLocale } = await req.json();
-	if (!quoteId) {
-		return NextResponse.json({ error: "quoteId가 필요합니다." }, { status: 400 });
-	}
-	const locale = resolveLocale(rawLocale);
+type GenerateResult = {
+	attachmentUrl: string;
+	attachmentName: string;
+	signedUrl: string;
+};
 
-	const authClient = await createServerSupabaseClient();
-	const {
-		data: { user },
-	} = await authClient.auth.getUser();
-	if (!user) {
-		return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
-	}
-
+async function generateQuoteDoc(
+	admin: ReturnType<typeof createServiceRoleClient>,
+	quoteId: string,
+	locale: Locale,
+	senderId: string,
+): Promise<GenerateResult | { error: string }> {
 	const data = await getQuotePdfData(quoteId, locale);
-	if (!data) {
-		return NextResponse.json({ error: "견적을 찾을 수 없습니다." }, { status: 404 });
-	}
+	if (!data) return { error: "견적을 찾을 수 없습니다." };
 
-	if (data.buyerId !== user.id && data.sellerId !== user.id) {
-		return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
-	}
-
-	const admin = createServiceRoleClient();
 	const storagePath = `${quoteId}/quote-${locale}.pdf`;
 
 	const [t, tCategory] = await Promise.all([
@@ -81,12 +72,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 	const { data: existingSigned } = await admin.storage.from(BUCKET).createSignedUrl(storagePath, SIGNED_URL_TTL);
 
 	if (existingSigned) {
-		await ensureMessageRecorded(admin, quoteId, user.id, storagePath, fileName);
-		return NextResponse.json({
-			attachmentUrl: storagePath,
-			attachmentName: fileName,
-			signedUrl: existingSigned.signedUrl,
-		});
+		await ensureMessageRecorded(admin, quoteId, senderId, storagePath, fileName);
+		return { attachmentUrl: storagePath, attachmentName: fileName, signedUrl: existingSigned.signedUrl };
 	}
 
 	const labels: QuotePdfLabels = {
@@ -132,19 +119,77 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		.from(BUCKET)
 		.upload(storagePath, pdfBuffer, { contentType: "application/pdf", upsert: true });
 
-	if (uploadError) {
-		return NextResponse.json({ error: uploadError.message }, { status: 500 });
-	}
+	if (uploadError) return { error: uploadError.message };
 
-	await ensureMessageRecorded(admin, quoteId, user.id, storagePath, fileName);
+	await ensureMessageRecorded(admin, quoteId, senderId, storagePath, fileName);
 
 	const { data: signed, error: signError } = await admin.storage
 		.from(BUCKET)
 		.createSignedUrl(storagePath, SIGNED_URL_TTL);
 
-	if (signError || !signed) {
-		return NextResponse.json({ error: signError?.message ?? "URL 생성 실패" }, { status: 500 });
+	if (signError || !signed) return { error: signError?.message ?? "URL 생성 실패" };
+
+	return { attachmentUrl: storagePath, attachmentName: fileName, signedUrl: signed.signedUrl };
+}
+
+export async function POST(req: NextRequest): Promise<NextResponse> {
+	const { quoteId, locale: rawLocale, sendPair } = await req.json();
+	if (!quoteId) {
+		return NextResponse.json({ error: "quoteId가 필요합니다." }, { status: 400 });
+	}
+	const locale = resolveLocale(rawLocale);
+
+	const authClient = await createServerSupabaseClient();
+	const {
+		data: { user },
+	} = await authClient.auth.getUser();
+	if (!user) {
+		return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
 	}
 
-	return NextResponse.json({ attachmentUrl: storagePath, attachmentName: fileName, signedUrl: signed.signedUrl });
+	const data = await getQuotePdfData(quoteId, locale);
+	if (!data) {
+		return NextResponse.json({ error: "견적을 찾을 수 없습니다." }, { status: 404 });
+	}
+
+	if (data.buyerId !== user.id && data.sellerId !== user.id) {
+		return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
+	}
+
+	const admin = createServiceRoleClient();
+
+	// 문의하기(채팅 시작) 시점에는 바이어 언어 원본 + 셀러 언어 참고 번역본을 함께 보낸다.
+	if (sendPair) {
+		const { data: profiles } = await admin
+			.from("profiles")
+			.select("id, country")
+			.in("id", [data.buyerId, data.sellerId]);
+		const countryMap = new Map((profiles ?? []).map((p) => [p.id, p.country]));
+
+		const buyerLocale = countryToLocale(countryMap.get(data.buyerId));
+		const sellerLocale = countryToLocale(countryMap.get(data.sellerId));
+
+		const original = await generateQuoteDoc(admin, quoteId, buyerLocale, user.id);
+		if ("error" in original) {
+			return NextResponse.json({ error: original.error }, { status: 500 });
+		}
+
+		if (sellerLocale === buyerLocale) {
+			return NextResponse.json({ original, translation: null });
+		}
+
+		const translation = await generateQuoteDoc(admin, quoteId, sellerLocale, user.id);
+		if ("error" in translation) {
+			return NextResponse.json({ error: translation.error }, { status: 500 });
+		}
+
+		return NextResponse.json({ original, translation });
+	}
+
+	const result = await generateQuoteDoc(admin, quoteId, locale, user.id);
+	if ("error" in result) {
+		return NextResponse.json({ error: result.error }, { status: 500 });
+	}
+
+	return NextResponse.json(result);
 }
