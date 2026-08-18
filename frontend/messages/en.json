@@ -213,11 +213,37 @@
 	},
 	"AdminLayout": {
 		"menuDashboard": "Dashboard",
+		"menuContracts": "Contracts",
 		"menuNotices": "Notices",
 		"menuResources": "Resources",
 		"menuInquiries": "Inquiries",
 		"adminBadge": "Admin",
 		"viewUserSite": "View user site"
+	},
+	"AdminContractsPage": {
+		"title": "Contracts",
+		"summary": "{count} total"
+	},
+	"AdminContractList": {
+		"statusOngoing": "Ongoing",
+		"statusCompleted": "Completed",
+		"statusCancelled": "Cancelled",
+		"columnStatus": "Status",
+		"columnTitle": "Listing Title",
+		"columnBuyer": "Buyer",
+		"columnSeller": "Seller",
+		"columnAmount": "Amount",
+		"columnContractDate": "Contract Date",
+		"columnAction": "Action",
+		"noCompanyName": "No company name",
+		"confirmAction": "Confirm",
+		"cancelAction": "Cancel",
+		"confirmModalTitle": "Mark this contract as completed?",
+		"confirmModalDescription": "The contract will be marked completed regardless of payment confirmation status.",
+		"cancelModalTitle": "Cancel this contract?",
+		"cancelModalDescription": "This cannot be undone. The listing and quote will revert to their pre-award status.",
+		"genericErrorMessage": "An error occurred while processing your request.",
+		"emptyTitle": "No contracts yet"
 	},
 	"AdminInquiriesPage": {
 		"title": "Inquiries",

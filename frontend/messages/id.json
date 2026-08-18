@@ -321,11 +321,37 @@
 	},
 	"AdminLayout": {
 		"menuDashboard": "Dasbor",
+		"menuContracts": "Manajemen Kontrak",
 		"menuNotices": "Pengumuman",
 		"menuResources": "Pusat Materi",
 		"menuInquiries": "Tanya Jawab",
 		"adminBadge": "Operator",
 		"viewUserSite": "Lihat tampilan pengguna"
+	},
+	"AdminContractsPage": {
+		"title": "Manajemen Kontrak",
+		"summary": "Total {count} kontrak"
+	},
+	"AdminContractList": {
+		"statusOngoing": "Berjalan",
+		"statusCompleted": "Selesai",
+		"statusCancelled": "Dibatalkan",
+		"columnStatus": "Status",
+		"columnTitle": "Judul Permintaan",
+		"columnBuyer": "Pembeli",
+		"columnSeller": "Pemasok",
+		"columnAmount": "Jumlah",
+		"columnContractDate": "Tanggal Kontrak",
+		"columnAction": "Aksi",
+		"noCompanyName": "Tanpa Nama Perusahaan",
+		"confirmAction": "Konfirmasi",
+		"cancelAction": "Batalkan",
+		"confirmModalTitle": "Tandai kontrak ini selesai?",
+		"confirmModalDescription": "Kontrak akan ditandai selesai terlepas dari status konfirmasi pembayaran.",
+		"cancelModalTitle": "Batalkan kontrak ini?",
+		"cancelModalDescription": "Tindakan ini tidak dapat dibatalkan. Permintaan dan penawaran akan kembali ke status sebelum konfirmasi.",
+		"genericErrorMessage": "Terjadi kesalahan saat memproses permintaan.",
+		"emptyTitle": "Belum ada kontrak terdaftar"
 	},
 	"AdminInquiriesPage": {
 		"title": "Tanya Jawab",

@@ -321,11 +321,37 @@
 	},
 	"AdminLayout": {
 		"menuDashboard": "대시보드",
+		"menuContracts": "계약 관리",
 		"menuNotices": "공지사항",
 		"menuResources": "자료실",
 		"menuInquiries": "1:1 문의",
 		"adminBadge": "운영자",
 		"viewUserSite": "사용자 화면 보기"
+	},
+	"AdminContractsPage": {
+		"title": "계약 관리",
+		"summary": "총 {count}건"
+	},
+	"AdminContractList": {
+		"statusOngoing": "진행 중",
+		"statusCompleted": "완료",
+		"statusCancelled": "취소됨",
+		"columnStatus": "상태",
+		"columnTitle": "공고명",
+		"columnBuyer": "발주기업",
+		"columnSeller": "공급기업",
+		"columnAmount": "금액",
+		"columnContractDate": "계약일",
+		"columnAction": "액션",
+		"noCompanyName": "기업명 없음",
+		"confirmAction": "확정",
+		"cancelAction": "취소",
+		"confirmModalTitle": "이 계약을 완료 처리할까요?",
+		"confirmModalDescription": "입금 확인 여부와 상관없이 계약을 완료 상태로 처리합니다.",
+		"cancelModalTitle": "이 계약을 취소할까요?",
+		"cancelModalDescription": "취소 후에는 되돌릴 수 없습니다. 공고와 견적이 확정 이전 상태로 돌아갑니다.",
+		"genericErrorMessage": "처리 중 오류가 발생했습니다.",
+		"emptyTitle": "등록된 계약이 없어요"
 	},
 	"AdminInquiriesPage": {
 		"title": "1:1 문의",
