@@ -9,9 +9,8 @@ export async function LandingPageHeader(): Promise<React.JSX.Element> {
 	return (
 		<header className="border-landing-line bg-landing-paper/90 sticky top-0 z-40 border-b backdrop-blur">
 			<div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-				<Link href="/" className="flex items-center gap-1.5 text-lg font-bold tracking-tight">
-					MitraPay
-					<span aria-hidden className="bg-landing-gold mt-1 size-1.5 rounded-[1px]" />
+				<Link href="/" className="text-lg font-bold tracking-tight">
+					Mitra<span className="text-landing-accent">Pay</span>
 				</Link>
 				<div className="flex items-center gap-2">
 					<LanguageSwitcher />
