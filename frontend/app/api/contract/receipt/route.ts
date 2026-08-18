@@ -11,7 +11,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 	}
 
 	const authClient = await createServerSupabaseClient();
-	const { data: { user } } = await authClient.auth.getUser();
+	const {
+		data: { user },
+	} = await authClient.auth.getUser();
 	if (!user) {
 		return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
 	}
@@ -51,4 +53,55 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 	}
 
 	return NextResponse.json({ receiptUrl: storagePath });
+}
+
+export async function DELETE(req: NextRequest): Promise<NextResponse> {
+	const { contractId } = await req.json();
+	if (!contractId) {
+		return NextResponse.json({ error: "contractId가 필요합니다." }, { status: 400 });
+	}
+
+	const authClient = await createServerSupabaseClient();
+	const {
+		data: { user },
+	} = await authClient.auth.getUser();
+	if (!user) {
+		return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
+	}
+
+	const admin = await createServerAdminClient();
+
+	// 본인 계약인지 확인 (buyer만 삭제 가능)
+	const { data: contract } = await admin
+		.from("contracts")
+		.select("buyer_id, payment_receipt_url, payment_confirmed_at")
+		.eq("id", contractId)
+		.single();
+
+	if (!contract || contract.buyer_id !== user.id) {
+		return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
+	}
+
+	if (!contract.payment_receipt_url) {
+		return NextResponse.json({ error: "삭제할 영수증이 없습니다." }, { status: 400 });
+	}
+
+	// 판매자가 이미 입금 확인한 뒤에는 삭제 불가
+	if (contract.payment_confirmed_at) {
+		return NextResponse.json({ error: "이미 입금 확인된 계약입니다." }, { status: 400 });
+	}
+
+	// 스토리지 파일 삭제는 실패해도 계약 상태 정리를 막지 않는다
+	await admin.storage.from("quote-documents").remove([contract.payment_receipt_url]);
+
+	const { error: updateError } = await admin
+		.from("contracts")
+		.update({ payment_receipt_url: null })
+		.eq("id", contractId);
+
+	if (updateError) {
+		return NextResponse.json({ error: updateError.message }, { status: 500 });
+	}
+
+	return NextResponse.json({ success: true });
 }
