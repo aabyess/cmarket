@@ -1038,6 +1038,7 @@
 		"emptyTitle": "No contracts yet",
 		"genericErrorMessage": "An error occurred while processing your request.",
 		"noPartnerCompanyName": "No company name",
+		"noResultsCancelled": "No cancelled contracts.",
 		"noResultsCompleted": "No completed contracts.",
 		"noResultsOngoing": "No ongoing contracts.",
 		"paymentConfirmed": "Payment confirmed · {date}",
@@ -1082,6 +1083,7 @@
 	"ContractListTabs": {
 		"searchPlaceholder": "Search listing, partner",
 		"tabAll": "All",
+		"tabCancelled": "Cancelled",
 		"tabCompleted": "Completed",
 		"tabOngoing": "In Progress"
 	},

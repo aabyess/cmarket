@@ -1159,6 +1159,7 @@
 		"emptyTitle": "Belum ada kontrak",
 		"genericErrorMessage": "Terjadi kesalahan saat memproses permintaan.",
 		"noPartnerCompanyName": "Tanpa Nama Perusahaan",
+		"noResultsCancelled": "Tidak ada kontrak yang dibatalkan.",
 		"noResultsCompleted": "Tidak ada kontrak yang selesai.",
 		"noResultsOngoing": "Tidak ada kontrak yang sedang berjalan.",
 		"paymentConfirmed": "Pembayaran dikonfirmasi · {date}",
@@ -1203,6 +1204,7 @@
 	"ContractListTabs": {
 		"searchPlaceholder": "Cari permintaan",
 		"tabAll": "Semua",
+		"tabCancelled": "Dibatalkan",
 		"tabCompleted": "Selesai",
 		"tabOngoing": "Berjalan"
 	},
