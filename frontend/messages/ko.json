@@ -306,7 +306,8 @@
 		"deliveryDaysValue": "{days}일",
 		"noteLabel": "제안 메모",
 		"priceLabel": "견적가",
-		"footer": "본 견적서는 MitraPay를 통해 자동 생성되었습니다."
+		"footer": "본 견적서는 MitraPay를 통해 자동 생성되었습니다.",
+		"translationDisclaimer": "본 문서는 참고용 번역본입니다. 정확한 내용은 반드시 원본 문서를 확인해 주세요. 번역 과정에서 발생할 수 있는 오류에 대해 당사는 책임지지 않습니다."
 	},
 	"InvoicePdfDocument": {
 		"fileNamePrefix": "인보이스",

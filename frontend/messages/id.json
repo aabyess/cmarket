@@ -306,7 +306,8 @@
 		"deliveryDaysValue": "{days} hari",
 		"noteLabel": "Catatan",
 		"priceLabel": "Harga Penawaran",
-		"footer": "Surat penawaran ini dibuat secara otomatis melalui MitraPay."
+		"footer": "Surat penawaran ini dibuat secara otomatis melalui MitraPay.",
+		"translationDisclaimer": "Dokumen ini adalah terjemahan untuk referensi saja. Untuk isi yang akurat, harap periksa dokumen asli. Kami tidak bertanggung jawab atas kesalahan yang mungkin terjadi selama proses penerjemahan."
 	},
 	"InvoicePdfDocument": {
 		"fileNamePrefix": "Invoice",

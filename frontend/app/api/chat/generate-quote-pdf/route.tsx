@@ -102,6 +102,7 @@ async function generateQuoteDoc(
 		noteLabel: t("noteLabel"),
 		priceLabel: t("priceLabel"),
 		footer: t("footer"),
+		translationDisclaimer: t("translationDisclaimer"),
 	};
 	const categoryLabels = getCategoryLabels(tCategory);
 
@@ -113,6 +114,7 @@ async function generateQuoteDoc(
 			sellerCompany={data.sellerCompany}
 			labels={labels}
 			categoryLabels={categoryLabels}
+			isTranslationCopy={translateItems}
 		/>,
 	);
 

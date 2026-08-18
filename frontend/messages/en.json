@@ -1358,7 +1358,8 @@
 		"deliveryDaysValue": "{days} days",
 		"noteLabel": "Note",
 		"priceLabel": "Quoted Price",
-		"footer": "This quote was automatically generated via MitraPay."
+		"footer": "This quote was automatically generated via MitraPay.",
+		"translationDisclaimer": "This document is a reference translation only. Please refer to the original document for accurate content. We are not responsible for any errors that may occur during translation."
 	},
 	"InvoicePdfDocument": {
 		"fileNamePrefix": "Invoice",
