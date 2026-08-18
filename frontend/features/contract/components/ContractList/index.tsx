@@ -22,6 +22,7 @@ import { Pagination } from "@/components/commons/Pagination";
 import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import { ContractListTabs } from "@/features/contract/components/ContractList/ContractListTabs";
 import { ContractListTable } from "@/features/contract/components/ContractList/ContractListTable";
+import { ContractListCancelModal } from "@/features/contract/components/ContractList/ContractListCancelModal";
 import type { Contract, ContractFilter, ContractStatus } from "@/features/contract/types";
 
 const CURRENCY_SYMBOL: Record<string, string> = {
@@ -80,13 +81,17 @@ export function ContractList({ contracts, role }: ContractListProps) {
 		);
 	}
 
-	async function handleStatusChange(contractId: string, status: "completed" | "cancelled") {
+	async function handleStatusChange(
+		contractId: string,
+		status: "completed" | "cancelled",
+		reason?: string,
+	) {
 		setLoadingId(contractId);
 		try {
 			const res = await fetch("/api/contract/status", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ contractId, status }),
+				body: JSON.stringify({ contractId, status, reason }),
 			});
 			if (!res.ok) {
 				const { error } = await res.json();
@@ -187,6 +192,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 		all: contracts.length,
 		ongoing: contracts.filter((c) => c.status === "ongoing").length,
 		completed: contracts.filter((c) => c.status === "completed").length,
+		cancelled: contracts.filter((c) => c.status === "cancelled").length,
 	};
 
 	const keyword = search.trim().toLowerCase();
@@ -255,7 +261,11 @@ export function ContractList({ contracts, role }: ContractListProps) {
 			{visibleContracts.length === 0 ? (
 				<div className="rounded-2xl border border-[#E5E7EB] bg-white p-12 text-center">
 					<p className="text-sm text-[#6B7280]">
-						{filter === "ongoing" ? t("noResultsOngoing") : t("noResultsCompleted")}
+						{filter === "ongoing"
+							? t("noResultsOngoing")
+							: filter === "cancelled"
+								? t("noResultsCancelled")
+								: t("noResultsCompleted")}
 					</p>
 				</div>
 			) : viewMode === "list" ? (
@@ -513,14 +523,12 @@ export function ContractList({ contracts, role }: ContractListProps) {
 				onClose={() => setReceiptDeleteId(null)}
 			/>
 
-			<ConfirmModal
+			<ContractListCancelModal
 				isOpen={cancelConfirmId !== null}
-				title={t("cancelModalTitle")}
-				description={t("cancelModalDescription")}
-				confirmLabel={t("cancelModalConfirmLabel")}
-				variant="danger"
 				isLoading={loadingId === cancelConfirmId}
-				onConfirm={() => cancelConfirmId && handleStatusChange(cancelConfirmId, "cancelled")}
+				onConfirm={(reason) =>
+					cancelConfirmId && handleStatusChange(cancelConfirmId, "cancelled", reason)
+				}
 				onClose={() => setCancelConfirmId(null)}
 			/>
 		</>

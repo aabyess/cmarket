@@ -13,7 +13,7 @@ type ContractListTabsProps = {
 	onSearchChange: (value: string) => void;
 };
 
-const TAB_VALUES: ContractFilter[] = ["all", "ongoing", "completed"];
+const TAB_VALUES: ContractFilter[] = ["all", "ongoing", "completed", "cancelled"];
 
 export function ContractListTabs({
 	value,
@@ -27,6 +27,7 @@ export function ContractListTabs({
 		all: t("tabAll"),
 		ongoing: t("tabOngoing"),
 		completed: t("tabCompleted"),
+		cancelled: t("tabCancelled"),
 	};
 
 	return (

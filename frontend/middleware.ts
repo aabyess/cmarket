@@ -37,7 +37,7 @@ function isRedirect(response: NextResponse): boolean {
 
 // 인증이 필요한 라우트 그룹. matcher는 헤더 위조 방지를 위해 일부러 훨씬 넓게 잡았으므로,
 // 새 보호 라우트를 추가할 때는 여기만 갱신하면 된다(matcher를 건드릴 필요 없음).
-const PROTECTED_PREFIXES = ["/buyer", "/seller", "/support", "/admin"];
+const PROTECTED_PREFIXES = ["/buyer", "/seller", "/support", "/admin", "/plans"];
 
 export async function middleware(request: NextRequest) {
 	// 클라이언트가 보낸 x-user-* 헤더는 위조일 수 있으니 항상 제거한다.
