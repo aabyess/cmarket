@@ -12,42 +12,50 @@ export async function LandingPageFaq(): Promise<React.JSX.Element> {
 	}));
 
 	return (
-		<section className="bg-white">
-			<div className="mx-auto max-w-3xl px-6 py-16 lg:py-20">
+		<section className="border-landing-line border-t bg-white">
+			<div className="mx-auto max-w-3xl px-6 py-20 lg:py-24">
 				<LandingPageReveal>
-					<h2 className="text-center text-3xl font-bold text-[#1F2937]">{t("faqTitle")}</h2>
+					<h2 className="text-3xl font-bold tracking-tight">{t("faqTitle")}</h2>
 				</LandingPageReveal>
 
-				<div className="mt-10 space-y-3">
+				<div className="border-landing-ink mt-8 border-t">
 					{faqs.map((faq) => (
 						<LandingPageReveal key={faq.question}>
-							<details className="group rounded-2xl border border-[#E5E7EB] bg-white px-6 py-4">
-								<summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-[#1F2937]">
+							<details className="group border-landing-line border-b">
+								<summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-sm font-semibold">
 									{faq.question}
 									<ChevronDown
 										size={16}
-										className="shrink-0 text-[#9CA3AF] transition-transform group-open:rotate-180"
+										className="text-landing-dim shrink-0 transition-transform group-open:rotate-180"
 									/>
 								</summary>
-								<p className="mt-3 text-sm leading-relaxed text-[#6B7280]">{faq.answer}</p>
+								<p className="text-landing-dim pb-5 text-sm leading-relaxed">{faq.answer}</p>
 							</details>
 						</LandingPageReveal>
 					))}
 				</div>
 
-				{/* 최종 CTA */}
+				{/* 최종 CTA — 서류 위 도장처럼 닫는 잉크 패널 */}
 				<LandingPageReveal>
-					<div className="bg-imsg-blue mt-16 rounded-3xl px-8 py-12 text-center">
-						<h2 className="text-2xl font-bold text-white lg:text-3xl">{t("finalTitle")}</h2>
-						<p className="mt-3 text-sm text-white/80">{t("finalSubtitle")}</p>
-						<div className="mt-7 flex flex-col items-center gap-3">
+					<div className="bg-landing-ink relative mt-20 overflow-hidden rounded-lg px-8 py-14 text-center">
+						<span
+							aria-hidden
+							className="font-landing-doc border-landing-gold/60 text-landing-gold/70 pointer-events-none absolute -top-7 -right-7 flex size-36 -rotate-12 flex-col items-center justify-center rounded-full border-2 text-[10px] font-semibold tracking-[0.22em] uppercase">
+							MitraPay
+							<span className="mt-1 tracking-[0.14em]">KR – ID</span>
+						</span>
+						<h2 className="text-landing-paper text-2xl font-bold lg:text-3xl">{t("finalTitle")}</h2>
+						<p className="text-landing-paper/70 mt-3 text-sm">{t("finalSubtitle")}</p>
+						<div className="mt-8 flex flex-col items-center gap-3.5">
 							<Link
 								href="/signup"
-								className="text-imsg-blue inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-bold transition-opacity hover:opacity-90">
+								className="bg-landing-paper text-landing-ink inline-flex items-center gap-2 rounded-md px-8 py-3.5 text-sm font-bold transition-colors hover:bg-white">
 								{t("finalButton")}
 								<ArrowRight size={16} />
 							</Link>
-							<Link href="/login" className="text-xs text-white/70 hover:text-white">
+							<Link
+								href="/login"
+								className="font-landing-doc text-landing-paper/60 hover:text-landing-paper text-xs transition-colors">
 								{t("finalLogin")}
 							</Link>
 						</div>
