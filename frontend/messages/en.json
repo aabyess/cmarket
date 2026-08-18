@@ -109,7 +109,10 @@
 		"noAccount": "Don't have an account?",
 		"signup": "Sign up",
 		"supportNotice": "Our professional consultants are ready to help with solution inquiries.",
-		"supportPhone": "Customer center 02-742-9217"
+		"supportPhone": "Customer center 02-742-9217",
+		"sessionExpiredTitle": "Your session has expired",
+		"sessionExpiredDescription": "You were automatically logged out due to inactivity. Please log in again.",
+		"sessionExpiredConfirm": "OK"
 	},
 	"SignupCountrySelector": {
 		"step": "1 / 4",

@@ -92,7 +92,11 @@ export async function middleware(request: NextRequest) {
 	const { data: { user } } = await supabase.auth.getUser();
 
 	if (!user && isProtectedPath) {
-		return NextResponse.redirect(new URL(withLocale(locale, "/login"), request.url));
+		const loginUrl = new URL(withLocale(locale, "/login"), request.url);
+		// 세션 쿠키가 있는데도 user가 없다면 "로그인한 적 없음"이 아니라 "세션 만료"다.
+		const hadSession = request.cookies.getAll().some((cookie) => cookie.name.startsWith("sb-"));
+		if (hadSession) loginUrl.searchParams.set("expired", "1");
+		return NextResponse.redirect(loginUrl);
 	}
 
 	if (!user) {
