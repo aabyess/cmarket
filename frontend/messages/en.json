@@ -1019,7 +1019,7 @@
 	"ContractList": {
 		"cancelContract": "Cancel Contract",
 		"cancelModalConfirmLabel": "Confirm Cancellation",
-		"cancelModalDescription": "This cannot be undone once cancelled.",
+		"cancelModalDescription": "Once cancelled, the listing reopens so quotes can be selected again, and a cancellation notice is sent to the partner company.",
 		"cancelModalTitle": "Cancel this contract?",
 		"confirmDelivery": "Confirm Delivery",
 		"confirmDeliveryModalDescription": "This cannot be undone once confirmed. Please make sure you've actually received the goods before proceeding.",

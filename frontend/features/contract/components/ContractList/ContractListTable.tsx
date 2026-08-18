@@ -159,7 +159,7 @@ export function ContractListTable({
 													</button>
 												</>
 											)}
-											{contract.status === "ongoing" && (
+											{contract.status === "ongoing" && !contract.paymentReceiptUrl && (
 												<button
 													onClick={() => onRequestCancel(contract.id)}
 													disabled={loadingId === contract.id}
