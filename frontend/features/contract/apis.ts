@@ -1,7 +1,7 @@
 import { getLocale } from "next-intl/server";
 import { createServerSupabaseClient, createServerAdminClient } from "@/libs/supabaseServer";
 import { resolveTranslatedField } from "@/utils/resolveTranslatedField";
-import type { Contract } from "@/features/contract/types";
+import type { AdminContract, Contract } from "@/features/contract/types";
 
 export async function getContracts(role: "buyer" | "seller"): Promise<Contract[]> {
 	const supabase = await createServerSupabaseClient();
@@ -74,6 +74,67 @@ export async function getContracts(role: "buyer" | "seller"): Promise<Contract[]
 			paymentReceiptUrl: row.payment_receipt_url ?? null,
 			paymentConfirmedAt: row.payment_confirmed_at ?? null,
 			deliveryConfirmedAt: row.delivery_confirmed_at ?? null,
+		};
+	});
+}
+
+export async function getAllContracts(): Promise<AdminContract[]> {
+	const admin = await createServerAdminClient();
+	const locale = await getLocale();
+
+	const { data, error } = await admin
+		.from("contracts")
+		.select(
+			"id, buyer_id, seller_id, status, created_at, payment_confirmed_at, listings(title, title_source_lang, title_translations), quotes(price, currency, delivery_days)",
+		)
+		.order("created_at", { ascending: false });
+
+	if (error) throw new Error(error.message);
+	if (!data || data.length === 0) return [];
+
+	const companyIds = [...new Set(data.flatMap((row) => [row.buyer_id, row.seller_id]))];
+
+	const { data: companies } = await admin
+		.from("companies")
+		.select("profile_id, company_name")
+		.in("profile_id", companyIds);
+
+	const companyMap = new Map((companies ?? []).map((c) => [c.profile_id, c.company_name]));
+
+	return data.map((row) => {
+		const listing = row.listings as unknown as {
+			title: string;
+			title_source_lang: string | null;
+			title_translations: Record<string, string> | null;
+		};
+		const quote = row.quotes as unknown as {
+			price: number;
+			currency: string;
+			delivery_days: number;
+		};
+
+		return {
+			id: row.id,
+			status: row.status,
+			createdAt: row.created_at,
+			listing: {
+				title: listing
+					? resolveTranslatedField(
+							listing.title,
+							listing.title_source_lang,
+							listing.title_translations,
+							locale,
+						)
+					: "",
+			},
+			quote: {
+				price: Number(quote?.price ?? 0),
+				currency: quote?.currency ?? "USD",
+				deliveryDays: quote?.delivery_days ?? 0,
+			},
+			buyerCompanyName: companyMap.get(row.buyer_id) ?? "",
+			sellerCompanyName: companyMap.get(row.seller_id) ?? "",
+			paymentConfirmedAt: row.payment_confirmed_at ?? null,
 		};
 	});
 }

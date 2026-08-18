@@ -23,3 +23,20 @@ export type Contract = {
 };
 /** 계약 목록 탭 */
 export type ContractFilter = "all" | "ongoing" | "completed" | "cancelled";
+
+export type AdminContract = {
+	id: string;
+	status: ContractStatus;
+	createdAt: string;
+	listing: {
+		title: string;
+	};
+	quote: {
+		price: number;
+		currency: string;
+		deliveryDays: number;
+	};
+	buyerCompanyName: string;
+	sellerCompanyName: string;
+	paymentConfirmedAt: string | null;
+};
