@@ -57,8 +57,9 @@ async function generateQuoteDoc(
 	quoteId: string,
 	locale: Locale,
 	senderId: string,
+	translateItems = false,
 ): Promise<GenerateResult | { error: string }> {
-	const data = await getQuotePdfData(quoteId, locale);
+	const data = await getQuotePdfData(quoteId, locale, translateItems);
 	if (!data) return { error: "견적을 찾을 수 없습니다." };
 
 	const storagePath = `${quoteId}/quote-${locale}.pdf`;
@@ -178,7 +179,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 			return NextResponse.json({ original, translation: null });
 		}
 
-		const translation = await generateQuoteDoc(admin, quoteId, sellerLocale, user.id);
+		const translation = await generateQuoteDoc(admin, quoteId, sellerLocale, user.id, true);
 		if ("error" in translation) {
 			return NextResponse.json({ error: translation.error }, { status: 500 });
 		}

@@ -28,6 +28,19 @@ async function callTranslate(
 	}
 }
 
+const DEEPL_TARGET: Record<SupportedLocale, string> = {
+	ko: "KO",
+	id: "ID",
+	en: "EN-US",
+};
+
+/** DeepL로 지정한 언어 하나로만 번역한다. 실패하면 원문을 그대로 돌려준다. */
+export async function translateTextServer(text: string, targetLocale: SupportedLocale): Promise<string> {
+	if (!text?.trim()) return text;
+	const result = await callTranslate(text, DEEPL_TARGET[targetLocale]);
+	return result?.translatedText ?? text;
+}
+
 export async function translateFieldServer(text: string): Promise<FieldTranslationResult | null> {
 	if (!text?.trim()) return null;
 
