@@ -85,7 +85,7 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 			: { count: 0 };
 
 	const todos: BuyerTodo[] = listingRows
-		.filter((row) => row.status === "active")
+		.filter((row) => row.status === "active" && row.end_date !== null)
 		.map((row) => ({
 			row,
 			quotes: (row.quotes as unknown as { price: number }[]) ?? [],
