@@ -60,7 +60,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
 	}
 
-	const data = await getQuotePdfData(quoteId);
+	const data = await getQuotePdfData(quoteId, locale);
 	if (!data) {
 		return NextResponse.json({ error: "견적을 찾을 수 없습니다." }, { status: 404 });
 	}

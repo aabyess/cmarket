@@ -181,7 +181,8 @@
 	},
 	"ChatMessageList": {
 		"dateLabel": "{year}년 {month}월 {day}일",
-		"read": "읽음"
+		"read": "읽음",
+		"translateButton": "번역"
 	},
 	"ChatView": {
 		"emptyTitle": "대화를 선택하세요",
@@ -257,7 +258,8 @@
 	"NotificationBell": {
 		"title": "알림",
 		"markAllRead": "모두 읽음",
-		"emptyText": "알림이 없어요"
+		"emptyText": "알림이 없어요",
+		"deleteAriaLabel": "알림 삭제"
 	},
 	"AdminNoticeForm": {
 		"titleLabel": "제목",
@@ -1052,6 +1054,21 @@
 		"noResultsDescription": "검색어나 필터를 조정해보세요.",
 		"noResultsTitle": "조건에 맞는 공고가 없어요",
 		"quoteCountLabel": "견적 {count}"
+	},
+	"QuoteReviewQuoteCard": {
+		"awardedBadge": "계약 확정",
+		"lowestPriceBadge": "최저가",
+		"fastestDeliveryBadge": "최속납기",
+		"representativePrefix": "대표 {name}",
+		"submittedOn": "{date} 제출",
+		"revisedSuffix": "수정됨",
+		"companyHomepage": "기업 홈페이지",
+		"priceLabel": "견적가",
+		"approxPriceIdr": "약 Rp {amount}",
+		"deliveryLabel": "납품 소요",
+		"daysSuffix": "{days}일",
+		"awardButton": "계약 확정",
+		"chatButton": "문의하기"
 	},
 	"QuoteReviewListingTable": {
 		"awardedBadge": "거래 확정",

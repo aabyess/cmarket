@@ -1,9 +1,10 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
 import type { ListingWithQuotes, ReceivedQuote, ListingSummary, BuyerDashboardData, BuyerTradeSummary, BuyerTodo, BuyerActivity, ListingFormData, ListingStatus, Currency } from "@/features/buyer/types";
 import { getExchangeRates, convertCurrency } from "@/libs/exchangeRate";
 import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
 import { formatRelativeTime } from "@/utils/formatRelativeTime";
+import { resolveTranslatedField } from "@/utils/resolveTranslatedField";
 
 async function getSessionUser() {
 	const supabase = await createServerSupabaseClient();
@@ -26,9 +27,10 @@ export async function getBuyerCompanyName(): Promise<string> {
 
 export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 	const { supabase, user } = await getSessionUser();
-	const [t, tRelative] = await Promise.all([
+	const [t, tRelative, locale] = await Promise.all([
 		getTranslations("BuyerDashboardData"),
 		getTranslations("RelativeTime"),
+		getLocale(),
 	]);
 
 	const empty: BuyerDashboardData = {
@@ -44,7 +46,7 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 	const [{ data: listings }, { count: unreadQuoteCount }, { data: recentNotifications }] = await Promise.all([
 		supabase
 			.from("listings")
-			.select("id, title, status, currency, end_date, quotes(price)")
+			.select("id, title, title_source_lang, title_translations, status, currency, end_date, quotes(price)")
 			.eq("user_id", user.id),
 		supabase
 			.from("notifications")
@@ -54,7 +56,9 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 			.eq("is_read", false),
 		supabase
 			.from("notifications")
-			.select("id, type, title, content, created_at")
+			.select(
+				"id, type, title, title_source_lang, title_translations, content, content_source_lang, content_translations, created_at",
+			)
 			.eq("profile_id", user.id)
 			.order("created_at", { ascending: false })
 			.limit(5),
@@ -99,7 +103,7 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 				todo: {
 					id: row.id,
 					listingId: row.id,
-					title: row.title,
+					title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
 					description: t("quotesSummary", { count: quotes.length, price: `${symbol}${lowestPrice.toLocaleString()}` }),
 					deadlineText: daysLeft > 0 ? t("deadlineDays", { days: daysLeft }) : t("deadlineClosed"),
 					actionLabel: t("compareAction"),
@@ -114,8 +118,8 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 	const activities: BuyerActivity[] = (recentNotifications ?? []).map((row) => ({
 		id: row.id,
 		type: row.type === "quote" ? "quote" : "document",
-		title: row.title,
-		description: row.content,
+		title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
+		description: resolveTranslatedField(row.content, row.content_source_lang, row.content_translations, locale),
 		timeText: formatRelativeTime(row.created_at, tRelative),
 	}));
 
@@ -205,10 +209,13 @@ export async function getBuyerTradeSummary(): Promise<BuyerTradeSummary> {
 export async function getBuyerListings(): Promise<ListingSummary[]> {
 	const { supabase, user } = await getSessionUser();
 	if (!user) return [];
+	const locale = await getLocale();
 
 	const { data, error } = await supabase
 		.from("listings")
-		.select("id, title, items, currency, total_budget, budget_public, end_date, status, created_at, category")
+		.select(
+			"id, title, title_source_lang, title_translations, items, currency, total_budget, budget_public, end_date, status, created_at, category",
+		)
 		.eq("user_id", user.id)
 		.order("created_at", { ascending: false });
 
@@ -238,7 +245,7 @@ export async function getBuyerListings(): Promise<ListingSummary[]> {
 
 		return {
 			id: row.id,
-			title: row.title,
+			title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
 			items: row.items,
 			currency: row.currency,
 			totalBudget: Number(row.total_budget ?? 0),
@@ -255,10 +262,13 @@ export async function getBuyerListings(): Promise<ListingSummary[]> {
 export async function getListingsWithQuoteCount(): Promise<ListingWithQuotes[]> {
 	const { supabase, user } = await getSessionUser();
 	if (!user) return [];
+	const locale = await getLocale();
 
 	const { data, error } = await supabase
 		.from("listings")
-		.select("id, title, end_date, status, currency, created_at, quotes(price, delivery_days)")
+		.select(
+			"id, title, title_source_lang, title_translations, end_date, status, currency, created_at, quotes(price, delivery_days)",
+		)
 		.eq("user_id", user.id)
 		.order("end_date", { ascending: true });
 
@@ -269,7 +279,7 @@ export async function getListingsWithQuoteCount(): Promise<ListingWithQuotes[]> 
 
 		return {
 			id: row.id,
-			title: row.title,
+			title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
 			endDate: row.end_date,
 			status: row.status ?? "active",
 			currency: row.currency,
@@ -285,10 +295,13 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 	const supabase = await createServerSupabaseClient();
 	const { createServerAdminClient } = await import("@/libs/supabaseServer");
 	const admin = await createServerAdminClient();
+	const locale = await getLocale();
 
 	const { data, error } = await supabase
 		.from("quotes")
-		.select("id, listing_id, seller_id, price, currency, delivery_days, note, status, created_at, previous_price, previous_delivery_days, revised_at")
+		.select(
+			"id, listing_id, seller_id, price, currency, delivery_days, note, note_source_lang, note_translations, status, created_at, previous_price, previous_delivery_days, revised_at",
+		)
 		.eq("listing_id", listingId)
 		.order("price", { ascending: true });
 
@@ -299,7 +312,9 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 
 	const { data: companies } = await admin
 		.from("companies")
-		.select("profile_id, company_name, representative, address, business_type, business_item")
+		.select(
+			"profile_id, company_name, representative, address, business_type, business_type_source_lang, business_type_translations, business_item, business_item_source_lang, business_item_translations",
+		)
 		.in("profile_id", sellerIds);
 
 	const { data: profiles } = await admin
@@ -323,7 +338,7 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 			currency: row.currency,
 			priceInIdr: convertCurrency(price, row.currency, "IDR", rates),
 			deliveryDays: row.delivery_days,
-			note: row.note ?? "",
+			note: resolveTranslatedField(row.note ?? "", row.note_source_lang, row.note_translations, locale),
 			status: row.status,
 			createdAt: row.created_at,
 			previousPrice: row.previous_price !== null ? Number(row.previous_price) : null,
@@ -334,8 +349,22 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 				companyName: company?.company_name ?? "",
 				representative: company?.representative ?? "",
 				address: company?.address ?? "",
-				businessType: company?.business_type ?? "",
-				businessItem: company?.business_item ?? "",
+				businessType: company
+					? resolveTranslatedField(
+							company.business_type ?? "",
+							company.business_type_source_lang,
+							company.business_type_translations,
+							locale,
+						)
+					: "",
+				businessItem: company
+					? resolveTranslatedField(
+							company.business_item ?? "",
+							company.business_item_source_lang,
+							company.business_item_translations,
+							locale,
+						)
+					: "",
 				logoUrl: profile?.logo_url ?? null,
 			},
 		};

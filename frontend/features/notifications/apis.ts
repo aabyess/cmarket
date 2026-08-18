@@ -8,7 +8,9 @@ export async function getNotifications(): Promise<Notification[]> {
 
 	const { data, error } = await supabase
 		.from("notifications")
-		.select("id, type, quote_id, title, content, is_read, created_at")
+		.select(
+			"id, type, quote_id, title, content, title_source_lang, title_translations, content_source_lang, content_translations, is_read, created_at",
+		)
 		.eq("profile_id", user.id)
 		.order("created_at", { ascending: false })
 		.limit(20);
@@ -20,7 +22,11 @@ export async function getNotifications(): Promise<Notification[]> {
 		type: row.type as Notification["type"],
 		quoteId: row.quote_id,
 		title: row.title,
+		titleSourceLang: row.title_source_lang,
+		titleTranslations: row.title_translations,
 		content: row.content,
+		contentSourceLang: row.content_source_lang,
+		contentTranslations: row.content_translations,
 		isRead: row.is_read,
 		createdAt: row.created_at,
 	}));

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerAdminClient, createServerSupabaseClient } from "@/libs/supabaseServer";
+import { translateFieldServer } from "@/libs/translateFieldServer";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
 	const { logoUrl, categories, bankAccount, company, contact } = await req.json();
@@ -31,13 +32,22 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 	// 사업자등록번호는 받지 않는다. 인보이스·계약서에 찍히는 식별자라
 	// 바뀌면 지난 거래의 상대방이 누구였는지가 흔들린다.
 	if (company) {
+		const [businessTypeTranslation, businessItemTranslation] = await Promise.all([
+			translateFieldServer(company.businessType),
+			translateFieldServer(company.businessItem),
+		]);
+
 		const { error: companyError } = await admin
 			.from("companies")
 			.update({
 				company_name: company.companyName,
 				representative: company.representative,
 				business_type: company.businessType,
+				business_type_source_lang: businessTypeTranslation?.sourceLang ?? null,
+				business_type_translations: businessTypeTranslation?.translations ?? null,
 				business_item: company.businessItem,
+				business_item_source_lang: businessItemTranslation?.sourceLang ?? null,
+				business_item_translations: businessItemTranslation?.translations ?? null,
 				address: company.address,
 			})
 			.eq("profile_id", user.id);

@@ -1,4 +1,5 @@
 import { createClient } from "@/libs/supabase";
+import { translateField } from "@/utils/translateField";
 import { ListingFormData } from "@/features/buyer/types";
 
 const DEFAULT_DEADLINE_DAYS = 7;
@@ -15,9 +16,13 @@ export async function postListing(data: ListingFormData) {
 	const { data: { user }, error: userError } = await supabase.auth.getUser();
 	if (userError || !user) throw new Error("로그인이 필요합니다.");
 
+	const titleTranslation = await translateField(data.title);
+
 	const { error } = await supabase.from("listings").insert({
 		user_id: user.id,
 		title: data.title,
+		title_source_lang: titleTranslation?.sourceLang ?? null,
+		title_translations: titleTranslation?.translations ?? null,
 		category: data.category,
 		description: data.description,
 		items: data.items,
@@ -50,10 +55,14 @@ export async function updateListing(id: string, data: ListingFormData): Promise<
 	const { data: { user }, error: userError } = await supabase.auth.getUser();
 	if (userError || !user) throw new Error("로그인이 필요합니다.");
 
+	const titleTranslation = await translateField(data.title);
+
 	const { error } = await supabase
 		.from("listings")
 		.update({
 			title: data.title,
+			title_source_lang: titleTranslation?.sourceLang ?? null,
+			title_translations: titleTranslation?.translations ?? null,
 			category: data.category,
 			description: data.description,
 			items: data.items,

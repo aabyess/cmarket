@@ -1,9 +1,12 @@
 import { createClient } from "@/libs/supabase";
+import { translateField } from "@/utils/translateField";
 import type { QuoteFormData } from "@/features/seller/types";
 
 // 발주사에게 알림을 남겨야 하는데 그건 남의 행이라 RLS 를 통과하지 못한다.
 // 견적 저장과 알림 생성을 한 곳에서 처리하려고 서버 라우트를 거친다.
 export async function postQuote(listingId: string, data: QuoteFormData): Promise<void> {
+	const noteTranslation = await translateField(data.note);
+
 	const res = await fetch("/api/quote", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
@@ -13,6 +16,8 @@ export async function postQuote(listingId: string, data: QuoteFormData): Promise
 			currency: data.currency,
 			deliveryDays: data.deliveryDays,
 			note: data.note,
+			noteSourceLang: noteTranslation?.sourceLang ?? null,
+			noteTranslations: noteTranslation?.translations ?? null,
 		}),
 	});
 
@@ -33,6 +38,8 @@ export async function updateQuote(quoteId: string, data: QuoteFormData): Promise
 
 	if (fetchError) throw fetchError;
 
+	const noteTranslation = await translateField(data.note);
+
 	const { error } = await supabase
 		.from("quotes")
 		.update({
@@ -40,6 +47,8 @@ export async function updateQuote(quoteId: string, data: QuoteFormData): Promise
 			currency: data.currency,
 			delivery_days: data.deliveryDays,
 			note: data.note,
+			note_source_lang: noteTranslation?.sourceLang ?? null,
+			note_translations: noteTranslation?.translations ?? null,
 			previous_price: current.price,
 			previous_delivery_days: current.delivery_days,
 			revised_at: new Date().toISOString(),

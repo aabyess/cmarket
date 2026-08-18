@@ -1,4 +1,6 @@
+import { getLocale } from "next-intl/server";
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
+import { resolveTranslatedField } from "@/utils/resolveTranslatedField";
 import type { ChatContext, ChatRole, ChatRoom } from "@/features/chat/types";
 
 type QuoteRow = {
@@ -9,13 +11,19 @@ type QuoteRow = {
 	currency: string;
 	delivery_days: number;
 	status: "pending" | "awarded" | "rejected";
-	listings: { title: string; user_id: string } | null;
+	listings: {
+		title: string;
+		title_source_lang: string | null;
+		title_translations: Record<string, string> | null;
+		user_id: string;
+	} | null;
 };
 
 export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 	const supabase = await createServerSupabaseClient();
 	const { data: { user } } = await supabase.auth.getUser();
 	if (!user) return [];
+	const locale = await getLocale();
 
 	let quoteIds: string[] = [];
 
@@ -47,7 +55,9 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 
 	const { data: quotes } = await supabase
 		.from("quotes")
-		.select("id, listing_id, seller_id, price, currency, delivery_days, status, listings(title, user_id)")
+		.select(
+			"id, listing_id, seller_id, price, currency, delivery_days, status, listings(title, title_source_lang, title_translations, user_id)",
+		)
 		.in("id", activeQuoteIds);
 
 	const quoteRows = (quotes ?? []) as unknown as QuoteRow[];
@@ -83,7 +93,14 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 			return {
 				quoteId: quote.id,
 				listingId: quote.listing_id,
-				listingTitle: quote.listings?.title ?? "",
+				listingTitle: quote.listings
+					? resolveTranslatedField(
+							quote.listings.title,
+							quote.listings.title_source_lang,
+							quote.listings.title_translations,
+							locale,
+						)
+					: "",
 				partnerId,
 				partnerName: companyMap.get(partnerId) ?? "",
 				price: Number(quote.price),

@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
 import type { SellerDashboardData } from "@/features/seller/types";
 import type { MyQuote } from "@/features/seller/types";
@@ -6,6 +6,7 @@ import type { ListingDetail, MyQuoteSummary, OpenListing } from "@/features/sell
 import type { Currency } from "@/features/buyer/types";
 import { getExchangeRates, convertCurrency } from "@/libs/exchangeRate";
 import { formatRelativeTime } from "@/utils/formatRelativeTime";
+import { resolveTranslatedField } from "@/utils/resolveTranslatedField";
 
 export async function getSellerCompanyName(): Promise<string> {
 	const supabase = await createServerSupabaseClient();
@@ -43,7 +44,7 @@ export async function getSellerDashboardData(): Promise<SellerDashboardData> {
 			supabase.from("contracts").select("*", { count: "exact", head: true }).eq("seller_id", user.id),
 			supabase
 				.from("quotes")
-				.select("status, created_at, listings(title)")
+				.select("status, created_at, listings(title, title_source_lang, title_translations)")
 				.eq("seller_id", user.id)
 				.order("created_at", { ascending: false })
 				.limit(5),
@@ -53,17 +54,25 @@ export async function getSellerDashboardData(): Promise<SellerDashboardData> {
 	const pendingQuoteCount = quotes?.filter((q) => q.status === "pending").length ?? 0;
 	const awardedQuoteCount = quotes?.filter((q) => q.status === "awarded").length ?? 0;
 
-	const [t, tRelative] = await Promise.all([
+	const [t, tRelative, locale] = await Promise.all([
 		getTranslations("SellerDashboardData"),
 		getTranslations("RelativeTime"),
+		getLocale(),
 	]);
 
 	const activities = (recentQuotes ?? []).map((row) => {
-		const listing = row.listings as unknown as { title: string } | null;
+		const listing = row.listings as unknown as {
+			title: string;
+			title_source_lang: string | null;
+			title_translations: Record<string, string> | null;
+		} | null;
+		const listingTitle = listing
+			? resolveTranslatedField(listing.title, listing.title_source_lang, listing.title_translations, locale)
+			: "";
 		const title =
 			row.status === "awarded"
-				? t("contractConfirmedActivity", { title: listing?.title ?? "" })
-				: t("quoteSubmittedActivity", { title: listing?.title ?? "" });
+				? t("contractConfirmedActivity", { title: listingTitle })
+				: t("quoteSubmittedActivity", { title: listingTitle });
 
 		return { title, timeText: formatRelativeTime(row.created_at, tRelative) };
 	});
@@ -81,11 +90,12 @@ export async function getSellerDashboardData(): Promise<SellerDashboardData> {
 export async function getOpenListings(): Promise<OpenListing[]> {
 	const supabase = await createServerSupabaseClient();
 	const { data: { user } } = await supabase.auth.getUser();
+	const locale = await getLocale();
 
 	const { data, error } = await supabase
 		.from("listings")
 		.select(
-			"id, title, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, created_at, status",
+			"id, title, title_source_lang, title_translations, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, created_at, status",
 		)
 		.order("end_date", { ascending: true });
 
@@ -108,7 +118,7 @@ export async function getOpenListings(): Promise<OpenListing[]> {
 
 		return {
 			id: row.id,
-			title: row.title,
+			title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
 			description: row.description ?? "",
 			items: row.items,
 			currency: row.currency,
@@ -129,11 +139,12 @@ export async function getListingDetail(listingId: string): Promise<ListingDetail
 	const supabase = await createServerSupabaseClient();
 	const { data: { user } } = await supabase.auth.getUser();
 	const rates = await getExchangeRates();
+	const locale = await getLocale();
 
 	const { data, error } = await supabase
 		.from("listings")
 		.select(
-			"id, title, category, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, delivery_address, delivery_address_detail, delivery_days, delivery_method, delivery_timing_mode, delivery_deadline_date, delivery_lat, delivery_lng, attachments, created_at, user_id, status",
+			"id, title, title_source_lang, title_translations, category, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, delivery_address, delivery_address_detail, delivery_days, delivery_method, delivery_timing_mode, delivery_deadline_date, delivery_lat, delivery_lng, attachments, created_at, user_id, status",
 		)
 		.eq("id", listingId)
 		.single();
@@ -171,7 +182,7 @@ export async function getListingDetail(listingId: string): Promise<ListingDetail
 
 	return {
 		id: data.id,
-		title: data.title,
+		title: resolveTranslatedField(data.title, data.title_source_lang, data.title_translations, locale),
 		description: data.description ?? "",
 		items: data.items,
 		currency: data.currency,
@@ -203,11 +214,12 @@ export async function getMyQuotes(): Promise<MyQuote[]> {
 	const supabase = await createServerSupabaseClient();
 	const { data: { user } } = await supabase.auth.getUser();
 	if (!user) return [];
+	const locale = await getLocale();
 
 	const { data, error } = await supabase
 		.from("quotes")
 		.select(
-			"id, listing_id, price, currency, delivery_days, note, status, created_at, listings(title, end_date, user_id)",
+			"id, listing_id, price, currency, delivery_days, note, note_source_lang, note_translations, status, created_at, listings(title, title_source_lang, title_translations, end_date, user_id)",
 		)
 		.eq("seller_id", user.id)
 		.order("created_at", { ascending: false });
@@ -231,19 +243,24 @@ export async function getMyQuotes(): Promise<MyQuote[]> {
 	return data.map((row) => {
 		const listing = row.listings as unknown as {
 			title: string;
+			title_source_lang: string | null;
+			title_translations: Record<string, string> | null;
 			end_date: string;
 			user_id: string;
 		} | null;
+		const listingTitle = listing
+			? resolveTranslatedField(listing.title, listing.title_source_lang, listing.title_translations, locale)
+			: "";
 
 		return {
 			id: row.id,
 			listingId: row.listing_id,
-			listingTitle: listing?.title ?? "",
+			listingTitle,
 			buyerCompanyName: companyMap.get(listing?.user_id ?? "") ?? "",
 			price: Number(row.price),
 			currency: row.currency,
 			deliveryDays: row.delivery_days,
-			note: row.note ?? "",
+			note: resolveTranslatedField(row.note ?? "", row.note_source_lang, row.note_translations, locale),
 			status: row.status,
 			createdAt: row.created_at,
 			listingEndDate: listing?.end_date ?? "",
@@ -276,10 +293,12 @@ export async function getRecommendedListings(): Promise<OpenListing[]> {
 	// end_date 가 null 이면 이 비교가 false 라 자연히 제외된다.
 	const today = new Date().toISOString().slice(0, 10);
 
+	const locale = await getLocale();
+
 	let query = supabase
 		.from("listings")
 		.select(
-			"id, title, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, created_at",
+			"id, title, title_source_lang, title_translations, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, created_at",
 		)
 		.eq("status", "active")
 		.gte("end_date", today)
@@ -302,7 +321,7 @@ export async function getRecommendedListings(): Promise<OpenListing[]> {
 
 		return {
 			id: row.id,
-			title: row.title,
+			title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
 			description: row.description ?? "",
 			items: row.items,
 			currency: row.currency,

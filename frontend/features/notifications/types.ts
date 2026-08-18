@@ -5,7 +5,11 @@ export type Notification = {
 	type: NotificationType;
 	quoteId: string;
 	title: string;
+	titleSourceLang: string | null;
+	titleTranslations: Record<string, string> | null;
 	content: string;
+	contentSourceLang: string | null;
+	contentTranslations: Record<string, string> | null;
 	isRead: boolean;
 	createdAt: string;
 };

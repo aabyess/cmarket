@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerAdminClient, createServerSupabaseClient } from "@/libs/supabaseServer";
+import { translateFieldServer } from "@/libs/translateFieldServer";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-	const { listingId, price, currency, deliveryDays, note } = await req.json();
+	const { listingId, price, currency, deliveryDays, note, noteSourceLang, noteTranslations } = await req.json();
 
 	const supabase = await createServerSupabaseClient();
 	const {
@@ -33,6 +34,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 			currency,
 			delivery_days: deliveryDays,
 			note,
+			note_source_lang: noteSourceLang ?? null,
+			note_translations: noteTranslations ?? null,
 		})
 		.select("id")
 		.single();
@@ -49,12 +52,24 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		.eq("profile_id", user.id)
 		.single();
 
+	const notificationTitle = "새 견적이 도착했어요";
+	const notificationContent = `${company?.company_name ?? "공급기업"} · ${listing.title}`;
+
+	const [titleTranslation, contentTranslation] = await Promise.all([
+		translateFieldServer(notificationTitle),
+		translateFieldServer(notificationContent),
+	]);
+
 	const { error: notificationError } = await admin.from("notifications").insert({
 		profile_id: listing.user_id,
 		type: "quote",
 		quote_id: quote.id,
-		title: "새 견적이 도착했어요",
-		content: `${company?.company_name ?? "공급기업"} · ${listing.title}`,
+		title: notificationTitle,
+		content: notificationContent,
+		title_source_lang: titleTranslation?.sourceLang ?? null,
+		title_translations: titleTranslation?.translations ?? null,
+		content_source_lang: contentTranslation?.sourceLang ?? null,
+		content_translations: contentTranslation?.translations ?? null,
 	});
 
 	// 알림 실패가 견적 제출을 되돌리지는 않는다. 견적은 이미 저장됐고,

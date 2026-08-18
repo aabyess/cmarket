@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter, usePathname } from "@/i18n/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { Bell, Mail, MessageSquare, X } from "lucide-react";
@@ -9,6 +9,7 @@ import { useNotifications, NOTIFICATION_QUERY_KEYS } from "@/features/notificati
 import { markNotificationRead, markAllNotificationsRead, deleteNotification } from "@/features/notifications/apis";
 import { createClient } from "@/libs/supabase";
 import { cn } from "@/utils/cn";
+import { resolveTranslatedField } from "@/utils/resolveTranslatedField";
 import type { Notification } from "@/features/notifications/types";
 
 function formatTime(iso: string): string {
@@ -24,6 +25,7 @@ function formatTime(iso: string): string {
 
 export function NotificationBell(): React.ReactNode {
 	const t = useTranslations("NotificationBell");
+	const locale = useLocale();
 	const router = useRouter();
 	const pathname = usePathname();
 	const queryClient = useQueryClient();
@@ -129,49 +131,59 @@ export function NotificationBell(): React.ReactNode {
 								<p className="text-sm text-[#9CA3AF]">{t("emptyText")}</p>
 							</div>
 						) : (
-							notifications.map((n) => (
-								<div
-									key={n.id}
-									className={cn(
-										"group flex items-start gap-2 px-4 py-3 transition-colors hover:bg-gray-50",
-										!n.isRead && "bg-[#EFF6FF]",
-									)}
-								>
-									<span
+							notifications.map((n) => {
+								const title = resolveTranslatedField(n.title, n.titleSourceLang, n.titleTranslations, locale);
+								const content = resolveTranslatedField(
+									n.content,
+									n.contentSourceLang,
+									n.contentTranslations,
+									locale,
+								);
+
+								return (
+									<div
+										key={n.id}
 										className={cn(
-											"mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full",
-											n.type === "quote" ? "bg-[#EFF6FF]" : "bg-[#F3F4F6]",
+											"group flex items-start gap-2 px-4 py-3 transition-colors hover:bg-gray-50",
+											!n.isRead && "bg-[#EFF6FF]",
 										)}
 									>
-										{n.type === "quote" ? (
-											<Mail size={12} className="text-imsg-blue" />
-										) : (
-											<MessageSquare size={12} className="text-[#6B7280]" />
-										)}
-									</span>
+										<span
+											className={cn(
+												"mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full",
+												n.type === "quote" ? "bg-[#EFF6FF]" : "bg-[#F3F4F6]",
+											)}
+										>
+											{n.type === "quote" ? (
+												<Mail size={12} className="text-imsg-blue" />
+											) : (
+												<MessageSquare size={12} className="text-[#6B7280]" />
+											)}
+										</span>
 
-									<button
-										onClick={() => handleNotificationClick(n)}
-										className="flex min-w-0 flex-1 flex-col gap-0.5 text-left"
-									>
-										<div className="flex items-center justify-between gap-2">
-											<p className="truncate text-sm font-medium text-[#1F2937]">{n.title}</p>
-											<span className="shrink-0 text-xs text-[#9CA3AF]">
-												{formatTime(n.createdAt)}
-											</span>
-										</div>
-										<p className="truncate text-xs text-[#6B7280]">{n.content}</p>
-									</button>
+										<button
+											onClick={() => handleNotificationClick(n)}
+											className="flex min-w-0 flex-1 flex-col gap-0.5 text-left"
+										>
+											<div className="flex items-center justify-between gap-2">
+												<p className="truncate text-sm font-medium text-[#1F2937]">{title}</p>
+												<span className="shrink-0 text-xs text-[#9CA3AF]">
+													{formatTime(n.createdAt)}
+												</span>
+											</div>
+											<p className="truncate text-xs text-[#6B7280]">{content}</p>
+										</button>
 
-									<button
-										onClick={(e) => handleDelete(e, n.id)}
-										aria-label="알림 삭제"
-										className="mt-0.5 shrink-0 text-[#D1D5DB] opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 hover:text-[#9CA3AF]"
-									>
-										<X size={14} />
-									</button>
-								</div>
-							))
+										<button
+											onClick={(e) => handleDelete(e, n.id)}
+											aria-label={t("deleteAriaLabel")}
+											className="mt-0.5 shrink-0 text-[#D1D5DB] opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 hover:text-[#9CA3AF]"
+										>
+											<X size={14} />
+										</button>
+									</div>
+								);
+							})
 						)}
 					</div>
 				</div>

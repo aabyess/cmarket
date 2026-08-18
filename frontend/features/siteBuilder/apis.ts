@@ -1,8 +1,9 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { createServerAdminClient, createServerSupabaseClient } from "@/libs/supabaseServer";
 import { SITE_PAGE_LOCALE, SITE_PAGE_SLUG } from "@/features/siteBuilder/constants";
 import { isBlockArray, normalizeBlocks } from "@/features/siteBuilder/utils";
 import { buildSeedBlocks, buildSeedTranslations } from "@/features/siteBuilder/seed";
+import { resolveTranslatedField } from "@/utils/resolveTranslatedField";
 import type {
 	Block,
 	PublicSite,
@@ -14,14 +15,18 @@ type CompanyRow = {
 	company_name: string | null;
 	representative: string | null;
 	business_type: string | null;
+	business_type_source_lang: string | null;
+	business_type_translations: Record<string, string> | null;
 	business_item: string | null;
+	business_item_source_lang: string | null;
+	business_item_translations: Record<string, string> | null;
 	business_number: string | null;
 	address: string | null;
 	site_tenant_id: string | null;
 };
 
 const COMPANY_COLUMNS =
-	"company_name, representative, business_type, business_item, business_number, address, site_tenant_id";
+	"company_name, representative, business_type, business_type_source_lang, business_type_translations, business_item, business_item_source_lang, business_item_translations, business_number, address, site_tenant_id";
 
 function toCompanyInfo(row: CompanyRow | null): SiteCompanyInfo {
 	return {
@@ -31,6 +36,24 @@ function toCompanyInfo(row: CompanyRow | null): SiteCompanyInfo {
 		businessItem: row?.business_item ?? "",
 		businessNumber: row?.business_number ?? "",
 		address: row?.address ?? "",
+	};
+}
+
+function toPublicCompanyInfo(row: CompanyRow | null, locale: string): SiteCompanyInfo {
+	return {
+		...toCompanyInfo(row),
+		businessType: resolveTranslatedField(
+			row?.business_type ?? "",
+			row?.business_type_source_lang ?? null,
+			row?.business_type_translations ?? null,
+			locale,
+		),
+		businessItem: resolveTranslatedField(
+			row?.business_item ?? "",
+			row?.business_item_source_lang ?? null,
+			row?.business_item_translations ?? null,
+			locale,
+		),
 	};
 }
 
@@ -178,6 +201,7 @@ export async function getSiteEditorData(): Promise<SiteEditorData | null> {
 
 export async function getPublicSite(profileId: string): Promise<PublicSite | null> {
 	const admin = await createServerAdminClient();
+	const locale = await getLocale();
 
 	const { data: company } = await admin
 		.from("companies")
@@ -194,7 +218,7 @@ export async function getPublicSite(profileId: string): Promise<PublicSite | nul
 		.maybeSingle();
 
 	const base: PublicSite = {
-		company: toCompanyInfo(company),
+		company: toPublicCompanyInfo(company, locale),
 		logoUrl: profile?.logo_url ?? "",
 		blocks: [],
 		isPublished: false,

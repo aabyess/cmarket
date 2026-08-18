@@ -1,15 +1,15 @@
 import { Link } from "@/i18n/navigation";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 import type { ContactProps } from "@/features/siteBuilder/types";
 
 type SiteRendererContactProps = {
 	props: ContactProps;
 };
 
-export async function SiteRendererContact({
+export function SiteRendererContact({
 	props,
-}: SiteRendererContactProps): Promise<React.JSX.Element> {
-	const t = await getTranslations("SiteRendererContact");
+}: SiteRendererContactProps): React.JSX.Element {
+	const t = useTranslations("SiteRendererContact");
 	const items = [
 		{ label: t("managerLabel"), value: props.managerName },
 		{ label: t("emailLabel"), value: props.email },

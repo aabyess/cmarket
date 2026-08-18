@@ -1,10 +1,18 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { useTranslations } from "next-intl";
+import { useEffect, useRef, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { Languages, Loader2 } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { resolveTranslatedField } from "@/utils/resolveTranslatedField";
 import { QuotePdfCard } from "@/features/chat/components/QuotePdfCard";
 import type { ChatMessage } from "@/features/chat/types";
+
+const DEEPL_TARGET: Record<string, string> = {
+	ko: "KO",
+	id: "ID",
+	en: "EN-US",
+};
 
 function formatTime(iso: string): string {
 	const date = new Date(iso);
@@ -19,9 +27,12 @@ type ChatMessageListProps = {
 
 export function ChatMessageList({ messages, myId, quoteId }: ChatMessageListProps): React.ReactNode {
 	const t = useTranslations("ChatMessageList");
+	const locale = useLocale();
 	const bottomRef = useRef<HTMLDivElement>(null);
 	const prevLengthRef = useRef(0);
 	const isInitialRef = useRef(true);
+	const [manualTranslations, setManualTranslations] = useState<Record<string, string>>({});
+	const [translatingIds, setTranslatingIds] = useState<Record<string, boolean>>({});
 
 	useEffect(() => {
 		if (isInitialRef.current) {
@@ -34,6 +45,25 @@ export function ChatMessageList({ messages, myId, quoteId }: ChatMessageListProp
 		}
 		prevLengthRef.current = messages.length;
 	}, [messages.length]);
+
+	async function handleManualTranslate(messageId: string, content: string): Promise<void> {
+		setTranslatingIds((prev) => ({ ...prev, [messageId]: true }));
+		try {
+			const res = await fetch("/api/translate", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ text: content, targetLang: DEEPL_TARGET[locale] ?? "EN-US" }),
+			});
+			const data = await res.json();
+			if (data.translatedText) {
+				setManualTranslations((prev) => ({ ...prev, [messageId]: data.translatedText }));
+			}
+		} catch {
+			// 번역 실패해도 원문은 계속 보인다
+		} finally {
+			setTranslatingIds((prev) => ({ ...prev, [messageId]: false }));
+		}
+	}
 
 	const lastReadMineId = [...messages]
 		.reverse()
@@ -61,7 +91,18 @@ export function ChatMessageList({ messages, myId, quoteId }: ChatMessageListProp
 					const sameAsNext = next?.senderId === message.senderId;
 					const showTime = !sameAsNext;
 					const isLastMine = isMine && message.id === lastReadMineId;
-					const hasTranslation = !isMine && Boolean(message.translatedContent);
+
+					const autoTranslated = resolveTranslatedField(
+						message.content,
+						message.sourceLang,
+						message.translations,
+						locale,
+					);
+					const hasAutoTranslation = !isMine && autoTranslated !== message.content;
+					const manualTranslation = manualTranslations[message.id];
+					const displayText = hasAutoTranslation ? autoTranslated : (manualTranslation ?? message.content);
+					const showOriginal = !isMine && (hasAutoTranslation || Boolean(manualTranslation));
+					const showTranslateButton = !isMine && !hasAutoTranslation && !manualTranslation;
 
 					return (
 						<div key={message.id} className={sameAsPrev ? "mt-0.5" : "mt-3"}>
@@ -73,7 +114,7 @@ export function ChatMessageList({ messages, myId, quoteId }: ChatMessageListProp
 								</div>
 							)}
 
-<div className={cn("flex items-end gap-1.5", isMine ? "flex-row-reverse" : "flex-row")}>
+							<div className={cn("flex items-end gap-1.5", isMine ? "flex-row-reverse" : "flex-row")}>
 								{/* 버블 + 번역 */}
 								{(message.messageType === "quote_pdf" || message.messageType === "invoice_pdf") && message.attachmentUrl ? (
 									<QuotePdfCard
@@ -92,15 +133,27 @@ export function ChatMessageList({ messages, myId, quoteId }: ChatMessageListProp
 													: "bg-[#E9E9EB] text-black",
 											)}
 										>
-											<p className="whitespace-pre-wrap break-words">
-												{hasTranslation ? message.translatedContent : message.content}
-											</p>
+											<p className="whitespace-pre-wrap break-words">{displayText}</p>
 										</div>
 										{/* 번역 원문은 별도의 옅은 말풍선으로 분리 */}
-										{hasTranslation && (
+										{showOriginal && (
 											<div className="w-fit rounded-[16px] bg-black/5 px-3 py-1.5 text-xs italic text-imsg-secondary">
 												<p className="whitespace-pre-wrap break-words">{message.content}</p>
 											</div>
+										)}
+										{showTranslateButton && (
+											<button
+												onClick={() => handleManualTranslate(message.id, message.content)}
+												disabled={translatingIds[message.id]}
+												className="flex items-center gap-1 text-xs text-imsg-secondary hover:text-imsg-blue disabled:opacity-60"
+											>
+												{translatingIds[message.id] ? (
+													<Loader2 size={11} className="animate-spin" />
+												) : (
+													<Languages size={11} />
+												)}
+												{t("translateButton")}
+											</button>
 										)}
 									</div>
 								)}

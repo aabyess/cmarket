@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { cva } from "class-variance-authority";
 import { SafeImage } from "@/components/commons/SafeImage";
@@ -50,6 +51,12 @@ const badge = cva("flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font
 	defaultVariants: { tone: "price" },
 });
 
+const DATE_LOCALE: Record<string, string> = {
+	ko: "ko-KR",
+	id: "id-ID",
+	en: "en-US",
+};
+
 export function QuoteReviewQuoteCard({
 	quote,
 	backHref,
@@ -61,6 +68,8 @@ export function QuoteReviewQuoteCard({
 	onStartChat,
 	onRequestAward,
 }: QuoteReviewQuoteCardProps): React.JSX.Element {
+	const t = useTranslations("QuoteReviewQuoteCard");
+	const locale = useLocale();
 	const symbol = CURRENCY_SYMBOL[quote.currency];
 	const isAwarded = quote.status === "awarded";
 
@@ -76,17 +85,17 @@ export function QuoteReviewQuoteCard({
 	return (
 		<div className={card({ awarded: isAwarded })}>
 			<div className="mb-3 flex flex-wrap items-center gap-1.5">
-				{isAwarded && <span className={badge({ tone: "awarded" })}>계약 확정</span>}
+				{isAwarded && <span className={badge({ tone: "awarded" })}>{t("awardedBadge")}</span>}
 				{!isAwarded && isLowestPrice && (
 					<span className={badge({ tone: "price" })}>
 						<TrendingDown size={11} />
-						최저가
+						{t("lowestPriceBadge")}
 					</span>
 				)}
 				{!isAwarded && isFastest && (
 					<span className={badge({ tone: "speed" })}>
 						<Truck size={11} />
-						최속납기
+						{t("fastestDeliveryBadge")}
 					</span>
 				)}
 			</div>
@@ -114,21 +123,23 @@ export function QuoteReviewQuoteCard({
 						{quote.seller.companyName}
 					</span>
 					<span className="mt-0.5 block text-xs text-imsg-secondary">
-						대표 {quote.seller.representative || "-"} ·{" "}
-						{new Date(quote.createdAt).toLocaleDateString("ko-KR")} 제출
-						{quote.revisedAt && " · 수정됨"}
+						{t("representativePrefix", { name: quote.seller.representative || "-" })} ·{" "}
+						{t("submittedOn", {
+							date: new Date(quote.createdAt).toLocaleDateString(DATE_LOCALE[locale] ?? "en-US"),
+						})}
+						{quote.revisedAt && ` · ${t("revisedSuffix")}`}
 					</span>
 				</span>
 
 				<span className="flex shrink-0 items-center gap-1 rounded-full border border-[#E5E7EB] px-3 py-1.5 text-xs font-semibold text-[#374151] transition-colors duration-200 group-hover:border-imsg-blue group-hover:bg-white group-hover:text-imsg-blue">
 					<ExternalLink size={11} />
-					기업 홈페이지
+					{t("companyHomepage")}
 				</span>
 			</Link>
 
 			<div className="mb-4 flex flex-wrap items-end gap-x-8 gap-y-3 rounded-xl bg-[#FAFAFC] px-4 py-3.5">
 				<div>
-					<p className="text-xs text-imsg-secondary">견적가</p>
+					<p className="text-xs text-imsg-secondary">{t("priceLabel")}</p>
 					<p
 						className={cn(
 							"text-2xl font-bold tracking-tight",
@@ -138,7 +149,7 @@ export function QuoteReviewQuoteCard({
 					</p>
 					{quote.currency !== "IDR" && quote.priceInIdr !== null && (
 						<p className="text-xs text-imsg-secondary">
-							약 Rp {Math.round(quote.priceInIdr).toLocaleString()}
+							{t("approxPriceIdr", { amount: Math.round(quote.priceInIdr).toLocaleString() })}
 						</p>
 					)}
 					{quote.previousPrice !== null && quote.previousPrice !== quote.price && (
@@ -149,13 +160,13 @@ export function QuoteReviewQuoteCard({
 				</div>
 
 				<div>
-					<p className="text-xs text-imsg-secondary">납품 소요</p>
+					<p className="text-xs text-imsg-secondary">{t("deliveryLabel")}</p>
 					<p
 						className={cn(
 							"text-2xl font-bold tracking-tight",
 							isFastest ? "text-[#16A34A]" : "text-[#0f172a]",
 						)}>
-						{quote.deliveryDays}일
+						{t("daysSuffix", { days: quote.deliveryDays })}
 					</p>
 				</div>
 			</div>
@@ -182,7 +193,7 @@ export function QuoteReviewQuoteCard({
 					disabled={isAwardDisabled || isAwarding}
 					className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] py-2.5 text-sm font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-imsg-surface disabled:cursor-not-allowed disabled:opacity-40">
 					{isAwarding ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
-					계약 확정
+					{t("awardButton")}
 				</button>
 				<button
 					type="button"
@@ -194,7 +205,7 @@ export function QuoteReviewQuoteCard({
 					) : (
 						<MessageSquare size={14} />
 					)}
-					문의하기
+					{t("chatButton")}
 				</button>
 			</div>
 		</div>
