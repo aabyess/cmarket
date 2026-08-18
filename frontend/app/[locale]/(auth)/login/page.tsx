@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
+import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import { motion, AnimatePresence } from "motion/react";
 import { Eye, EyeOff } from "lucide-react";
 import { useLogin } from "@/features/auth/mutations";
 import { SecurityModal } from "@/features/auth/components/SecurityModal";
@@ -16,6 +19,7 @@ const SAVED_USERNAME_KEY = "saved_username";
 export default function LoginPage() {
 	const t = useTranslations("Login");
 	const router = useRouter();
+	const searchParams = useSearchParams();
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [saveUsername, setSaveUsername] = useState(false);
@@ -24,6 +28,7 @@ export default function LoginPage() {
 	const { mutateAsync: login } = useLogin();
 	const [securityStep, setSecurityStep] = useState<"connecting" | "verifying" | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [showExpiredModal, setShowExpiredModal] = useState(false);
 
 	useEffect(() => {
 		const saved = localStorage.getItem(SAVED_USERNAME_KEY);
@@ -31,6 +36,14 @@ export default function LoginPage() {
 			setUsername(saved);
 			setSaveUsername(true);
 		}
+	}, []);
+
+	useEffect(() => {
+		if (searchParams.get("expired") === "1") {
+			setShowExpiredModal(true);
+			router.replace("/login");
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
@@ -69,6 +82,45 @@ export default function LoginPage() {
 	return (
 		<div className="min-h-screen bg-[#f5f5f5] flex items-center justify-center px-4">
 			{securityStep && <SecurityModal step={securityStep} />}
+
+			<AnimatePresence>
+				{showExpiredModal && (
+					<Dialog static open={showExpiredModal} onClose={() => setShowExpiredModal(false)} className="relative z-50">
+						<motion.div
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							transition={{ duration: 0.15 }}
+							className="fixed inset-0 bg-black/40"
+							aria-hidden="true"
+						/>
+						<div className="fixed inset-0 flex items-center justify-center p-4">
+							<DialogPanel className="w-full max-w-sm">
+								<motion.div
+									initial={{ opacity: 0, scale: 0.95, y: 8 }}
+									animate={{ opacity: 1, scale: 1, y: 0 }}
+									exit={{ opacity: 0, scale: 0.95, y: 8 }}
+									transition={{ duration: 0.18, ease: "easeOut" }}
+									className="rounded-2xl bg-white p-6 shadow-xl"
+								>
+									<DialogTitle className="text-base font-semibold text-[#1F2937]">
+										{t("sessionExpiredTitle")}
+									</DialogTitle>
+									<p className="mt-2 text-sm leading-relaxed text-[#6B7280]">
+										{t("sessionExpiredDescription")}
+									</p>
+									<button
+										onClick={() => setShowExpiredModal(false)}
+										className="mt-6 w-full rounded-lg bg-imsg-blue py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB]"
+									>
+										{t("sessionExpiredConfirm")}
+									</button>
+								</motion.div>
+							</DialogPanel>
+						</div>
+					</Dialog>
+				)}
+			</AnimatePresence>
 
 			<div className="fixed right-4 top-4">
 				<LanguageSwitcher />

@@ -109,7 +109,10 @@
 		"noAccount": "계정이 없으신가요?",
 		"signup": "회원가입하기",
 		"supportNotice": "솔루션 문의는 전문 컨설턴트가 도와드립니다.",
-		"supportPhone": "고객센터 02-742-9217"
+		"supportPhone": "고객센터 02-742-9217",
+		"sessionExpiredTitle": "세션이 만료됐어요",
+		"sessionExpiredDescription": "장시간 활동이 없어 자동으로 로그아웃됐어요. 다시 로그인해 주세요.",
+		"sessionExpiredConfirm": "확인"
 	},
 	"SignupCountrySelector": {
 		"step": "1 / 4",

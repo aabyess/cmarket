@@ -109,7 +109,10 @@
 		"noAccount": "Belum punya akun?",
 		"signup": "Daftar",
 		"supportNotice": "Konsultan profesional kami siap membantu pertanyaan solusi Anda.",
-		"supportPhone": "Pusat layanan pelanggan 02-742-9217"
+		"supportPhone": "Pusat layanan pelanggan 02-742-9217",
+		"sessionExpiredTitle": "Sesi Anda telah berakhir",
+		"sessionExpiredDescription": "Anda logout otomatis karena tidak ada aktivitas dalam waktu lama. Silakan login kembali.",
+		"sessionExpiredConfirm": "Oke"
 	},
 	"SignupCountrySelector": {
 		"step": "1 / 4",
