@@ -155,9 +155,9 @@ export function ContractListTable({
 												<button
 													onClick={() => onRequestDeliveryConfirm(contract.id)}
 													disabled={loadingId === contract.id}
-													title={t("confirmDeliveryTitle")}
-													className="flex size-8 items-center justify-center rounded-lg border border-[#BBF7D0] bg-[#F0FDF4] text-[#16A34A] transition-colors hover:bg-[#DCFCE7] disabled:opacity-60">
+													className="flex items-center gap-1 rounded-lg border border-[#BBF7D0] bg-[#F0FDF4] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#16A34A] transition-colors hover:bg-[#DCFCE7] disabled:opacity-60">
 													<PackageCheck size={14} />
+													{t("confirmDeliveryTitle")}
 												</button>
 											)}
 											{contract.deliveryConfirmedAt && (
