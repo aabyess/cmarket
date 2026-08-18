@@ -125,6 +125,18 @@
 		"addressDetailPlaceholder": "Enter detailed address (optional)",
 		"categoryLabel": "Business Type",
 		"categoryPlaceholder": "e.g. Manufacturing",
+		"categories": {
+			"manufacturing": "Manufacturing",
+			"construction": "Construction",
+			"tradeDistribution": "Trade/Distribution",
+			"services": "Services",
+			"agriculture": "Agriculture/Fishery",
+			"mining": "Mining",
+			"itTech": "IT/Technology",
+			"healthcare": "Healthcare",
+			"education": "Education",
+			"other": "Other"
+		},
 		"itemLabel": "Business Item",
 		"itemPlaceholder": "e.g. Office equipment manufacturing",
 		"submit": "Complete Registration",
@@ -646,7 +658,28 @@
 		"deleteTable": "Delete Table"
 	},
 	"UnitSelect": {
-		"placeholder": "Unit"
+		"placeholder": "Unit",
+		"descriptions": {
+			"EA": "Each",
+			"SET": "Set",
+			"BOX": "Box",
+			"식": "Lump sum",
+			"건": "Case/Task",
+			"명": "Person",
+			"회": "Times",
+			"일": "Day/Period",
+			"개월": "Month(s)",
+			"조": "Group/Set",
+			"벌": "Clothing/Set",
+			"권": "Book/Document",
+			"부": "Document/Print",
+			"포": "Packaging unit",
+			"KG": "Kilogram",
+			"TON": "Ton",
+			"L": "Liter",
+			"M": "Meter",
+			"M2": "Square meter"
+		}
 	},
 	"ListingBrowse": {
 		"tabAll": "All",
@@ -1166,6 +1199,7 @@
 		"emptyDescription": "Once you exchange quotes, you can chat here."
 	},
 	"ChatRoomPanel": {
+		"backToListAria": "Back to chat list",
 		"statusAwarded": "Contract Confirmed",
 		"statusRejected": "Closed",
 		"awardButton": "Confirm",
@@ -1398,6 +1432,18 @@
 		"addressDetailPlaceholder": "Enter detailed address (optional)",
 		"categoryLabel": "Business Type",
 		"categoryPlaceholder": "e.g. Services",
+		"categories": {
+			"manufacturing": "Manufacturing",
+			"construction": "Construction",
+			"tradeDistribution": "Trade/Distribution",
+			"services": "Services",
+			"agriculture": "Agriculture/Fishery",
+			"mining": "Mining",
+			"itTech": "IT/Technology",
+			"healthcare": "Healthcare",
+			"education": "Education",
+			"other": "Other"
+		},
 		"itemLabel": "Business Item",
 		"itemPlaceholder": "e.g. Software development",
 		"submit": "Complete Registration",

@@ -22,10 +22,17 @@ const PROVINSI_LIST = [
   "Papua Barat", "Papua",
 ];
 
-const BUSINESS_CATEGORIES = [
-  "제조업 (Manufaktur)", "건설업 (Konstruksi)", "무역/유통 (Perdagangan)",
-  "서비스업 (Jasa)", "농업/어업 (Pertanian/Perikanan)", "광업 (Pertambangan)",
-  "IT/기술 (Teknologi)", "의료/보건 (Kesehatan)", "교육 (Pendidikan)", "기타 (Lainnya)",
+const BUSINESS_CATEGORIES: { key: string; value: string }[] = [
+  { key: "manufacturing", value: "제조업 (Manufaktur)" },
+  { key: "construction", value: "건설업 (Konstruksi)" },
+  { key: "tradeDistribution", value: "무역/유통 (Perdagangan)" },
+  { key: "services", value: "서비스업 (Jasa)" },
+  { key: "agriculture", value: "농업/어업 (Pertanian/Perikanan)" },
+  { key: "mining", value: "광업 (Pertambangan)" },
+  { key: "itTech", value: "IT/기술 (Teknologi)" },
+  { key: "healthcare", value: "의료/보건 (Kesehatan)" },
+  { key: "education", value: "교육 (Pendidikan)" },
+  { key: "other", value: "기타 (Lainnya)" },
 ];
 
 const EMAIL_DOMAINS = ["gmail.com", "yahoo.com", "outlook.com", "직접 입력"];
@@ -688,7 +695,7 @@ export function SignupInfoIndonesia() {
                   >
                     <option value="">{t("categoryPlaceholder")}</option>
                     {BUSINESS_CATEGORIES.map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
+                      <option key={cat.key} value={cat.value}>{t(`categories.${cat.key}`)}</option>
                     ))}
                   </select>
                 </Field>
