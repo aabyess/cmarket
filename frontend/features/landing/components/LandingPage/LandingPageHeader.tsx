@@ -7,21 +7,22 @@ export async function LandingPageHeader(): Promise<React.JSX.Element> {
 	const t = await getTranslations("Landing");
 
 	return (
-		<header className="sticky top-0 z-40 border-b border-[#E5E7EB] bg-white/80 backdrop-blur">
+		<header className="border-landing-line bg-landing-paper/90 sticky top-0 z-40 border-b backdrop-blur">
 			<div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-				<Link href="/" className="text-lg font-bold text-[#1F2937]">
-					Mitra<span className="text-imsg-blue">Pay</span>
+				<Link href="/" className="flex items-center gap-1.5 text-lg font-bold tracking-tight">
+					MitraPay
+					<span aria-hidden className="bg-landing-seal mt-1 size-1.5 rounded-[1px]" />
 				</Link>
 				<div className="flex items-center gap-2">
 					<LanguageSwitcher />
 					<Link
 						href="/login"
-						className="rounded-lg px-3.5 py-2 text-sm font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
+						className="text-landing-dim hover:text-landing-ink rounded-md px-3.5 py-2 text-sm font-medium transition-colors">
 						{t("headerLogin")}
 					</Link>
 					<Link
 						href="/signup"
-						className="bg-imsg-blue rounded-lg px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB]">
+						className="bg-landing-ink text-landing-paper hover:bg-landing-ink/90 rounded-md px-4 py-2 text-sm font-semibold transition-colors">
 						{t("headerSignup")}
 					</Link>
 				</div>

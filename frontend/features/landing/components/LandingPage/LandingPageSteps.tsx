@@ -1,42 +1,53 @@
 // features/landing/components/LandingPage/LandingPageSteps.tsx
 import { getTranslations } from "next-intl/server";
-import { ClipboardList, Scale, FileCheck, Banknote, PackageCheck } from "lucide-react";
 import { LandingPageReveal } from "@/features/landing/components/LandingPage/LandingPageReveal";
 
-const STEP_ICONS = [ClipboardList, Scale, FileCheck, Banknote, PackageCheck];
+/** 각 단계에서 실제로 만들어지는 무역 문서 코드 (BAST = 인니 수령확인서) */
+const STEP_DOC_CODES = ["RFQ", "QUOTATION", "CONTRACT", "INVOICE", "BAST"];
 
 export async function LandingPageSteps(): Promise<React.JSX.Element> {
 	const t = await getTranslations("Landing");
 	const steps = [1, 2, 3, 4, 5].map((n, i) => ({
-		Icon: STEP_ICONS[i],
+		code: STEP_DOC_CODES[i],
 		title: t(`step${n}Title`),
 		description: t(`step${n}Desc`),
 	}));
 
 	return (
-		<section className="bg-imsg-surface">
-			<div className="mx-auto max-w-6xl px-6 py-16 lg:py-20">
+		<section>
+			<div className="mx-auto max-w-6xl px-6 py-20 lg:py-24">
 				<LandingPageReveal>
-					<h2 className="text-center text-3xl font-bold text-[#1F2937]">{t("stepsTitle")}</h2>
-					<p className="mt-3 text-center text-sm text-[#6B7280]">{t("stepsSubtitle")}</p>
+					<p className="font-landing-doc text-landing-dim text-xs font-medium tracking-[0.18em] uppercase">
+						Paper Trail
+					</p>
+					<h2 className="mt-3 max-w-xl text-3xl font-bold tracking-tight">{t("stepsTitle")}</h2>
+					<p className="text-landing-dim mt-3 text-sm">{t("stepsSubtitle")}</p>
 				</LandingPageReveal>
 
-				<div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+				<ol className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
 					{steps.map((step, i) => (
-						<LandingPageReveal key={step.title} delay={i * 0.08}>
-							<div className="h-full rounded-2xl border border-[#E5E7EB] bg-white p-5">
-								<div className="flex items-center justify-between">
-									<span className="bg-imsg-blue/10 text-imsg-blue flex size-10 items-center justify-center rounded-xl">
-										<step.Icon size={18} />
-									</span>
-									<span className="text-2xl font-bold text-[#E5E7EB]">{i + 1}</span>
+						<li key={step.title}>
+							<LandingPageReveal delay={i * 0.08} className="h-full">
+								<div className="border-landing-line flex h-full flex-col rounded-lg border bg-white">
+									<div className="border-landing-line flex items-center justify-between border-b border-dashed px-4 py-2.5">
+										<span className="font-landing-doc text-[11px] font-semibold tracking-[0.1em]">
+											{step.code}
+										</span>
+										<span className="font-landing-doc text-landing-dim text-[11px]">
+											{`0${i + 1} / 05`}
+										</span>
+									</div>
+									<div className="px-4 pt-3.5 pb-4">
+										<p className="text-sm font-semibold">{step.title}</p>
+										<p className="text-landing-dim mt-1.5 text-xs leading-relaxed">
+											{step.description}
+										</p>
+									</div>
 								</div>
-								<p className="mt-4 text-sm font-semibold text-[#1F2937]">{step.title}</p>
-								<p className="mt-1.5 text-xs leading-relaxed text-[#6B7280]">{step.description}</p>
-							</div>
-						</LandingPageReveal>
+							</LandingPageReveal>
+						</li>
 					))}
-				</div>
+				</ol>
 			</div>
 		</section>
 	);
