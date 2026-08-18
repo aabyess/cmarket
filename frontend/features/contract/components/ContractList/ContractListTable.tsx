@@ -103,29 +103,27 @@ export function ContractListTable({
 													{contract.paymentReceiptUrl ? (
 														<button
 															onClick={() => onViewReceipt(contract.id)}
-															title={t("viewReceiptTitle")}
-															className="text-imsg-blue flex size-8 items-center justify-center rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] transition-colors hover:bg-[#DBEAFE]">
+															className="text-imsg-blue flex items-center gap-1 rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap transition-colors hover:bg-[#DBEAFE]">
 															<FileText size={14} />
+															{t("viewReceiptTitle")}
 														</button>
 													) : null}
 													<button
 														onClick={() => onUploadClick(contract.id)}
 														disabled={uploadingId === contract.id}
-														title={
-															contract.paymentReceiptUrl
-																? t("reuploadReceiptTitle")
-																: t("uploadReceiptTitle")
-														}
-														className="flex size-8 items-center justify-center rounded-lg border border-[#E5E7EB] text-[#374151] transition-colors hover:bg-[#F9FAFB] disabled:opacity-60">
+														className="flex items-center gap-1 rounded-lg border border-[#E5E7EB] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#374151] transition-colors hover:bg-[#F9FAFB] disabled:opacity-60">
 														<Upload size={14} />
+														{contract.paymentReceiptUrl
+															? t("reuploadReceiptTitle")
+															: t("uploadReceiptTitle")}
 													</button>
 													{contract.paymentReceiptUrl ? (
 														<button
 															onClick={() => onRequestReceiptDelete(contract.id)}
 															disabled={loadingId === contract.id}
-															title={t("deleteReceiptTitle")}
-															className="flex size-8 items-center justify-center rounded-lg border border-[#FECACA] bg-[#FEF2F2] text-[#DC2626] transition-colors hover:bg-[#FEE2E2] disabled:opacity-60">
+															className="flex items-center gap-1 rounded-lg border border-[#FECACA] bg-[#FEF2F2] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#DC2626] transition-colors hover:bg-[#FEE2E2] disabled:opacity-60">
 															<Trash2 size={14} />
+															{t("deleteReceiptTitle")}
 														</button>
 													) : null}
 												</>
@@ -135,22 +133,22 @@ export function ContractListTable({
 													{contract.paymentReceiptUrl && (
 														<button
 															onClick={() => onViewReceipt(contract.id)}
-															title={t("confirmReceiptTitle")}
-															className="text-imsg-blue flex size-8 items-center justify-center rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] transition-colors hover:bg-[#DBEAFE]">
+															className="text-imsg-blue flex items-center gap-1 rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap transition-colors hover:bg-[#DBEAFE]">
 															<FileText size={14} />
+															{t("confirmReceiptTitle")}
 														</button>
 													)}
 													<button
 														onClick={() => onRequestConfirm(contract.id)}
 														disabled={loadingId === contract.id || !contract.paymentReceiptUrl}
-														title={t("confirmPaymentTitle")}
 														className={cn(
-															"flex size-8 items-center justify-center rounded-lg transition-colors disabled:opacity-60",
+															"flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium whitespace-nowrap transition-colors disabled:opacity-60",
 															contract.paymentReceiptUrl
 																? "bg-[#16A34A] text-white hover:bg-[#15803D]"
 																: "border border-[#E5E7EB] text-[#9CA3AF]",
 														)}>
 														<CheckCircle2 size={14} />
+														{t("confirmPaymentTitle")}
 													</button>
 												</>
 											)}
