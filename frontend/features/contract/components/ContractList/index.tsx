@@ -73,6 +73,13 @@ export function ContractList({ contracts, role }: ContractListProps) {
 		fileInputRefs.current[contractId]?.click();
 	}
 
+	/** 계약이 어떤 공고에서 나온 것인지 확인할 수 있도록 상세 페이지로 이동한다. */
+	function handleOpenDetail(listingId: string) {
+		router.push(
+			role === "buyer" ? `/buyer/listing/${listingId}` : `/seller/listing-browse/${listingId}`,
+		);
+	}
+
 	async function handleStatusChange(contractId: string, status: "completed" | "cancelled") {
 		setLoadingId(contractId);
 		try {
@@ -263,14 +270,16 @@ export function ContractList({ contracts, role }: ContractListProps) {
 					onRequestCancel={setCancelConfirmId}
 					onRequestDeliveryConfirm={setDeliveryConfirmId}
 					onRequestReceiptDelete={setReceiptDeleteId}
+					onOpenDetail={handleOpenDetail}
 				/>
 			) : (
 				<div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
 					{paginatedContracts.map((contract) => (
 						<div
 							key={contract.id}
+							onClick={() => handleOpenDetail(contract.listingId)}
 							className={cn(
-								"rounded-2xl border border-[#E5E7EB] bg-white p-6 transition-opacity",
+								"cursor-pointer rounded-2xl border border-[#E5E7EB] bg-white p-6 transition-all hover:border-[#BFDBFE] hover:shadow-sm",
 								contract.status !== "ongoing" && "opacity-75",
 							)}>
 							{/* 헤더 */}
@@ -356,9 +365,9 @@ export function ContractList({ contracts, role }: ContractListProps) {
 									</div>
 								)}
 
-							{/* 액션 버튼 */}
+							{/* 액션 버튼 — 클릭이 카드 이동으로 번지지 않게 막는다 */}
 							{contract.status === "ongoing" && (
-								<div className="flex flex-wrap gap-2">
+								<div className="flex flex-wrap gap-2" onClick={(e) => e.stopPropagation()}>
 									{/* Buyer 버튼 */}
 									{role === "buyer" && (
 										<>
@@ -442,7 +451,10 @@ export function ContractList({ contracts, role }: ContractListProps) {
 								contract.status !== "cancelled" &&
 								!contract.deliveryConfirmedAt && (
 									<button
-										onClick={() => setDeliveryConfirmId(contract.id)}
+										onClick={(e) => {
+											e.stopPropagation();
+											setDeliveryConfirmId(contract.id);
+										}}
 										disabled={loadingId === contract.id}
 										className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-[#BBF7D0] bg-[#F0FDF4] py-2.5 text-xs font-semibold text-[#16A34A] transition-colors hover:bg-[#DCFCE7] disabled:opacity-60">
 										<PackageCheck size={14} />

@@ -28,6 +28,7 @@ type ContractListTableProps = {
 	onRequestCancel: (contractId: string) => void;
 	onRequestDeliveryConfirm: (contractId: string) => void;
 	onRequestReceiptDelete: (contractId: string) => void;
+	onOpenDetail: (listingId: string) => void;
 };
 
 export function ContractListTable({
@@ -41,6 +42,7 @@ export function ContractListTable({
 	onRequestCancel,
 	onRequestDeliveryConfirm,
 	onRequestReceiptDelete,
+	onOpenDetail,
 }: ContractListTableProps): React.ReactNode {
 	const t = useTranslations("ContractListTable");
 	const statusLabels: Record<ContractStatus, string> = {
@@ -68,7 +70,11 @@ export function ContractListTable({
 						{contracts.map((contract) => (
 							<tr
 								key={contract.id}
-								className={cn("transition-colors", contract.status !== "ongoing" && "opacity-75")}>
+								onClick={() => onOpenDetail(contract.listingId)}
+								className={cn(
+									"cursor-pointer transition-colors hover:bg-[#F9FAFB]",
+									contract.status !== "ongoing" && "opacity-75",
+								)}>
 								<td className="px-4 py-3 whitespace-nowrap">
 									<span
 										className={cn(
@@ -93,7 +99,8 @@ export function ContractListTable({
 								<td className="px-4 py-3 text-[#9CA3AF]">
 									{new Date(contract.createdAt).toLocaleDateString("ko-KR")}
 								</td>
-								<td className="px-4 py-3">
+								{/* 액션 칸 — 버튼 클릭이 행 이동으로 번지지 않게 막는다 */}
+								<td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
 									{contract.status === "cancelled" ? (
 										<span className="block text-right text-xs text-[#9CA3AF]">-</span>
 									) : (
