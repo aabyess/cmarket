@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { CheckCircle2, FileText, Upload, PackageCheck } from "lucide-react";
+import { CheckCircle2, FileText, Upload, PackageCheck, Trash2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { Contract, ContractStatus } from "@/features/contract/types";
 
@@ -27,6 +27,7 @@ type ContractListTableProps = {
 	onRequestConfirm: (contractId: string) => void;
 	onRequestCancel: (contractId: string) => void;
 	onRequestDeliveryConfirm: (contractId: string) => void;
+	onRequestReceiptDelete: (contractId: string) => void;
 };
 
 export function ContractListTable({
@@ -39,6 +40,7 @@ export function ContractListTable({
 	onRequestConfirm,
 	onRequestCancel,
 	onRequestDeliveryConfirm,
+	onRequestReceiptDelete,
 }: ContractListTableProps): React.ReactNode {
 	const t = useTranslations("ContractListTable");
 	const statusLabels: Record<ContractStatus, string> = {
@@ -117,6 +119,15 @@ export function ContractListTable({
 														className="flex size-8 items-center justify-center rounded-lg border border-[#E5E7EB] text-[#374151] transition-colors hover:bg-[#F9FAFB] disabled:opacity-60">
 														<Upload size={14} />
 													</button>
+													{contract.paymentReceiptUrl ? (
+														<button
+															onClick={() => onRequestReceiptDelete(contract.id)}
+															disabled={loadingId === contract.id}
+															title={t("deleteReceiptTitle")}
+															className="flex size-8 items-center justify-center rounded-lg border border-[#FECACA] bg-[#FEF2F2] text-[#DC2626] transition-colors hover:bg-[#FEE2E2] disabled:opacity-60">
+															<Trash2 size={14} />
+														</button>
+													) : null}
 												</>
 											)}
 											{contract.status === "ongoing" && role === "seller" && (

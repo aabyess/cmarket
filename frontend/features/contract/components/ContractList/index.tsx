@@ -14,6 +14,7 @@ import {
 	FileText,
 	Truck,
 	PackageCheck,
+	Trash2,
 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
@@ -62,6 +63,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 	const [confirmId, setConfirmId] = useState<string | null>(null);
 	const [cancelConfirmId, setCancelConfirmId] = useState<string | null>(null);
 	const [deliveryConfirmId, setDeliveryConfirmId] = useState<string | null>(null);
+	const [receiptDeleteId, setReceiptDeleteId] = useState<string | null>(null);
 	const [viewMode, setViewMode] = useState<ViewMode>("list");
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(10);
@@ -113,6 +115,28 @@ export function ContractList({ contracts, role }: ContractListProps) {
 		} finally {
 			setLoadingId(null);
 			setDeliveryConfirmId(null);
+		}
+	}
+
+	async function handleReceiptDelete(contractId: string) {
+		setLoadingId(contractId);
+		try {
+			const res = await fetch("/api/contract/receipt", {
+				method: "DELETE",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ contractId }),
+			});
+			if (!res.ok) {
+				const { error } = await res.json();
+				throw new Error(error);
+			}
+			router.refresh();
+		} catch (err) {
+			console.error(err);
+			alert(t("receiptDeleteErrorMessage"));
+		} finally {
+			setLoadingId(null);
+			setReceiptDeleteId(null);
 		}
 	}
 
@@ -238,6 +262,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 					onRequestConfirm={setConfirmId}
 					onRequestCancel={setCancelConfirmId}
 					onRequestDeliveryConfirm={setDeliveryConfirmId}
+					onRequestReceiptDelete={setReceiptDeleteId}
 				/>
 			) : (
 				<div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -352,6 +377,13 @@ export function ContractList({ contracts, role }: ContractListProps) {
 														<Upload size={14} />
 														{uploadingId === contract.id ? t("uploading") : t("reupload")}
 													</button>
+													<button
+														onClick={() => setReceiptDeleteId(contract.id)}
+														disabled={loadingId === contract.id}
+														className="flex items-center justify-center gap-1.5 rounded-xl border border-[#FECACA] bg-[#FEF2F2] px-3 py-2.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEE2E2] disabled:opacity-60">
+														<Trash2 size={14} />
+														{t("deleteReceipt")}
+													</button>
 												</>
 											) : (
 												<button
@@ -452,6 +484,17 @@ export function ContractList({ contracts, role }: ContractListProps) {
 				isLoading={loadingId === deliveryConfirmId}
 				onConfirm={() => deliveryConfirmId && handleDeliveryConfirm(deliveryConfirmId)}
 				onClose={() => setDeliveryConfirmId(null)}
+			/>
+
+			<ConfirmModal
+				isOpen={receiptDeleteId !== null}
+				title={t("deleteReceiptModalTitle")}
+				description={t("deleteReceiptModalDescription")}
+				confirmLabel={t("deleteReceipt")}
+				variant="danger"
+				isLoading={loadingId === receiptDeleteId}
+				onConfirm={() => receiptDeleteId && handleReceiptDelete(receiptDeleteId)}
+				onClose={() => setReceiptDeleteId(null)}
 			/>
 
 			<ConfirmModal
