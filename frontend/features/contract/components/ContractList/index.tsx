@@ -403,12 +403,14 @@ export function ContractList({ contracts, role }: ContractListProps) {
 													{uploadingId === contract.id ? t("uploading") : t("uploadReceipt")}
 												</button>
 											)}
-											<button
-												onClick={() => setCancelConfirmId(contract.id)}
-												disabled={loadingId === contract.id}
-												className="flex-1 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60">
-												{t("cancelContract")}
-											</button>
+											{!contract.paymentReceiptUrl && (
+												<button
+													onClick={() => setCancelConfirmId(contract.id)}
+													disabled={loadingId === contract.id}
+													className="flex-1 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60">
+													{t("cancelContract")}
+												</button>
+											)}
 										</>
 									)}
 
@@ -435,12 +437,14 @@ export function ContractList({ contracts, role }: ContractListProps) {
 												<CheckCircle2 size={14} />
 												{loadingId === contract.id ? t("processing") : t("confirmPayment")}
 											</button>
-											<button
-												onClick={() => setCancelConfirmId(contract.id)}
-												disabled={loadingId === contract.id}
-												className="flex-1 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60">
-												{t("cancelContract")}
-											</button>
+											{!contract.paymentReceiptUrl && (
+												<button
+													onClick={() => setCancelConfirmId(contract.id)}
+													disabled={loadingId === contract.id}
+													className="flex-1 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60">
+													{t("cancelContract")}
+												</button>
+											)}
 										</>
 									)}
 								</div>

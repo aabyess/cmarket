@@ -41,8 +41,7 @@ export function ContractListTabs({
 						className={cn(
 							"flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors",
 							isActive ? "bg-imsg-blue text-white" : "text-[#374151] hover:bg-[#F9FAFB]",
-						)}
-					>
+						)}>
 						{tabLabels[tabValue]}
 						<span className={cn("text-xs", isActive ? "text-white/70" : "text-[#9CA3AF]")}>
 							{counts[tabValue]}
