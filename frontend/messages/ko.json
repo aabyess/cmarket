@@ -277,7 +277,10 @@
 		"defaultFileName": "견적서.pdf",
 		"opening": "여는 중...",
 		"openHint": "견적서 · 탭하여 새 창에서 보기",
-		"loadError": "문서를 여는 데 실패했습니다."
+		"loadError": "문서를 여는 데 실패했습니다.",
+		"originalBadge": "원본 문서",
+		"translationBadge": "번역본 · 참고용",
+		"translationHint": "정확한 금액·조건은 원본 문서를 기준으로 확인해주세요."
 	},
 	"QuotePdfDocument": {
 		"fileNamePrefix": "견적서",

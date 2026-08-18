@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Mail } from "lucide-react";
 import { QuoteReviewQuoteCard } from "@/features/buyer/components/QuoteReview/QuoteReviewQuoteCard";
@@ -19,7 +19,6 @@ type QuoteReviewProps = {
 
 export function QuoteReview({ quotes, backHref }: QuoteReviewProps): React.JSX.Element {
 	const t = useTranslations("QuoteReview");
-	const locale = useLocale();
 	const router = useRouter();
 	const [startingId, setStartingId] = useState<string | null>(null);
 	const [awardingId, setAwardingId] = useState<string | null>(null);
@@ -38,7 +37,7 @@ export function QuoteReview({ quotes, backHref }: QuoteReviewProps): React.JSX.E
 			await fetch("/api/chat/generate-quote-pdf", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ quoteId, locale }),
+				body: JSON.stringify({ quoteId, sendPair: true }),
 			});
 			await startChat(quoteId, {
 				price: quote?.price ?? 0,

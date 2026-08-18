@@ -1329,7 +1329,10 @@
 		"defaultFileName": "Quote.pdf",
 		"opening": "Opening...",
 		"openHint": "Quote · Tap to open in a new window",
-		"loadError": "Failed to open the document."
+		"loadError": "Failed to open the document.",
+		"originalBadge": "Original Document",
+		"translationBadge": "Translation · Reference Only",
+		"translationHint": "For accurate amounts and terms, please check the original document."
 	},
 	"QuotePdfDocument": {
 		"fileNamePrefix": "Quote",

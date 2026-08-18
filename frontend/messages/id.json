@@ -277,7 +277,10 @@
 		"defaultFileName": "Penawaran.pdf",
 		"opening": "Membuka...",
 		"openHint": "Penawaran · Ketuk untuk membuka di jendela baru",
-		"loadError": "Gagal membuka dokumen."
+		"loadError": "Gagal membuka dokumen.",
+		"originalBadge": "Dokumen Asli",
+		"translationBadge": "Terjemahan · Referensi",
+		"translationHint": "Untuk jumlah dan ketentuan yang akurat, silakan periksa dokumen asli."
 	},
 	"QuotePdfDocument": {
 		"fileNamePrefix": "Penawaran",
