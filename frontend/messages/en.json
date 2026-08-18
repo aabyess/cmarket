@@ -1163,7 +1163,9 @@
 		"title": "Chat",
 		"searchPlaceholder": "Search",
 		"emptyTitle": "No conversations yet",
-		"emptyDescription": "Once you exchange quotes, you can chat here."
+		"emptyDescription": "Once you exchange quotes, you can chat here.",
+		"quotePdfPreview": "📄 Quote",
+		"invoicePdfPreview": "📄 Invoice"
 	},
 	"ChatRoomPanel": {
 		"statusAwarded": "Contract Confirmed",

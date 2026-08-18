@@ -165,7 +165,9 @@
 		"title": "채팅",
 		"searchPlaceholder": "검색",
 		"emptyTitle": "대화가 없어요",
-		"emptyDescription": "견적을 주고받으면 여기에서 대화할 수 있어요."
+		"emptyDescription": "견적을 주고받으면 여기에서 대화할 수 있어요.",
+		"quotePdfPreview": "📄 견적서",
+		"invoicePdfPreview": "📄 인보이스"
 	},
 	"ChatRoomPanel": {
 		"statusAwarded": "계약 확정",
