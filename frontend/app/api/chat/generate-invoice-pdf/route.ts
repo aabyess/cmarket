@@ -91,7 +91,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
 	const fixedMeta = parseInvoiceMeta(existingMessage?.content ?? null);
 
-	const data = await getInvoicePdfData(quoteId, fixedMeta);
+	const data = await getInvoicePdfData(quoteId, locale, fixedMeta);
 	if (!data) {
 		return NextResponse.json({ error: "데이터를 찾을 수 없습니다." }, { status: 404 });
 	}

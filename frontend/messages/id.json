@@ -181,7 +181,8 @@
 	},
 	"ChatMessageList": {
 		"dateLabel": "{day}/{month}/{year}",
-		"read": "Dibaca"
+		"read": "Dibaca",
+		"translateButton": "Terjemahkan"
 	},
 	"ChatView": {
 		"emptyTitle": "Pilih percakapan",
@@ -257,7 +258,8 @@
 	"NotificationBell": {
 		"title": "Notifikasi",
 		"markAllRead": "Tandai semua dibaca",
-		"emptyText": "Belum ada notifikasi"
+		"emptyText": "Belum ada notifikasi",
+		"deleteAriaLabel": "Hapus notifikasi"
 	},
 	"AdminNoticeForm": {
 		"titleLabel": "Judul",
@@ -1065,6 +1067,21 @@
 		"noResultsDescription": "Coba sesuaikan kata kunci atau filter Anda.",
 		"noResultsTitle": "Tidak ada permintaan yang sesuai",
 		"quoteCountLabel": "{count} penawaran"
+	},
+	"QuoteReviewQuoteCard": {
+		"awardedBadge": "Dikonfirmasi",
+		"lowestPriceBadge": "Harga Terendah",
+		"fastestDeliveryBadge": "Pengiriman Tercepat",
+		"representativePrefix": "Perwakilan {name}",
+		"submittedOn": "Diajukan {date}",
+		"revisedSuffix": "Direvisi",
+		"companyHomepage": "Halaman Perusahaan",
+		"priceLabel": "Harga Penawaran",
+		"approxPriceIdr": "Sekitar Rp {amount}",
+		"deliveryLabel": "Waktu Pengiriman",
+		"daysSuffix": "{days} hari",
+		"awardButton": "Konfirmasi Kontrak",
+		"chatButton": "Hubungi"
 	},
 	"QuoteReviewListingTable": {
 		"awardedBadge": "Dikonfirmasi",

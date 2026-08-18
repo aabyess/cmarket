@@ -1,4 +1,5 @@
 import { createServerAdminClient } from "@/libs/supabaseServer";
+import { resolveTranslatedField } from "@/utils/resolveTranslatedField";
 
 export type InvoicePdfData = {
 	invoiceNumber: string;
@@ -45,7 +46,11 @@ export type InvoiceMeta = {
 	paymentDueDate: string;
 };
 
-export async function getInvoicePdfData(quoteId: string, meta?: InvoiceMeta): Promise<InvoicePdfResult | null> {
+export async function getInvoicePdfData(
+	quoteId: string,
+	locale: string,
+	meta?: InvoiceMeta,
+): Promise<InvoicePdfResult | null> {
 	const admin = await createServerAdminClient();
 
 	const { data: quote, error: quoteError } = await admin
@@ -58,7 +63,7 @@ export async function getInvoicePdfData(quoteId: string, meta?: InvoiceMeta): Pr
 
 	const { data: listing, error: listingError } = await admin
 		.from("listings")
-		.select("user_id, title, items")
+		.select("user_id, title, title_source_lang, title_translations, items")
 		.eq("id", quote.listing_id)
 		.single();
 
@@ -72,7 +77,9 @@ export async function getInvoicePdfData(quoteId: string, meta?: InvoiceMeta): Pr
 
 	const { data: sellerCompany } = await admin
 		.from("companies")
-		.select("company_name, representative, address, business_type, business_item")
+		.select(
+			"company_name, representative, address, business_type, business_type_source_lang, business_type_translations, business_item, business_item_source_lang, business_item_translations",
+		)
 		.eq("profile_id", quote.seller_id)
 		.single();
 
@@ -97,7 +104,7 @@ export async function getInvoicePdfData(quoteId: string, meta?: InvoiceMeta): Pr
 		sellerId: quote.seller_id,
 		...resolvedMeta,
 		listing: {
-			title: listing.title,
+			title: resolveTranslatedField(listing.title, listing.title_source_lang, listing.title_translations, locale),
 			items: listing.items ?? [],
 		},
 		quote: {
@@ -114,8 +121,18 @@ export async function getInvoicePdfData(quoteId: string, meta?: InvoiceMeta): Pr
 			companyName: sellerCompany?.company_name ?? "",
 			representative: sellerCompany?.representative ?? "",
 			address: sellerCompany?.address ?? "",
-			businessType: sellerCompany?.business_type ?? "",
-			businessItem: sellerCompany?.business_item ?? "",
+			businessType: resolveTranslatedField(
+				sellerCompany?.business_type ?? "",
+				sellerCompany?.business_type_source_lang ?? null,
+				sellerCompany?.business_type_translations ?? null,
+				locale,
+			),
+			businessItem: resolveTranslatedField(
+				sellerCompany?.business_item ?? "",
+				sellerCompany?.business_item_source_lang ?? null,
+				sellerCompany?.business_item_translations ?? null,
+				locale,
+			),
 		},
 		bankAccount: bankAccount
 			? {

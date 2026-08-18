@@ -26,8 +26,8 @@ export type ChatMessage = {
 	content: string;
 	isRead: boolean;
 	createdAt: string;
-	translatedContent: string | null;
 	sourceLang: string | null;
+	translations: Record<string, string> | null;
 	messageType: ChatMessageType;
 	attachmentUrl: string | null;
 	attachmentName: string | null;

@@ -1,4 +1,5 @@
 import { createClient } from "@/libs/supabase";
+import { translateField } from "@/utils/translateField";
 
 export async function postLogin({ username, password }: { username: string; password: string }) {
 	const res = await fetch("/api/auth/login", {
@@ -79,6 +80,11 @@ export async function signupIndonesia(payload: SignupIndonesiaPayload): Promise<
 
 	if (profileError) throw new Error(profileError.message);
 
+	const [businessTypeTranslation, businessItemTranslation] = await Promise.all([
+		translateField(payload.businessCategory),
+		translateField(payload.businessItem),
+	]);
+
 	const { error: companyError } = await supabase.from("companies").insert({
 		profile_id: userId,
 		company_name: payload.companyName,
@@ -89,7 +95,11 @@ export async function signupIndonesia(payload: SignupIndonesiaPayload): Promise<
 		city: payload.city,
 		address: `${payload.addressBase} ${payload.addressDetail}`.trim(),
 		business_type: payload.businessCategory,
+		business_type_source_lang: businessTypeTranslation?.sourceLang ?? null,
+		business_type_translations: businessTypeTranslation?.translations ?? null,
 		business_item: payload.businessItem,
+		business_item_source_lang: businessItemTranslation?.sourceLang ?? null,
+		business_item_translations: businessItemTranslation?.translations ?? null,
 	});
 
 	if (companyError) throw new Error(companyError.message);
@@ -154,6 +164,11 @@ export async function signupKorea(payload: SignupKoreaPayload): Promise<void> {
 
 	if (profileError) throw new Error(profileError.message);
 
+	const [businessTypeTranslation, businessItemTranslation] = await Promise.all([
+		translateField(payload.businessCategory),
+		translateField(payload.businessItem),
+	]);
+
 	const { error: companyError } = await supabase.from("companies").insert({
 		profile_id: userId,
 		company_name: payload.companyName,
@@ -161,7 +176,11 @@ export async function signupKorea(payload: SignupKoreaPayload): Promise<void> {
 		business_number: payload.businessNumber,
 		address: `${payload.addressBase} ${payload.addressDetail}`.trim(),
 		business_type: payload.businessCategory,
+		business_type_source_lang: businessTypeTranslation?.sourceLang ?? null,
+		business_type_translations: businessTypeTranslation?.translations ?? null,
 		business_item: payload.businessItem,
+		business_item_source_lang: businessItemTranslation?.sourceLang ?? null,
+		business_item_translations: businessItemTranslation?.translations ?? null,
 	});
 
 	if (companyError) throw new Error(companyError.message);

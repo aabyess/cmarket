@@ -2,6 +2,7 @@
 import { createClient } from "@/libs/supabase";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CHAT_QUERY_KEYS } from "@/features/chat/queries";
+import { translateField } from "@/utils/translateField";
 import type { ChatMessage } from "@/features/chat/types";
 
 export async function postMessage(quoteId: string, content: string): Promise<void> {
@@ -10,45 +11,14 @@ export async function postMessage(quoteId: string, content: string): Promise<voi
 	const { data: { user }, error: userError } = await supabase.auth.getUser();
 	if (userError || !user) throw new Error("로그인이 필요합니다.");
 
-	// 번역 시도 (실패해도 메시지 전송은 진행)
-	let translatedContent: string | null = null;
-	let sourceLang: string | null = null;
-
-	try {
-		const res = await fetch("/api/translate", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ text: content, targetLang: "KO" }),
-		});
-		const data = await res.json();
-	
-		// 이미 한국어면 번역 저장 안 함
-		if (data.detectedLang !== "KO") {
-			translatedContent = data.translatedText;
-			sourceLang = data.detectedLang;
-		} else {
-			// 한국어면 인도네시아어로 번역
-			const res2 = await fetch("/api/translate", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ text: content, targetLang: "ID" }),
-			});
-			const data2 = await res2.json();
-			if (data2.translatedText) {
-				translatedContent = data2.translatedText;
-				sourceLang = "KO";
-			}
-		}
-	} catch {
-		// 번역 실패해도 메시지 전송은 계속
-	}
+	const translation = await translateField(content);
 
 	const { error } = await supabase.from("messages").insert({
 		quote_id: quoteId,
 		sender_id: user.id,
 		content,
-		translated_content: translatedContent,
-		source_lang: sourceLang,
+		source_lang: translation?.sourceLang ?? null,
+		translations: translation?.translations ?? null,
 	});
 
 	if (error) throw error;
@@ -106,11 +76,14 @@ export async function startChat(quoteId: string, summary: QuoteSummary): Promise
 			`가격: ${summary.currency} ${summary.previousPrice.toLocaleString()} → ${summary.currency} ${summary.price.toLocaleString()} (${priceDiffText})`,
 			`납기: ${summary.previousDeliveryDays}일 → ${summary.deliveryDays}일 (${daysDiffText})`,
 		].join("\n");
+		const comparisonTranslation = await translateField(comparisonContent);
 
 		const { error: comparisonError } = await supabase.from("messages").insert({
 			quote_id: quoteId,
 			sender_id: user.id,
 			content: comparisonContent,
+			source_lang: comparisonTranslation?.sourceLang ?? null,
+			translations: comparisonTranslation?.translations ?? null,
 		});
 
 		if (comparisonError) throw comparisonError;
@@ -122,19 +95,27 @@ export async function startChat(quoteId: string, summary: QuoteSummary): Promise
 		`납기: ${summary.deliveryDays}일`,
 		`업체명: ${summary.sellerCompanyName}`,
 	].join("\n");
+	const summaryTranslation = await translateField(summaryContent);
 
 	const { error: summaryError } = await supabase.from("messages").insert({
 		quote_id: quoteId,
 		sender_id: user.id,
 		content: summaryContent,
+		source_lang: summaryTranslation?.sourceLang ?? null,
+		translations: summaryTranslation?.translations ?? null,
 	});
 
 	if (summaryError) throw summaryError;
 
+	const greetingContent = "안녕하세요, 견적 관련해서 문의드립니다.";
+	const greetingTranslation = await translateField(greetingContent);
+
 	const { error: greetingError } = await supabase.from("messages").insert({
 		quote_id: quoteId,
 		sender_id: user.id,
-		content: "안녕하세요, 견적 관련해서 문의드립니다.",
+		content: greetingContent,
+		source_lang: greetingTranslation?.sourceLang ?? null,
+		translations: greetingTranslation?.translations ?? null,
 	});
 
 	if (greetingError) throw greetingError;
@@ -174,8 +155,8 @@ export function useSendMessage(quoteId: string, myId: string) {
 				content,
 				isRead: false,
 				createdAt: new Date().toISOString(),
-				translatedContent: null,
 				sourceLang: null,
+				translations: null,
 				messageType: "text",
 				attachmentUrl: null,
 				attachmentName: null,

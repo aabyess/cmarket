@@ -955,6 +955,21 @@
 		"noResultsTitle": "No listings match your filters",
 		"quoteCountLabel": "{count} quotes"
 	},
+	"QuoteReviewQuoteCard": {
+		"awardedBadge": "Confirmed",
+		"lowestPriceBadge": "Lowest Price",
+		"fastestDeliveryBadge": "Fastest Delivery",
+		"representativePrefix": "Rep. {name}",
+		"submittedOn": "Submitted {date}",
+		"revisedSuffix": "Revised",
+		"companyHomepage": "Company Page",
+		"priceLabel": "Quoted Price",
+		"approxPriceIdr": "Approx. Rp {amount}",
+		"deliveryLabel": "Delivery Time",
+		"daysSuffix": "{days} days",
+		"awardButton": "Confirm Contract",
+		"chatButton": "Contact"
+	},
 	"QuoteReviewListingTable": {
 		"awardedBadge": "Deal Confirmed",
 		"closed": "Closed",
@@ -1153,7 +1168,8 @@
 	},
 	"ChatMessageList": {
 		"dateLabel": "{month}/{day}/{year}",
-		"read": "Read"
+		"read": "Read",
+		"translateButton": "Translate"
 	},
 	"ChatView": {
 		"emptyTitle": "Select a conversation",
@@ -1229,7 +1245,8 @@
 	"NotificationBell": {
 		"title": "Notifications",
 		"markAllRead": "Mark all as read",
-		"emptyText": "No notifications yet"
+		"emptyText": "No notifications yet",
+		"deleteAriaLabel": "Delete notification"
 	},
 	"RelativeTime": {
 		"justNow": "Just now",
