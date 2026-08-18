@@ -5,7 +5,9 @@ import type { Contract } from "@/features/contract/types";
 
 export async function getContracts(role: "buyer" | "seller"): Promise<Contract[]> {
 	const supabase = await createServerSupabaseClient();
-	const { data: { user } } = await supabase.auth.getUser();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
 	if (!user) return [];
 	const locale = await getLocale();
 
@@ -13,16 +15,16 @@ export async function getContracts(role: "buyer" | "seller"): Promise<Contract[]
 
 	const { data, error } = await supabase
 		.from("contracts")
-		.select("id, listing_id, quote_id, buyer_id, seller_id, status, created_at, payment_receipt_url, payment_confirmed_at, listings(title, title_source_lang, title_translations), quotes(price, currency, delivery_days)")
+		.select(
+			"id, listing_id, quote_id, buyer_id, seller_id, status, created_at, payment_receipt_url, payment_confirmed_at, delivery_confirmed_at, listings(title, title_source_lang, title_translations), quotes(price, currency, delivery_days)",
+		)
 		.eq(filter, user.id)
 		.order("created_at", { ascending: false });
 
 	if (error) throw new Error(error.message);
 	if (!data || data.length === 0) return [];
 
-	const partnerIds = data.map((row) =>
-		role === "buyer" ? row.seller_id : row.buyer_id,
-	);
+	const partnerIds = data.map((row) => (role === "buyer" ? row.seller_id : row.buyer_id));
 
 	const adminSupabase = await createServerAdminClient();
 	const { data: companies } = await adminSupabase
@@ -38,7 +40,11 @@ export async function getContracts(role: "buyer" | "seller"): Promise<Contract[]
 			title_source_lang: string | null;
 			title_translations: Record<string, string> | null;
 		};
-		const quote = row.quotes as unknown as { price: number; currency: string; delivery_days: number };
+		const quote = row.quotes as unknown as {
+			price: number;
+			currency: string;
+			delivery_days: number;
+		};
 		const partnerId = role === "buyer" ? row.seller_id : row.buyer_id;
 
 		return {
@@ -51,7 +57,12 @@ export async function getContracts(role: "buyer" | "seller"): Promise<Contract[]
 			createdAt: row.created_at,
 			listing: {
 				title: listing
-					? resolveTranslatedField(listing.title, listing.title_source_lang, listing.title_translations, locale)
+					? resolveTranslatedField(
+							listing.title,
+							listing.title_source_lang,
+							listing.title_translations,
+							locale,
+						)
 					: "",
 			},
 			quote: {
@@ -62,6 +73,7 @@ export async function getContracts(role: "buyer" | "seller"): Promise<Contract[]
 			partnerCompanyName: companyMap.get(partnerId) ?? "",
 			paymentReceiptUrl: row.payment_receipt_url ?? null,
 			paymentConfirmedAt: row.payment_confirmed_at ?? null,
+			deliveryConfirmedAt: row.delivery_confirmed_at ?? null,
 		};
 	});
 }
@@ -71,9 +83,6 @@ export async function updateContractStatus(
 	status: "completed" | "cancelled",
 ): Promise<void> {
 	const supabase = await createServerSupabaseClient();
-	const { error } = await supabase
-		.from("contracts")
-		.update({ status })
-		.eq("id", contractId);
+	const { error } = await supabase.from("contracts").update({ status }).eq("id", contractId);
 	if (error) throw new Error(error.message);
 }

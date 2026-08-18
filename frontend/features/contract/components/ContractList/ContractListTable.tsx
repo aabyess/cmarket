@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { CheckCircle2, FileText, Upload } from "lucide-react";
+import { CheckCircle2, FileText, Upload, PackageCheck } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { Contract, ContractStatus } from "@/features/contract/types";
 
@@ -26,6 +26,7 @@ type ContractListTableProps = {
 	onViewReceipt: (contractId: string) => void;
 	onRequestConfirm: (contractId: string) => void;
 	onRequestCancel: (contractId: string) => void;
+	onRequestDeliveryConfirm: (contractId: string) => void;
 };
 
 export function ContractListTable({
@@ -37,6 +38,7 @@ export function ContractListTable({
 	onViewReceipt,
 	onRequestConfirm,
 	onRequestCancel,
+	onRequestDeliveryConfirm,
 }: ContractListTableProps): React.ReactNode {
 	const t = useTranslations("ContractListTable");
 	const statusLabels: Record<ContractStatus, string> = {
@@ -64,15 +66,13 @@ export function ContractListTable({
 						{contracts.map((contract) => (
 							<tr
 								key={contract.id}
-								className={cn("transition-colors", contract.status !== "ongoing" && "opacity-75")}
-							>
-								<td className="whitespace-nowrap px-4 py-3">
+								className={cn("transition-colors", contract.status !== "ongoing" && "opacity-75")}>
+								<td className="px-4 py-3 whitespace-nowrap">
 									<span
 										className={cn(
-											"whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium",
+											"rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap",
 											STATUS_STYLE[contract.status],
-										)}
-									>
+										)}>
 										{statusLabels[contract.status]}
 									</span>
 								</td>
@@ -85,42 +85,47 @@ export function ContractListTable({
 								<td className="px-4 py-3 text-[#1F2937]">
 									{CURRENCY_SYMBOL[contract.quote.currency]} {contract.quote.price.toLocaleString()}
 								</td>
-								<td className="px-4 py-3 text-[#6B7280]">{t("days", { count: contract.quote.deliveryDays })}</td>
+								<td className="px-4 py-3 text-[#6B7280]">
+									{t("days", { count: contract.quote.deliveryDays })}
+								</td>
 								<td className="px-4 py-3 text-[#9CA3AF]">
 									{new Date(contract.createdAt).toLocaleDateString("ko-KR")}
 								</td>
 								<td className="px-4 py-3">
-									{contract.status === "ongoing" ? (
-										<div className="flex flex-wrap justify-end gap-1">
-											{role === "buyer" && (
+									{contract.status === "cancelled" ? (
+										<span className="block text-right text-xs text-[#9CA3AF]">-</span>
+									) : (
+										<div className="flex flex-wrap items-center justify-end gap-1">
+											{contract.status === "ongoing" && role === "buyer" && (
 												<>
 													{contract.paymentReceiptUrl ? (
 														<button
 															onClick={() => onViewReceipt(contract.id)}
 															title={t("viewReceiptTitle")}
-															className="flex size-8 items-center justify-center rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] text-imsg-blue transition-colors hover:bg-[#DBEAFE]"
-														>
+															className="text-imsg-blue flex size-8 items-center justify-center rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] transition-colors hover:bg-[#DBEAFE]">
 															<FileText size={14} />
 														</button>
 													) : null}
 													<button
 														onClick={() => onUploadClick(contract.id)}
 														disabled={uploadingId === contract.id}
-														title={contract.paymentReceiptUrl ? t("reuploadReceiptTitle") : t("uploadReceiptTitle")}
-														className="flex size-8 items-center justify-center rounded-lg border border-[#E5E7EB] text-[#374151] transition-colors hover:bg-[#F9FAFB] disabled:opacity-60"
-													>
+														title={
+															contract.paymentReceiptUrl
+																? t("reuploadReceiptTitle")
+																: t("uploadReceiptTitle")
+														}
+														className="flex size-8 items-center justify-center rounded-lg border border-[#E5E7EB] text-[#374151] transition-colors hover:bg-[#F9FAFB] disabled:opacity-60">
 														<Upload size={14} />
 													</button>
 												</>
 											)}
-											{role === "seller" && (
+											{contract.status === "ongoing" && role === "seller" && (
 												<>
 													{contract.paymentReceiptUrl && (
 														<button
 															onClick={() => onViewReceipt(contract.id)}
 															title={t("confirmReceiptTitle")}
-															className="flex size-8 items-center justify-center rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] text-imsg-blue transition-colors hover:bg-[#DBEAFE]"
-														>
+															className="text-imsg-blue flex size-8 items-center justify-center rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] transition-colors hover:bg-[#DBEAFE]">
 															<FileText size={14} />
 														</button>
 													)}
@@ -133,22 +138,40 @@ export function ContractListTable({
 															contract.paymentReceiptUrl
 																? "bg-[#16A34A] text-white hover:bg-[#15803D]"
 																: "border border-[#E5E7EB] text-[#9CA3AF]",
-														)}
-													>
+														)}>
 														<CheckCircle2 size={14} />
 													</button>
 												</>
 											)}
-											<button
-												onClick={() => onRequestCancel(contract.id)}
-												disabled={loadingId === contract.id}
-												className="rounded-lg border border-[#E5E7EB] px-2.5 py-1.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60"
-											>
-												{t("cancelContract")}
-											</button>
+											{contract.status === "ongoing" && (
+												<button
+													onClick={() => onRequestCancel(contract.id)}
+													disabled={loadingId === contract.id}
+													className="rounded-lg border border-[#E5E7EB] px-2.5 py-1.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60">
+													{t("cancelContract")}
+												</button>
+											)}
+											{role === "buyer" && !contract.deliveryConfirmedAt && (
+												<button
+													onClick={() => onRequestDeliveryConfirm(contract.id)}
+													disabled={loadingId === contract.id}
+													title={t("confirmDeliveryTitle")}
+													className="flex size-8 items-center justify-center rounded-lg border border-[#BBF7D0] bg-[#F0FDF4] text-[#16A34A] transition-colors hover:bg-[#DCFCE7] disabled:opacity-60">
+													<PackageCheck size={14} />
+												</button>
+											)}
+											{contract.deliveryConfirmedAt && (
+												<span
+													title={t("deliveryConfirmedTitle", {
+														date: new Date(contract.deliveryConfirmedAt).toLocaleDateString(
+															"ko-KR",
+														),
+													})}
+													className="flex size-8 items-center justify-center text-[#16A34A]">
+													<PackageCheck size={14} />
+												</span>
+											)}
 										</div>
-									) : (
-										<span className="block text-right text-xs text-[#9CA3AF]">-</span>
 									)}
 								</td>
 							</tr>
