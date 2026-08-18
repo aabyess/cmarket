@@ -1,53 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient, createServerAdminClient } from "@/libs/supabaseServer";
 
-export async function GET(req: NextRequest): Promise<NextResponse> {
-	const path = req.nextUrl.searchParams.get("path");
-	if (!path) {
-		return NextResponse.json({ error: "path가 필요합니다." }, { status: 400 });
+const ERROR_MESSAGES: Record<string, string> = {
+	QUOTE_NOT_FOUND: "견적을 찾을 수 없습니다.",
+	LISTING_NOT_FOUND: "공고를 찾을 수 없습니다.",
+	FORBIDDEN: "권한이 없습니다.",
+	LISTING_ALREADY_AWARDED: "이미 마감된 공고입니다.",
+	ALREADY_AWARDED: "이미 확정된 견적입니다.",
+};
+
+export async function POST(req: NextRequest): Promise<NextResponse> {
+	const { quoteId } = await req.json();
+	if (!quoteId) {
+		return NextResponse.json({ error: "quoteId가 필요합니다." }, { status: 400 });
 	}
 
 	const authClient = await createServerSupabaseClient();
-	const { data: { user } } = await authClient.auth.getUser();
+	const {
+		data: { user },
+	} = await authClient.auth.getUser();
 	if (!user) {
 		return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
 	}
 
-	const decodedPath = decodeURIComponent(path);
-	const parts = decodedPath.split("/");
-	// 견적서: quoteId/timestamp.pdf
-	// 인보이스: invoices/quoteId/timestamp.pdf
-	const quoteId = parts[0] === "invoices" ? parts[1] : parts[0];
-
 	const admin = await createServerAdminClient();
 
-	const { data: quote } = await admin
-		.from("quotes")
-		.select("listing_id, seller_id")
-		.eq("id", quoteId)
-		.single();
+	const { data: quote } = await admin.from("quotes").select("seller_id").eq("id", quoteId).single();
 
-	if (!quote) {
-		return NextResponse.json({ error: "견적을 찾을 수 없습니다." }, { status: 404 });
+	const { data: contractId, error } = await admin.rpc("award_quote", {
+		p_quote_id: quoteId,
+		p_buyer_id: user.id,
+	});
+
+	if (error) {
+		const message = ERROR_MESSAGES[error.message] ?? "계약 확정 처리 중 오류가 발생했습니다.";
+		const status = error.message === "FORBIDDEN" ? 403 : error.message === "QUOTE_NOT_FOUND" ? 404 : 400;
+		return NextResponse.json({ error: message }, { status });
 	}
 
-	const { data: listing } = await admin
-		.from("listings")
-		.select("user_id")
-		.eq("id", quote.listing_id)
-		.single();
+	let invoiceWarning: string | null = null;
+	if (quote?.seller_id) {
+		const { data: bankAccount } = await admin
+			.from("bank_accounts")
+			.select("id")
+			.eq("profile_id", quote.seller_id)
+			.eq("is_primary", true)
+			.maybeSingle();
 
-	if (!listing || (listing.user_id !== user.id && quote.seller_id !== user.id)) {
-		return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
+		if (!bankAccount) {
+			invoiceWarning = "공급기업이 아직 계좌 정보를 등록하지 않아 인보이스 발행이 지연될 수 있습니다.";
+		}
 	}
 
-	const { data: signed, error } = await admin.storage
-		.from("quote-documents")
-		.createSignedUrl(decodedPath, 60 * 10);
-
-	if (error || !signed) {
-		return NextResponse.json({ error: error?.message ?? "URL 생성 실패" }, { status: 500 });
-	}
-
-	return NextResponse.json({ url: signed.signedUrl });
+	return NextResponse.json({ contractId, invoiceWarning });
 }
