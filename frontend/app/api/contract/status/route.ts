@@ -52,6 +52,9 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
 		});
 
 		if (error) {
+			if (!CANCEL_ERROR_MESSAGES[error.message]) {
+				console.error("cancel_contract rpc error:", error);
+			}
 			const message =
 				CANCEL_ERROR_MESSAGES[error.message] ?? "계약 취소 처리 중 오류가 발생했습니다.";
 			const httpStatus =
