@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient, createServerAdminClient } from "@/libs/supabaseServer";
+import { createInvoiceMeta } from "@/features/chat/pdf/getInvoicePdfData";
 
 const ERROR_MESSAGES: Record<string, string> = {
 	QUOTE_NOT_FOUND: "견적을 찾을 수 없습니다.",
@@ -34,8 +35,29 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
 	if (error) {
 		const message = ERROR_MESSAGES[error.message] ?? "계약 확정 처리 중 오류가 발생했습니다.";
-		const status = error.message === "FORBIDDEN" ? 403 : error.message === "QUOTE_NOT_FOUND" ? 404 : 400;
+		const status =
+			error.message === "FORBIDDEN" ? 403 : error.message === "QUOTE_NOT_FOUND" ? 404 : 400;
 		return NextResponse.json({ error: message }, { status });
+	}
+
+	// 낙찰 확정 시 채팅에 인보이스 카드 메시지를 만든다. PDF 자체는 카드가 열릴 때 생성된다.
+	if (quote?.seller_id) {
+		const { data: existingInvoice } = await admin
+			.from("messages")
+			.select("id")
+			.eq("quote_id", quoteId)
+			.eq("message_type", "invoice_pdf")
+			.limit(1)
+			.maybeSingle();
+
+		if (!existingInvoice) {
+			await admin.from("messages").insert({
+				quote_id: quoteId,
+				sender_id: quote.seller_id,
+				content: JSON.stringify(createInvoiceMeta(quoteId)),
+				message_type: "invoice_pdf",
+			});
+		}
 	}
 
 	let invoiceWarning: string | null = null;
@@ -48,7 +70,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 			.maybeSingle();
 
 		if (!bankAccount) {
-			invoiceWarning = "공급기업이 아직 계좌 정보를 등록하지 않아 인보이스 발행이 지연될 수 있습니다.";
+			invoiceWarning =
+				"공급기업이 아직 계좌 정보를 등록하지 않아 인보이스 발행이 지연될 수 있습니다.";
 		}
 	}
 

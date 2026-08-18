@@ -165,7 +165,9 @@
 		"title": "Chat",
 		"searchPlaceholder": "Cari",
 		"emptyTitle": "Belum ada percakapan",
-		"emptyDescription": "Setelah bertukar penawaran, Anda bisa mengobrol di sini."
+		"emptyDescription": "Setelah bertukar penawaran, Anda bisa mengobrol di sini.",
+		"quotePdfPreview": "📄 Surat Penawaran",
+		"invoicePdfPreview": "📄 Invoice"
 	},
 	"ChatRoomPanel": {
 		"statusAwarded": "Dikonfirmasi",

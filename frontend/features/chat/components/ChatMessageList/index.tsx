@@ -25,7 +25,11 @@ type ChatMessageListProps = {
 	quoteId: string;
 };
 
-export function ChatMessageList({ messages, myId, quoteId }: ChatMessageListProps): React.ReactNode {
+export function ChatMessageList({
+	messages,
+	myId,
+	quoteId,
+}: ChatMessageListProps): React.ReactNode {
 	const t = useTranslations("ChatMessageList");
 	const locale = useLocale();
 	const bottomRef = useRef<HTMLDivElement>(null);
@@ -65,14 +69,12 @@ export function ChatMessageList({ messages, myId, quoteId }: ChatMessageListProp
 		}
 	}
 
-	const lastReadMineId = [...messages]
-		.reverse()
-		.find((m) => m.senderId === myId && m.isRead)?.id;
+	const lastReadMineId = [...messages].reverse().find((m) => m.senderId === myId && m.isRead)?.id;
 
 	let lastDate = "";
 
 	return (
-		<div className="flex-1 overflow-y-auto bg-imsg-surface px-4 py-4" style={{ minHeight: 0 }}>
+		<div className="bg-imsg-surface flex-1 overflow-y-auto px-4 py-4" style={{ minHeight: 0 }}>
 			<div className="mx-auto flex min-h-full max-w-2xl flex-col justify-end">
 				{messages.map((message, i) => {
 					const isMine = message.senderId === myId;
@@ -100,7 +102,9 @@ export function ChatMessageList({ messages, myId, quoteId }: ChatMessageListProp
 					);
 					const hasAutoTranslation = !isMine && autoTranslated !== message.content;
 					const manualTranslation = manualTranslations[message.id];
-					const displayText = hasAutoTranslation ? autoTranslated : (manualTranslation ?? message.content);
+					const displayText = hasAutoTranslation
+						? autoTranslated
+						: (manualTranslation ?? message.content);
 					const showOriginal = !isMine && (hasAutoTranslation || Boolean(manualTranslation));
 					const showTranslateButton = !isMine && !hasAutoTranslation && !manualTranslation;
 
@@ -108,15 +112,16 @@ export function ChatMessageList({ messages, myId, quoteId }: ChatMessageListProp
 						<div key={message.id} className={sameAsPrev ? "mt-0.5" : "mt-3"}>
 							{showDate && (
 								<div className="my-4 flex justify-center">
-									<span className="rounded-full bg-black/5 px-3 py-1 text-xs font-medium text-imsg-secondary">
+									<span className="text-imsg-secondary rounded-full bg-black/5 px-3 py-1 text-xs font-medium">
 										{dateLabel}
 									</span>
 								</div>
 							)}
 
-							<div className={cn("flex items-end gap-1.5", isMine ? "flex-row-reverse" : "flex-row")}>
+							<div
+								className={cn("flex items-end gap-1.5", isMine ? "flex-row-reverse" : "flex-row")}>
 								{/* 버블 + 번역 */}
-								{(message.messageType === "quote_pdf" || message.messageType === "invoice_pdf") && message.attachmentUrl ? (
+								{message.messageType === "quote_pdf" || message.messageType === "invoice_pdf" ? (
 									<QuotePdfCard
 										quoteId={quoteId}
 										docType={message.messageType === "invoice_pdf" ? "invoice" : "quote"}
@@ -128,25 +133,21 @@ export function ChatMessageList({ messages, myId, quoteId }: ChatMessageListProp
 										<div
 											className={cn(
 												"w-fit rounded-[20px] px-3.5 py-2 text-sm leading-snug",
-												isMine
-													? "bg-imsg-blue text-white"
-													: "bg-[#E9E9EB] text-black",
-											)}
-										>
-											<p className="whitespace-pre-wrap break-words">{displayText}</p>
+												isMine ? "bg-imsg-blue text-white" : "bg-[#E9E9EB] text-black",
+											)}>
+											<p className="break-words whitespace-pre-wrap">{displayText}</p>
 										</div>
 										{/* 번역 원문은 별도의 옅은 말풍선으로 분리 */}
 										{showOriginal && (
-											<div className="w-fit rounded-[16px] bg-black/5 px-3 py-1.5 text-xs italic text-imsg-secondary">
-												<p className="whitespace-pre-wrap break-words">{message.content}</p>
+											<div className="text-imsg-secondary w-fit rounded-[16px] bg-black/5 px-3 py-1.5 text-xs italic">
+												<p className="break-words whitespace-pre-wrap">{message.content}</p>
 											</div>
 										)}
 										{showTranslateButton && (
 											<button
 												onClick={() => handleManualTranslate(message.id, message.content)}
 												disabled={translatingIds[message.id]}
-												className="flex items-center gap-1 text-xs text-imsg-secondary hover:text-imsg-blue disabled:opacity-60"
-											>
+												className="text-imsg-secondary hover:text-imsg-blue flex items-center gap-1 text-xs disabled:opacity-60">
 												{translatingIds[message.id] ? (
 													<Loader2 size={11} className="animate-spin" />
 												) : (
@@ -161,10 +162,10 @@ export function ChatMessageList({ messages, myId, quoteId }: ChatMessageListProp
 								{/* 시간 + 읽음 */}
 								<div className="flex shrink-0 items-center gap-1 pb-0.5">
 									{isLastMine && (
-										<span className="text-xs font-medium text-imsg-blue">{t("read")}</span>
+										<span className="text-imsg-blue text-xs font-medium">{t("read")}</span>
 									)}
 									{showTime && (
-										<span className="text-xs text-imsg-secondary">
+										<span className="text-imsg-secondary text-xs">
 											{formatTime(message.createdAt)}
 										</span>
 									)}

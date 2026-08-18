@@ -50,6 +50,14 @@ export type InvoiceMeta = {
 	paymentDueDate: string;
 };
 
+/** 인보이스 번호·발행일·결제기한을 확정한다. 낙찰 시점에 한 번 생성해 저장해야 언어별 재생성 시에도 번호가 유지된다. */
+export function createInvoiceMeta(quoteId: string): InvoiceMeta {
+	const now = new Date();
+	const invoiceNumber = `INV-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-${quoteId.slice(0, 6).toUpperCase()}`;
+	const paymentDueDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+	return { invoiceNumber, issuedAt: now.toISOString(), paymentDueDate };
+}
+
 export async function getInvoicePdfData(
 	quoteId: string,
 	locale: string,
@@ -94,21 +102,19 @@ export async function getInvoicePdfData(
 		.eq("is_primary", true)
 		.maybeSingle();
 
-	const now = new Date();
-	const resolvedMeta =
-		meta ??
-		(() => {
-			const invoiceNumber = `INV-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-${quoteId.slice(0, 6).toUpperCase()}`;
-			const paymentDueDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
-			return { invoiceNumber, issuedAt: now.toISOString(), paymentDueDate };
-		})();
+	const resolvedMeta = meta ?? createInvoiceMeta(quoteId);
 
 	return {
 		buyerId: listing.user_id,
 		sellerId: quote.seller_id,
 		...resolvedMeta,
 		listing: {
-			title: resolveTranslatedField(listing.title, listing.title_source_lang, listing.title_translations, locale),
+			title: resolveTranslatedField(
+				listing.title,
+				listing.title_source_lang,
+				listing.title_translations,
+				locale,
+			),
 			items: listing.items ?? [],
 		},
 		quote: {
@@ -144,12 +150,12 @@ export async function getInvoicePdfData(
 		},
 		bankAccount: bankAccount
 			? {
-				bankName: bankAccount.bank_name,
-				accountNumber: bankAccount.account_number,
-				accountHolder: bankAccount.account_holder,
-				swiftCode: bankAccount.swift_code ?? "",
-				currency: bankAccount.currency,
-			}
+					bankName: bankAccount.bank_name,
+					accountNumber: bankAccount.account_number,
+					accountHolder: bankAccount.account_holder,
+					swiftCode: bankAccount.swift_code ?? "",
+					currency: bankAccount.currency,
+				}
 			: null,
 	};
 }

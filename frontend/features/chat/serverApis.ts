@@ -1,4 +1,4 @@
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
 import { resolveTranslatedField } from "@/utils/resolveTranslatedField";
 import type { ChatContext, ChatRole, ChatRoom } from "@/features/chat/types";
@@ -21,7 +21,9 @@ type QuoteRow = {
 
 export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 	const supabase = await createServerSupabaseClient();
-	const { data: { user } } = await supabase.auth.getUser();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
 	if (!user) return [];
 	const locale = await getLocale();
 
@@ -31,10 +33,7 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 		const { data } = await supabase.from("quotes").select("id").eq("seller_id", user.id);
 		quoteIds = (data ?? []).map((row) => row.id);
 	} else {
-		const { data: listings } = await supabase
-			.from("listings")
-			.select("id")
-			.eq("user_id", user.id);
+		const { data: listings } = await supabase.from("listings").select("id").eq("user_id", user.id);
 		const listingIds = (listings ?? []).map((row) => row.id);
 		if (listingIds.length === 0) return [];
 
@@ -46,7 +45,7 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 
 	const { data: messages } = await supabase
 		.from("messages")
-		.select("quote_id, content, created_at, sender_id, is_read")
+		.select("quote_id, content, created_at, sender_id, is_read, message_type")
 		.in("quote_id", quoteIds)
 		.order("created_at", { ascending: false });
 
@@ -84,6 +83,16 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 
 	const contractSet = new Set((contracts ?? []).map((c) => c.quote_id));
 
+	// PDF 카드 메시지는 content가 메타 JSON이라 목록 미리보기에 그대로 노출되면 안 된다.
+	const tRoom = await getTranslations("ChatRoomList");
+
+	function toPreview(latest: { content: string; message_type: string | null } | undefined): string {
+		if (!latest) return "";
+		if (latest.message_type === "invoice_pdf") return tRoom("invoicePdfPreview");
+		if (latest.message_type === "quote_pdf") return tRoom("quotePdfPreview");
+		return latest.content;
+	}
+
 	return quoteRows
 		.map((quote) => {
 			const roomMessages = (messages ?? []).filter((m) => m.quote_id === quote.id);
@@ -108,7 +117,7 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 				deliveryDays: quote.delivery_days,
 				quoteStatus: quote.status,
 				hasContract: contractSet.has(quote.id),
-				lastMessage: latest?.content ?? "",
+				lastMessage: toPreview(latest),
 				lastMessageAt: latest?.created_at ?? null,
 				unreadCount: roomMessages.filter((m) => !m.is_read && m.sender_id !== user.id).length,
 			};
@@ -118,7 +127,9 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 
 export async function getChatContext(role: ChatRole): Promise<ChatContext | null> {
 	const supabase = await createServerSupabaseClient();
-	const { data: { user } } = await supabase.auth.getUser();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
 	if (!user) return null;
 
 	const rooms = await getChatRooms(role);
