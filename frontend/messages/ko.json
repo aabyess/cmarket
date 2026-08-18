@@ -180,7 +180,7 @@
 	},
 	"ChatRoomPanel": {
 		"backToListAria": "채팅 목록으로 돌아가기",
-		"statusAwarded": "계약 확정",
+		"statusAwarded": "계약 확정됨",
 		"statusRejected": "마감",
 		"awardButton": "계약 확정",
 		"quotePriceLabel": "견적가",
