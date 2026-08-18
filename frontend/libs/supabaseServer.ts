@@ -14,9 +14,14 @@ export async function createServerSupabaseClient(schema: "public" | "demo" = "pu
 					return cookieStore.getAll();
 				},
 				setAll(cookiesToSet) {
-					cookiesToSet.forEach(({ name, value, options }) =>
-						cookieStore.set(name, value, options),
-					);
+					try {
+						cookiesToSet.forEach(({ name, value, options }) =>
+							cookieStore.set(name, value, options),
+						);
+					} catch {
+						// Server Component에서 호출된 경우. 미들웨어가 매 요청마다
+						// 세션을 갱신하므로 여기서는 무시해도 된다.
+					}
 				},
 			},
 		},
