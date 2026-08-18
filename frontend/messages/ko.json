@@ -1146,6 +1146,7 @@
 		"emptyTitle": "계약이 없어요",
 		"genericErrorMessage": "처리 중 오류가 발생했습니다.",
 		"noPartnerCompanyName": "기업명 없음",
+		"noResultsCancelled": "취소된 계약이 없어요.",
 		"noResultsCompleted": "완료된 계약이 없어요.",
 		"noResultsOngoing": "진행 중인 계약이 없어요.",
 		"paymentConfirmed": "입금 확인 완료 · {date}",
@@ -1190,6 +1191,7 @@
 	"ContractListTabs": {
 		"searchPlaceholder": "공고명, 거래처 검색",
 		"tabAll": "전체",
+		"tabCancelled": "취소됨",
 		"tabCompleted": "계약 완료",
 		"tabOngoing": "진행 중"
 	},
