@@ -84,7 +84,8 @@ const styles = StyleSheet.create({
 	},
 	dueDateLabel: { fontSize: 10, color: "#D97706" },
 	dueDateValue: { fontSize: 10, fontWeight: "bold", color: "#D97706" },
-	footer: { marginTop: 24, fontSize: 8, color: "#9CA3AF", textAlign: "center" },
+	taxNote: { marginTop: 24, fontSize: 8, color: "#9CA3AF", textAlign: "center" },
+	footer: { marginTop: 4, fontSize: 8, color: "#9CA3AF", textAlign: "center" },
 });
 
 export type InvoicePdfLabels = {
@@ -96,6 +97,8 @@ export type InvoicePdfLabels = {
 	representativeLabel: string;
 	addressLabel: string;
 	businessTypeItemLabel: string;
+	npwpLabel: string;
+	businessNumberLabel: string;
 	itemsSectionTitle: string;
 	itemNameColumn: string;
 	itemSpecColumn: string;
@@ -115,6 +118,7 @@ export type InvoicePdfLabels = {
 	accountHolderLabel: string;
 	swiftCodeLabel: string;
 	receivingCurrencyLabel: string;
+	taxNote: string;
 	footer: string;
 };
 
@@ -154,6 +158,16 @@ export function InvoicePdfDocument({
 						<Text>
 							{labels.representativeLabel}: {buyerCompany.representative || "-"}
 						</Text>
+						{buyerCompany.npwp && (
+							<Text>
+								{labels.npwpLabel}: {buyerCompany.npwp}
+							</Text>
+						)}
+						{buyerCompany.businessNumber && (
+							<Text>
+								{labels.businessNumberLabel}: {buyerCompany.businessNumber}
+							</Text>
+						)}
 						<Text>
 							{labels.addressLabel}: {buyerCompany.address || "-"}
 						</Text>
@@ -168,6 +182,16 @@ export function InvoicePdfDocument({
 						<Text>
 							{labels.representativeLabel}: {sellerCompany.representative || "-"}
 						</Text>
+						{sellerCompany.npwp && (
+							<Text>
+								{labels.npwpLabel}: {sellerCompany.npwp}
+							</Text>
+						)}
+						{sellerCompany.businessNumber && (
+							<Text>
+								{labels.businessNumberLabel}: {sellerCompany.businessNumber}
+							</Text>
+						)}
 						<Text>
 							{labels.addressLabel}: {sellerCompany.address || "-"}
 						</Text>
@@ -246,6 +270,7 @@ export function InvoicePdfDocument({
 					</View>
 				)}
 
+				<Text style={styles.taxNote}>{labels.taxNote}</Text>
 				<Text style={styles.footer}>{labels.footer}</Text>
 			</Page>
 		</Document>

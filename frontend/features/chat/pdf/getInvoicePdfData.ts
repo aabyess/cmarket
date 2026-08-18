@@ -18,6 +18,8 @@ export type InvoicePdfData = {
 		companyName: string;
 		representative: string;
 		address: string;
+		npwp: string;
+		businessNumber: string;
 	};
 	sellerCompany: {
 		companyName: string;
@@ -25,6 +27,8 @@ export type InvoicePdfData = {
 		address: string;
 		businessType: string;
 		businessItem: string;
+		npwp: string;
+		businessNumber: string;
 	};
 	bankAccount: {
 		bankName: string;
@@ -71,14 +75,14 @@ export async function getInvoicePdfData(
 
 	const { data: buyerCompany } = await admin
 		.from("companies")
-		.select("company_name, representative, address")
+		.select("company_name, representative, address, npwp, business_number")
 		.eq("profile_id", listing.user_id)
 		.single();
 
 	const { data: sellerCompany } = await admin
 		.from("companies")
 		.select(
-			"company_name, representative, address, business_type, business_type_source_lang, business_type_translations, business_item, business_item_source_lang, business_item_translations",
+			"company_name, representative, address, npwp, business_number, business_type, business_type_source_lang, business_type_translations, business_item, business_item_source_lang, business_item_translations",
 		)
 		.eq("profile_id", quote.seller_id)
 		.single();
@@ -116,11 +120,15 @@ export async function getInvoicePdfData(
 			companyName: buyerCompany?.company_name ?? "",
 			representative: buyerCompany?.representative ?? "",
 			address: buyerCompany?.address ?? "",
+			npwp: buyerCompany?.npwp ?? "",
+			businessNumber: buyerCompany?.business_number ?? "",
 		},
 		sellerCompany: {
 			companyName: sellerCompany?.company_name ?? "",
 			representative: sellerCompany?.representative ?? "",
 			address: sellerCompany?.address ?? "",
+			npwp: sellerCompany?.npwp ?? "",
+			businessNumber: sellerCompany?.business_number ?? "",
 			businessType: resolveTranslatedField(
 				sellerCompany?.business_type ?? "",
 				sellerCompany?.business_type_source_lang ?? null,

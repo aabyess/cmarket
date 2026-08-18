@@ -1191,6 +1191,8 @@
 		"representativeLabel": "Representative",
 		"addressLabel": "Address",
 		"businessTypeItemLabel": "Business Type/Item",
+		"npwpLabel": "NPWP",
+		"businessNumberLabel": "Business Registration No.",
 		"listingInfoSectionTitle": "Listing Information",
 		"listingTitleLabel": "Listing Title",
 		"categoryLabel": "Category",
@@ -1217,6 +1219,8 @@
 		"representativeLabel": "Representative",
 		"addressLabel": "Address",
 		"businessTypeItemLabel": "Business Type/Item",
+		"npwpLabel": "NPWP",
+		"businessNumberLabel": "Business Registration No.",
 		"itemsSectionTitle": "Items Supplied",
 		"itemNameColumn": "Item Name",
 		"itemSpecColumn": "Spec",
@@ -1236,6 +1240,7 @@
 		"accountHolderLabel": "Account Holder",
 		"swiftCodeLabel": "SWIFT Code",
 		"receivingCurrencyLabel": "Receiving Currency",
+		"taxNote": "This document is a commercial invoice and does not replace a tax invoice (Faktur Pajak) under Indonesian tax regulations.",
 		"footer": "This invoice was automatically generated via MitraPay. Inquiries: support@mitrapay.com"
 	},
 	"ChatFab": {

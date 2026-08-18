@@ -204,6 +204,8 @@
 		"representativeLabel": "Perwakilan",
 		"addressLabel": "Alamat",
 		"businessTypeItemLabel": "Jenis/Bidang Usaha",
+		"npwpLabel": "NPWP",
+		"businessNumberLabel": "No. Registrasi Usaha (Korea)",
 		"listingInfoSectionTitle": "Informasi Permintaan",
 		"listingTitleLabel": "Judul Permintaan",
 		"categoryLabel": "Kategori",
@@ -230,6 +232,8 @@
 		"representativeLabel": "Perwakilan",
 		"addressLabel": "Alamat",
 		"businessTypeItemLabel": "Jenis/Bidang Usaha",
+		"npwpLabel": "NPWP",
+		"businessNumberLabel": "No. Registrasi Usaha (Korea)",
 		"itemsSectionTitle": "Barang yang Dipasok",
 		"itemNameColumn": "Nama Barang",
 		"itemSpecColumn": "Spesifikasi",
@@ -249,6 +253,7 @@
 		"accountHolderLabel": "Nama Pemilik Rekening",
 		"swiftCodeLabel": "Kode SWIFT",
 		"receivingCurrencyLabel": "Mata Uang Penerimaan",
+		"taxNote": "Dokumen ini merupakan invoice komersial dan bukan pengganti Faktur Pajak menurut peraturan perpajakan Indonesia.",
 		"footer": "Invoice ini dibuat secara otomatis melalui MitraPay. Pertanyaan: support@mitrapay.com"
 	},
 	"ChatFab": {
