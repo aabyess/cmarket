@@ -204,6 +204,8 @@
 		"representativeLabel": "대표자",
 		"addressLabel": "주소",
 		"businessTypeItemLabel": "업태/종목",
+		"npwpLabel": "NPWP",
+		"businessNumberLabel": "사업자등록번호",
 		"listingInfoSectionTitle": "공고 정보",
 		"listingTitleLabel": "공고명",
 		"categoryLabel": "카테고리",
@@ -230,6 +232,8 @@
 		"representativeLabel": "대표자",
 		"addressLabel": "주소",
 		"businessTypeItemLabel": "업태/종목",
+		"npwpLabel": "NPWP",
+		"businessNumberLabel": "사업자등록번호",
 		"itemsSectionTitle": "공급 품목",
 		"itemNameColumn": "품목명",
 		"itemSpecColumn": "규격",
@@ -249,6 +253,7 @@
 		"accountHolderLabel": "예금주",
 		"swiftCodeLabel": "SWIFT 코드",
 		"receivingCurrencyLabel": "수취 통화",
+		"taxNote": "본 문서는 상업 인보이스로, 인도네시아 세법상 세금계산서(Faktur Pajak)를 대체하지 않습니다.",
 		"footer": "본 인보이스는 MitraPay를 통해 자동 생성되었습니다. 문의: support@mitrapay.com"
 	},
 	"ChatFab": {

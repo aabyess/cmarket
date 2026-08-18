@@ -89,6 +89,8 @@ export type QuotePdfData = {
 		companyName: string;
 		representative: string;
 		address: string;
+		npwp: string;
+		businessNumber: string;
 	};
 	sellerCompany: {
 		companyName: string;
@@ -96,6 +98,8 @@ export type QuotePdfData = {
 		address: string;
 		businessType: string;
 		businessItem: string;
+		npwp: string;
+		businessNumber: string;
 	};
 };
 
@@ -107,6 +111,8 @@ export type QuotePdfLabels = {
 	representativeLabel: string;
 	addressLabel: string;
 	businessTypeItemLabel: string;
+	npwpLabel: string;
+	businessNumberLabel: string;
 	listingInfoSectionTitle: string;
 	listingTitleLabel: string;
 	categoryLabel: string;
@@ -150,6 +156,16 @@ export function QuotePdfDocument({ listing, quote, buyerCompany, sellerCompany, 
 						<Text>
 							{labels.representativeLabel}: {buyerCompany.representative || "-"}
 						</Text>
+						{buyerCompany.npwp && (
+							<Text>
+								{labels.npwpLabel}: {buyerCompany.npwp}
+							</Text>
+						)}
+						{buyerCompany.businessNumber && (
+							<Text>
+								{labels.businessNumberLabel}: {buyerCompany.businessNumber}
+							</Text>
+						)}
 						<Text>
 							{labels.addressLabel}: {buyerCompany.address || "-"}
 						</Text>
@@ -164,6 +180,16 @@ export function QuotePdfDocument({ listing, quote, buyerCompany, sellerCompany, 
 						<Text>
 							{labels.representativeLabel}: {sellerCompany.representative || "-"}
 						</Text>
+						{sellerCompany.npwp && (
+							<Text>
+								{labels.npwpLabel}: {sellerCompany.npwp}
+							</Text>
+						)}
+						{sellerCompany.businessNumber && (
+							<Text>
+								{labels.businessNumberLabel}: {sellerCompany.businessNumber}
+							</Text>
+						)}
 						<Text>
 							{labels.addressLabel}: {sellerCompany.address || "-"}
 						</Text>

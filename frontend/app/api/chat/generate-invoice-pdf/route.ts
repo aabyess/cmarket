@@ -130,6 +130,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		representativeLabel: t("representativeLabel"),
 		addressLabel: t("addressLabel"),
 		businessTypeItemLabel: t("businessTypeItemLabel"),
+		npwpLabel: t("npwpLabel"),
+		businessNumberLabel: t("businessNumberLabel"),
 		itemsSectionTitle: t("itemsSectionTitle"),
 		itemNameColumn: t("itemNameColumn"),
 		itemSpecColumn: t("itemSpecColumn"),
@@ -149,6 +151,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		accountHolderLabel: t("accountHolderLabel"),
 		swiftCodeLabel: t("swiftCodeLabel"),
 		receivingCurrencyLabel: t("receivingCurrencyLabel"),
+		taxNote: t("taxNote"),
 		footer: t("footer"),
 	};
 

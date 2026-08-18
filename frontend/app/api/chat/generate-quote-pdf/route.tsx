@@ -97,6 +97,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		representativeLabel: t("representativeLabel"),
 		addressLabel: t("addressLabel"),
 		businessTypeItemLabel: t("businessTypeItemLabel"),
+		npwpLabel: t("npwpLabel"),
+		businessNumberLabel: t("businessNumberLabel"),
 		listingInfoSectionTitle: t("listingInfoSectionTitle"),
 		listingTitleLabel: t("listingTitleLabel"),
 		categoryLabel: t("categoryLabel"),
