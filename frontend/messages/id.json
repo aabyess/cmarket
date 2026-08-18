@@ -182,14 +182,14 @@
 		"backToListAria": "Kembali ke daftar chat",
 		"statusAwarded": "Dikonfirmasi",
 		"statusRejected": "Ditutup",
-		"awardButton": "Konfirmasi",
+		"awardButton": "Konfirmasi Kontrak",
 		"quotePriceLabel": "Harga Penawaran",
 		"deliveryLabel": "Pengiriman",
 		"deliveryDays": "{days} hari",
 		"messagePlaceholder": "Ketik pesan",
-		"awardModalTitle": "Konfirmasi perusahaan ini?",
-		"awardModalDescription": "{partnerName} akan dikonfirmasi sebagai pemasok akhir. Penawaran lainnya akan otomatis ditandai tidak terpilih, dan tindakan ini tidak dapat diubah setelah dikonfirmasi.",
-		"awardModalConfirm": "Konfirmasi"
+		"awardModalTitle": "Konfirmasi kontrak dengan perusahaan ini?",
+		"awardModalDescription": "{partnerName} akan dikonfirmasi sebagai pemasok akhir. Setelah dikonfirmasi, kontrak akan dibuat dan invoice (tagihan) akan otomatis diterbitkan di chat. Penawaran lainnya akan ditandai tidak terpilih, dan tindakan ini tidak dapat diubah.",
+		"awardModalConfirm": "Konfirmasi Kontrak"
 	},
 	"ChatMessageList": {
 		"dateLabel": "{day}/{month}/{year}",
@@ -1055,7 +1055,7 @@
 	},
 	"QuoteReview": {
 		"awardErrorMessage": "Terjadi kesalahan saat memproses konfirmasi kontrak.",
-		"confirmDescription": "Setelah dikonfirmasi, penawaran lain tidak dapat dipilih dan perusahaan pemasok akan diberi tahu tentang kontrak ini.",
+		"confirmDescription": "Setelah dikonfirmasi, kontrak akan dibuat dan invoice (tagihan) dari pemasok akan otomatis diterbitkan di chat. Penawaran lain tidak dapat dipilih dan perusahaan pemasok akan diberi tahu tentang kontrak ini.",
 		"confirmLabel": "Konfirmasi Kontrak",
 		"confirmTitle": "Konfirmasi kontrak dengan penawaran ini?",
 		"emptyDescription": "Penawaran pertama biasanya tiba dalam 2-3 hari.",
@@ -1075,8 +1075,8 @@
 		"columnPrice": "Harga Penawaran",
 		"fastestDeliveryBadge": "Pengiriman Tercepat",
 		"lowestPriceBadge": "Harga Terendah",
-		"modalConfirmLabel": "Konfirmasi",
-		"modalDescription": "Sulit untuk membatalkan setelah ini.",
+		"modalConfirmLabel": "Konfirmasi Kontrak",
+		"modalDescription": "Setelah dikonfirmasi, kontrak akan dibuat dan invoice (tagihan) akan otomatis diterbitkan di chat. Sulit untuk membatalkan setelah ini.",
 		"modalTitle": "Konfirmasi kontrak ini?",
 		"navigating": "Mengalihkan...",
 		"noName": "Tanpa Nama",

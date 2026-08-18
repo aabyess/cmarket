@@ -934,7 +934,7 @@
 	},
 	"QuoteReview": {
 		"awardErrorMessage": "An error occurred while confirming the contract.",
-		"confirmDescription": "Once confirmed, other quotes can no longer be selected, and the supplier will be notified of the contract.",
+		"confirmDescription": "Once confirmed, a contract is created and the supplier's invoice is automatically issued in the chat. Other quotes can no longer be selected, and the supplier will be notified of the contract.",
 		"confirmLabel": "Confirm Contract",
 		"confirmTitle": "Confirm the contract with this quote?",
 		"emptyDescription": "Your first quote usually arrives within 2-3 days.",
@@ -954,8 +954,8 @@
 		"columnPrice": "Quoted Price",
 		"fastestDeliveryBadge": "Fastest Delivery",
 		"lowestPriceBadge": "Lowest Price",
-		"modalConfirmLabel": "Confirm",
-		"modalDescription": "This can't easily be undone afterward.",
+		"modalConfirmLabel": "Confirm Contract",
+		"modalDescription": "Once confirmed, a contract is created and an invoice is automatically issued in the chat. This can't easily be undone afterward.",
 		"modalTitle": "Confirm this contract?",
 		"navigating": "Redirecting...",
 		"noName": "No Name",
@@ -1204,14 +1204,14 @@
 		"backToListAria": "Back to chat list",
 		"statusAwarded": "Contract Confirmed",
 		"statusRejected": "Closed",
-		"awardButton": "Confirm",
+		"awardButton": "Confirm Contract",
 		"quotePriceLabel": "Quote Price",
 		"deliveryLabel": "Delivery",
 		"deliveryDays": "{days} days",
 		"messagePlaceholder": "Type a message",
-		"awardModalTitle": "Confirm this company?",
-		"awardModalDescription": "{partnerName} will be confirmed as the final supplier. Other quotes will automatically be marked as not selected, and this cannot be changed once confirmed.",
-		"awardModalConfirm": "Confirm"
+		"awardModalTitle": "Confirm the contract with this company?",
+		"awardModalDescription": "{partnerName} will be confirmed as the final supplier. Once confirmed, a contract is created and an invoice is automatically issued in the chat. Other quotes will be marked as not selected, and this cannot be undone.",
+		"awardModalConfirm": "Confirm Contract"
 	},
 	"ChatMessageList": {
 		"dateLabel": "{month}/{day}/{year}",
