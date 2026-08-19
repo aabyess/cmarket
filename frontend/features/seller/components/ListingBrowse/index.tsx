@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
@@ -9,6 +9,7 @@ import { cn } from "@/utils/cn";
 import { ListingBrowseCard } from "@/features/seller/components/ListingBrowse/ListingBrowseCard";
 import { ListingBrowseTable } from "@/features/seller/components/ListingBrowse/ListingBrowseTable";
 import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
+import { Pagination } from "@/components/commons/Pagination";
 import type { OpenListing } from "@/features/seller/types";
 
 type StatusTab = "all" | "active" | "closed";
@@ -32,6 +33,8 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 	const [statusTab, setStatusTab] = useState<StatusTab>("all");
 	const [sort, setSort] = useState<SortOption>("deadline");
 	const [viewMode, setViewMode] = useState<ViewMode>("grid");
+	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(10);
 
 	const tabLabels: Record<StatusTab, string> = {
 		all: t("tabAll"),
@@ -75,6 +78,13 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 			return new Date(a.endDate).getTime() - new Date(b.endDate).getTime();
 		});
 	}, [listings, statusTab, trimmedKeyword, sort]);
+
+	useEffect(() => {
+		setPage(1);
+	}, [statusTab, trimmedKeyword, sort, pageSize]);
+
+	const pageCount = Math.max(1, Math.ceil(filteredListings.length / pageSize));
+	const paginatedListings = filteredListings.slice((page - 1) * pageSize, page * pageSize);
 
 	return (
 		<div>
@@ -155,12 +165,12 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 				</div>
 			) : viewMode === "list" ? (
 				<ListingBrowseTable
-					listings={filteredListings}
+					listings={paginatedListings}
 					onRowClick={(id) => router.push(`/seller/listing-browse/${id}`)}
 				/>
 			) : (
 				<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-					{filteredListings.map((listing) => (
+					{paginatedListings.map((listing) => (
 						<ListingBrowseCard
 							key={listing.id}
 							listing={listing}
@@ -168,6 +178,16 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 						/>
 					))}
 				</div>
+			)}
+
+			{filteredListings.length > 0 && (
+				<Pagination
+					page={page}
+					pageCount={pageCount}
+					pageSize={pageSize}
+					onPageChange={setPage}
+					onPageSizeChange={setPageSize}
+				/>
 			)}
 		</div>
 	);
