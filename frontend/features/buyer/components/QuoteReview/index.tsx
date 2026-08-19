@@ -9,6 +9,7 @@ import { QuoteCompareTable } from "@/features/buyer/components/QuoteReview/Quote
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import { startChat } from "@/features/chat/mutations";
+import { ChatStartLoadingModal } from "@/features/chat/components/ChatStartLoadingModal";
 import type { ReceivedQuote } from "@/features/buyer/types";
 
 type QuoteReviewProps = {
@@ -21,6 +22,7 @@ export function QuoteReview({ quotes, backHref }: QuoteReviewProps): React.JSX.E
 	const t = useTranslations("QuoteReview");
 	const router = useRouter();
 	const [startingId, setStartingId] = useState<string | null>(null);
+	const [chatStartStep, setChatStartStep] = useState<"preparing" | "navigating" | null>(null);
 	const [awardingId, setAwardingId] = useState<string | null>(null);
 	const [confirmQuoteId, setConfirmQuoteId] = useState<string | null>(null);
 	const [viewMode, setViewMode] = useState<ViewMode>("list");
@@ -32,6 +34,7 @@ export function QuoteReview({ quotes, backHref }: QuoteReviewProps): React.JSX.E
 
 	async function handleStartChat(quoteId: string): Promise<void> {
 		setStartingId(quoteId);
+		setChatStartStep("preparing");
 		const quote = quotes.find((q) => q.id === quoteId);
 		try {
 			await fetch("/api/chat/generate-quote-pdf", {
@@ -39,6 +42,7 @@ export function QuoteReview({ quotes, backHref }: QuoteReviewProps): React.JSX.E
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ quoteId, sendPair: true }),
 			});
+			setChatStartStep("navigating");
 			await startChat(quoteId, {
 				price: quote?.price ?? 0,
 				currency: quote?.currency ?? "USD",
@@ -51,6 +55,8 @@ export function QuoteReview({ quotes, backHref }: QuoteReviewProps): React.JSX.E
 		} catch (err) {
 			console.error(err);
 			setStartingId(null);
+		} finally {
+			setChatStartStep(null);
 		}
 	}
 
@@ -92,6 +98,8 @@ export function QuoteReview({ quotes, backHref }: QuoteReviewProps): React.JSX.E
 
 	return (
 		<>
+			{chatStartStep && <ChatStartLoadingModal step={chatStartStep} />}
+
 			<div className="mb-4 flex justify-end">
 				<ViewModeToggle value={viewMode} onChange={setViewMode} />
 			</div>
