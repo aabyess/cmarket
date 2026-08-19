@@ -935,6 +935,8 @@
 		"tabAll": "전체",
 		"tabActive": "진행중",
 		"tabClosed": "마감",
+		"sortDeadline": "마감임박순",
+		"sortNewest": "최신등록순",
 		"searchPlaceholder": "품목명, 공고 제목으로 검색",
 		"emptySearchTitle": "검색 결과가 없어요",
 		"emptyDefaultTitle": "해당하는 공고가 없어요",

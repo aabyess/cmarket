@@ -3,14 +3,21 @@
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { Search, FileSearch } from "lucide-react";
+import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
+import { Search, FileSearch, ArrowUpDown } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { ListingBrowseCard } from "@/features/seller/components/ListingBrowse/ListingBrowseCard";
 import type { OpenListing } from "@/features/seller/types";
 
 type StatusTab = "all" | "active" | "closed";
+type SortOption = "deadline" | "newest";
 
 const TAB_VALUES: StatusTab[] = ["all", "active", "closed"];
+const SORT_VALUES: SortOption[] = ["deadline", "newest"];
+
+function isListingClosed(listing: OpenListing): boolean {
+	return listing.status !== "active" || new Date(listing.endDate).getTime() <= Date.now();
+}
 
 type ListingBrowseProps = {
 	listings: OpenListing[];
@@ -21,6 +28,7 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 	const router = useRouter();
 	const [keyword, setKeyword] = useState("");
 	const [statusTab, setStatusTab] = useState<StatusTab>("all");
+	const [sort, setSort] = useState<SortOption>("deadline");
 
 	const tabLabels: Record<StatusTab, string> = {
 		all: t("tabAll"),
@@ -28,12 +36,16 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 		closed: t("tabClosed"),
 	};
 
+	const sortLabels: Record<SortOption, string> = {
+		deadline: t("sortDeadline"),
+		newest: t("sortNewest"),
+	};
+
 	const trimmedKeyword = keyword.trim().toLowerCase();
 
 	const filteredListings = useMemo(() => {
-		return listings.filter((listing) => {
-			const isClosed =
-				listing.status !== "active" || new Date(listing.endDate).getTime() <= Date.now();
+		const filtered = listings.filter((listing) => {
+			const isClosed = isListingClosed(listing);
 			if (statusTab === "active" && isClosed) return false;
 			if (statusTab === "closed" && !isClosed) return false;
 			if (!trimmedKeyword) return true;
@@ -48,7 +60,18 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 				.toLowerCase();
 			return haystack.includes(trimmedKeyword);
 		});
-	}, [listings, statusTab, trimmedKeyword]);
+
+		return [...filtered].sort((a, b) => {
+			if (sort === "newest") {
+				return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+			}
+
+			const aClosed = isListingClosed(a);
+			const bClosed = isListingClosed(b);
+			if (aClosed !== bClosed) return aClosed ? 1 : -1;
+			return new Date(a.endDate).getTime() - new Date(b.endDate).getTime();
+		});
+	}, [listings, statusTab, trimmedKeyword, sort]);
 
 	return (
 		<div>
@@ -66,21 +89,47 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 				/>
 			</div>
 
-			<div className="mb-4 flex w-fit gap-1 rounded-xl border border-[#E5E7EB] bg-white p-1">
-				{TAB_VALUES.map((value) => (
-					<button
-						key={value}
-						onClick={() => setStatusTab(value)}
-						className={cn(
-							"rounded-lg px-4 py-1.5 text-xs font-medium transition-colors",
-							statusTab === value
-								? "bg-imsg-blue text-white"
-								: "text-[#6B7280] hover:bg-[#F9FAFB]",
-						)}
-					>
-						{tabLabels[value]}
-					</button>
-				))}
+			<div className="mb-4 flex items-center justify-between gap-2">
+				<div className="flex w-fit gap-1 rounded-xl border border-[#E5E7EB] bg-white p-1">
+					{TAB_VALUES.map((value) => (
+						<button
+							key={value}
+							onClick={() => setStatusTab(value)}
+							className={cn(
+								"rounded-lg px-4 py-1.5 text-xs font-medium transition-colors",
+								statusTab === value
+									? "bg-imsg-blue text-white"
+									: "text-[#6B7280] hover:bg-[#F9FAFB]",
+							)}
+						>
+							{tabLabels[value]}
+						</button>
+					))}
+				</div>
+
+				<Popover className="relative">
+					<PopoverButton className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
+						<ArrowUpDown size={14} />
+						{sortLabels[sort]}
+					</PopoverButton>
+
+					<PopoverPanel className="absolute right-0 z-20 mt-2 w-40 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
+						{SORT_VALUES.map((option) => (
+							<button
+								key={option}
+								onClick={() => setSort(option)}
+								className={cn(
+									"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
+									sort === option
+										? "bg-[#EFF6FF] text-imsg-blue"
+										: "text-[#374151] hover:bg-[#F9FAFB]",
+								)}
+							>
+								{sortLabels[option]}
+							</button>
+						))}
+					</PopoverPanel>
+				</Popover>
 			</div>
 
 			{filteredListings.length === 0 ? (

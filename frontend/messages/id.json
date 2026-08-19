@@ -948,6 +948,8 @@
 		"tabAll": "Semua",
 		"tabActive": "Berlangsung",
 		"tabClosed": "Ditutup",
+		"sortDeadline": "Tenggat terdekat",
+		"sortNewest": "Terbaru",
 		"searchPlaceholder": "Cari nama produk atau judul permintaan",
 		"emptySearchTitle": "Tidak ada hasil pencarian",
 		"emptyDefaultTitle": "Tidak ada permintaan yang sesuai",

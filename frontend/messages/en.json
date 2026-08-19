@@ -786,6 +786,8 @@
 		"tabAll": "All",
 		"tabActive": "Active",
 		"tabClosed": "Closed",
+		"sortDeadline": "Deadline soon",
+		"sortNewest": "Newest",
 		"searchPlaceholder": "Search by item name or listing title",
 		"emptySearchTitle": "No search results",
 		"emptyDefaultTitle": "No matching listings",
