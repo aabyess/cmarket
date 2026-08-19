@@ -948,11 +948,25 @@
 		"tabAll": "Semua",
 		"tabActive": "Berlangsung",
 		"tabClosed": "Ditutup",
+		"sortDeadline": "Tenggat terdekat",
+		"sortNewest": "Terbaru",
 		"searchPlaceholder": "Cari nama produk atau judul permintaan",
 		"emptySearchTitle": "Tidak ada hasil pencarian",
 		"emptyDefaultTitle": "Tidak ada permintaan yang sesuai",
 		"emptySearchDescription": "Coba cari dengan kata kunci lain.",
 		"emptyDefaultDescription": "Kami akan memberi tahu Anda saat ada permintaan baru."
+	},
+	"ListingBrowseTable": {
+		"columnStatus": "Status",
+		"columnTitle": "Permintaan",
+		"columnBudget": "Anggaran",
+		"columnDelivery": "Tujuan pengiriman",
+		"columnMyQuote": "Penawaran saya",
+		"closed": "Ditutup",
+		"daysLeft": "D-{days}",
+		"budgetPrivate": "Privat",
+		"quoteSent": "Penawaran terkirim",
+		"noQuote": "Belum dikirim"
 	},
 	"ListingBrowseCard": {
 		"closed": "Ditutup",
