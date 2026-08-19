@@ -13,7 +13,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		noteTranslations,
 		items,
 		attachments,
-		validityDays,
 		paymentTerms,
 	} = await req.json();
 
@@ -50,7 +49,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 			note_translations: noteTranslations ?? null,
 			items: items ?? null,
 			attachments: attachments ?? null,
-			validity_days: validityDays ?? null,
 			payment_terms: paymentTerms ?? null,
 		})
 		.select("id")

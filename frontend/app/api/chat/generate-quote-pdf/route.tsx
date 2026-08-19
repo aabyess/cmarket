@@ -101,8 +101,6 @@ async function generateQuoteDoc(
 		quoteInfoSectionTitle: t("quoteInfoSectionTitle"),
 		deliveryDaysLabel: t("deliveryDaysLabel"),
 		deliveryDaysValue: (days) => t("deliveryDaysValue", { days }),
-		validityLabel: t("validityLabel"),
-		validityDaysValue: (days) => t("validityDaysValue", { days }),
 		paymentTermsLabel: t("paymentTermsLabel"),
 		attachmentsLabel: t("attachmentsLabel"),
 		noteLabel: t("noteLabel"),

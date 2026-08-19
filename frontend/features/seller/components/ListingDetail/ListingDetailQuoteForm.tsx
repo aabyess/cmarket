@@ -62,7 +62,6 @@ export function ListingDetailQuoteForm({
 		note: myQuote?.note ?? "",
 		items: buildInitialItems(items, myQuote),
 		attachments: myQuote?.attachments ?? [],
-		validityDays: myQuote?.validityDays ?? 0,
 		paymentTerms: myQuote?.paymentTerms ?? "",
 	});
 	const [isLoading, setIsLoading] = useState(false);
@@ -196,7 +195,6 @@ export function ListingDetailQuoteForm({
 			note: myQuote?.note ?? "",
 			items: buildInitialItems(items, myQuote),
 			attachments: myQuote?.attachments ?? [],
-			validityDays: myQuote?.validityDays ?? 0,
 			paymentTerms: myQuote?.paymentTerms ?? "",
 		});
 		setError(null);
@@ -273,20 +271,10 @@ export function ListingDetailQuoteForm({
 					</div>
 				)}
 
-				{(myQuote.validityDays || myQuote.paymentTerms) && (
-					<div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 border-t border-[#F3F4F6] pt-3 text-xs text-[#374151]">
-						{myQuote.validityDays ? (
-							<div>
-								<p className="text-[#9CA3AF]">{t("validityLabel")}</p>
-								<p className="mt-0.5">{t("validityDaysSuffix", { days: myQuote.validityDays })}</p>
-							</div>
-						) : null}
-						{myQuote.paymentTerms ? (
-							<div className="min-w-0 flex-1">
-								<p className="text-[#9CA3AF]">{t("paymentTermsLabel")}</p>
-								<p className="mt-0.5 whitespace-pre-wrap">{myQuote.paymentTerms}</p>
-							</div>
-						) : null}
+				{myQuote.paymentTerms && (
+					<div className="mt-3 border-t border-[#F3F4F6] pt-3 text-xs text-[#374151]">
+						<p className="text-[#9CA3AF]">{t("paymentTermsLabel")}</p>
+						<p className="mt-0.5 whitespace-pre-wrap">{myQuote.paymentTerms}</p>
 					</div>
 				)}
 
@@ -438,21 +426,6 @@ export function ListingDetailQuoteForm({
 							value={form.deliveryDays || ""}
 							onChange={(e) => handleChange({ deliveryDays: Number(e.target.value) })}
 							placeholder={t("deliveryDaysPlaceholder")}
-							className="w-28 rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
-						/>
-						<span className="text-sm text-[#6B7280]">{t("deliveryDaysSuffix")}</span>
-					</div>
-				</div>
-
-				<div>
-					<label className="mb-2 block text-sm font-medium text-[#374151]">{t("validityFieldLabel")}</label>
-					<div className="flex items-center gap-2">
-						<input
-							type="number"
-							min={0}
-							value={form.validityDays || ""}
-							onChange={(e) => handleChange({ validityDays: Number(e.target.value) })}
-							placeholder={t("validityDaysPlaceholder")}
 							className="w-28 rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 						/>
 						<span className="text-sm text-[#6B7280]">{t("deliveryDaysSuffix")}</span>

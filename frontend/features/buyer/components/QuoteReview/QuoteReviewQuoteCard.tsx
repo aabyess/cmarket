@@ -234,20 +234,10 @@ export function QuoteReviewQuoteCard({
 				))}
 			</dl>
 
-			{(quote.validityDays || quote.paymentTerms) && (
-				<div className="mb-4 flex flex-wrap gap-x-6 gap-y-2 rounded-xl border border-[#F2F2F7] px-4 py-3 text-sm">
-					{quote.validityDays ? (
-						<div>
-							<p className="text-xs text-imsg-secondary">{t("validityLabel")}</p>
-							<p className="mt-0.5 text-[#374151]">{t("validityDaysSuffix", { days: quote.validityDays })}</p>
-						</div>
-					) : null}
-					{quote.paymentTerms ? (
-						<div className="min-w-0 flex-1">
-							<p className="text-xs text-imsg-secondary">{t("paymentTermsLabel")}</p>
-							<p className="mt-0.5 whitespace-pre-wrap text-[#374151]">{quote.paymentTerms}</p>
-						</div>
-					) : null}
+			{quote.paymentTerms && (
+				<div className="mb-4 rounded-xl border border-[#F2F2F7] px-4 py-3 text-sm">
+					<p className="text-xs text-imsg-secondary">{t("paymentTermsLabel")}</p>
+					<p className="mt-0.5 whitespace-pre-wrap text-[#374151]">{quote.paymentTerms}</p>
 				</div>
 			)}
 

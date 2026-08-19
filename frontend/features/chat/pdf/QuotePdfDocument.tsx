@@ -95,7 +95,6 @@ export type QuotePdfData = {
 		deliveryDays: number;
 		note: string;
 		createdAt: string;
-		validityDays: number | null;
 		paymentTerms: string | null;
 		attachments: { fileName: string }[];
 	};
@@ -141,8 +140,6 @@ export type QuotePdfLabels = {
 	quoteInfoSectionTitle: string;
 	deliveryDaysLabel: string;
 	deliveryDaysValue: (days: number) => string;
-	validityLabel: string;
-	validityDaysValue: (days: number) => string;
 	paymentTermsLabel: string;
 	attachmentsLabel: string;
 	noteLabel: string;
@@ -282,12 +279,6 @@ export function QuotePdfDocument({
 					<Text style={styles.label}>{labels.deliveryDaysLabel}</Text>
 					<Text style={styles.value}>{labels.deliveryDaysValue(quote.deliveryDays)}</Text>
 				</View>
-				{quote.validityDays ? (
-					<View style={styles.row}>
-						<Text style={styles.label}>{labels.validityLabel}</Text>
-						<Text style={styles.value}>{labels.validityDaysValue(quote.validityDays)}</Text>
-					</View>
-				) : null}
 				{quote.paymentTerms ? (
 					<View style={styles.row}>
 						<Text style={styles.label}>{labels.paymentTermsLabel}</Text>

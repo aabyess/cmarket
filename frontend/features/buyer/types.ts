@@ -118,7 +118,6 @@ export type ReceivedQuote = {
 	revisedAt: string | null;
 	items: QuoteItemPrice[];
 	attachments: ListingAttachment[];
-	validityDays: number | null;
 	paymentTerms: string | null;
 	seller: SellerInfo;
 };

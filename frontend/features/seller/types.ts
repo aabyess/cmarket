@@ -56,7 +56,6 @@ export type QuoteFormData = {
 	note: string;
 	items: QuoteItemPrice[];
 	attachments: ListingAttachment[];
-	validityDays: number;
 	paymentTerms: string;
 };
 
@@ -85,6 +84,5 @@ export type MyQuoteSummary = {
 	status: "pending" | "awarded" | "rejected";
 	items: QuoteItemPrice[];
 	attachments: ListingAttachment[];
-	validityDays: number | null;
 	paymentTerms: string | null;
 };

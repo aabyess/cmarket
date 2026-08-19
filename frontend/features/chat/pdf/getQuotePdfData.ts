@@ -40,7 +40,7 @@ export async function getQuotePdfData(
 	const { data: quote, error: quoteError } = await admin
 		.from("quotes")
 		.select(
-			"listing_id, seller_id, price, currency, delivery_days, note, note_source_lang, note_translations, created_at, items, attachments, validity_days, payment_terms",
+			"listing_id, seller_id, price, currency, delivery_days, note, note_source_lang, note_translations, created_at, items, attachments, payment_terms",
 		)
 		.eq("id", quoteId)
 		.single();
@@ -103,7 +103,6 @@ export async function getQuotePdfData(
 			deliveryDays: quote.delivery_days,
 			note: resolveTranslatedField(quote.note ?? "", quote.note_source_lang, quote.note_translations, locale),
 			createdAt: quote.created_at,
-			validityDays: quote.validity_days,
 			paymentTerms: quote.payment_terms,
 			attachments: ((quote.attachments ?? []) as { fileName: string }[]).map((a) => ({ fileName: a.fileName })),
 		},

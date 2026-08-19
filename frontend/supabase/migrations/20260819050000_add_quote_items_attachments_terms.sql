@@ -1,7 +1,6 @@
 alter table public.quotes
 	add column if not exists items jsonb,
 	add column if not exists attachments jsonb,
-	add column if not exists validity_days integer,
 	add column if not exists payment_terms text;
 
 -- 견적 첨부(카탈로그·스펙시트 등) 저장용 비공개 버킷.

@@ -168,7 +168,7 @@ export async function getListingDetail(listingId: string): Promise<ListingDetail
 	if (user) {
 		const { data: quote } = await supabase
 			.from("quotes")
-			.select("id, price, currency, delivery_days, note, status, items, attachments, validity_days, payment_terms")
+			.select("id, price, currency, delivery_days, note, status, items, attachments, payment_terms")
 			.eq("listing_id", listingId)
 			.eq("seller_id", user.id)
 			.maybeSingle();
@@ -183,7 +183,6 @@ export async function getListingDetail(listingId: string): Promise<ListingDetail
 				status: quote.status,
 				items: quote.items ?? [],
 				attachments: quote.attachments ?? [],
-				validityDays: quote.validity_days,
 				paymentTerms: quote.payment_terms,
 			};
 		}
