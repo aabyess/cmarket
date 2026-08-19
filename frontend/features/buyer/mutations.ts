@@ -110,7 +110,19 @@ export async function extendListingDeadline(id: string, extendDays: number): Pro
 	const { data: { user }, error: userError } = await supabase.auth.getUser();
 	if (userError || !user) throw new Error("로그인이 필요합니다.");
 
-	const newDeadline = new Date();
+	// "오늘 + N일"이 아니라 "기존 마감일 + N일"이어야 연장이다.
+	// 기존 마감일이 이미 지났으면 오늘을 기준으로 연장한다.
+	const { data: current, error: fetchError } = await supabase
+		.from("listings")
+		.select("end_date")
+		.eq("id", id)
+		.eq("user_id", user.id)
+		.single();
+
+	if (fetchError || !current) throw new Error("공고를 찾을 수 없습니다.");
+
+	const base = new Date(Math.max(new Date(current.end_date).getTime(), Date.now()));
+	const newDeadline = new Date(base);
 	newDeadline.setDate(newDeadline.getDate() + extendDays);
 
 	const { error } = await supabase

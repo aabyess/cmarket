@@ -24,16 +24,35 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
 	}
 
+	// admin 클라이언트는 RLS를 우회하므로 비즈니스 검증을 여기서 직접 한다.
+	if (typeof price !== "number" || !Number.isFinite(price) || price <= 0) {
+		return NextResponse.json({ error: "가격이 올바르지 않습니다." }, { status: 400 });
+	}
+	if (!["USD", "IDR", "KRW"].includes(currency)) {
+		return NextResponse.json({ error: "지원하지 않는 통화입니다." }, { status: 400 });
+	}
+	if (!Number.isInteger(deliveryDays) || deliveryDays <= 0) {
+		return NextResponse.json({ error: "납기일수가 올바르지 않습니다." }, { status: 400 });
+	}
+
 	const admin = await createServerAdminClient();
 
 	const { data: listing } = await admin
 		.from("listings")
-		.select("id, title, user_id")
+		.select("id, title, user_id, status")
 		.eq("id", listingId)
 		.single();
 
 	if (!listing) {
 		return NextResponse.json({ error: "공고를 찾을 수 없습니다." }, { status: 404 });
+	}
+
+	if (listing.status !== "active") {
+		return NextResponse.json({ error: "마감된 공고에는 견적을 제출할 수 없습니다." }, { status: 400 });
+	}
+
+	if (listing.user_id === user.id) {
+		return NextResponse.json({ error: "본인 공고에는 견적을 제출할 수 없습니다." }, { status: 400 });
 	}
 
 	const { data: quote, error: quoteError } = await admin

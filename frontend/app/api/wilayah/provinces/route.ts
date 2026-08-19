@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(): Promise<NextResponse> {
 	try {
-		const res = await fetch("https://wilayah.id/api/provinces.json");
+		const res = await fetch("https://wilayah.id/api/provinces.json", { next: { revalidate: 86400 } });
 		if (!res.ok) throw new Error("failed to fetch provinces");
 		const data = await res.json();
 		return NextResponse.json(data);

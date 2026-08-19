@@ -6,6 +6,7 @@ import { ListingDetailActions } from "@/features/buyer/components/ListingDetailA
 import { ListingDetailSummary } from "@/features/buyer/components/ListingDetail/ListingDetailSummary";
 import { ListingInfo } from "@/features/shared/components/ListingInfo";
 import { getCategoryLabels, getListingStatusLabels } from "@/features/buyer/constants";
+import { sanitizeHtml } from "@/utils/sanitizeHtml";
 import type { ListingDetailData } from "@/features/buyer/components/ListingDetail/types";
 
 type ListingDetailProps = {
@@ -72,11 +73,11 @@ export async function ListingDetail({
 						<FileText size={16} className="text-imsg-secondary" />
 						{t("descriptionTitle")}
 					</h2>
-					{/* 설명은 에디터가 만든 HTML 이다. 작성자는 로그인한 발주기업 본인이고
-					    저장 경로가 서버를 거치므로 그대로 렌더한다. */}
+					{/* 설명은 에디터가 만든 HTML 이지만 저장은 클라이언트에서 직접 이뤄지므로
+					    임의 HTML이 들어올 수 있다. 렌더 전에 살균한다. */}
 					<div
 						className="prose prose-sm max-w-none text-[#374151] [&_table]:w-full [&_td]:border [&_td]:border-[#E5E7EB] [&_td]:p-2 [&_th]:border [&_th]:border-[#E5E7EB] [&_th]:bg-[#F9FAFB] [&_th]:p-2"
-						dangerouslySetInnerHTML={{ __html: listing.description }}
+						dangerouslySetInnerHTML={{ __html: sanitizeHtml(listing.description) }}
 					/>
 				</section>
 			)}

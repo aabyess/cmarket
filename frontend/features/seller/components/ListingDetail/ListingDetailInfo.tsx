@@ -3,6 +3,7 @@ import { cva } from "class-variance-authority";
 import { getTranslations } from "next-intl/server";
 import { ListingInfo } from "@/features/shared/components/ListingInfo";
 import { getCategoryLabels, CURRENCY_SYMBOL } from "@/features/buyer/constants";
+import { sanitizeHtml } from "@/utils/sanitizeHtml";
 import type { ListingDetail } from "@/features/seller/types";
 
 type ListingDetailInfoProps = {
@@ -114,7 +115,7 @@ export async function ListingDetailInfo({ listing }: ListingDetailInfoProps): Pr
 					</h2>
 					<div
 						className="prose prose-sm max-w-none text-[#374151] [&_table]:w-full [&_td]:border [&_td]:border-[#E5E7EB] [&_td]:p-2 [&_th]:border [&_th]:border-[#E5E7EB] [&_th]:bg-[#F9FAFB] [&_th]:p-2"
-						dangerouslySetInnerHTML={{ __html: listing.description }}
+						dangerouslySetInnerHTML={{ __html: sanitizeHtml(listing.description) }}
 					/>
 				</section>
 			)}

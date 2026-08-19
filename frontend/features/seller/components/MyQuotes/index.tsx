@@ -107,7 +107,7 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 							key={quote.id}
 							quote={quote}
 							onViewListing={() => router.push(`/seller/listing-browse/${quote.listingId}`)}
-							onGoToChat={() => router.push(`/seller/chat/${quote.id}`)}
+							onGoToChat={() => router.push(`/seller/chat?quoteId=${quote.id}`)}
 						/>
 					))}
 				</div>
@@ -115,7 +115,7 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 				<MyQuotesTable
 					quotes={paginatedQuotes}
 					onViewListing={(listingId) => router.push(`/seller/listing-browse/${listingId}`)}
-					onGoToChat={(quoteId) => router.push(`/seller/chat/${quoteId}`)}
+					onGoToChat={(quoteId) => router.push(`/seller/chat?quoteId=${quoteId}`)}
 				/>
 			)}
 

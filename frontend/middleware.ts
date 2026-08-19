@@ -89,6 +89,15 @@ export async function middleware(request: NextRequest) {
 		return response;
 	}
 
+	// 리다이렉트에도 갱신된 세션 쿠키를 실어야 한다. getUser()가 토큰을 refresh하면
+	// 새 쿠키가 pendingCookies에 쌓이는데, 이걸 버리면 브라우저에 이미 소비된 구
+	// refresh token만 남아 다음 요청에서 세션이 통째로 폐기된다(간헐적 강제 로그아웃).
+	function buildRedirect(url: URL): NextResponse {
+		const response = NextResponse.redirect(url);
+		pendingCookies.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+		return response;
+	}
+
 	const { data: { user } } = await supabase.auth.getUser();
 
 	if (!user && isProtectedPath) {
@@ -96,7 +105,7 @@ export async function middleware(request: NextRequest) {
 		// 세션 쿠키가 있는데도 user가 없다면 "로그인한 적 없음"이 아니라 "세션 만료"다.
 		const hadSession = request.cookies.getAll().some((cookie) => cookie.name.startsWith("sb-"));
 		if (hadSession) loginUrl.searchParams.set("expired", "1");
-		return NextResponse.redirect(loginUrl);
+		return buildRedirect(loginUrl);
 	}
 
 	if (!user) {
@@ -118,25 +127,25 @@ export async function middleware(request: NextRequest) {
 	const homePath = HOME_BY_ROLE[role] ?? "/buyer/dashboard";
 
 	if (pathWithoutLocale === "/login") {
-		return NextResponse.redirect(new URL(withLocale(locale, homePath), request.url));
+		return buildRedirect(new URL(withLocale(locale, homePath), request.url));
 	}
 
 	// 운영자 화면은 운영자만. 나머지는 자기 역할의 홈으로 돌려보낸다.
 	if (pathWithoutLocale.startsWith("/admin") && role !== "admin") {
-		return NextResponse.redirect(new URL(withLocale(locale, homePath), request.url));
+		return buildRedirect(new URL(withLocale(locale, homePath), request.url));
 	}
 
 	// 운영자는 거래 화면을 쓰지 않는다. 소속 회사가 없어 데이터가 비어 보인다.
 	if (role === "admin" && (pathWithoutLocale.startsWith("/buyer") || pathWithoutLocale.startsWith("/seller"))) {
-		return NextResponse.redirect(new URL(withLocale(locale, "/admin"), request.url));
+		return buildRedirect(new URL(withLocale(locale, "/admin"), request.url));
 	}
 
 	if (role === "buyer" && pathWithoutLocale.startsWith("/seller")) {
-		return NextResponse.redirect(new URL(withLocale(locale, "/buyer/dashboard"), request.url));
+		return buildRedirect(new URL(withLocale(locale, "/buyer/dashboard"), request.url));
 	}
 
 	if (role === "seller" && pathWithoutLocale.startsWith("/buyer")) {
-		return NextResponse.redirect(new URL(withLocale(locale, "/seller/dashboard"), request.url));
+		return buildRedirect(new URL(withLocale(locale, "/seller/dashboard"), request.url));
 	}
 
 	// 이미 검증한 user/role을 헤더로 전달해 서버 컴포넌트에서 재조회하지 않게 한다.
