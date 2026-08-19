@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Mail, ArrowRight, Clock, Bell, MessageSquare } from "lucide-react";
 import { cn } from "@/utils/cn";
-import type { BuyerDashboardData, BuyerTodo, BuyerTradeSummary } from "@/features/buyer/types";
+import type { BuyerActivity, BuyerDashboardData, BuyerTodo, BuyerTradeSummary } from "@/features/buyer/types";
 
 type DashboardHomeProps = {
 	companyName: string;
@@ -22,6 +22,14 @@ export function DashboardHome({ companyName, data, tradeSummary }: DashboardHome
 
 	function handleTodoAction(todo: BuyerTodo) {
 		router.push(`/buyer/quote-review?listingId=${todo.listingId}`);
+	}
+
+	function handleActivityClick(activity: BuyerActivity) {
+		if (activity.type === "quote") {
+			router.push("/buyer/quote-review");
+			return;
+		}
+		router.push(`/buyer/chat?quoteId=${activity.quoteId}`);
 	}
 
 	const urgentTodos = data.todos.filter((t) => t.highlights.length > 0);
@@ -220,17 +228,19 @@ export function DashboardHome({ companyName, data, tradeSummary }: DashboardHome
 								</li>
 							) : (
 								data.activities.map((activity, i) => (
-									<li
-										key={i}
-										className="flex items-start gap-3 rounded-xl px-2 py-2.5 transition-colors hover:bg-imsg-surface"
-									>
-										<span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-blue-50">
-											<Bell size={12} className="text-imsg-blue" />
-										</span>
-										<div className="min-w-0 flex-1">
-											<p className="text-sm text-[#0f172a]">{activity.title}</p>
-											<p className="mt-0.5 text-sm text-imsg-secondary">{activity.timeText}</p>
-										</div>
+									<li key={i}>
+										<button
+											onClick={() => handleActivityClick(activity)}
+											className="flex w-full items-start gap-3 rounded-xl px-2 py-2.5 text-left transition-colors hover:bg-imsg-surface"
+										>
+											<span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-blue-50">
+												<Bell size={12} className="text-imsg-blue" />
+											</span>
+											<div className="min-w-0 flex-1">
+												<p className="text-sm text-[#0f172a]">{activity.title}</p>
+												<p className="mt-0.5 text-sm text-imsg-secondary">{activity.timeText}</p>
+											</div>
+										</button>
 									</li>
 								))
 							)}

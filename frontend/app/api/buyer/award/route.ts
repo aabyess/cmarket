@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient, createServerAdminClient } from "@/libs/supabaseServer";
 import { createInvoiceMeta } from "@/features/chat/pdf/getInvoicePdfData";
+import { translateFieldServer } from "@/libs/translateFieldServer";
 
 const ERROR_MESSAGES: Record<string, string> = {
 	QUOTE_NOT_FOUND: "견적을 찾을 수 없습니다.",
@@ -26,7 +27,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
 	const admin = await createServerAdminClient();
 
-	const { data: quote } = await admin.from("quotes").select("seller_id").eq("id", quoteId).single();
+	const { data: quote } = await admin
+		.from("quotes")
+		.select("seller_id, listing_id")
+		.eq("id", quoteId)
+		.single();
 
 	const { data: contractId, error } = await admin.rpc("award_quote", {
 		p_quote_id: quoteId,
@@ -38,6 +43,40 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		const status =
 			error.message === "FORBIDDEN" ? 403 : error.message === "QUOTE_NOT_FOUND" ? 404 : 400;
 		return NextResponse.json({ error: message }, { status });
+	}
+
+	// 바이어 본인의 대시보드 최근 활동에도 계약 확정 기록이 남도록 알린다.
+	// 알림 실패가 낙찰 확정 자체를 되돌리지는 않는다.
+	if (quote?.listing_id) {
+		const { data: listing } = await admin
+			.from("listings")
+			.select("title")
+			.eq("id", quote.listing_id)
+			.single();
+
+		const notificationTitle = "계약이 확정됐어요";
+		const notificationContent = listing?.title ?? "";
+
+		const [titleTranslation, contentTranslation] = await Promise.all([
+			translateFieldServer(notificationTitle),
+			translateFieldServer(notificationContent),
+		]);
+
+		const { error: notificationError } = await admin.from("notifications").insert({
+			profile_id: user.id,
+			type: "message",
+			quote_id: quoteId,
+			title: notificationTitle,
+			content: notificationContent,
+			title_source_lang: titleTranslation?.sourceLang ?? null,
+			title_translations: titleTranslation?.translations ?? null,
+			content_source_lang: contentTranslation?.sourceLang ?? null,
+			content_translations: contentTranslation?.translations ?? null,
+		});
+
+		if (notificationError) {
+			console.error("award notificationError:", notificationError);
+		}
 	}
 
 	// 낙찰 확정 시 채팅에 인보이스 카드 메시지를 만든다. PDF 자체는 카드가 열릴 때 생성된다.
