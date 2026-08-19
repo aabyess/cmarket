@@ -1035,6 +1035,9 @@
 		"filterPending": "검토 중",
 		"filterAwarded": "계약 확정",
 		"filterRejected": "미선정",
+		"sortNewest": "최신순",
+		"sortOldest": "오래된순",
+		"sortDeadline": "마감임박순",
 		"gridViewAriaLabel": "카드로 보기",
 		"listViewAriaLabel": "목록으로 보기"
 	},

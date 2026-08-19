@@ -886,6 +886,9 @@
 		"filterPending": "Under review",
 		"filterAwarded": "Contract awarded",
 		"filterRejected": "Not selected",
+		"sortNewest": "Newest",
+		"sortOldest": "Oldest",
+		"sortDeadline": "Deadline soon",
 		"gridViewAriaLabel": "View as cards",
 		"listViewAriaLabel": "View as list"
 	},

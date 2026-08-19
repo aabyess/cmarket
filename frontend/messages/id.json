@@ -1048,6 +1048,9 @@
 		"filterPending": "Sedang ditinjau",
 		"filterAwarded": "Disepakati",
 		"filterRejected": "Tidak terpilih",
+		"sortNewest": "Terbaru",
+		"sortOldest": "Terlama",
+		"sortDeadline": "Tenggat terdekat",
 		"gridViewAriaLabel": "Tampilkan sebagai kartu",
 		"listViewAriaLabel": "Tampilkan sebagai daftar"
 	},
