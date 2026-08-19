@@ -8,6 +8,7 @@ import { SafeImage } from "@/components/commons/SafeImage";
 import { cn } from "@/utils/cn";
 import { startChat } from "@/features/chat/mutations";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
+import { ChatStartLoadingModal } from "@/features/chat/components/ChatStartLoadingModal";
 import type { Currency, ReceivedQuote } from "@/features/buyer/types";
 
 const CURRENCY_SYMBOL: Record<Currency, string> = {
@@ -24,6 +25,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 	const t = useTranslations("QuoteCompareTable");
 	const router = useRouter();
 	const [startingId, setStartingId] = useState<string | null>(null);
+	const [chatStartStep, setChatStartStep] = useState<"preparing" | "navigating" | null>(null);
 	const [awardingId, setAwardingId] = useState<string | null>(null);
 	const [confirmQuoteId, setConfirmQuoteId] = useState<string | null>(null);
 
@@ -36,6 +38,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 
 	async function handleStartChat(quoteId: string) {
 		setStartingId(quoteId);
+		setChatStartStep("preparing");
 		const quote = quotes.find((q) => q.id === quoteId);
 		try {
 			await fetch("/api/chat/generate-quote-pdf", {
@@ -43,6 +46,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ quoteId, sendPair: true }),
 			});
+			setChatStartStep("navigating");
 			await startChat(quoteId, {
 				price: quote?.price ?? 0,
 				currency: quote?.currency ?? "USD",
@@ -55,6 +59,8 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 		} catch (err) {
 			console.error(err);
 			setStartingId(null);
+		} finally {
+			setChatStartStep(null);
 		}
 	}
 
@@ -86,6 +92,8 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 
 	return (
 		<div className="overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white">
+			{chatStartStep && <ChatStartLoadingModal step={chatStartStep} />}
+
 			<div className="overflow-x-auto">
 				<table className="w-full border-collapse text-left text-sm">
 					<thead className="bg-[#F9FAFB]">

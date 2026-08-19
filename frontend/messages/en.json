@@ -352,6 +352,11 @@
 		"subtitle": "Signing you in securely",
 		"sslLabel": "SSL-encrypted secure connection"
 	},
+	"ChatStartLoadingModal": {
+		"preparingTitle": "Preparing your quote documents",
+		"navigatingTitle": "Heading to the chat room",
+		"subtitle": "Please wait a moment..."
+	},
 	"PageLoading": { "loading": "Loading..." },
 	"Pagination": { "perPage": "{size} / page" },
 	"NotFoundPage": {

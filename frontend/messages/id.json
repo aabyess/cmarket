@@ -509,6 +509,11 @@
 		"subtitle": "Masuk dengan aman",
 		"sslLabel": "Koneksi terenkripsi SSL"
 	},
+	"ChatStartLoadingModal": {
+		"preparingTitle": "Sedang menyiapkan surat penawaran",
+		"navigatingTitle": "Sedang menuju ke ruang chat",
+		"subtitle": "Mohon tunggu sebentar..."
+	},
 	"PageLoading": {
 		"loading": "Memuat..."
 	},
