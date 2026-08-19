@@ -1,5 +1,6 @@
 import { createServerAdminClient } from "@/libs/supabaseServer";
 import { resolveTranslatedField } from "@/utils/resolveTranslatedField";
+import { translateTextServer, type SupportedLocale } from "@/libs/translateFieldServer";
 import type { QuotePdfData } from "@/features/chat/pdf/QuotePdfDocument";
 
 type QuotePdfResult = QuotePdfData & {
@@ -8,7 +9,31 @@ type QuotePdfResult = QuotePdfData & {
 	sellerId: string;
 };
 
-export async function getQuotePdfData(quoteId: string, locale: string): Promise<QuotePdfResult | null> {
+type ListingItem = { name: string; spec: string; quantity: number; unit: string };
+
+function toSupportedLocale(locale: string): SupportedLocale {
+	return locale === "ko" || locale === "id" ? locale : "en";
+}
+
+/** 바이어가 원어로 입력한 품목명·사양을 지정한 언어로 번역한다. DB에는 저장하지 않고 이 PDF에만 반영된다. */
+async function translateItemsList(items: ListingItem[], locale: string): Promise<ListingItem[]> {
+	const targetLocale = toSupportedLocale(locale);
+	return Promise.all(
+		items.map(async (item) => {
+			const [name, spec] = await Promise.all([
+				translateTextServer(item.name, targetLocale),
+				translateTextServer(item.spec, targetLocale),
+			]);
+			return { ...item, name, spec };
+		}),
+	);
+}
+
+export async function getQuotePdfData(
+	quoteId: string,
+	locale: string,
+	translateItems = false,
+): Promise<QuotePdfResult | null> {
 	const admin = await createServerAdminClient();
 
 	const { data: quote, error: quoteError } = await admin
@@ -28,6 +53,10 @@ export async function getQuotePdfData(quoteId: string, locale: string): Promise<
 		.single();
 
 	if (listingError || !listing) return null;
+
+	const items: ListingItem[] = translateItems
+		? await translateItemsList(listing.items ?? [], locale)
+		: (listing.items ?? []);
 
 	const { data: buyerCompany } = await admin
 		.from("companies")
@@ -50,7 +79,7 @@ export async function getQuotePdfData(quoteId: string, locale: string): Promise<
 		listing: {
 			title: resolveTranslatedField(listing.title, listing.title_source_lang, listing.title_translations, locale),
 			category: listing.category,
-			items: listing.items ?? [],
+			items,
 			currency: listing.currency,
 			totalBudget: Number(listing.total_budget ?? 0),
 			budgetPublic: listing.budget_public ?? false,

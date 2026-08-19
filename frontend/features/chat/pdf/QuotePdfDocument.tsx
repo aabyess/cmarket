@@ -63,6 +63,15 @@ const styles = StyleSheet.create({
 	priceLabel: { fontSize: 10, color: "#2563EB" },
 	priceValue: { fontSize: 20, fontWeight: "bold", color: "#2563EB" },
 	footer: { marginTop: 24, fontSize: 8, color: "#9CA3AF", textAlign: "center" },
+	disclaimer: {
+		marginBottom: 16,
+		backgroundColor: "#FFFBEB",
+		border: "1pt solid #FDE68A",
+		borderRadius: 6,
+		padding: 10,
+		fontSize: 9,
+		color: "#92400E",
+	},
 });
 
 export type QuotePdfData = {
@@ -128,11 +137,14 @@ export type QuotePdfLabels = {
 	noteLabel: string;
 	priceLabel: string;
 	footer: string;
+	translationDisclaimer: string;
 };
 
 type QuotePdfDocumentProps = QuotePdfData & {
 	labels: QuotePdfLabels;
 	categoryLabels: Record<string, string>;
+	/** 참고용 번역본일 때만 안내 문구를 넣는다. 원본에는 넣지 않는다. */
+	isTranslationCopy?: boolean;
 };
 
 function formatDate(iso: string): string {
@@ -140,7 +152,15 @@ function formatDate(iso: string): string {
 	return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
 }
 
-export function QuotePdfDocument({ listing, quote, buyerCompany, sellerCompany, labels, categoryLabels }: QuotePdfDocumentProps) {
+export function QuotePdfDocument({
+	listing,
+	quote,
+	buyerCompany,
+	sellerCompany,
+	labels,
+	categoryLabels,
+	isTranslationCopy,
+}: QuotePdfDocumentProps) {
 	const symbol = CURRENCY_SYMBOL[quote.currency] ?? quote.currency;
 
 	return (
@@ -148,6 +168,8 @@ export function QuotePdfDocument({ listing, quote, buyerCompany, sellerCompany, 
 			<Page size="A4" style={styles.page}>
 				<Text style={styles.title}>{labels.title}</Text>
 				<Text style={styles.subtitle}>{labels.issuedLine(formatDate(quote.createdAt))}</Text>
+
+				{isTranslationCopy && <Text style={styles.disclaimer}>{labels.translationDisclaimer}</Text>}
 
 				<View style={styles.companyRow}>
 					<View style={styles.companyBox}>
