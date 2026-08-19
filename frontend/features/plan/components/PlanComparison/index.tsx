@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { Check, Sparkles } from "lucide-react";
+import { Check, Star, Crown } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { Plan } from "@/constants/plan";
 import type { PlanInfo } from "@/features/plan/apis";
@@ -19,7 +19,19 @@ const PLAN_FEATURE_COUNT: Record<Plan, number> = {
 const PLAN_HIGHLIGHT: Record<Plan, string> = {
 	free: "",
 	pro: "border-imsg-blue ring-1 ring-imsg-blue",
-	max: "border-[#0f172a] ring-1 ring-[#0f172a]",
+	max: "border-indigo-900 ring-1 ring-indigo-900",
+};
+
+const PLAN_BADGE_ICON: Record<Plan, typeof Star | null> = {
+	free: null,
+	pro: Star,
+	max: Crown,
+};
+
+const PLAN_BADGE_STYLE: Record<Plan, string> = {
+	free: "",
+	pro: "bg-imsg-blue/10 text-imsg-blue",
+	max: "bg-amber-50 text-amber-600",
 };
 
 export function PlanComparison({ planInfo }: PlanComparisonProps): React.ReactNode {
@@ -56,6 +68,7 @@ export function PlanComparison({ planInfo }: PlanComparisonProps): React.ReactNo
 				{PLAN_ORDER.map((plan) => {
 					const isCurrent = plan === currentPlan;
 					const featureCount = PLAN_FEATURE_COUNT[plan];
+					const BadgeIcon = PLAN_BADGE_ICON[plan];
 
 					return (
 						<div
@@ -66,8 +79,13 @@ export function PlanComparison({ planInfo }: PlanComparisonProps): React.ReactNo
 							)}
 						>
 							{plan !== "free" && (
-								<span className="mb-3 inline-flex w-fit items-center gap-1 rounded-full bg-imsg-blue/10 px-2.5 py-1 text-xs font-semibold text-imsg-blue">
-									<Sparkles size={12} />
+								<span
+									className={cn(
+										"mb-3 inline-flex w-fit items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold",
+										PLAN_BADGE_STYLE[plan],
+									)}
+								>
+									{BadgeIcon && <BadgeIcon size={12} />}
 									{t(`${plan}.badge`)}
 								</span>
 							)}
@@ -85,17 +103,19 @@ export function PlanComparison({ planInfo }: PlanComparisonProps): React.ReactNo
 								))}
 							</ul>
 
-							<button
-								disabled
-								className={cn(
-									"mt-6 w-full rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors",
-									isCurrent
-										? "bg-[#F3F4F6] text-[#9CA3AF]"
-										: "bg-imsg-blue/10 text-imsg-blue disabled:cursor-not-allowed",
-								)}
-							>
-								{isCurrent ? t("currentPlanButton") : t("upgradeComingSoonButton")}
-							</button>
+							<div className="mt-5 border-t border-[#F3F4F6] pt-5">
+								<button
+									disabled
+									className={cn(
+										"w-full rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors",
+										isCurrent
+											? "bg-[#F3F4F6] text-[#9CA3AF]"
+											: "bg-imsg-blue/10 text-imsg-blue disabled:cursor-not-allowed",
+									)}
+								>
+									{isCurrent ? t("currentPlanButton") : t("upgradeComingSoonButton")}
+								</button>
+							</div>
 						</div>
 					);
 				})}
