@@ -34,7 +34,7 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 	const [sort, setSort] = useState<SortOption>("deadline");
 	const [viewMode, setViewMode] = useState<ViewMode>("grid");
 	const [page, setPage] = useState(1);
-	const [pageSize, setPageSize] = useState(10);
+	const [pageSize, setPageSize] = useState(9);
 
 	const tabLabels: Record<StatusTab, string> = {
 		all: t("tabAll"),
@@ -187,6 +187,7 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 					pageSize={pageSize}
 					onPageChange={setPage}
 					onPageSizeChange={setPageSize}
+					pageSizeOptions={[9, 18, 30, 60]}
 				/>
 			)}
 		</div>
