@@ -7,6 +7,8 @@ import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { Search, FileSearch, ArrowUpDown } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { ListingBrowseCard } from "@/features/seller/components/ListingBrowse/ListingBrowseCard";
+import { ListingBrowseTable } from "@/features/seller/components/ListingBrowse/ListingBrowseTable";
+import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import type { OpenListing } from "@/features/seller/types";
 
 type StatusTab = "all" | "active" | "closed";
@@ -29,6 +31,7 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 	const [keyword, setKeyword] = useState("");
 	const [statusTab, setStatusTab] = useState<StatusTab>("all");
 	const [sort, setSort] = useState<SortOption>("deadline");
+	const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
 	const tabLabels: Record<StatusTab, string> = {
 		all: t("tabAll"),
@@ -107,29 +110,33 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 					))}
 				</div>
 
-				<Popover className="relative">
-					<PopoverButton className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
-						<ArrowUpDown size={14} />
-						{sortLabels[sort]}
-					</PopoverButton>
+				<div className="flex items-center gap-2">
+					<Popover className="relative">
+						<PopoverButton className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
+							<ArrowUpDown size={14} />
+							{sortLabels[sort]}
+						</PopoverButton>
 
-					<PopoverPanel className="absolute right-0 z-20 mt-2 w-40 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
-						{SORT_VALUES.map((option) => (
-							<button
-								key={option}
-								onClick={() => setSort(option)}
-								className={cn(
-									"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
-									sort === option
-										? "bg-[#EFF6FF] text-imsg-blue"
-										: "text-[#374151] hover:bg-[#F9FAFB]",
-								)}
-							>
-								{sortLabels[option]}
-							</button>
-						))}
-					</PopoverPanel>
-				</Popover>
+						<PopoverPanel className="absolute right-0 z-20 mt-2 w-40 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
+							{SORT_VALUES.map((option) => (
+								<button
+									key={option}
+									onClick={() => setSort(option)}
+									className={cn(
+										"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
+										sort === option
+											? "bg-[#EFF6FF] text-imsg-blue"
+											: "text-[#374151] hover:bg-[#F9FAFB]",
+									)}
+								>
+									{sortLabels[option]}
+								</button>
+							))}
+						</PopoverPanel>
+					</Popover>
+
+					<ViewModeToggle value={viewMode} onChange={setViewMode} />
+				</div>
 			</div>
 
 			{filteredListings.length === 0 ? (
@@ -146,6 +153,11 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 							: t("emptyDefaultDescription")}
 					</p>
 				</div>
+			) : viewMode === "list" ? (
+				<ListingBrowseTable
+					listings={filteredListings}
+					onRowClick={(id) => router.push(`/seller/listing-browse/${id}`)}
+				/>
 			) : (
 				<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
 					{filteredListings.map((listing) => (

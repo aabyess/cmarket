@@ -943,6 +943,18 @@
 		"emptySearchDescription": "다른 키워드로 검색해보세요.",
 		"emptyDefaultDescription": "새 공고가 올라오면 알려드릴게요."
 	},
+	"ListingBrowseTable": {
+		"columnStatus": "상태",
+		"columnTitle": "공고명",
+		"columnBudget": "예산",
+		"columnDelivery": "배송지",
+		"columnMyQuote": "내 견적",
+		"closed": "마감",
+		"daysLeft": "D-{days}",
+		"budgetPrivate": "비공개",
+		"quoteSent": "견적 보냄",
+		"noQuote": "미제출"
+	},
 	"ListingBrowseCard": {
 		"closed": "마감",
 		"daysLeft": "D-{days}",

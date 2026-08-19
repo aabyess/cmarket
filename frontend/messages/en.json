@@ -794,6 +794,18 @@
 		"emptySearchDescription": "Try a different keyword.",
 		"emptyDefaultDescription": "We'll let you know when new listings are posted."
 	},
+	"ListingBrowseTable": {
+		"columnStatus": "Status",
+		"columnTitle": "Listing",
+		"columnBudget": "Budget",
+		"columnDelivery": "Delivery to",
+		"columnMyQuote": "My quote",
+		"closed": "Closed",
+		"daysLeft": "D-{days}",
+		"budgetPrivate": "Private",
+		"quoteSent": "Quote sent",
+		"noQuote": "Not sent"
+	},
 	"ListingBrowseCard": {
 		"closed": "Closed",
 		"daysLeft": "D-{days}",
