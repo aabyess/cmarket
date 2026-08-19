@@ -28,7 +28,7 @@ export default async function ListingDetailPage({
 				</p>
 			</div>
 
-			<QuoteReview quotes={quotes} backHref={`/buyer/listing/${id}`} />
+			<QuoteReview quotes={quotes} listingItems={listing.items} backHref={`/buyer/listing/${id}`} />
 		</div>
 	);
 }

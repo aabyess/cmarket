@@ -18,6 +18,9 @@ export async function postQuote(listingId: string, data: QuoteFormData): Promise
 			note: data.note,
 			noteSourceLang: noteTranslation?.sourceLang ?? null,
 			noteTranslations: noteTranslation?.translations ?? null,
+			items: data.items,
+			attachments: data.attachments,
+			paymentTerms: data.paymentTerms,
 		}),
 	});
 
@@ -49,6 +52,9 @@ export async function updateQuote(quoteId: string, data: QuoteFormData): Promise
 			note: data.note,
 			note_source_lang: noteTranslation?.sourceLang ?? null,
 			note_translations: noteTranslation?.translations ?? null,
+			items: data.items,
+			attachments: data.attachments,
+			payment_terms: data.paymentTerms,
 			previous_price: current.price,
 			previous_delivery_days: current.delivery_days,
 			revised_at: new Date().toISOString(),

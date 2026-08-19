@@ -3,7 +3,7 @@ import { ChevronLeft } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { QuoteReview } from "@/features/buyer/components/QuoteReview";
 import { QuoteReviewListingPicker } from "@/features/buyer/components/QuoteReview/QuoteReviewListingPicker";
-import { getListingsWithQuoteCount, getQuotesByListing } from "@/features/buyer/apis";
+import { getListingDetail, getListingsWithQuoteCount, getQuotesByListing } from "@/features/buyer/apis";
 
 type QuoteReviewPageProps = {
 	searchParams: Promise<{ listingId?: string }>;
@@ -28,9 +28,10 @@ export default async function QuoteReviewPage({ searchParams }: QuoteReviewPageP
 		);
 	}
 
-	const [listings, quotes] = await Promise.all([
+	const [listings, quotes, listingDetail] = await Promise.all([
 		getListingsWithQuoteCount(),
 		getQuotesByListing(listingId),
+		getListingDetail(listingId),
 	]);
 
 	const currentListing = listings.find((listing) => listing.id === listingId);
@@ -52,7 +53,11 @@ export default async function QuoteReviewPage({ searchParams }: QuoteReviewPageP
 				<p className="mt-1 text-sm text-[#6B7280]">{t("quoteCount", { count: quotes.length })}</p>
 			</div>
 
-			<QuoteReview quotes={quotes} backHref={`/buyer/quote-review?listingId=${listingId}`} />
+			<QuoteReview
+				quotes={quotes}
+				listingItems={listingDetail?.items ?? []}
+				backHref={`/buyer/quote-review?listingId=${listingId}`}
+			/>
 		</div>
 	);
 }

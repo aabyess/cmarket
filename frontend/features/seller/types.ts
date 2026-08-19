@@ -5,6 +5,7 @@ import type {
 	ListingAttachment,
 	ListingCategory,
 	ListingItem,
+	QuoteItemPrice,
 } from "@/features/buyer/types";
 
 export type SellerDashboardData = {
@@ -53,6 +54,9 @@ export type QuoteFormData = {
 	currency: Currency;
 	deliveryDays: number;
 	note: string;
+	items: QuoteItemPrice[];
+	attachments: ListingAttachment[];
+	paymentTerms: string;
 };
 
 export type QuoteStatus = "pending" | "awarded" | "rejected";
@@ -78,4 +82,7 @@ export type MyQuoteSummary = {
 	deliveryDays: number;
 	note: string;
 	status: "pending" | "awarded" | "rejected";
+	items: QuoteItemPrice[];
+	attachments: ListingAttachment[];
+	paymentTerms: string | null;
 };

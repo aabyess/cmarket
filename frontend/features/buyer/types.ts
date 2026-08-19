@@ -116,6 +116,9 @@ export type ReceivedQuote = {
 	previousPrice: number | null;
 	previousDeliveryDays: number | null;
 	revisedAt: string | null;
+	items: QuoteItemPrice[];
+	attachments: ListingAttachment[];
+	paymentTerms: string | null;
 	seller: SellerInfo;
 };
 
@@ -148,6 +151,11 @@ export type ListingAttachment = {
 	fileName: string;
 	storagePath: string;
 	fileSize: number;
+};
+
+export type QuoteItemPrice = {
+	itemId: string;
+	unitPrice: number;
 };
 
 export type DeliveryMethod = "sea_fob" | "sea_cif" | "air" | "negotiate";

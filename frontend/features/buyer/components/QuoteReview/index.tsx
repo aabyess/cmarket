@@ -10,15 +10,16 @@ import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import { startChat } from "@/features/chat/mutations";
 import { ChatStartLoadingModal } from "@/features/chat/components/ChatStartLoadingModal";
-import type { ReceivedQuote } from "@/features/buyer/types";
+import type { ListingItem, ReceivedQuote } from "@/features/buyer/types";
 
 type QuoteReviewProps = {
 	quotes: ReceivedQuote[];
+	listingItems: ListingItem[];
 	/** 기업 홈페이지에서 돌아올 경로. 서버에서 내려받아 useSearchParams 의존을 없앤다. */
 	backHref: string;
 };
 
-export function QuoteReview({ quotes, backHref }: QuoteReviewProps): React.JSX.Element {
+export function QuoteReview({ quotes, listingItems, backHref }: QuoteReviewProps): React.JSX.Element {
 	const t = useTranslations("QuoteReview");
 	const router = useRouter();
 	const [startingId, setStartingId] = useState<string | null>(null);
@@ -110,6 +111,7 @@ export function QuoteReview({ quotes, backHref }: QuoteReviewProps): React.JSX.E
 						<QuoteReviewQuoteCard
 							key={quote.id}
 							quote={quote}
+							listingItems={listingItems}
 							backHref={backHref}
 							isLowestPrice={lowestPriceInIdr !== null && quote.priceInIdr === lowestPriceInIdr}
 							isFastest={quote.deliveryDays === fastestDays}

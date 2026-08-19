@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { cva } from "class-variance-authority";
@@ -7,7 +8,10 @@ import { SafeImage } from "@/components/commons/SafeImage";
 import {
 	Building2,
 	CheckCircle2,
+	ChevronDown,
+	ChevronUp,
 	ExternalLink,
+	FileText,
 	Loader2,
 	MapPin,
 	MessageSquare,
@@ -16,10 +20,11 @@ import {
 } from "lucide-react";
 import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
 import { cn } from "@/utils/cn";
-import type { ReceivedQuote } from "@/features/buyer/types";
+import type { ListingItem, ReceivedQuote } from "@/features/buyer/types";
 
 type QuoteReviewQuoteCardProps = {
 	quote: ReceivedQuote;
+	listingItems: ListingItem[];
 	backHref: string;
 	isLowestPrice: boolean;
 	isFastest: boolean;
@@ -59,6 +64,7 @@ const DATE_LOCALE: Record<string, string> = {
 
 export function QuoteReviewQuoteCard({
 	quote,
+	listingItems,
 	backHref,
 	isLowestPrice,
 	isFastest,
@@ -72,6 +78,24 @@ export function QuoteReviewQuoteCard({
 	const locale = useLocale();
 	const symbol = CURRENCY_SYMBOL[quote.currency];
 	const isAwarded = quote.status === "awarded";
+	const [showItemsBreakdown, setShowItemsBreakdown] = useState(false);
+	const [openingAttachmentId, setOpeningAttachmentId] = useState<string | null>(null);
+
+	async function handleOpenAttachment(attachmentId: string, storagePath: string): Promise<void> {
+		setOpeningAttachmentId(attachmentId);
+		try {
+			const res = await fetch(
+				`/api/seller/quote-attachment-url?quoteId=${quote.id}&storagePath=${encodeURIComponent(storagePath)}`,
+			);
+			const data = await res.json();
+			if (!res.ok) throw new Error(data.error);
+			window.open(data.url, "_blank", "noopener,noreferrer");
+		} catch (err) {
+			console.error(err);
+		} finally {
+			setOpeningAttachmentId(null);
+		}
+	}
 
 	const meta = [
 		{
@@ -171,6 +195,36 @@ export function QuoteReviewQuoteCard({
 				</div>
 			</div>
 
+			{quote.items.length > 0 && (
+				<div className="mb-4 rounded-xl border border-[#F2F2F7] px-4 py-3">
+					<button
+						type="button"
+						onClick={() => setShowItemsBreakdown((prev) => !prev)}
+						className="flex w-full items-center justify-between text-sm font-medium text-[#374151]">
+						{t("itemsBreakdownToggle")}
+						{showItemsBreakdown ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+					</button>
+					{showItemsBreakdown && (
+						<ul className="mt-2 space-y-1.5">
+							{quote.items.map((entry) => {
+								const item = listingItems.find((i) => i.id === entry.itemId);
+								if (!item) return null;
+								return (
+									<li
+										key={entry.itemId}
+										className="flex items-center justify-between text-xs text-imsg-secondary">
+										<span className="min-w-0 truncate text-[#374151]">{item.name}</span>
+										<span className="shrink-0">
+											{symbol} {entry.unitPrice.toLocaleString()} × {item.quantity}{item.unit}
+										</span>
+									</li>
+								);
+							})}
+						</ul>
+					)}
+				</div>
+			)}
+
 			<dl className="mb-4 space-y-1.5">
 				{meta.map((row) => (
 					<div key={row.value} className="flex items-start gap-2 text-sm text-imsg-secondary">
@@ -179,6 +233,37 @@ export function QuoteReviewQuoteCard({
 					</div>
 				))}
 			</dl>
+
+			{quote.paymentTerms && (
+				<div className="mb-4 rounded-xl border border-[#F2F2F7] px-4 py-3 text-sm">
+					<p className="text-xs text-imsg-secondary">{t("paymentTermsLabel")}</p>
+					<p className="mt-0.5 whitespace-pre-wrap text-[#374151]">{quote.paymentTerms}</p>
+				</div>
+			)}
+
+			{quote.attachments.length > 0 && (
+				<ul className="mb-4 space-y-1.5">
+					{quote.attachments.map((attachment) => (
+						<li
+							key={attachment.id}
+							className="flex items-center gap-2 rounded-xl border border-[#F2F2F7] px-4 py-2.5">
+							<FileText size={14} className="shrink-0 text-imsg-secondary" />
+							<span className="min-w-0 flex-1 truncate text-sm text-[#374151]">{attachment.fileName}</span>
+							<button
+								type="button"
+								onClick={() => handleOpenAttachment(attachment.id, attachment.storagePath)}
+								disabled={openingAttachmentId === attachment.id}
+								className="shrink-0 text-xs font-medium text-imsg-blue transition-colors hover:underline disabled:opacity-50">
+								{openingAttachmentId === attachment.id ? (
+									<Loader2 size={13} className="animate-spin" />
+								) : (
+									t("attachmentOpenButton")
+								)}
+							</button>
+						</li>
+					))}
+				</ul>
+			)}
 
 			{quote.note && (
 				<p className="mb-4 whitespace-pre-wrap rounded-xl border border-[#F2F2F7] px-4 py-3 text-sm leading-relaxed text-[#4B5563]">
