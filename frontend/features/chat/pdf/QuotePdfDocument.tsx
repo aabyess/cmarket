@@ -49,8 +49,10 @@ const styles = StyleSheet.create({
 		borderBottom: "1pt solid #F3F4F6",
 	},
 	colName: { flex: 2 },
-	colSpec: { flex: 2 },
+	colSpec: { flex: 1.5 },
 	colQty: { flex: 1, textAlign: "right" },
+	colPrice: { flex: 1.5, textAlign: "right" },
+	colAmount: { flex: 1.5, textAlign: "right" },
 	priceBox: {
 		marginTop: 16,
 		backgroundColor: "#EFF6FF",
@@ -78,7 +80,7 @@ export type QuotePdfData = {
 	listing: {
 		title: string;
 		category: string;
-		items: { name: string; spec: string; quantity: number; unit: string }[];
+		items: { name: string; spec: string; quantity: number; unit: string; unitPrice: number }[];
 		currency: string;
 		totalBudget: number;
 		budgetPublic: boolean;
@@ -93,6 +95,9 @@ export type QuotePdfData = {
 		deliveryDays: number;
 		note: string;
 		createdAt: string;
+		validityDays: number | null;
+		paymentTerms: string | null;
+		attachments: { fileName: string }[];
 	};
 	buyerCompany: {
 		companyName: string;
@@ -131,9 +136,15 @@ export type QuotePdfLabels = {
 	itemNameColumn: string;
 	itemSpecColumn: string;
 	itemQtyColumn: string;
+	itemPriceColumn: string;
+	itemAmountColumn: string;
 	quoteInfoSectionTitle: string;
 	deliveryDaysLabel: string;
 	deliveryDaysValue: (days: number) => string;
+	validityLabel: string;
+	validityDaysValue: (days: number) => string;
+	paymentTermsLabel: string;
+	attachmentsLabel: string;
 	noteLabel: string;
 	priceLabel: string;
 	footer: string;
@@ -246,6 +257,8 @@ export function QuotePdfDocument({
 						<Text style={styles.colName}>{labels.itemNameColumn}</Text>
 						<Text style={styles.colSpec}>{labels.itemSpecColumn}</Text>
 						<Text style={styles.colQty}>{labels.itemQtyColumn}</Text>
+						<Text style={styles.colPrice}>{labels.itemPriceColumn}</Text>
+						<Text style={styles.colAmount}>{labels.itemAmountColumn}</Text>
 					</View>
 					{listing.items.map((item, i) => (
 						<View key={i} style={styles.tableRow}>
@@ -253,6 +266,12 @@ export function QuotePdfDocument({
 							<Text style={styles.colSpec}>{item.spec || "-"}</Text>
 							<Text style={styles.colQty}>
 								{item.quantity} {item.unit}
+							</Text>
+							<Text style={styles.colPrice}>
+								{symbol} {item.unitPrice.toLocaleString()}
+							</Text>
+							<Text style={styles.colAmount}>
+								{symbol} {(item.unitPrice * item.quantity).toLocaleString()}
 							</Text>
 						</View>
 					))}
@@ -263,6 +282,24 @@ export function QuotePdfDocument({
 					<Text style={styles.label}>{labels.deliveryDaysLabel}</Text>
 					<Text style={styles.value}>{labels.deliveryDaysValue(quote.deliveryDays)}</Text>
 				</View>
+				{quote.validityDays ? (
+					<View style={styles.row}>
+						<Text style={styles.label}>{labels.validityLabel}</Text>
+						<Text style={styles.value}>{labels.validityDaysValue(quote.validityDays)}</Text>
+					</View>
+				) : null}
+				{quote.paymentTerms ? (
+					<View style={styles.row}>
+						<Text style={styles.label}>{labels.paymentTermsLabel}</Text>
+						<Text style={styles.value}>{quote.paymentTerms}</Text>
+					</View>
+				) : null}
+				{quote.attachments.length > 0 ? (
+					<View style={styles.row}>
+						<Text style={styles.label}>{labels.attachmentsLabel}</Text>
+						<Text style={styles.value}>{quote.attachments.map((a) => a.fileName).join(", ")}</Text>
+					</View>
+				) : null}
 				{quote.note && (
 					<View style={styles.row}>
 						<Text style={styles.label}>{labels.noteLabel}</Text>

@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { CheckCircle2, Pencil, Clock } from "lucide-react";
+import { CheckCircle2, Pencil, Clock, Upload, FileText, X, Loader2, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { postQuote, updateQuote } from "@/features/seller/mutations";
-import type { Currency } from "@/features/buyer/types";
+import type { Currency, ListingAttachment, ListingItem, QuoteItemPrice } from "@/features/buyer/types";
 import type { MyQuoteSummary, QuoteFormData } from "@/features/seller/types";
 
 const CURRENCIES: { value: Currency; label: string; symbol: string }[] = [
@@ -15,8 +15,30 @@ const CURRENCIES: { value: Currency; label: string; symbol: string }[] = [
 	{ value: "KRW", label: "KRW", symbol: "₩" },
 ];
 
+const MAX_ATTACHMENTS = 5;
+const MAX_ATTACHMENT_SIZE = 5 * 1024 * 1024;
+
+function buildInitialItems(items: ListingItem[], myQuote: MyQuoteSummary | null): QuoteItemPrice[] {
+	if (myQuote && myQuote.items.length > 0) return myQuote.items;
+	return items.map((item) => ({ itemId: item.id, unitPrice: 0 }));
+}
+
+function computeTotal(items: ListingItem[], itemPrices: QuoteItemPrice[]): number {
+	return itemPrices.reduce((sum, entry) => {
+		const item = items.find((i) => i.id === entry.itemId);
+		const quantity = item?.quantity ?? 0;
+		return sum + entry.unitPrice * quantity;
+	}, 0);
+}
+
+function formatFileSize(bytes: number): string {
+	if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)}KB`;
+	return `${(bytes / (1024 * 1024)).toFixed(1)}MB`;
+}
+
 type ListingDetailQuoteFormProps = {
 	listingId: string;
+	items: ListingItem[];
 	defaultCurrency: Currency;
 	myQuote: MyQuoteSummary | null;
 	isClosed: boolean;
@@ -24,6 +46,7 @@ type ListingDetailQuoteFormProps = {
 
 export function ListingDetailQuoteForm({
 	listingId,
+	items,
 	defaultCurrency,
 	myQuote,
 	isClosed,
@@ -31,24 +54,99 @@ export function ListingDetailQuoteForm({
 	const t = useTranslations("ListingDetailQuoteForm");
 	const router = useRouter();
 	const [isEditing, setIsEditing] = useState(false);
+	const [showItemsBreakdown, setShowItemsBreakdown] = useState(false);
 	const [form, setForm] = useState<QuoteFormData>({
 		price: myQuote?.price ?? 0,
 		currency: myQuote?.currency ?? defaultCurrency,
 		deliveryDays: myQuote?.deliveryDays ?? 0,
 		note: myQuote?.note ?? "",
+		items: buildInitialItems(items, myQuote),
+		attachments: myQuote?.attachments ?? [],
+		validityDays: myQuote?.validityDays ?? 0,
+		paymentTerms: myQuote?.paymentTerms ?? "",
 	});
 	const [isLoading, setIsLoading] = useState(false);
+	const [isUploading, setIsUploading] = useState(false);
+	const [isDragging, setIsDragging] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const currentSymbol = CURRENCIES.find((c) => c.value === form.currency)?.symbol ?? "$";
+	const total = computeTotal(items, form.items);
 
 	function handleChange(patch: Partial<QuoteFormData>) {
 		setForm((prev) => ({ ...prev, ...patch }));
 		setError(null);
 	}
 
+	function handleItemPriceChange(itemId: string, unitPrice: number) {
+		handleChange({
+			items: form.items.map((entry) => (entry.itemId === itemId ? { ...entry, unitPrice } : entry)),
+		});
+	}
+
+	async function uploadFiles(files: FileList): Promise<void> {
+		const remaining = MAX_ATTACHMENTS - form.attachments.length;
+		if (remaining <= 0) {
+			alert(t("maxAttachmentsError", { max: MAX_ATTACHMENTS }));
+			return;
+		}
+
+		const targets = Array.from(files).slice(0, remaining);
+		setIsUploading(true);
+
+		try {
+			const uploaded: ListingAttachment[] = [];
+
+			for (const file of targets) {
+				if (file.size > MAX_ATTACHMENT_SIZE) {
+					alert(t("attachmentTooLarge", { fileName: file.name }));
+					continue;
+				}
+
+				const formData = new FormData();
+				formData.append("file", file);
+
+				const res = await fetch("/api/seller/upload-quote-attachment", {
+					method: "POST",
+					body: formData,
+				});
+
+				if (!res.ok) {
+					const { error: uploadError } = await res.json();
+					alert(t("attachmentUploadFailed", { fileName: file.name, error: uploadError }));
+					continue;
+				}
+
+				const data = await res.json();
+				uploaded.push({
+					id: crypto.randomUUID(),
+					fileName: data.fileName,
+					storagePath: data.storagePath,
+					fileSize: data.fileSize,
+				});
+			}
+
+			if (uploaded.length > 0) {
+				handleChange({ attachments: [...form.attachments, ...uploaded] });
+			}
+		} finally {
+			setIsUploading(false);
+		}
+	}
+
+	function handleRemoveAttachment(id: string): void {
+		handleChange({ attachments: form.attachments.filter((a) => a.id !== id) });
+	}
+
+	function handleDrop(e: React.DragEvent<HTMLDivElement>): void {
+		e.preventDefault();
+		setIsDragging(false);
+		if (e.dataTransfer.files.length > 0) uploadFiles(e.dataTransfer.files);
+	}
+
 	function validate(): boolean {
-		if (form.price <= 0) {
+		if (total <= 0) {
 			setError(t("priceRequiredError"));
 			return false;
 		}
@@ -64,7 +162,7 @@ export function ListingDetailQuoteForm({
 
 		setIsLoading(true);
 		try {
-			await postQuote(listingId, form);
+			await postQuote(listingId, { ...form, price: total });
 			router.refresh();
 		} catch (err) {
 			console.error(err);
@@ -79,7 +177,7 @@ export function ListingDetailQuoteForm({
 
 		setIsLoading(true);
 		try {
-			await updateQuote(myQuote.id, form);
+			await updateQuote(myQuote.id, { ...form, price: total });
 			setIsEditing(false);
 			router.refresh();
 		} catch (err) {
@@ -96,6 +194,10 @@ export function ListingDetailQuoteForm({
 			currency: myQuote?.currency ?? defaultCurrency,
 			deliveryDays: myQuote?.deliveryDays ?? 0,
 			note: myQuote?.note ?? "",
+			items: buildInitialItems(items, myQuote),
+			attachments: myQuote?.attachments ?? [],
+			validityDays: myQuote?.validityDays ?? 0,
+			paymentTerms: myQuote?.paymentTerms ?? "",
 		});
 		setError(null);
 		setIsEditing(false);
@@ -142,6 +244,66 @@ export function ListingDetailQuoteForm({
 						</p>
 					</div>
 				</div>
+
+				{myQuote.items.length > 0 && (
+					<div className="mt-3 border-t border-[#F3F4F6] pt-3">
+						<button
+							onClick={() => setShowItemsBreakdown((prev) => !prev)}
+							className="flex w-full items-center justify-between text-xs font-medium text-[#374151]"
+						>
+							{t("itemsBreakdownToggle")}
+							{showItemsBreakdown ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+						</button>
+						{showItemsBreakdown && (
+							<ul className="mt-2 space-y-1.5">
+								{myQuote.items.map((entry) => {
+									const item = items.find((i) => i.id === entry.itemId);
+									if (!item) return null;
+									return (
+										<li key={entry.itemId} className="flex items-center justify-between text-xs text-[#374151]">
+											<span className="min-w-0 truncate">{item.name}</span>
+											<span className="shrink-0 text-[#9CA3AF]">
+												{symbol} {entry.unitPrice.toLocaleString()} × {item.quantity}{item.unit}
+											</span>
+										</li>
+									);
+								})}
+							</ul>
+						)}
+					</div>
+				)}
+
+				{(myQuote.validityDays || myQuote.paymentTerms) && (
+					<div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 border-t border-[#F3F4F6] pt-3 text-xs text-[#374151]">
+						{myQuote.validityDays ? (
+							<div>
+								<p className="text-[#9CA3AF]">{t("validityLabel")}</p>
+								<p className="mt-0.5">{t("validityDaysSuffix", { days: myQuote.validityDays })}</p>
+							</div>
+						) : null}
+						{myQuote.paymentTerms ? (
+							<div className="min-w-0 flex-1">
+								<p className="text-[#9CA3AF]">{t("paymentTermsLabel")}</p>
+								<p className="mt-0.5 whitespace-pre-wrap">{myQuote.paymentTerms}</p>
+							</div>
+						) : null}
+					</div>
+				)}
+
+				{myQuote.attachments.length > 0 && (
+					<ul className="mt-3 space-y-1.5 border-t border-[#F3F4F6] pt-3">
+						{myQuote.attachments.map((attachment) => (
+							<li
+								key={attachment.id}
+								className="flex items-center gap-2 rounded-lg border border-[#E2E8F0] px-3 py-2"
+							>
+								<FileText size={13} className="shrink-0 text-[#9CA3AF]" />
+								<span className="min-w-0 flex-1 truncate text-xs text-[#374151]">{attachment.fileName}</span>
+								<span className="shrink-0 text-xs text-[#9CA3AF]">{formatFileSize(attachment.fileSize)}</span>
+							</li>
+						))}
+					</ul>
+				)}
 
 				{myQuote.note && (
 					<p className="mt-3 whitespace-pre-wrap rounded-lg bg-[#F9FAFB] px-3 py-2.5 text-xs leading-relaxed text-[#374151]">
@@ -220,16 +382,48 @@ export function ListingDetailQuoteForm({
 							</button>
 						))}
 					</div>
-					<div className="flex items-center gap-2">
-						<span className="text-sm text-[#6B7280]">{currentSymbol}</span>
-						<input
-							type="number"
-							min={0}
-							value={form.price || ""}
-							onChange={(e) => handleChange({ price: Number(e.target.value) })}
-							placeholder={t("pricePlaceholder")}
-							className="flex-1 rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
-						/>
+
+					<div className="space-y-2">
+						{items.map((item) => {
+							const entry = form.items.find((e) => e.itemId === item.id);
+							const unitPrice = entry?.unitPrice ?? 0;
+							const subtotal = unitPrice * item.quantity;
+
+							return (
+								<div key={item.id} className="rounded-lg border border-[#E2E8F0] p-3">
+									<div className="flex items-start justify-between gap-2">
+										<div className="min-w-0">
+											<p className="truncate text-sm font-medium text-[#1F2937]">{item.name}</p>
+											{item.spec && <p className="truncate text-xs text-[#9CA3AF]">{item.spec}</p>}
+										</div>
+										<span className="shrink-0 text-xs text-[#6B7280]">
+											{item.quantity} {item.unit}
+										</span>
+									</div>
+									<div className="mt-2 flex items-center gap-2">
+										<span className="text-sm text-[#6B7280]">{currentSymbol}</span>
+										<input
+											type="number"
+											min={0}
+											value={unitPrice || ""}
+											onChange={(e) => handleItemPriceChange(item.id, Number(e.target.value))}
+											placeholder={t("pricePlaceholder")}
+											className="flex-1 rounded-lg border border-[#E2E8F0] px-3 py-2 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
+										/>
+										<span className="shrink-0 text-xs text-[#9CA3AF]">
+											= {currentSymbol} {subtotal.toLocaleString()}
+										</span>
+									</div>
+								</div>
+							);
+						})}
+					</div>
+
+					<div className="mt-2 flex items-center justify-between rounded-lg bg-[#F9FAFB] px-3 py-2.5">
+						<span className="text-sm font-medium text-[#374151]">{t("totalLabel")}</span>
+						<span className="text-base font-semibold text-[#1F2937]">
+							{currentSymbol} {total.toLocaleString()}
+						</span>
 					</div>
 				</div>
 
@@ -251,6 +445,32 @@ export function ListingDetailQuoteForm({
 				</div>
 
 				<div>
+					<label className="mb-2 block text-sm font-medium text-[#374151]">{t("validityFieldLabel")}</label>
+					<div className="flex items-center gap-2">
+						<input
+							type="number"
+							min={0}
+							value={form.validityDays || ""}
+							onChange={(e) => handleChange({ validityDays: Number(e.target.value) })}
+							placeholder={t("validityDaysPlaceholder")}
+							className="w-28 rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
+						/>
+						<span className="text-sm text-[#6B7280]">{t("deliveryDaysSuffix")}</span>
+					</div>
+				</div>
+
+				<div>
+					<label className="mb-2 block text-sm font-medium text-[#374151]">{t("paymentTermsFieldLabel")}</label>
+					<input
+						type="text"
+						value={form.paymentTerms}
+						onChange={(e) => handleChange({ paymentTerms: e.target.value })}
+						placeholder={t("paymentTermsPlaceholder")}
+						className="w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
+					/>
+				</div>
+
+				<div>
 					<label className="mb-2 block text-sm font-medium text-[#374151]">{t("noteFieldLabel")}</label>
 					<textarea
 						value={form.note}
@@ -259,6 +479,67 @@ export function ListingDetailQuoteForm({
 						rows={4}
 						className="w-full resize-none rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 					/>
+				</div>
+
+				<div>
+					<label className="mb-2 block text-sm font-medium text-[#374151]">{t("attachmentsFieldLabel")}</label>
+					<div
+						onClick={() => fileInputRef.current?.click()}
+						onDragOver={(e) => {
+							e.preventDefault();
+							setIsDragging(true);
+						}}
+						onDragLeave={() => setIsDragging(false)}
+						onDrop={handleDrop}
+						className={cn(
+							"flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border py-6 text-center transition-colors",
+							isDragging
+								? "border-dashed border-imsg-blue bg-[#EFF6FF]"
+								: "border-[#E2E8F0] bg-[#F9FAFB] hover:border-dashed hover:border-imsg-blue",
+						)}
+					>
+						{isUploading ? (
+							<Loader2 size={18} className="animate-spin text-imsg-blue" />
+						) : (
+							<Upload size={18} className="text-[#9CA3AF]" />
+						)}
+						<p className="text-xs text-[#374151]">{t("attachmentsDropzoneText")}</p>
+						<p className="text-xs text-[#9CA3AF]">{t("attachmentsMaxSize")}</p>
+						<input
+							ref={fileInputRef}
+							type="file"
+							multiple
+							accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx"
+							className="hidden"
+							onChange={(e) => {
+								if (e.target.files) uploadFiles(e.target.files);
+								e.target.value = "";
+							}}
+						/>
+					</div>
+
+					{form.attachments.length > 0 && (
+						<ul className="mt-2 space-y-1.5">
+							{form.attachments.map((attachment) => (
+								<li
+									key={attachment.id}
+									className="flex items-center justify-between gap-2 rounded-lg border border-[#E2E8F0] px-3 py-2"
+								>
+									<div className="flex min-w-0 items-center gap-2">
+										<FileText size={13} className="shrink-0 text-[#9CA3AF]" />
+										<span className="truncate text-xs text-[#374151]">{attachment.fileName}</span>
+										<span className="shrink-0 text-xs text-[#9CA3AF]">{formatFileSize(attachment.fileSize)}</span>
+									</div>
+									<button
+										onClick={() => handleRemoveAttachment(attachment.id)}
+										className="shrink-0 text-[#D1D5DB] transition-colors hover:text-[#EF4444]"
+									>
+										<X size={13} />
+									</button>
+								</li>
+							))}
+						</ul>
+					)}
 				</div>
 
 				{error && <p className="text-sm text-red-500">{error}</p>}

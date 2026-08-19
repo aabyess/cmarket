@@ -29,10 +29,11 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
 				{t("backToList")}
 			</Link>
 
-			<div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+			<div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_440px]">
 				<ListingDetailInfo listing={listing} />
 				<ListingDetailQuoteForm
 					listingId={listing.id}
+					items={listing.items}
 					defaultCurrency={listing.currency}
 					myQuote={listing.myQuote}
 					isClosed={new Date(listing.endDate).getTime() <= Date.now()}

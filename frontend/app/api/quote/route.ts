@@ -3,7 +3,19 @@ import { createServerAdminClient, createServerSupabaseClient } from "@/libs/supa
 import { translateFieldServer } from "@/libs/translateFieldServer";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-	const { listingId, price, currency, deliveryDays, note, noteSourceLang, noteTranslations } = await req.json();
+	const {
+		listingId,
+		price,
+		currency,
+		deliveryDays,
+		note,
+		noteSourceLang,
+		noteTranslations,
+		items,
+		attachments,
+		validityDays,
+		paymentTerms,
+	} = await req.json();
 
 	const supabase = await createServerSupabaseClient();
 	const {
@@ -36,6 +48,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 			note,
 			note_source_lang: noteSourceLang ?? null,
 			note_translations: noteTranslations ?? null,
+			items: items ?? null,
+			attachments: attachments ?? null,
+			validity_days: validityDays ?? null,
+			payment_terms: paymentTerms ?? null,
 		})
 		.select("id")
 		.single();

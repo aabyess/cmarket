@@ -300,7 +300,7 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 	const { data, error } = await supabase
 		.from("quotes")
 		.select(
-			"id, listing_id, seller_id, price, currency, delivery_days, note, note_source_lang, note_translations, status, created_at, previous_price, previous_delivery_days, revised_at",
+			"id, listing_id, seller_id, price, currency, delivery_days, note, note_source_lang, note_translations, status, created_at, previous_price, previous_delivery_days, revised_at, items, attachments, validity_days, payment_terms",
 		)
 		.eq("listing_id", listingId)
 		.order("price", { ascending: true });
@@ -344,6 +344,10 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 			previousPrice: row.previous_price !== null ? Number(row.previous_price) : null,
 			previousDeliveryDays: row.previous_delivery_days,
 			revisedAt: row.revised_at,
+			items: row.items ?? [],
+			attachments: row.attachments ?? [],
+			validityDays: row.validity_days,
+			paymentTerms: row.payment_terms,
 			seller: {
 				profileId: row.seller_id,
 				companyName: company?.company_name ?? "",

@@ -9,7 +9,8 @@ type QuotePdfResult = QuotePdfData & {
 	sellerId: string;
 };
 
-type ListingItem = { name: string; spec: string; quantity: number; unit: string };
+type ListingItem = { id: string; name: string; spec: string; quantity: number; unit: string };
+type PdfItem = ListingItem & { unitPrice: number };
 
 function toSupportedLocale(locale: string): SupportedLocale {
 	return locale === "ko" || locale === "id" ? locale : "en";
@@ -38,7 +39,9 @@ export async function getQuotePdfData(
 
 	const { data: quote, error: quoteError } = await admin
 		.from("quotes")
-		.select("listing_id, seller_id, price, currency, delivery_days, note, note_source_lang, note_translations, created_at")
+		.select(
+			"listing_id, seller_id, price, currency, delivery_days, note, note_source_lang, note_translations, created_at, items, attachments, validity_days, payment_terms",
+		)
 		.eq("id", quoteId)
 		.single();
 
@@ -54,9 +57,15 @@ export async function getQuotePdfData(
 
 	if (listingError || !listing) return null;
 
-	const items: ListingItem[] = translateItems
-		? await translateItemsList(listing.items ?? [], locale)
-		: (listing.items ?? []);
+	const rawItems: ListingItem[] = listing.items ?? [];
+	const translatedItems = translateItems ? await translateItemsList(rawItems, locale) : rawItems;
+
+	const quoteItemPrices = (quote.items ?? []) as { itemId: string; unitPrice: number }[];
+	const unitPriceByItemId = new Map(quoteItemPrices.map((entry) => [entry.itemId, entry.unitPrice]));
+	const items: PdfItem[] = translatedItems.map((item) => ({
+		...item,
+		unitPrice: unitPriceByItemId.get(item.id) ?? 0,
+	}));
 
 	const { data: buyerCompany } = await admin
 		.from("companies")
@@ -94,6 +103,9 @@ export async function getQuotePdfData(
 			deliveryDays: quote.delivery_days,
 			note: resolveTranslatedField(quote.note ?? "", quote.note_source_lang, quote.note_translations, locale),
 			createdAt: quote.created_at,
+			validityDays: quote.validity_days,
+			paymentTerms: quote.payment_terms,
+			attachments: ((quote.attachments ?? []) as { fileName: string }[]).map((a) => ({ fileName: a.fileName })),
 		},
 		buyerCompany: {
 			companyName: buyerCompany?.company_name ?? "",
