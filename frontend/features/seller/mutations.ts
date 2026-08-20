@@ -1,4 +1,4 @@
-import type { QuoteFormData } from "@/features/seller/types";
+import type { QuoteDraft, QuoteFormData } from "@/features/seller/types";
 
 // 발주사에게 알림을 남겨야 하는데 그건 남의 행이라 RLS 를 통과하지 못한다.
 // 견적 저장과 알림 생성을 한 곳에서 처리하려고 서버 라우트를 거친다.
@@ -46,4 +46,30 @@ export async function updateQuote(quoteId: string, data: QuoteFormData): Promise
 		const { error } = await res.json();
 		throw new Error(error ?? "견적 수정에 실패했습니다.");
 	}
+}
+
+export class QuoteDraftError extends Error {
+	status: number;
+
+	constructor(status: number, message: string) {
+		super(message);
+		this.name = "QuoteDraftError";
+		this.status = status;
+	}
+}
+
+// 공고 내용을 바탕으로 견적 메모/결제조건 초안을 AI가 생성한다. 가격은 생성하지 않는다.
+export async function draftQuoteWithAi(listingId: string, locale: string): Promise<QuoteDraft> {
+	const res = await fetch("/api/ai/draft-quote", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ listingId, locale }),
+	});
+
+	if (!res.ok) {
+		const { error } = await res.json();
+		throw new QuoteDraftError(res.status, error ?? "AI 초안 생성에 실패했습니다.");
+	}
+
+	return res.json();
 }
