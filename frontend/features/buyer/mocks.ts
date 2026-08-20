@@ -46,6 +46,7 @@ export const MOCK_DASHBOARD_DATA: BuyerDashboardData = {
 		{
 			id: "act-1",
 			type: "quote",
+			quoteId: "quote-1",
 			title: "진동 측정기 · 새 견적 도착",
 			description: "₩42,000,000 · 대한사무기기",
 			timeText: "방금",
@@ -53,6 +54,7 @@ export const MOCK_DASHBOARD_DATA: BuyerDashboardData = {
 		{
 			id: "act-2",
 			type: "document",
+			quoteId: "quote-2",
 			title: "케미컬 용제 · 서류 업로드됨",
 			description: "공급기업이 선적 서류를 올렸어요",
 			timeText: "어제",
@@ -60,6 +62,7 @@ export const MOCK_DASHBOARD_DATA: BuyerDashboardData = {
 		{
 			id: "act-3",
 			type: "completed",
+			quoteId: "quote-3",
 			title: "기계 부품 · 거래 완료",
 			description: "Rp 12.000.000 절감",
 			timeText: "7.28",

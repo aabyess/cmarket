@@ -67,6 +67,7 @@ export type BuyerActivityType = "quote" | "document" | "completed";
 export type BuyerActivity = {
 	id: string;
 	type: BuyerActivityType;
+	quoteId: string | null;
 	title: string;
 	description: string;
 	timeText: string;

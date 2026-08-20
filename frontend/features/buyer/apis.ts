@@ -57,7 +57,7 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 		supabase
 			.from("notifications")
 			.select(
-				"id, type, title, title_source_lang, title_translations, content, content_source_lang, content_translations, created_at",
+				"id, type, quote_id, title, title_source_lang, title_translations, content, content_source_lang, content_translations, created_at",
 			)
 			.eq("profile_id", user.id)
 			.order("created_at", { ascending: false })
@@ -118,6 +118,7 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 	const activities: BuyerActivity[] = (recentNotifications ?? []).map((row) => ({
 		id: row.id,
 		type: row.type === "quote" ? "quote" : "document",
+		quoteId: row.quote_id,
 		title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
 		description: resolveTranslatedField(row.content, row.content_source_lang, row.content_translations, locale),
 		timeText: formatRelativeTime(row.created_at, tRelative),
