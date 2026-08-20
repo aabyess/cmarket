@@ -15,6 +15,14 @@ type LoadTemplateModalProps = {
 	onSelect: (template: ListingTemplate) => void;
 };
 
+// description은 에디터가 만든 HTML이라 미리보기에는 태그를 벗겨 평문만 보여준다.
+function toPlainText(html: string): string {
+	return html
+		.replace(/<[^>]+>/g, " ")
+		.replace(/\s+/g, " ")
+		.trim();
+}
+
 export default function LoadTemplateModal({
 	isOpen,
 	onClose,
@@ -97,9 +105,9 @@ export default function LoadTemplateModal({
 														onClick={() => onSelect(template)}
 														className="hover:border-imsg-blue w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-left transition-colors hover:bg-[#EFF6FF]">
 														<p className="text-sm font-semibold text-[#1F2937]">{template.name}</p>
-														{template.description && (
+														{toPlainText(template.description) !== "" && (
 															<p className="mt-1 line-clamp-2 text-xs text-[#6B7280]">
-																{template.description}
+																{toPlainText(template.description)}
 															</p>
 														)}
 													</button>
