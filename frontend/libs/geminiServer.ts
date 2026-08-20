@@ -1,7 +1,9 @@
 // libs/geminiServer.ts
 // 최신 모델은 수요가 몰리면 일시적으로 503(UNAVAILABLE)을 반환하므로,
 // 과부하 시 예비 모델로 순차 폴백한다.
-const GEMINI_MODELS = ["gemini-3.7-flash", "gemini-3.5-flash", "gemini-2.5-flash"];
+// 주의: 2.5-flash는 이 계정(신규 사용자)에서 404라 폴백 후보가 될 수 없다.
+// 아래 세 모델은 모두 실제 키로 200 응답을 확인한 것들이다.
+const GEMINI_MODELS = ["gemini-3.7-flash", "gemini-3.6-flash", "gemini-3.5-flash"];
 const DEFAULT_MAX_OUTPUT_TOKENS = 4096;
 
 export class GeminiError extends Error {
