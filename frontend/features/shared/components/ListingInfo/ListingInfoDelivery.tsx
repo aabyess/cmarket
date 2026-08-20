@@ -1,6 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import { CalendarClock, ExternalLink, MapPin, Ship, User } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getDeliveryMethodLabels } from "@/features/buyer/constants";
 import type { DeliveryMethod, DeliveryTimingMode } from "@/features/buyer/types";
 
@@ -20,7 +20,7 @@ export type ListingInfoDeliveryProps = {
 };
 
 export async function ListingInfoDelivery(props: ListingInfoDeliveryProps): Promise<React.JSX.Element> {
-	const t = await getTranslations("ListingInfoDelivery");
+	const [t, locale] = await Promise.all([getTranslations("ListingInfoDelivery"), getLocale()]);
 	const deliveryMethodLabels = getDeliveryMethodLabels(await getTranslations("DeliveryMethod"));
 
 	const fullAddress = [props.provinsi, props.city, props.address, props.addressDetail]
@@ -34,7 +34,7 @@ export async function ListingInfoDelivery(props: ListingInfoDeliveryProps): Prom
 
 	const timing =
 		props.timingMode === "specific" && props.deadlineDate
-			? t("deadlineUntil", { date: new Date(props.deadlineDate).toLocaleDateString("ko-KR") })
+			? t("deadlineUntil", { date: new Date(props.deadlineDate).toLocaleDateString(locale) })
 			: props.deliveryDays > 0
 				? t("afterAwardDays", { days: props.deliveryDays })
 				: t("negotiateAfterDecision");

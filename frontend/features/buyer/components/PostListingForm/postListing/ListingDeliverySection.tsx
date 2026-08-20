@@ -137,20 +137,22 @@ export default function ListingDeliverySection({ form, onChange }: ListingDelive
 				</div>
 			</div>
 
-			<ListingLocationPickerModal
-				isOpen={isMapOpen}
-				onClose={() => setIsMapOpen(false)}
-				initialLat={form.deliveryLat}
-				initialLng={form.deliveryLng}
-				initialSearchQuery={[form.deliveryProvinsi, form.deliveryCity].filter(Boolean).join(", ")}
-				onConfirm={(lat, lng, address) =>
-					onChange({
-						deliveryLat: lat,
-						deliveryLng: lng,
-						deliveryAddress: address || form.deliveryAddress,
-					})
-				}
-			/>
+			{isMapOpen && (
+				<ListingLocationPickerModal
+					isOpen={isMapOpen}
+					onClose={() => setIsMapOpen(false)}
+					initialLat={form.deliveryLat}
+					initialLng={form.deliveryLng}
+					initialSearchQuery={[form.deliveryProvinsi, form.deliveryCity].filter(Boolean).join(", ")}
+					onConfirm={(lat, lng, address) =>
+						onChange({
+							deliveryLat: lat,
+							deliveryLng: lng,
+							deliveryAddress: address || form.deliveryAddress,
+						})
+					}
+				/>
+			)}
 		</SectionWrapper>
 	);
 }
