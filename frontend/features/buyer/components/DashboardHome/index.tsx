@@ -29,6 +29,15 @@ export function DashboardHome({ companyName, data, tradeSummary }: DashboardHome
 			router.push("/buyer/quote-review");
 			return;
 		}
+		if (activity.type === "award") {
+			router.push("/buyer/contract");
+			return;
+		}
+		// quote_id가 없는 옛 알림은 특정 방으로 못 보내므로 채팅 목록으로 보낸다.
+		if (!activity.quoteId) {
+			router.push("/buyer/chat");
+			return;
+		}
 		router.push(`/buyer/chat?quoteId=${activity.quoteId}`);
 	}
 

@@ -120,7 +120,7 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 
 	const activities: BuyerActivity[] = (recentNotifications ?? []).map((row) => ({
 		id: row.id,
-		type: row.type === "quote" ? "quote" : "document",
+		type: row.type === "quote" ? "quote" : row.type === "award" ? "award" : "document",
 		quoteId: row.quote_id,
 		title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
 		description: resolveTranslatedField(row.content, row.content_source_lang, row.content_translations, locale),

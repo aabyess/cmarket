@@ -88,6 +88,12 @@ export function NotificationBell(): React.ReactNode {
 			return;
 		}
 
+		// 계약 확정은 계약 페이지로 보낸다.
+		if (notification.type === "award") {
+			router.push(pathname.startsWith("/seller") ? "/seller/contract" : "/buyer/contract");
+			return;
+		}
+
 		router.push(`${chatBasePath}?quoteId=${notification.quoteId}`);
 	}
 
