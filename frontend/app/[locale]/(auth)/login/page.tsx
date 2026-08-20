@@ -155,7 +155,16 @@ export default function LoginPage() {
 					</div>
 
 					<div className="space-y-1.5">
-						<label className="text-sm font-medium text-[#374151]">{t("passwordLabel")}</label>
+						<div className="flex items-center justify-between">
+							<label className="text-sm font-medium text-[#374151]">{t("passwordLabel")}</label>
+							<button
+								type="button"
+								onClick={() => router.push("/forgot-password")}
+								className="text-xs text-imsg-blue hover:underline"
+							>
+								{t("forgotPasswordLink")}
+							</button>
+						</div>
 						<div className="relative">
 							<input
 								type={showPassword ? "text" : "password"}
