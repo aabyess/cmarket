@@ -51,15 +51,26 @@ function stripHtml(html: string): string {
 		.trim();
 }
 
+const INSTRUCTIONS_MAX_LENGTH = 500;
+
 export async function POST(req: NextRequest): Promise<NextResponse> {
-	const body = await parseJsonBody<{ listingId?: string; locale?: string }>(req);
+	const body = await parseJsonBody<{ listingId?: string; locale?: string; instructions?: string }>(
+		req,
+	);
 	if (!body) {
 		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
 	}
-	const { listingId, locale } = body;
+	const { listingId, locale, instructions } = body;
 
 	if (!listingId) {
 		return NextResponse.json({ error: "listingId가 필요합니다." }, { status: 400 });
+	}
+
+	if (typeof instructions === "string" && instructions.length > INSTRUCTIONS_MAX_LENGTH) {
+		return NextResponse.json(
+			{ error: `전달사항은 ${INSTRUCTIONS_MAX_LENGTH}자 이하로 입력해주세요.` },
+			{ status: 400 },
+		);
 	}
 
 	const targetLocale: SupportedLocale = SUPPORTED_LOCALES.includes(locale as SupportedLocale)
@@ -93,6 +104,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		.map((item) => `- ${item.name} (${item.spec || "규격 미지정"}) × ${item.quantity}${item.unit}`)
 		.join("\n");
 
+	// 셀러 본인의 요청사항은 (발주자 텍스트와 달리) 지시로 반영한다.
+	// 단, 시스템 규칙(가격 언급 금지 등)이 항상 우선이다.
+	const sellerInstructions = typeof instructions === "string" ? instructions.trim() : "";
+
 	const prompt = [
 		`작성 언어: ${LOCALE_LANGUAGE_NAME[targetLocale]}`,
 		"",
@@ -101,6 +116,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		`카테고리: ${listing.category}`,
 		itemLines ? `품목:\n${itemLines}` : "",
 		listing.description ? `설명: ${stripHtml(listing.description).slice(0, 1500)}` : "",
+		sellerInstructions
+			? `\n[셀러 요청사항 — 초안에 반영하되 시스템 규칙이 우선]\n${sellerInstructions}`
+			: "",
 	]
 		.filter(Boolean)
 		.join("\n");
