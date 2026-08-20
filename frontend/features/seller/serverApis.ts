@@ -3,10 +3,14 @@ import { createServerSupabaseClient } from "@/libs/supabaseServer";
 import type { SellerDashboardData } from "@/features/seller/types";
 import type { MyQuote } from "@/features/seller/types";
 import type { ListingDetail, MyQuoteSummary, OpenListing } from "@/features/seller/types";
-import type { Currency } from "@/features/buyer/types";
+import type { Currency, ListingItem } from "@/features/buyer/types";
 import { getExchangeRates, convertCurrency } from "@/libs/exchangeRate";
 import { formatRelativeTime } from "@/utils/formatRelativeTime";
 import { resolveTranslatedField } from "@/utils/resolveTranslatedField";
+import { htmlToPlainText } from "@/utils/htmlToPlainText";
+
+// 목록 카드 미리보기용 설명 길이 — 상세 페이지(getListingDetail)는 전문을 그대로 쓴다.
+const DESCRIPTION_PREVIEW_LENGTH = 500;
 
 export async function getSellerCompanyName(): Promise<string> {
 	const supabase = await createServerSupabaseClient();
@@ -120,8 +124,11 @@ export async function getOpenListings(): Promise<OpenListing[]> {
 			return {
 				id: row.id,
 				title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
-				description: row.description ?? "",
-				items: row.items,
+				description: htmlToPlainText(row.description ?? "", DESCRIPTION_PREVIEW_LENGTH),
+				items: ((row.items ?? []) as ListingItem[]).map((item) => ({
+					name: item.name,
+					spec: item.spec,
+				})),
 				currency: row.currency,
 				totalBudget,
 				budgetInKrw: convertCurrency(totalBudget, row.currency as Currency, "KRW", rates),
