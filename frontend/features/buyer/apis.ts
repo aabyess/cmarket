@@ -48,17 +48,11 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 
 	if (!user) return empty;
 
-	const [{ data: listings }, { count: unreadQuoteCount }, { data: recentNotifications }] = await Promise.all([
+	const [{ data: listings }, { data: recentNotifications }] = await Promise.all([
 		supabase
 			.from("listings")
 			.select("id, title, title_source_lang, title_translations, status, currency, end_date, quotes(id, price)")
 			.eq("user_id", user.id),
-		supabase
-			.from("notifications")
-			.select("*", { count: "exact", head: true })
-			.eq("profile_id", user.id)
-			.eq("type", "quote")
-			.eq("is_read", false),
 		supabase
 			.from("notifications")
 			.select(
@@ -75,6 +69,12 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 	const quoteIds = listingRows.flatMap(
 		(row) => ((row.quotes as unknown as { id: string }[]) ?? []).map((q) => q.id),
 	);
+
+	// "받은 견적" 배지는 안읽은 알림 수가 아니라, 진행중 공고에 실제로 달린 견적 수를 보여준다.
+	// (알림을 다 읽으면 0이 되어 "받은 견적이 없다"처럼 보이던 문제)
+	const activeQuoteCount = listingRows
+		.filter((row) => row.status === "active")
+		.reduce((sum, row) => sum + (((row.quotes as unknown as { id: string }[]) ?? []).length), 0);
 
 	const { count: unreadChatCount } =
 		quoteIds.length > 0
@@ -132,7 +132,7 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 		todos,
 		// 대시보드 UI에 절약금액 카드가 아직 없어 계산 기준을 정하지 않았다. 필요해지면 채운다.
 		savings: { totalAmount: 0, completedCount: 0 },
-		badges: { quotes: unreadQuoteCount ?? 0, chats: unreadChatCount ?? 0 },
+		badges: { quotes: activeQuoteCount, chats: unreadChatCount ?? 0 },
 		activities,
 	};
 }

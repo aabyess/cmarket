@@ -131,8 +131,9 @@ export function DashboardHome({ companyName, data, tradeSummary }: DashboardHome
 								{data.todos.map((todo, i) => (
 									<li
 										key={todo.id}
+										onClick={() => handleTodoAction(todo)}
 										className={cn(
-											"flex items-start gap-4 px-5 py-4 transition-colors hover:bg-imsg-surface",
+											"flex cursor-pointer items-start gap-4 px-5 py-4 transition-colors hover:bg-imsg-surface",
 											i !== data.todos.length - 1 && "border-b border-[#F2F2F7]",
 											todo.highlights.length > 0 ? "border-l-2 border-l-red-400" : "border-l-2 border-l-imsg-blue",
 										)}
@@ -159,7 +160,10 @@ export function DashboardHome({ companyName, data, tradeSummary }: DashboardHome
 											)}
 										</div>
 										<button
-											onClick={() => handleTodoAction(todo)}
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTodoAction(todo);
+											}}
 											className={cn(
 												"flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors",
 												todo.highlights.length > 0
