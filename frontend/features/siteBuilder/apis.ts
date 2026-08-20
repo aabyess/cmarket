@@ -7,9 +7,65 @@ import { resolveTranslatedField } from "@/utils/resolveTranslatedField";
 import type {
 	Block,
 	PublicSite,
+	SiteBankAccount,
 	SiteCompanyInfo,
 	SiteEditorData,
 } from "@/features/siteBuilder/types";
+
+type BankAccountRow = {
+	bank_name: string | null;
+	account_number: string | null;
+	account_holder: string | null;
+	swift_code: string | null;
+	currency: string | null;
+};
+
+function toBankAccount(row: BankAccountRow | null): SiteBankAccount {
+	return {
+		bankName: row?.bank_name ?? "",
+		accountNumber: row?.account_number ?? "",
+		accountHolder: row?.account_holder ?? "",
+		swiftCode: row?.swift_code ?? "",
+		currency: row?.currency ?? "KRW",
+	};
+}
+
+// 사이트빌더 설정 탭과 셀러 설정 페이지의 정산 계좌 섹션이 같은 bank_accounts 대표 계좌를 읽고 쓴다.
+export async function getPrimaryBankAccount(
+	supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
+	profileId: string,
+): Promise<SiteBankAccount> {
+	const { data } = await supabase
+		.from("bank_accounts")
+		.select("bank_name, account_number, account_holder, swift_code, currency")
+		.eq("profile_id", profileId)
+		.eq("is_primary", true)
+		.maybeSingle<BankAccountRow>();
+
+	return toBankAccount(data);
+}
+
+export async function upsertPrimaryBankAccount(
+	admin: Awaited<ReturnType<typeof createServerAdminClient>>,
+	profileId: string,
+	bankAccount: SiteBankAccount,
+): Promise<{ error: string | null }> {
+	const { error } = await admin.from("bank_accounts").upsert(
+		{
+			profile_id: profileId,
+			bank_name: bankAccount.bankName,
+			account_number: bankAccount.accountNumber,
+			account_holder: bankAccount.accountHolder,
+			swift_code: bankAccount.swiftCode || null,
+			currency: bankAccount.currency || "KRW",
+			is_primary: true,
+			updated_at: new Date().toISOString(),
+		},
+		{ onConflict: "profile_id,is_primary" },
+	);
+
+	return { error: error?.message ?? null };
+}
 
 type CompanyRow = {
 	company_name: string | null;
@@ -90,12 +146,7 @@ export async function getSiteEditorData(): Promise<SiteEditorData | null> {
 		.eq("profile_id", user.id)
 		.maybeSingle();
 
-	const { data: bank } = await supabase
-		.from("bank_accounts")
-		.select("bank_name, account_number, account_holder, swift_code, currency")
-		.eq("profile_id", user.id)
-		.eq("is_primary", true)
-		.maybeSingle();
+	const bankAccount = await getPrimaryBankAccount(supabase, user.id);
 
 	const demo = await createServerSupabaseClient("demo");
 
@@ -179,13 +230,7 @@ export async function getSiteEditorData(): Promise<SiteEditorData | null> {
 		settings: {
 			logoUrl: profile?.logo_url ?? "",
 			categories: profile?.categories ?? [],
-			bankAccount: {
-				bankName: bank?.bank_name ?? "",
-				accountNumber: bank?.account_number ?? "",
-				accountHolder: bank?.account_holder ?? "",
-				swiftCode: bank?.swift_code ?? "",
-				currency: bank?.currency ?? "KRW",
-			},
+			bankAccount,
 			company: toCompanyInfo(company),
 			contact: {
 				name: contact?.name ?? "",

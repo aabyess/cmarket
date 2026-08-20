@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerAdminClient, createServerSupabaseClient } from "@/libs/supabaseServer";
 import { translateFieldServer } from "@/libs/translateFieldServer";
+import { upsertPrimaryBankAccount } from "@/features/siteBuilder/apis";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
 	const { logoUrl, categories, bankAccount, company, contact } = await req.json();
@@ -84,22 +85,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 	}
 
 	if (bankAccount?.bankName) {
-		const { error: bankError } = await admin.from("bank_accounts").upsert(
-			{
-				profile_id: user.id,
-				bank_name: bankAccount.bankName,
-				account_number: bankAccount.accountNumber,
-				account_holder: bankAccount.accountHolder,
-				swift_code: bankAccount.swiftCode || null,
-				currency: bankAccount.currency || "KRW",
-				is_primary: true,
-				updated_at: new Date().toISOString(),
-			},
-			{ onConflict: "profile_id,is_primary" },
-		);
-
+		const { error: bankError } = await upsertPrimaryBankAccount(admin, user.id, bankAccount);
 		if (bankError) {
-			return NextResponse.json({ error: bankError.message }, { status: 500 });
+			return NextResponse.json({ error: bankError }, { status: 500 });
 		}
 	}
 

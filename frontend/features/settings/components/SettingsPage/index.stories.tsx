@@ -24,6 +24,7 @@ export const Buyer: Story = {
 	args: {
 		role: "buyer",
 		email: "buyer@example.com",
+		bankAccount: null,
 	},
 };
 
@@ -31,5 +32,26 @@ export const Seller: Story = {
 	args: {
 		role: "seller",
 		email: "seller@example.com",
+		bankAccount: {
+			bankName: "",
+			accountNumber: "",
+			accountHolder: "",
+			swiftCode: "",
+			currency: "KRW",
+		},
+	},
+};
+
+export const SellerWithBankAccount: Story = {
+	args: {
+		role: "seller",
+		email: "seller@example.com",
+		bankAccount: {
+			bankName: "국민은행",
+			accountNumber: "123-456-789012",
+			accountHolder: "대한정밀공업",
+			swiftCode: "CZNBKRSE",
+			currency: "KRW",
+		},
 	},
 };
