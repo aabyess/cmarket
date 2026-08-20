@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { CheckCircle2, CreditCard, FileText, Upload } from "lucide-react";
+import { CheckCircle2, CreditCard, FileText, Loader2, Receipt, Upload } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { Pagination } from "@/components/commons/Pagination";
@@ -47,6 +47,7 @@ export function PaymentsList({ contracts, role }: PaymentsListProps): React.Reac
 	const [uploadingId, setUploadingId] = useState<string | null>(null);
 	const [confirmingId, setConfirmingId] = useState<string | null>(null);
 	const [confirmId, setConfirmId] = useState<string | null>(null);
+	const [receiptPdfLoadingId, setReceiptPdfLoadingId] = useState<string | null>(null);
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(10);
 	const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
@@ -84,6 +85,29 @@ export function PaymentsList({ contracts, role }: PaymentsListProps): React.Reac
 		} catch (err) {
 			console.error(err);
 			alert(t("receiptViewErrorMessage"));
+		}
+	}
+
+	async function handleViewTransactionReceipt(contractId: string): Promise<void> {
+		setReceiptPdfLoadingId(contractId);
+		try {
+			const res = await fetch("/api/payments/receipt-pdf", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ contractId, locale }),
+			});
+			if (!res.ok) {
+				const { error } = await res.json();
+				throw new Error(error);
+			}
+			const blob = await res.blob();
+			const url = URL.createObjectURL(blob);
+			window.open(url, "_blank");
+		} catch (err) {
+			console.error(err);
+			alert(t("transactionReceiptErrorMessage"));
+		} finally {
+			setReceiptPdfLoadingId(null);
 		}
 	}
 
@@ -177,8 +201,10 @@ export function PaymentsList({ contracts, role }: PaymentsListProps): React.Reac
 						role={role}
 						uploadingId={uploadingId}
 						confirmingId={confirmingId}
+						receiptPdfLoadingId={receiptPdfLoadingId}
 						onUploadClick={(contractId) => fileInputRefs.current[contractId]?.click()}
 						onViewReceipt={handleViewReceipt}
+						onViewTransactionReceipt={handleViewTransactionReceipt}
 						onConfirmPayment={setConfirmId}
 					/>
 
@@ -237,6 +263,22 @@ export function PaymentsList({ contracts, role }: PaymentsListProps): React.Reac
 												<FileText size={14} />
 												{role === "seller" ? t("viewReceiptButtonSeller") : t("viewReceiptButton")}
 											</button>
+											{status === "confirmed" && (
+												<button
+													type="button"
+													onClick={() => handleViewTransactionReceipt(contract.id)}
+													disabled={receiptPdfLoadingId === contract.id}
+													className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#BBF7D0] bg-[#F0FDF4] py-2.5 text-xs font-medium text-[#16A34A] transition-colors hover:bg-[#DCFCE7] disabled:opacity-60">
+													{receiptPdfLoadingId === contract.id ? (
+														<Loader2 size={14} className="animate-spin" />
+													) : (
+														<Receipt size={14} />
+													)}
+													{receiptPdfLoadingId === contract.id
+														? t("transactionReceiptGenerating")
+														: t("transactionReceiptButton")}
+												</button>
+											)}
 											{role === "seller" && status === "awaitingConfirmation" && (
 												<button
 													type="button"
