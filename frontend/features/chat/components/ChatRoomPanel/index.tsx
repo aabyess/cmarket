@@ -13,7 +13,7 @@ import { useSendMessage, markMessagesRead, awardAndCreateContract } from "@/feat
 import { markNotificationsByQuoteRead } from "@/features/notifications/apis";
 import { NOTIFICATION_QUERY_KEYS } from "@/features/notifications/queries";
 import { createClient } from "@/libs/supabase";
-import type { ChatRole, ChatRoom } from "@/features/chat/types";
+import type { ChatMessage, ChatRole, ChatRoom } from "@/features/chat/types";
 
 type ChatRoomPanelProps = {
 	room: ChatRoom;
@@ -61,10 +61,21 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 					// refetch가 폭주한다. 페이로드를 캐시에 직접 반영한다.
 					if (payload.eventType === "INSERT") {
 						const incoming = mapMessageRow(payload.new as MessageRow);
-						queryClient.setQueryData<ReturnType<typeof mapMessageRow>[]>(queryKey, (prev) => {
+						queryClient.setQueryData<ChatMessage[]>(queryKey, (prev) => {
 							if (!prev) return prev;
 							if (prev.some((m) => m.id === incoming.id)) return prev;
-							return [...prev, incoming];
+
+							// 낙관적으로 넣어둔 임시(temp-) 메시지가 실제 행으로 도착하면 교체한다.
+							const tempIndex = prev.findIndex(
+								(m) =>
+									m.id.startsWith("temp-") &&
+									m.senderId === incoming.senderId &&
+									m.content === incoming.content,
+							);
+							const base = tempIndex >= 0 ? prev.filter((_, i) => i !== tempIndex) : prev;
+
+							// 이벤트 도착 순서가 created_at 순서와 다를 수 있으므로 항상 시간순으로 유지한다.
+							return [...base, incoming].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 						});
 
 						if (incoming.senderId !== myId) {
@@ -75,7 +86,7 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 
 					if (payload.eventType === "UPDATE") {
 						const updated = mapMessageRow(payload.new as MessageRow);
-						queryClient.setQueryData<ReturnType<typeof mapMessageRow>[]>(queryKey, (prev) =>
+						queryClient.setQueryData<ChatMessage[]>(queryKey, (prev) =>
 							prev?.map((m) => (m.id === updated.id ? updated : m)),
 						);
 						return;
