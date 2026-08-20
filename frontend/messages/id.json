@@ -1072,6 +1072,8 @@
 		"sortNewest": "Terbaru",
 		"sortOldest": "Terlama",
 		"sortDeadline": "Tenggat terdekat",
+		"sortSectionLabel": "Urutkan",
+		"statusSectionLabel": "Status",
 		"gridViewAriaLabel": "Tampilkan sebagai kartu",
 		"listViewAriaLabel": "Tampilkan sebagai daftar"
 	},

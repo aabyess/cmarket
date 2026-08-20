@@ -16,33 +16,12 @@ const SORT_VALUES: MyQuotesSort[] = ["newest", "oldest", "deadline"];
 
 type MyQuotesFilterBarProps = {
 	filter: MyQuotesFilter;
-	counts: Record<MyQuotesFilter, number>;
 	sort: MyQuotesSort;
 	viewMode: MyQuotesViewMode;
 	onFilterChange: (value: MyQuotesFilter) => void;
 	onSortChange: (value: MyQuotesSort) => void;
 	onViewModeChange: (mode: MyQuotesViewMode) => void;
 };
-
-const filterButton = cva(
-	"flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors duration-200",
-	{
-		variants: {
-			active: {
-				true: "bg-imsg-blue text-white",
-				false: "text-[#374151] hover:bg-[#F9FAFB]",
-			},
-		},
-		defaultVariants: { active: false },
-	},
-);
-
-const countText = cva("text-xs", {
-	variants: {
-		active: { true: "text-white/70", false: "text-[#9CA3AF]" },
-	},
-	defaultVariants: { active: false },
-});
 
 const viewButton = cva(
 	"flex size-8 items-center justify-center rounded-lg transition-colors duration-200",
@@ -59,7 +38,6 @@ const viewButton = cva(
 
 export function MyQuotesFilterBar({
 	filter,
-	counts,
 	sort,
 	viewMode,
 	onFilterChange,
@@ -79,62 +57,73 @@ export function MyQuotesFilterBar({
 		deadline: t("sortDeadline"),
 	};
 
+	const sortTriggerLabel =
+		filter === "all" ? sortLabels[sort] : `${sortLabels[sort]} · ${filterLabels[filter]}`;
+
 	return (
-		<div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-			<div className="flex flex-wrap items-center gap-1 rounded-xl border border-[#E5E7EB] bg-white p-1">
-				{FILTER_VALUES.map((value) => (
-					<button
-						key={value}
-						type="button"
-						onClick={() => onFilterChange(value)}
-						className={filterButton({ active: filter === value })}>
-						{filterLabels[value]}
-						<span className={countText({ active: filter === value })}>{counts[value]}</span>
-					</button>
-				))}
-			</div>
+		<div className="mb-4 flex items-center justify-end gap-2">
+			<Popover className="relative">
+				<PopoverButton className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
+					<ArrowUpDown size={14} />
+					{sortTriggerLabel}
+				</PopoverButton>
 
-			<div className="flex shrink-0 items-center gap-2">
-				<Popover className="relative">
-					<PopoverButton className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
-						<ArrowUpDown size={14} />
-						{sortLabels[sort]}
-					</PopoverButton>
+				<PopoverPanel className="absolute right-0 z-20 mt-2 w-44 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
+					<p className="px-3 pb-1 pt-1.5 text-[11px] font-semibold text-[#9CA3AF]">
+						{t("sortSectionLabel")}
+					</p>
+					{SORT_VALUES.map((option) => (
+						<button
+							key={option}
+							type="button"
+							onClick={() => onSortChange(option)}
+							className={cn(
+								"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
+								sort === option
+									? "bg-[#EFF6FF] text-imsg-blue"
+									: "text-[#374151] hover:bg-[#F9FAFB]",
+							)}>
+							{sortLabels[option]}
+						</button>
+					))}
 
-					<PopoverPanel className="absolute right-0 z-20 mt-2 w-36 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
-						{SORT_VALUES.map((option) => (
-							<button
-								key={option}
-								type="button"
-								onClick={() => onSortChange(option)}
-								className={cn(
-									"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
-									sort === option
-										? "bg-[#EFF6FF] text-imsg-blue"
-										: "text-[#374151] hover:bg-[#F9FAFB]",
-								)}>
-								{sortLabels[option]}
-							</button>
-						))}
-					</PopoverPanel>
-				</Popover>
+					<div className="my-1.5 border-t border-[#E5E7EB]" />
 
-				<div className="flex items-center gap-1 rounded-xl border border-[#E5E7EB] bg-white p-1">
-					<button
-						type="button"
-						onClick={() => onViewModeChange("grid")}
-						aria-label={t("gridViewAriaLabel")}
-						className={viewButton({ active: viewMode === "grid" })}>
-						<LayoutGrid size={15} />
-					</button>
-					<button
-						type="button"
-						onClick={() => onViewModeChange("list")}
-						aria-label={t("listViewAriaLabel")}
-						className={viewButton({ active: viewMode === "list" })}>
-						<List size={15} />
-					</button>
-				</div>
+					<p className="px-3 pb-1 pt-1.5 text-[11px] font-semibold text-[#9CA3AF]">
+						{t("statusSectionLabel")}
+					</p>
+					{FILTER_VALUES.map((option) => (
+						<button
+							key={option}
+							type="button"
+							onClick={() => onFilterChange(option)}
+							className={cn(
+								"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
+								filter === option
+									? "bg-[#EFF6FF] text-imsg-blue"
+									: "text-[#374151] hover:bg-[#F9FAFB]",
+							)}>
+							{filterLabels[option]}
+						</button>
+					))}
+				</PopoverPanel>
+			</Popover>
+
+			<div className="flex items-center gap-1 rounded-xl border border-[#E5E7EB] bg-white p-1">
+				<button
+					type="button"
+					onClick={() => onViewModeChange("grid")}
+					aria-label={t("gridViewAriaLabel")}
+					className={viewButton({ active: viewMode === "grid" })}>
+					<LayoutGrid size={15} />
+				</button>
+				<button
+					type="button"
+					onClick={() => onViewModeChange("list")}
+					aria-label={t("listViewAriaLabel")}
+					className={viewButton({ active: viewMode === "list" })}>
+					<List size={15} />
+				</button>
 			</div>
 		</div>
 	);

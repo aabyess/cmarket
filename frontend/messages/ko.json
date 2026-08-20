@@ -1059,6 +1059,8 @@
 		"sortNewest": "최신순",
 		"sortOldest": "오래된순",
 		"sortDeadline": "마감임박순",
+		"sortSectionLabel": "정렬",
+		"statusSectionLabel": "상태",
 		"gridViewAriaLabel": "카드로 보기",
 		"listViewAriaLabel": "목록으로 보기"
 	},
