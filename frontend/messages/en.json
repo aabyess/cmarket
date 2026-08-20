@@ -96,6 +96,8 @@
 		"dropdown": {
 			"myProfile": "My Profile",
 			"settings": "Settings",
+			"terms": "Terms of Service",
+			"privacy": "Privacy Policy",
 			"logout": "Log out"
 		}
 	},

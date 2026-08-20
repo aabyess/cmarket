@@ -96,6 +96,8 @@
 		"dropdown": {
 			"myProfile": "내 프로필",
 			"settings": "설정",
+			"terms": "이용약관",
+			"privacy": "개인정보 처리방침",
 			"logout": "로그아웃"
 		}
 	},

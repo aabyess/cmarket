@@ -7,7 +7,7 @@ import {
 	LayoutDashboard, ListTodo, Mail, MessageSquare,
 	FileCheck, HelpCircle, Search, Send, Building2,
 	LogOut, User, FilePlus, Sparkles, Settings, FileText, Phone,
-	Briefcase, ChevronDown, ChevronUp,
+	Briefcase, ChevronDown, ChevronUp, Shield,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { NotificationBell } from "@/features/notifications/components/NotificationBell";
@@ -175,6 +175,24 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 									>
 										<Settings size={14} />
 										{t("dropdown.settings")}
+									</Link>
+								</div>
+								<div className="border-t border-[#F3F4F6] py-1">
+									<Link
+										href="/terms"
+										onClick={() => setDropdownOpen(false)}
+										className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#374151] hover:bg-[#F3F4F6] transition-colors"
+									>
+										<FileText size={14} />
+										{t("dropdown.terms")}
+									</Link>
+									<Link
+										href="/privacy"
+										onClick={() => setDropdownOpen(false)}
+										className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#374151] hover:bg-[#F3F4F6] transition-colors"
+									>
+										<Shield size={14} />
+										{t("dropdown.privacy")}
 									</Link>
 								</div>
 								<div className="border-t border-[#F3F4F6] py-1">
