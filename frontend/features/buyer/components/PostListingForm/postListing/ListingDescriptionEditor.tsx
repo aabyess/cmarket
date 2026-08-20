@@ -25,7 +25,6 @@ import {
 	Undo2,
 	Redo2,
 	ImageIcon,
-	TableIcon,
 	AlignLeft,
 	AlignCenter,
 	AlignRight,

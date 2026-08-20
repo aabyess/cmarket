@@ -1,6 +1,6 @@
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
 import { getAuthHeaders } from "@/utils/authHeaders";
-import type { Inquiry, Notice, SupportResource } from "@/features/support/types";
+import type { Notice, SupportResource } from "@/features/support/types";
 
 type NoticeRow = {
 	id: string;
