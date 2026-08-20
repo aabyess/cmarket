@@ -54,7 +54,9 @@ async function ensureMessageRecorded(
 
 	if (existing) return;
 
-	await admin.from("messages").insert({
+	// award/route.ts와 거의 동시에 실행되면 둘 다 insert를 시도할 수 있다.
+	// messages_invoice_pdf_unique 인덱스로 막힌 중복(23505)은 정상 상황이라 무시한다.
+	const { error } = await admin.from("messages").insert({
 		quote_id: quoteId,
 		sender_id: senderId,
 		content: JSON.stringify(meta),
@@ -62,6 +64,9 @@ async function ensureMessageRecorded(
 		attachment_url: storagePath,
 		attachment_name: fileName,
 	});
+	if (error && error.code !== "23505") {
+		console.error("invoice message insert error:", error);
+	}
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
