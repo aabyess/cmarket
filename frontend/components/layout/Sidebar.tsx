@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import {
 	LayoutDashboard, ListTodo, Mail, MessageSquare,
@@ -191,7 +190,7 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 				</div>
 			</nav>
 
-			{/* 하단: 지원센터 연락처 + 로고 */}
+			{/* 하단: 지원센터 연락처 */}
 			<div className="mt-auto border-t border-sidebar-border px-4 py-4">
 				<p className="text-xs font-semibold text-sidebar-foreground/60">{t("menu.support")}</p>
 				<div className="mt-1.5 space-y-1">
@@ -203,9 +202,6 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 						<Mail size={12} className="shrink-0" />
 						<span>{SUPPORT_EMAIL}</span>
 					</div>
-				</div>
-				<div className="mt-3 flex justify-center">
-					<Image src="/images/MitraPay.png" alt="MitraPay 로고" width={72} height={72} />
 				</div>
 			</div>
 		</aside>
