@@ -38,7 +38,6 @@ const SELLER_MENU_ITEMS = [
 	{ labelKey: "dashboard", key: "dashboard", icon: LayoutDashboard, href: "/seller/dashboard", badge: null },
 	{ labelKey: "browseListings", key: "browse", icon: Search, href: "/seller/listing-browse", badge: null },
 	{ labelKey: "sentQuotes", key: "quotes", icon: Send, href: "/seller/quote-submit", badge: null },
-	{ labelKey: "quoteTemplates", key: "quote-templates", icon: FileText, href: "/seller/quote-templates", badge: null },
 	{ labelKey: "chat", key: "chat", icon: MessageSquare, href: "/seller/chat", badge: null },
 	{ labelKey: "contract", key: "contract", icon: FileCheck, href: "/seller/contract", badge: null },
 	{ labelKey: "profile", key: "profile", icon: Building2, href: "/seller/profile/edit", badge: null },
