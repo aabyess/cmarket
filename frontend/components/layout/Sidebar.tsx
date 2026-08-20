@@ -60,12 +60,12 @@ const BUYER_MENU_ITEMS: MenuEntry[] = [
 			{ labelKey: "myListings", key: "listings", icon: ListTodo, href: "/buyer/order-list", badge: null },
 			{ labelKey: "receivedQuotes", key: "quotes", icon: Mail, href: "/buyer/quote-review", badge: null },
 			{ labelKey: "contract", key: "contract", icon: FileCheck, href: "/buyer/contract", badge: null },
-			{ labelKey: "plans", key: "plans", icon: Sparkles, href: "/plans", badge: null },
+			{ labelKey: "listingTemplates", key: "listing-templates", icon: FileText, href: "/buyer/listing-templates", badge: null },
 		],
 	},
-	{ labelKey: "listingTemplates", key: "listing-templates", icon: FileText, href: "/buyer/listing-templates", badge: null },
 	{ labelKey: "chat", key: "chat", icon: MessageSquare, href: "/buyer/chat", badge: null },
 	{ labelKey: "profile", key: "profile", icon: Building2, href: "/buyer/profile/edit", badge: null },
+	{ labelKey: "plans", key: "plans", icon: Sparkles, href: "/plans", badge: null },
 	{ labelKey: "support", key: "support", icon: HelpCircle, href: "/support", badge: null },
 ];
 
