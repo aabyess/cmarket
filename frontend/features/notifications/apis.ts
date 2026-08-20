@@ -34,7 +34,14 @@ export async function getNotifications(): Promise<Notification[]> {
 
 export async function markNotificationRead(id: string): Promise<void> {
 	const supabase = createClient();
-	await supabase.from("notifications").update({ is_read: true }).eq("id", id);
+	const { data: { user } } = await supabase.auth.getUser();
+	if (!user) return;
+
+	await supabase
+		.from("notifications")
+		.update({ is_read: true })
+		.eq("id", id)
+		.eq("profile_id", user.id);
 }
 
 export async function markAllNotificationsRead(): Promise<void> {
@@ -64,5 +71,12 @@ export async function markNotificationsByQuoteRead(quoteId: string): Promise<voi
 
 export async function deleteNotification(id: string): Promise<void> {
 	const supabase = createClient();
-	await supabase.from("notifications").delete().eq("id", id);
+	const { data: { user } } = await supabase.auth.getUser();
+	if (!user) return;
+
+	await supabase
+		.from("notifications")
+		.delete()
+		.eq("id", id)
+		.eq("profile_id", user.id);
 }
