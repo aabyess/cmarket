@@ -16,11 +16,11 @@ type LoadTemplateModalProps = {
 };
 
 // description은 에디터가 만든 HTML이라 미리보기에는 태그를 벗겨 평문만 보여준다.
+// DOMParser는 비활성 문서를 만들어 태그 제거와 엔티티 디코딩(&amp; 등)을 한 번에,
+// 스크립트 실행이나 리소스 로드 없이 처리한다.
 function toPlainText(html: string): string {
-	return html
-		.replace(/<[^>]+>/g, " ")
-		.replace(/\s+/g, " ")
-		.trim();
+	const doc = new DOMParser().parseFromString(html, "text/html");
+	return (doc.body.textContent ?? "").replace(/\s+/g, " ").trim();
 }
 
 export default function LoadTemplateModal({
