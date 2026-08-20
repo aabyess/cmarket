@@ -437,7 +437,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 											)}
 											<button
 												onClick={() => setConfirmId(contract.id)}
-												disabled={loadingId === contract.id}
+												disabled={loadingId === contract.id || !contract.paymentReceiptUrl}
 												className={cn(
 													"flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-semibold transition-colors disabled:opacity-60",
 													contract.paymentReceiptUrl

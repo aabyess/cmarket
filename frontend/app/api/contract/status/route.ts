@@ -86,15 +86,26 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
 		return NextResponse.json({ success: true });
 	}
 
+	// 취소 외에 허용되는 전환은 입금 확인(completed)뿐이다.
+	// body의 status를 그대로 쓰면 완료/취소된 계약을 임의 상태로 되돌릴 수 있다.
+	if (status !== "completed") {
+		return NextResponse.json({ error: "허용되지 않는 상태 변경입니다." }, { status: 400 });
+	}
+
 	// 입금 확인(completed)은 Seller만 가능
-	if (status === "completed" && !isSeller) {
+	if (!isSeller) {
 		return NextResponse.json({ error: "입금 확인은 공급기업만 가능합니다." }, { status: 403 });
 	}
 
-	const updateData: Record<string, string> = { status };
-	if (status === "completed") {
-		updateData.payment_confirmed_at = new Date().toISOString();
+	// 진행 중인 계약만 완료 처리할 수 있다 (취소된 계약 재완료 방지)
+	if (contract.status !== "ongoing") {
+		return NextResponse.json({ error: "진행 중인 계약만 완료할 수 있습니다." }, { status: 400 });
 	}
+
+	const updateData: Record<string, string> = {
+		status: "completed",
+		payment_confirmed_at: new Date().toISOString(),
+	};
 
 	const { error } = await admin.from("contracts").update(updateData).eq("id", contractId);
 

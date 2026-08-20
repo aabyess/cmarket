@@ -10,6 +10,7 @@ import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { useMessages, CHAT_QUERY_KEYS } from "@/features/chat/queries";
 import { useSendMessage, markMessagesRead, awardAndCreateContract } from "@/features/chat/mutations";
 import { markNotificationsByQuoteRead } from "@/features/notifications/apis";
+import { NOTIFICATION_QUERY_KEYS } from "@/features/notifications/queries";
 import { createClient } from "@/libs/supabase";
 import type { ChatRole, ChatRoom } from "@/features/chat/types";
 
@@ -34,8 +35,11 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 
 	useEffect(() => {
 		markMessagesRead(room.quoteId);
-		markNotificationsByQuoteRead(room.quoteId);
-	}, [room.quoteId]);
+		// 알림을 읽음 처리한 뒤 캐시를 무효화해야 벨의 빨간 점이 바로 사라진다.
+		markNotificationsByQuoteRead(room.quoteId).then(() => {
+			queryClient.invalidateQueries({ queryKey: NOTIFICATION_QUERY_KEYS.all });
+		});
+	}, [room.quoteId, queryClient]);
 
 	useEffect(() => {
 		const supabase = createClient();

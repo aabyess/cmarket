@@ -54,13 +54,19 @@ export async function translateFieldServer(text: string): Promise<FieldTranslati
 	const remaining: { locale: SupportedLocale; deeplTarget: string }[] = [
 		{ locale: "ko", deeplTarget: "KO" },
 		{ locale: "id", deeplTarget: "ID" },
-	];
+	].filter(({ deeplTarget }) => detected !== deeplTarget) as {
+		locale: SupportedLocale;
+		deeplTarget: string;
+	}[];
 
-	for (const { locale, deeplTarget } of remaining) {
-		if (detected === deeplTarget) continue;
-		const result = await callTranslate(text, deeplTarget);
+	// 남은 언어들은 서로 독립이므로 병렬로 번역한다.
+	const results = await Promise.all(
+		remaining.map(({ deeplTarget }) => callTranslate(text, deeplTarget)),
+	);
+	remaining.forEach(({ locale }, i) => {
+		const result = results[i];
 		if (result) translations[locale] = result.translatedText;
-	}
+	});
 
 	const sourceLang =
 		detected === "EN" ? "en" : detected === "KO" ? "ko" : detected === "ID" ? "id" : detected.toLowerCase();

@@ -3,7 +3,7 @@ import { ChevronLeft } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { QuoteReview } from "@/features/buyer/components/QuoteReview";
 import { QuoteReviewListingPicker } from "@/features/buyer/components/QuoteReview/QuoteReviewListingPicker";
-import { getListingDetail, getListingsWithQuoteCount, getQuotesByListing } from "@/features/buyer/apis";
+import { getListingDetail, getListingsWithQuoteCount, getListingTitle, getQuotesByListing } from "@/features/buyer/apis";
 
 type QuoteReviewPageProps = {
 	searchParams: Promise<{ listingId?: string }>;
@@ -28,13 +28,12 @@ export default async function QuoteReviewPage({ searchParams }: QuoteReviewPageP
 		);
 	}
 
-	const [listings, quotes, listingDetail] = await Promise.all([
-		getListingsWithQuoteCount(),
+	// 제목 하나 때문에 전체 공고+견적을 내려받지 않도록 경량 조회를 쓴다.
+	const [listingTitle, quotes, listingDetail] = await Promise.all([
+		getListingTitle(listingId),
 		getQuotesByListing(listingId),
 		getListingDetail(listingId),
 	]);
-
-	const currentListing = listings.find((listing) => listing.id === listingId);
 
 	return (
 		<div className="px-8 py-6 xl:px-12">
@@ -48,7 +47,7 @@ export default async function QuoteReviewPage({ searchParams }: QuoteReviewPageP
 
 			<div className="mb-5">
 				<h1 className="text-2xl font-bold text-[#1F2937]">
-					{currentListing?.title ?? t("title")}
+					{listingTitle ?? t("title")}
 				</h1>
 				<p className="mt-1 text-sm text-[#6B7280]">{t("quoteCount", { count: quotes.length })}</p>
 			</div>

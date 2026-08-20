@@ -6,7 +6,7 @@ export async function GET(_request: NextRequest, { params }: Params): Promise<Ne
 	const { code } = await params;
 
 	try {
-		const res = await fetch(`https://wilayah.id/api/regencies/${code}.json`);
+		const res = await fetch(`https://wilayah.id/api/regencies/${code}.json`, { next: { revalidate: 86400 } });
 		if (!res.ok) throw new Error("failed to fetch regencies");
 		const data = await res.json();
 		return NextResponse.json(data);

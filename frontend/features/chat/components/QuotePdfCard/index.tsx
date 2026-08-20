@@ -103,7 +103,8 @@ export function QuotePdfCard({
 	async function handleOpen(): Promise<void> {
 		setIsOpening(true);
 		try {
-			const doc = resolvedDoc ?? (await resolveDoc());
+			// 마운트 시 받아둔 서명 URL은 10분이면 만료되므로 열 때마다 새로 발급받는다.
+			const doc = await resolveDoc();
 			if (doc) {
 				window.open(doc.signedUrl, "_blank", "noopener,noreferrer");
 			} else {

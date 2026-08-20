@@ -15,17 +15,19 @@ type ChatViewProps = {
 export function ChatView({ context, initialQuoteId }: ChatViewProps): React.ReactNode {
 	const t = useTranslations("ChatView");
 	const [activeQuoteId, setActiveQuoteId] = useState<string | null>(initialQuoteId ?? null);
-	const [rooms, setRooms] = useState<ChatRoom[]>(context.rooms);
+	// rooms를 state로 복사하면 낙찰 후 router.refresh()로 갱신된 서버 데이터가 반영되지 않는다.
+	// props에서 파생하고, 이 세션에서 읽음 처리한 방만 별도로 기억한다.
+	const [readQuoteIds, setReadQuoteIds] = useState<Set<string>>(new Set());
+
+	const rooms: ChatRoom[] = context.rooms.map((room) =>
+		readQuoteIds.has(room.quoteId) ? { ...room, unreadCount: 0 } : room,
+	);
 
 	const activeRoom = rooms.find((room) => room.quoteId === activeQuoteId) ?? null;
 
 	function handleSelect(quoteId: string): void {
 		setActiveQuoteId(quoteId);
-		setRooms((prev) =>
-			prev.map((room) =>
-				room.quoteId === quoteId ? { ...room, unreadCount: 0 } : room,
-			),
-		);
+		setReadQuoteIds((prev) => new Set(prev).add(quoteId));
 	}
 
 	return (

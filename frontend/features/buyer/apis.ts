@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
 import type { ListingWithQuotes, ReceivedQuote, ListingSummary, BuyerDashboardData, BuyerTradeSummary, BuyerTodo, BuyerActivity, ListingFormData, ListingStatus, Currency } from "@/features/buyer/types";
@@ -6,11 +7,15 @@ import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
 import { formatRelativeTime } from "@/utils/formatRelativeTime";
 import { resolveTranslatedField } from "@/utils/resolveTranslatedField";
 
-async function getSessionUser() {
+// 서버의 getSession()은 쿠키를 검증 없이 읽으므로 인가 판단에 쓰면 안 된다.
+// getUser()는 매 호출이 인증 서버 왕복이라, 같은 요청 안에서는 cache()로 한 번만 조회한다.
+async function fetchSessionUser() {
 	const supabase = await createServerSupabaseClient();
-	const { data: { session } } = await supabase.auth.getSession();
-	return { supabase, user: session?.user ?? null };
+	const { data: { user } } = await supabase.auth.getUser();
+	return { supabase, user };
 }
+
+const getSessionUser = cache(fetchSessionUser);
 
 export async function getBuyerCompanyName(): Promise<string> {
 	const { supabase, user } = await getSessionUser();
@@ -46,7 +51,7 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 	const [{ data: listings }, { count: unreadQuoteCount }, { data: recentNotifications }] = await Promise.all([
 		supabase
 			.from("listings")
-			.select("id, title, title_source_lang, title_translations, status, currency, end_date, quotes(price)")
+			.select("id, title, title_source_lang, title_translations, status, currency, end_date, quotes(id, price)")
 			.eq("user_id", user.id),
 		supabase
 			.from("notifications")
@@ -65,14 +70,11 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 	]);
 
 	const listingRows = listings ?? [];
-	const listingIds = listingRows.map((row) => row.id);
 
-	const { data: quoteIdRows } =
-		listingIds.length > 0
-			? await supabase.from("quotes").select("id").in("listing_id", listingIds)
-			: { data: [] as { id: string }[] };
-
-	const quoteIds = (quoteIdRows ?? []).map((row) => row.id);
+	// 견적 id는 위 listings 조회에 이미 임베드돼 있으므로 별도 쿼리를 만들지 않는다.
+	const quoteIds = listingRows.flatMap(
+		(row) => ((row.quotes as unknown as { id: string }[]) ?? []).map((q) => q.id),
+	);
 
 	const { count: unreadChatCount } =
 		quoteIds.length > 0
@@ -95,7 +97,8 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 			const lowestPrice = Math.min(...quotes.map((q) => Number(q.price)));
 			const symbol = CURRENCY_SYMBOL[row.currency as Currency];
 			const daysLeft = Math.ceil((new Date(row.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-			const isUrgent = daysLeft <= 3;
+			// 이미 마감된 공고에 "D-0"/"D--2" 뱃지가 붙지 않도록 남은 일수가 있을 때만 긴급 처리
+			const isUrgent = daysLeft > 0 && daysLeft <= 3;
 
 			return {
 				id: row.id,
@@ -157,27 +160,23 @@ export async function getBuyerTradeSummary(): Promise<BuyerTradeSummary> {
 	const closedListingIds = (listings ?? []).filter((l) => l.status === "closed").map((l) => l.id);
 	const allListingIds = (listings ?? []).map((l) => l.id);
 
-	let activeQuoteCount = 0;
-	let closedQuoteCount = 0;
+	// 두 쿼리는 서로 독립이므로 병렬로 조회한다.
+	const [quotesResult, contractsResult] = await Promise.all([
+		allListingIds.length > 0
+			? supabase.from("quotes").select("listing_id").in("listing_id", allListingIds)
+			: Promise.resolve({ data: [] as { listing_id: string }[], error: null }),
+		supabase.from("contracts").select("payment_confirmed_at").eq("buyer_id", user.id),
+	]);
 
-	if (allListingIds.length > 0) {
-		const { data: quotes, error: quotesError } = await supabase
-			.from("quotes")
-			.select("listing_id")
-			.in("listing_id", allListingIds);
+	if (quotesResult.error) throw new Error(quotesResult.error.message);
+	if (contractsResult.error) throw new Error(contractsResult.error.message);
 
-		if (quotesError) throw new Error(quotesError.message);
+	const activeIdSet = new Set(activeListingIds);
+	const closedIdSet = new Set(closedListingIds);
+	const activeQuoteCount = (quotesResult.data ?? []).filter((q) => activeIdSet.has(q.listing_id)).length;
+	const closedQuoteCount = (quotesResult.data ?? []).filter((q) => closedIdSet.has(q.listing_id)).length;
 
-		activeQuoteCount = (quotes ?? []).filter((q) => activeListingIds.includes(q.listing_id)).length;
-		closedQuoteCount = (quotes ?? []).filter((q) => closedListingIds.includes(q.listing_id)).length;
-	}
-
-	const { data: contracts, error: contractsError } = await supabase
-		.from("contracts")
-		.select("payment_confirmed_at")
-		.eq("buyer_id", user.id);
-
-	if (contractsError) throw new Error(contractsError.message);
+	const contracts = contractsResult.data;
 
 	const pendingCount = (contracts ?? []).filter((c) => !c.payment_confirmed_at).length;
 	const confirmedCount = (contracts ?? []).filter((c) => c.payment_confirmed_at).length;
@@ -292,8 +291,38 @@ export async function getListingsWithQuoteCount(): Promise<ListingWithQuotes[]> 
 	});
 }
 
+/** 견적 비교 페이지 헤더용 — 공고 하나의 제목만 가볍게 조회한다. */
+export async function getListingTitle(listingId: string): Promise<string | null> {
+	const { supabase, user } = await getSessionUser();
+	if (!user) return null;
+
+	const locale = await getLocale();
+
+	const { data } = await supabase
+		.from("listings")
+		.select("title, title_source_lang, title_translations, user_id")
+		.eq("id", listingId)
+		.single();
+
+	if (!data || data.user_id !== user.id) return null;
+
+	return resolveTranslatedField(data.title, data.title_source_lang, data.title_translations, locale);
+}
+
 export async function getQuotesByListing(listingId: string): Promise<ReceivedQuote[]> {
-	const supabase = await createServerSupabaseClient();
+	const { supabase, user } = await getSessionUser();
+	if (!user) return [];
+
+	// 판매사 정보는 RLS를 우회하는 admin 클라이언트로 조회하므로,
+	// 호출자가 이 공고의 소유자인지 여기서 직접 확인해야 한다.
+	const { data: listing } = await supabase
+		.from("listings")
+		.select("user_id")
+		.eq("id", listingId)
+		.single();
+
+	if (!listing || listing.user_id !== user.id) return [];
+
 	const { createServerAdminClient } = await import("@/libs/supabaseServer");
 	const admin = await createServerAdminClient();
 	const locale = await getLocale();
@@ -311,21 +340,20 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 
 	const sellerIds = data.map((row) => row.seller_id);
 
-	const { data: companies } = await admin
-		.from("companies")
-		.select(
-			"profile_id, company_name, representative, address, business_type, business_type_source_lang, business_type_translations, business_item, business_item_source_lang, business_item_translations",
-		)
-		.in("profile_id", sellerIds);
-
-	const { data: profiles } = await admin
-		.from("company_profiles")
-		.select("profile_id, logo_url")
-		.in("profile_id", sellerIds);
+	// 세 조회는 서로 독립이므로 병렬로 실행한다.
+	const [{ data: companies }, { data: profiles }, rates] = await Promise.all([
+		admin
+			.from("companies")
+			.select(
+				"profile_id, company_name, representative, address, business_type, business_type_source_lang, business_type_translations, business_item, business_item_source_lang, business_item_translations",
+			)
+			.in("profile_id", sellerIds),
+		admin.from("company_profiles").select("profile_id, logo_url").in("profile_id", sellerIds),
+		getExchangeRates(),
+	]);
 
 	const companyMap = new Map((companies ?? []).map((c) => [c.profile_id, c]));
 	const profileMap = new Map((profiles ?? []).map((p) => [p.profile_id, p]));
-	const rates = await getExchangeRates();
 
 	return data.map((row) => {
 		const company = companyMap.get(row.seller_id);

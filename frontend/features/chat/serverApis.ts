@@ -69,19 +69,25 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 		),
 	];
 
-	const { data: companies } = await supabase
-		.from("companies")
-		.select("profile_id, company_name")
-		.in("profile_id", partnerIds);
+	// 두 조회는 서로 독립이므로 병렬로 실행한다.
+	const [{ data: companies }, { data: contracts }] = await Promise.all([
+		supabase.from("companies").select("profile_id, company_name").in("profile_id", partnerIds),
+		supabase.from("contracts").select("quote_id").in("quote_id", activeQuoteIds),
+	]);
 
 	const companyMap = new Map((companies ?? []).map((c) => [c.profile_id, c.company_name]));
-
-	const { data: contracts } = await supabase
-		.from("contracts")
-		.select("quote_id")
-		.in("quote_id", activeQuoteIds);
-
 	const contractSet = new Set((contracts ?? []).map((c) => c.quote_id));
+
+	// 방마다 전체 메시지 배열을 다시 filter하면 O(방 수 × 메시지 수)가 된다. 한 번만 그룹핑한다.
+	const messagesByQuote = new Map<string, typeof messages>();
+	for (const message of messages ?? []) {
+		const group = messagesByQuote.get(message.quote_id);
+		if (group) {
+			group.push(message);
+		} else {
+			messagesByQuote.set(message.quote_id, [message]);
+		}
+	}
 
 	// PDF 카드 메시지는 content가 메타 JSON이라 목록 미리보기에 그대로 노출되면 안 된다.
 	const tRoom = await getTranslations("ChatRoomList");
@@ -95,7 +101,7 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 
 	return quoteRows
 		.map((quote) => {
-			const roomMessages = (messages ?? []).filter((m) => m.quote_id === quote.id);
+			const roomMessages = messagesByQuote.get(quote.id) ?? [];
 			const latest = roomMessages[0];
 			const partnerId = role === "seller" ? (quote.listings?.user_id ?? "") : quote.seller_id;
 
