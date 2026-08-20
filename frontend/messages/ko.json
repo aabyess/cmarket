@@ -84,6 +84,7 @@
 			"myListings": "나의 견적",
 			"receivedQuotes": "받은 견적",
 			"sentQuotes": "보낸 견적",
+			"quoteTemplates": "견적 템플릿",
 			"browseListings": "견적요청 보기",
 			"chat": "채팅",
 			"contract": "계약 관리",
@@ -96,6 +97,40 @@
 			"settings": "설정",
 			"logout": "로그아웃"
 		}
+	},
+	"QuoteTemplatesPage": {
+		"title": "견적 템플릿",
+		"subtitle": "자주 쓰는 견적 양식을 저장해두고 견적 작성 시 불러와 쓸 수 있어요."
+	},
+	"QuoteTemplateManager": {
+		"description": "저장된 템플릿을 관리해요.",
+		"newTemplateButton": "새 템플릿",
+		"loading": "불러오는 중...",
+		"emptyState": "아직 저장된 템플릿이 없어요.",
+		"noNotePreview": "메모 없음",
+		"updatedAtLabel": "{date} 수정",
+		"editAria": "수정",
+		"deleteAria": "삭제",
+		"editTitle": "템플릿 수정",
+		"createTitle": "새 템플릿",
+		"nameLabel": "템플릿 이름",
+		"namePlaceholder": "예: A4용지, 화학용품1",
+		"noteLabel": "메모",
+		"notePlaceholder": "제안 메모 내용을 입력하세요",
+		"paymentTermsLabel": "결제조건",
+		"paymentTermsPlaceholder": "예: T/T 선금 50%, 선적 전 잔금 50%",
+		"deliveryDaysLabel": "납기일수",
+		"deliveryDaysPlaceholder": "30",
+		"currencyLabel": "통화",
+		"currencyPlaceholder": "선택 안 함",
+		"nameRequiredError": "템플릿 이름을 입력해주세요.",
+		"cancelButton": "취소",
+		"saveButton": "저장",
+		"saving": "저장 중...",
+		"saveError": "저장에 실패했어요. 다시 시도해주세요.",
+		"deleteError": "삭제에 실패했어요. 다시 시도해주세요.",
+		"deleteConfirmTitle": "템플릿을 삭제할까요?",
+		"deleteConfirmDescription": "삭제하면 되돌릴 수 없어요."
 	},
 	"Login": {
 		"title": "로그인",
