@@ -59,11 +59,15 @@ export class QuoteDraftError extends Error {
 }
 
 // 공고 내용을 바탕으로 견적 메모/결제조건 초안을 AI가 생성한다. 가격은 생성하지 않는다.
-export async function draftQuoteWithAi(listingId: string, locale: string): Promise<QuoteDraft> {
+export async function draftQuoteWithAi(
+	listingId: string,
+	locale: string,
+	instructions?: string,
+): Promise<QuoteDraft> {
 	const res = await fetch("/api/ai/draft-quote", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ listingId, locale }),
+		body: JSON.stringify({ listingId, locale, instructions }),
 	});
 
 	if (!res.ok) {

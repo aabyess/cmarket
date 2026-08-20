@@ -7,6 +7,7 @@ import { useLocale } from "next-intl";
 import { CheckCircle2, Pencil, Clock, Upload, FileText, X, Loader2, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
+import { ListingDetailQuoteFormAiModal } from "@/features/seller/components/ListingDetail/ListingDetailQuoteFormAiModal";
 import { postQuote, updateQuote, draftQuoteWithAi, QuoteDraftError } from "@/features/seller/mutations";
 import type { Currency, ListingAttachment, ListingItem, QuoteItemPrice } from "@/features/buyer/types";
 import type { MyQuoteSummary, QuoteDraft, QuoteFormData } from "@/features/seller/types";
@@ -71,6 +72,7 @@ export function ListingDetailQuoteForm({
 	const [isDragging, setIsDragging] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [isDrafting, setIsDrafting] = useState(false);
+	const [isAiModalOpen, setIsAiModalOpen] = useState(false);
 	const [pendingDraft, setPendingDraft] = useState<QuoteDraft | null>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const locale = useLocale();
@@ -87,12 +89,13 @@ export function ListingDetailQuoteForm({
 		handleChange({ note: draft.note, paymentTerms: draft.paymentTerms });
 	}
 
-	async function handleAiDraft(): Promise<void> {
+	async function handleAiDraft(instructions: string): Promise<void> {
 		if (isDrafting) return;
 		setIsDrafting(true);
 		setError(null);
 		try {
-			const draft = await draftQuoteWithAi(listingId, locale);
+			const draft = await draftQuoteWithAi(listingId, locale, instructions || undefined);
+			setIsAiModalOpen(false);
 			// 이미 써둔 내용이 있으면 덮어쓰기 전에 확인받는다.
 			if (form.note.trim() || form.paymentTerms.trim()) {
 				setPendingDraft(draft);
@@ -100,6 +103,7 @@ export function ListingDetailQuoteForm({
 				applyDraft(draft);
 			}
 		} catch (err) {
+			setIsAiModalOpen(false);
 			if (err instanceof QuoteDraftError && err.status === 503) {
 				setError(t("aiNotConfigured"));
 			} else if (err instanceof QuoteDraftError && err.status === 429) {
@@ -476,7 +480,7 @@ export function ListingDetailQuoteForm({
 						<label className="block text-sm font-medium text-[#374151]">{t("paymentTermsFieldLabel")}</label>
 						<button
 							type="button"
-							onClick={handleAiDraft}
+							onClick={() => setIsAiModalOpen(true)}
 							disabled={isDrafting}
 							className="flex items-center gap-1 rounded-md border border-imsg-blue px-2 py-1 text-xs font-semibold text-imsg-blue transition-colors hover:bg-[#EFF6FF] disabled:opacity-60"
 						>
@@ -492,6 +496,13 @@ export function ListingDetailQuoteForm({
 						className="w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 					/>
 				</div>
+
+				<ListingDetailQuoteFormAiModal
+					isOpen={isAiModalOpen}
+					isLoading={isDrafting}
+					onClose={() => setIsAiModalOpen(false)}
+					onGenerate={handleAiDraft}
+				/>
 
 				<ConfirmModal
 					isOpen={pendingDraft !== null}
