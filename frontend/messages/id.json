@@ -270,7 +270,8 @@
 	"ChatMessageList": {
 		"dateLabel": "{day}/{month}/{year}",
 		"read": "Dibaca",
-		"translateButton": "Terjemahkan"
+		"translateButton": "Terjemahkan",
+		"loadOlderButton": "Lihat pesan sebelumnya"
 	},
 	"ChatView": {
 		"emptyTitle": "Pilih percakapan",

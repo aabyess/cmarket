@@ -270,7 +270,8 @@
 	"ChatMessageList": {
 		"dateLabel": "{year}년 {month}월 {day}일",
 		"read": "읽음",
-		"translateButton": "번역"
+		"translateButton": "번역",
+		"loadOlderButton": "이전 대화 보기"
 	},
 	"ChatView": {
 		"emptyTitle": "대화를 선택하세요",

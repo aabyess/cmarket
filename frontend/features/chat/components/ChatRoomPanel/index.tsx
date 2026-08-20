@@ -8,7 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { ChatMessageList } from "@/features/chat/components/ChatMessageList";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { useMessages, CHAT_QUERY_KEYS } from "@/features/chat/queries";
-import { mapMessageRow, type MessageRow } from "@/features/chat/apis";
+import { getMessages, mapMessageRow, MESSAGE_PAGE_SIZE, type MessageRow } from "@/features/chat/apis";
 import { useSendMessage, markMessagesRead, awardAndCreateContract } from "@/features/chat/mutations";
 import { markNotificationsByQuoteRead } from "@/features/notifications/apis";
 import { NOTIFICATION_QUERY_KEYS } from "@/features/notifications/queries";
@@ -33,6 +33,31 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 	const [isAwardModalOpen, setIsAwardModalOpen] = useState(false);
 	const [isAwarding, setIsAwarding] = useState(false);
 	const [limitExceeded, setLimitExceeded] = useState(false);
+	const [isLoadingOlder, setIsLoadingOlder] = useState(false);
+	const [reachedOldest, setReachedOldest] = useState(false);
+
+	// 첫 페이지가 꽉 찼다면 더 오래된 메시지가 있을 수 있다.
+	const hasOlderMessages = !reachedOldest && messages.length >= MESSAGE_PAGE_SIZE;
+
+	async function handleLoadOlder(): Promise<void> {
+		const oldest = messages[0];
+		if (!oldest || isLoadingOlder) return;
+
+		setIsLoadingOlder(true);
+		try {
+			const older = await getMessages(room.quoteId, { before: oldest.createdAt });
+			if (older.length < MESSAGE_PAGE_SIZE) setReachedOldest(true);
+			if (older.length > 0) {
+				queryClient.setQueryData<ChatMessage[]>(CHAT_QUERY_KEYS.messages(room.quoteId), (prev) => {
+					if (!prev) return older;
+					const known = new Set(prev.map((m) => m.id));
+					return [...older.filter((m) => !known.has(m.id)), ...prev];
+				});
+			}
+		} finally {
+			setIsLoadingOlder(false);
+		}
+	}
 
 	useEffect(() => {
 		markMessagesRead(room.quoteId);
@@ -186,7 +211,14 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 			{isLoading ? (
 				<div className="flex-1 bg-imsg-surface" />
 			) : (
-				<ChatMessageList messages={messages} myId={myId} quoteId={room.quoteId} />
+				<ChatMessageList
+				messages={messages}
+				myId={myId}
+				quoteId={room.quoteId}
+				hasOlder={hasOlderMessages}
+				isLoadingOlder={isLoadingOlder}
+				onLoadOlder={handleLoadOlder}
+			/>
 			)}
 
 			{/* 무료 요금제 번역 한도 안내 */}
