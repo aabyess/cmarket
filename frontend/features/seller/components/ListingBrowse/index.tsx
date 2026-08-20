@@ -97,7 +97,7 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 
 	useEffect(() => {
 		setPage(1);
-	}, [statusTab, trimmedKeyword, sort, quoteFilter, pageSize]);
+	}, [statusTab, trimmedKeyword, sort, quoteFilter, pageSize, listings.length]);
 
 	const pageCount = Math.max(1, Math.ceil(filteredListings.length / pageSize));
 	const paginatedListings = filteredListings.slice((page - 1) * pageSize, page * pageSize);

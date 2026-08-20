@@ -36,7 +36,7 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
 					items={listing.items}
 					defaultCurrency={listing.currency}
 					myQuote={listing.myQuote}
-					isClosed={new Date(listing.endDate).getTime() <= Date.now()}
+					isClosed={listing.status !== "active" || new Date(listing.endDate).getTime() <= Date.now()}
 				/>
 			</div>
 		</div>

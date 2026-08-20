@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { cva } from "class-variance-authority";
 import { Building2, MessageSquare } from "lucide-react";
 import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
@@ -29,6 +29,7 @@ export function MyQuotesTable({
 	onGoToChat,
 }: MyQuotesTableProps): React.JSX.Element {
 	const t = useTranslations("MyQuotesTable");
+	const locale = useLocale();
 	const statusLabels: Record<QuoteStatus, string> = {
 		pending: t("statusPending"),
 		awarded: t("statusAwarded"),
@@ -79,7 +80,7 @@ export function MyQuotesTable({
 									{t("daysSuffix", { days: quote.deliveryDays })}
 								</td>
 								<td className="whitespace-nowrap px-4 py-3 text-right text-imsg-secondary">
-									{new Date(quote.createdAt).toLocaleDateString("ko-KR")}
+									{new Date(quote.createdAt).toLocaleDateString(locale)}
 								</td>
 								<td className="whitespace-nowrap px-4 py-3 text-right">
 									{quote.status === "awarded" && (

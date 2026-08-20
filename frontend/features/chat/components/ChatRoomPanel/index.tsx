@@ -24,6 +24,7 @@ type ChatRoomPanelProps = {
 
 export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps): React.ReactNode {
 	const t = useTranslations("ChatRoomPanel");
+	const tQuoteCompare = useTranslations("QuoteCompareTable");
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { data: messages = [], isLoading } = useMessages(room.quoteId);
@@ -169,11 +170,13 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 	async function handleConfirmAward(): Promise<void> {
 		setIsAwarding(true);
 		try {
-			await awardAndCreateContract(room.listingId, room.quoteId, room.partnerId);
+			const { invoiceWarning } = await awardAndCreateContract(room.quoteId);
 			setIsAwardModalOpen(false);
+			if (invoiceWarning) alert(invoiceWarning);
 			router.refresh();
 		} catch (err) {
 			console.error(err);
+			alert(tQuoteCompare("awardErrorMessage"));
 		} finally {
 			setIsAwarding(false);
 		}

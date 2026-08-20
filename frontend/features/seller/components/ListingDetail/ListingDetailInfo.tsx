@@ -1,6 +1,6 @@
 import { Building2, FileText } from "lucide-react";
 import { cva } from "class-variance-authority";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { ListingInfo } from "@/features/shared/components/ListingInfo";
 import { getCategoryLabels, CURRENCY_SYMBOL } from "@/features/buyer/constants";
 import { sanitizeHtml } from "@/utils/sanitizeHtml";
@@ -32,8 +32,12 @@ function daysUntil(endDate: string): number {
 }
 
 export async function ListingDetailInfo({ listing }: ListingDetailInfoProps): Promise<React.JSX.Element> {
-	const t = await getTranslations("ListingDetailInfo");
-	const categoryLabels = getCategoryLabels(await getTranslations("ListingCategory"));
+	const [t, categoryT, locale] = await Promise.all([
+		getTranslations("ListingDetailInfo"),
+		getTranslations("ListingCategory"),
+		getLocale(),
+	]);
+	const categoryLabels = getCategoryLabels(categoryT);
 	const symbol = CURRENCY_SYMBOL[listing.currency] ?? "";
 	const remaining = daysUntil(listing.endDate);
 	const totalQuantity = listing.items.reduce((sum, item) => sum + item.quantity, 0);
@@ -53,7 +57,7 @@ export async function ListingDetailInfo({ listing }: ListingDetailInfoProps): Pr
 		},
 		{
 			label: t("deadlineLabel"),
-			value: new Date(listing.endDate).toLocaleDateString("ko-KR"),
+			value: new Date(listing.endDate).toLocaleDateString(locale),
 			sub: remaining > 0 ? t("daysLeft", { days: remaining }) : remaining === 0 ? t("closingToday") : t("closed"),
 			accent: remaining >= 0 && remaining <= 3,
 		},
@@ -79,7 +83,7 @@ export async function ListingDetailInfo({ listing }: ListingDetailInfoProps): Pr
 						{categoryLabels[listing.category]}
 					</span>
 					<span className="text-xs text-imsg-secondary">
-						{t("registeredOn", { date: new Date(listing.createdAt).toLocaleDateString("ko-KR") })}
+						{t("registeredOn", { date: new Date(listing.createdAt).toLocaleDateString(locale) })}
 					</span>
 				</div>
 
