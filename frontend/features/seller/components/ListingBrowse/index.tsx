@@ -56,10 +56,10 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 		notQuoted: t("quoteFilterNotQuoted"),
 	};
 
-	const sortTriggerLabel =
-		quoteFilter === "all"
-			? sortLabels[sort]
-			: `${sortLabels[sort]} · ${quoteFilterLabels[quoteFilter]}`;
+	const sortTriggerLabelParts = [sortLabels[sort]];
+	if (statusTab !== "all") sortTriggerLabelParts.push(tabLabels[statusTab]);
+	if (quoteFilter !== "all") sortTriggerLabelParts.push(quoteFilterLabels[quoteFilter]);
+	const sortTriggerLabel = sortTriggerLabelParts.join(" · ");
 
 	const trimmedKeyword = keyword.trim().toLowerCase();
 
@@ -118,24 +118,7 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 				/>
 			</div>
 
-			<div className="mb-4 flex items-center justify-between gap-2">
-				<div className="flex w-fit gap-1 rounded-xl border border-[#E5E7EB] bg-white p-1">
-					{TAB_VALUES.map((value) => (
-						<button
-							key={value}
-							onClick={() => setStatusTab(value)}
-							className={cn(
-								"rounded-lg px-4 py-1.5 text-xs font-medium transition-colors",
-								statusTab === value
-									? "bg-imsg-blue text-white"
-									: "text-[#6B7280] hover:bg-[#F9FAFB]",
-							)}
-						>
-							{tabLabels[value]}
-						</button>
-					))}
-				</div>
-
+			<div className="mb-4 flex items-center justify-end gap-2">
 				<div className="flex items-center gap-2">
 					<Popover className="relative">
 						<PopoverButton className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
@@ -159,6 +142,26 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 									)}
 								>
 									{sortLabels[option]}
+								</button>
+							))}
+
+							<div className="my-1.5 border-t border-[#E5E7EB]" />
+
+							<p className="px-3 pb-1 pt-1.5 text-[11px] font-semibold text-[#9CA3AF]">
+								{t("statusSectionLabel")}
+							</p>
+							{TAB_VALUES.map((option) => (
+								<button
+									key={option}
+									onClick={() => setStatusTab(option)}
+									className={cn(
+										"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
+										statusTab === option
+											? "bg-[#EFF6FF] text-imsg-blue"
+											: "text-[#374151] hover:bg-[#F9FAFB]",
+									)}
+								>
+									{tabLabels[option]}
 								</button>
 							))}
 
