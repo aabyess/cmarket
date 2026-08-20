@@ -17,11 +17,15 @@ export type SellerDashboardData = {
 	activities: { title: string; timeText: string }[];
 };
 
+// 목록(탐색) 화면은 카드/검색에 쓰는 name/spec만 있으면 되고, quantity/unit/price는
+// 어디서도 쓰지 않는다 — 전체 필드를 내려보내면 공고가 많을 때 페이로드가 불필요하게 커진다.
+export type ListingBrowseItem = Pick<ListingItem, "name" | "spec">;
+
 export type OpenListing = {
 	id: string;
 	title: string;
 	description: string;
-	items: ListingItem[];
+	items: ListingBrowseItem[];
 	currency: Currency;
 	totalBudget: number;
 	budgetInKrw: number | null;
@@ -33,7 +37,8 @@ export type OpenListing = {
 	hasMyQuote: boolean;
 	status: "active" | "closed" | "awarded";
 };
-export type ListingDetail = OpenListing & {
+export type ListingDetail = Omit<OpenListing, "items"> & {
+	items: ListingItem[];
 	category: ListingCategory;
 	deliveryAddress: string;
 	deliveryAddressDetail: string;
