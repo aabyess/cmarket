@@ -4,13 +4,16 @@ import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
-import { CheckCircle2, Pencil, Clock, Upload, FileText, X, Loader2, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
+import { CheckCircle2, Pencil, Clock, Upload, FileText, X, Loader2, ChevronDown, ChevronUp, Sparkles, Bookmark, Save } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { ListingDetailQuoteFormAiModal } from "@/features/seller/components/ListingDetail/ListingDetailQuoteFormAiModal";
+import { ListingDetailQuoteFormTemplateModal } from "@/features/seller/components/ListingDetail/ListingDetailQuoteFormTemplateModal";
+import { ListingDetailQuoteFormSaveTemplateModal } from "@/features/seller/components/ListingDetail/ListingDetailQuoteFormSaveTemplateModal";
 import { postQuote, updateQuote, draftQuoteWithAi, QuoteDraftError } from "@/features/seller/mutations";
 import type { Currency, ListingAttachment, ListingItem, QuoteItemPrice } from "@/features/buyer/types";
 import type { MyQuoteSummary, QuoteDraft, QuoteFormData } from "@/features/seller/types";
+import type { QuoteTemplate } from "@/features/quoteTemplates/types";
 
 const CURRENCIES: { value: Currency; label: string; symbol: string }[] = [
 	{ value: "USD", label: "USD", symbol: "$" },
@@ -74,6 +77,9 @@ export function ListingDetailQuoteForm({
 	const [isDrafting, setIsDrafting] = useState(false);
 	const [isAiModalOpen, setIsAiModalOpen] = useState(false);
 	const [pendingDraft, setPendingDraft] = useState<QuoteDraft | null>(null);
+	const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+	const [isSaveTemplateModalOpen, setIsSaveTemplateModalOpen] = useState(false);
+	const [pendingTemplatePatch, setPendingTemplatePatch] = useState<Partial<QuoteFormData> | null>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const locale = useLocale();
 
@@ -119,6 +125,28 @@ export function ListingDetailQuoteForm({
 	function handleConfirmDraftOverwrite() {
 		if (pendingDraft) applyDraft(pendingDraft);
 		setPendingDraft(null);
+	}
+
+	function handleSelectTemplate(template: QuoteTemplate): void {
+		const patch: Partial<QuoteFormData> = {
+			note: template.note,
+			paymentTerms: template.paymentTerms,
+		};
+		if (template.deliveryDays !== null) patch.deliveryDays = template.deliveryDays;
+		if (template.currency !== null) patch.currency = template.currency as Currency;
+
+		setIsTemplateModalOpen(false);
+		// 이미 써둔 내용이 있으면 덮어쓰기 전에 확인받는다.
+		if (form.note.trim() || form.paymentTerms.trim()) {
+			setPendingTemplatePatch(patch);
+		} else {
+			handleChange(patch);
+		}
+	}
+
+	function handleConfirmTemplateOverwrite() {
+		if (pendingTemplatePatch) handleChange(pendingTemplatePatch);
+		setPendingTemplatePatch(null);
 	}
 
 	function handleItemPriceChange(itemId: string, unitPrice: number) {
@@ -478,15 +506,33 @@ export function ListingDetailQuoteForm({
 				<div>
 					<div className="mb-2 flex items-center justify-between">
 						<label className="block text-sm font-medium text-[#374151]">{t("paymentTermsFieldLabel")}</label>
-						<button
-							type="button"
-							onClick={() => setIsAiModalOpen(true)}
-							disabled={isDrafting}
-							className="flex items-center gap-1 rounded-md border border-imsg-blue px-2 py-1 text-xs font-semibold text-imsg-blue transition-colors hover:bg-[#EFF6FF] disabled:opacity-60"
-						>
-							{isDrafting ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
-							{isDrafting ? t("aiDrafting") : t("aiDraftButton")}
-						</button>
+						<div className="flex items-center gap-1.5">
+							<button
+								type="button"
+								onClick={() => setIsSaveTemplateModalOpen(true)}
+								className="flex items-center gap-1 rounded-md border border-imsg-blue px-2 py-1 text-xs font-semibold text-imsg-blue transition-colors hover:bg-[#EFF6FF]"
+							>
+								<Save size={12} />
+								{t("templateSaveButton")}
+							</button>
+							<button
+								type="button"
+								onClick={() => setIsTemplateModalOpen(true)}
+								className="flex items-center gap-1 rounded-md border border-imsg-blue px-2 py-1 text-xs font-semibold text-imsg-blue transition-colors hover:bg-[#EFF6FF]"
+							>
+								<Bookmark size={12} />
+								{t("templateLoadButton")}
+							</button>
+							<button
+								type="button"
+								onClick={() => setIsAiModalOpen(true)}
+								disabled={isDrafting}
+								className="flex items-center gap-1 rounded-md border border-imsg-blue px-2 py-1 text-xs font-semibold text-imsg-blue transition-colors hover:bg-[#EFF6FF] disabled:opacity-60"
+							>
+								{isDrafting ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
+								{isDrafting ? t("aiDrafting") : t("aiDraftButton")}
+							</button>
+						</div>
 					</div>
 					<input
 						type="text"
@@ -510,6 +556,29 @@ export function ListingDetailQuoteForm({
 					description={t("aiOverwriteDescription")}
 					onConfirm={handleConfirmDraftOverwrite}
 					onClose={() => setPendingDraft(null)}
+				/>
+
+				<ListingDetailQuoteFormTemplateModal
+					isOpen={isTemplateModalOpen}
+					onClose={() => setIsTemplateModalOpen(false)}
+					onSelect={handleSelectTemplate}
+				/>
+
+				<ListingDetailQuoteFormSaveTemplateModal
+					isOpen={isSaveTemplateModalOpen}
+					note={form.note}
+					paymentTerms={form.paymentTerms}
+					deliveryDays={form.deliveryDays}
+					currency={form.currency}
+					onClose={() => setIsSaveTemplateModalOpen(false)}
+				/>
+
+				<ConfirmModal
+					isOpen={pendingTemplatePatch !== null}
+					title={t("templateOverwriteTitle")}
+					description={t("templateOverwriteDescription")}
+					onConfirm={handleConfirmTemplateOverwrite}
+					onClose={() => setPendingTemplatePatch(null)}
 				/>
 
 				<div>
