@@ -14,9 +14,11 @@ import type { OpenListing } from "@/features/seller/types";
 
 type StatusTab = "all" | "active" | "closed";
 type SortOption = "deadline" | "newest";
+type QuoteFilter = "all" | "quoted" | "notQuoted";
 
 const TAB_VALUES: StatusTab[] = ["all", "active", "closed"];
 const SORT_VALUES: SortOption[] = ["deadline", "newest"];
+const QUOTE_FILTER_VALUES: QuoteFilter[] = ["all", "quoted", "notQuoted"];
 
 function isListingClosed(listing: OpenListing): boolean {
 	return listing.status !== "active" || new Date(listing.endDate).getTime() <= Date.now();
@@ -32,6 +34,7 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 	const [keyword, setKeyword] = useState("");
 	const [statusTab, setStatusTab] = useState<StatusTab>("all");
 	const [sort, setSort] = useState<SortOption>("deadline");
+	const [quoteFilter, setQuoteFilter] = useState<QuoteFilter>("all");
 	const [viewMode, setViewMode] = useState<ViewMode>("grid");
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(9);
@@ -47,6 +50,17 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 		newest: t("sortNewest"),
 	};
 
+	const quoteFilterLabels: Record<QuoteFilter, string> = {
+		all: t("quoteFilterAll"),
+		quoted: t("quoteFilterQuoted"),
+		notQuoted: t("quoteFilterNotQuoted"),
+	};
+
+	const sortTriggerLabel =
+		quoteFilter === "all"
+			? sortLabels[sort]
+			: `${sortLabels[sort]} · ${quoteFilterLabels[quoteFilter]}`;
+
 	const trimmedKeyword = keyword.trim().toLowerCase();
 
 	const filteredListings = useMemo(() => {
@@ -54,6 +68,8 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 			const isClosed = isListingClosed(listing);
 			if (statusTab === "active" && isClosed) return false;
 			if (statusTab === "closed" && !isClosed) return false;
+			if (quoteFilter === "quoted" && !listing.hasMyQuote) return false;
+			if (quoteFilter === "notQuoted" && listing.hasMyQuote) return false;
 			if (!trimmedKeyword) return true;
 
 			const haystack = [
@@ -77,11 +93,11 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 			if (aClosed !== bClosed) return aClosed ? 1 : -1;
 			return new Date(a.endDate).getTime() - new Date(b.endDate).getTime();
 		});
-	}, [listings, statusTab, trimmedKeyword, sort]);
+	}, [listings, statusTab, trimmedKeyword, sort, quoteFilter]);
 
 	useEffect(() => {
 		setPage(1);
-	}, [statusTab, trimmedKeyword, sort, pageSize]);
+	}, [statusTab, trimmedKeyword, sort, quoteFilter, pageSize]);
 
 	const pageCount = Math.max(1, Math.ceil(filteredListings.length / pageSize));
 	const paginatedListings = filteredListings.slice((page - 1) * pageSize, page * pageSize);
@@ -124,10 +140,13 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 					<Popover className="relative">
 						<PopoverButton className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
 							<ArrowUpDown size={14} />
-							{sortLabels[sort]}
+							{sortTriggerLabel}
 						</PopoverButton>
 
-						<PopoverPanel className="absolute right-0 z-20 mt-2 w-40 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
+						<PopoverPanel className="absolute right-0 z-20 mt-2 w-44 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
+							<p className="px-3 pb-1 pt-1.5 text-[11px] font-semibold text-[#9CA3AF]">
+								{t("sortSectionLabel")}
+							</p>
 							{SORT_VALUES.map((option) => (
 								<button
 									key={option}
@@ -140,6 +159,26 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 									)}
 								>
 									{sortLabels[option]}
+								</button>
+							))}
+
+							<div className="my-1.5 border-t border-[#E5E7EB]" />
+
+							<p className="px-3 pb-1 pt-1.5 text-[11px] font-semibold text-[#9CA3AF]">
+								{t("quoteFilterSectionLabel")}
+							</p>
+							{QUOTE_FILTER_VALUES.map((option) => (
+								<button
+									key={option}
+									onClick={() => setQuoteFilter(option)}
+									className={cn(
+										"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
+										quoteFilter === option
+											? "bg-[#EFF6FF] text-imsg-blue"
+											: "text-[#374151] hover:bg-[#F9FAFB]",
+									)}
+								>
+									{quoteFilterLabels[option]}
 								</button>
 							))}
 						</PopoverPanel>
