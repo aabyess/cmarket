@@ -1,9 +1,9 @@
-export type NotificationType = "message" | "quote";
+export type NotificationType = "message" | "quote" | "award";
 
 export type Notification = {
 	id: string;
 	type: NotificationType;
-	quoteId: string;
+	quoteId: string | null;
 	title: string;
 	titleSourceLang: string | null;
 	titleTranslations: Record<string, string> | null;

@@ -88,6 +88,18 @@ export function NotificationBell(): React.ReactNode {
 			return;
 		}
 
+		// 계약 확정은 계약 페이지로 보낸다.
+		if (notification.type === "award") {
+			router.push(pathname.startsWith("/seller") ? "/seller/contract" : "/buyer/contract");
+			return;
+		}
+
+		// quote_id가 없는 옛 알림은 특정 방으로 못 보내므로 채팅 목록으로 보낸다.
+		if (!notification.quoteId) {
+			router.push(chatBasePath);
+			return;
+		}
+
 		router.push(`${chatBasePath}?quoteId=${notification.quoteId}`);
 	}
 

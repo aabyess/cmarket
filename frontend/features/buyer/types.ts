@@ -62,7 +62,7 @@ export type BuyerDashboardData = {
 	activities: BuyerActivity[];
 };
 
-export type BuyerActivityType = "quote" | "document" | "completed";
+export type BuyerActivityType = "quote" | "award" | "document" | "completed";
 
 export type BuyerActivity = {
 	id: string;

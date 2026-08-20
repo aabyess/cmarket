@@ -62,9 +62,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 			translateFieldServer(notificationContent),
 		]);
 
-		const { error: notificationError } = await admin.from("notifications").insert({
+		const notificationRow = {
 			profile_id: user.id,
-			type: "message",
 			quote_id: quoteId,
 			title: notificationTitle,
 			content: notificationContent,
@@ -72,10 +71,21 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 			title_translations: titleTranslation?.translations ?? null,
 			content_source_lang: contentTranslation?.sourceLang ?? null,
 			content_translations: contentTranslation?.translations ?? null,
-		});
+		};
+
+		// 클릭 시 계약 페이지로 라우팅할 수 있도록 전용 타입 "award"로 저장한다.
+		// notifications.type에 check 제약이 있는 환경이면 실패하므로 "message"로 폴백한다.
+		const { error: notificationError } = await admin
+			.from("notifications")
+			.insert({ ...notificationRow, type: "award" });
 
 		if (notificationError) {
-			console.error("award notificationError:", notificationError);
+			const { error: fallbackError } = await admin
+				.from("notifications")
+				.insert({ ...notificationRow, type: "message" });
+			if (fallbackError) {
+				console.error("award notificationError:", fallbackError);
+			}
 		}
 	}
 
