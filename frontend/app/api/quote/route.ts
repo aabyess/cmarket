@@ -166,7 +166,7 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
 
 	const { data: current } = await admin
 		.from("quotes")
-		.select("seller_id, status, price, delivery_days")
+		.select("seller_id, status, price, delivery_days, listing_id")
 		.eq("id", quoteId)
 		.single();
 
@@ -180,6 +180,19 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
 
 	if (current.status === "awarded") {
 		return NextResponse.json({ error: "확정된 견적은 수정할 수 없습니다." }, { status: 400 });
+	}
+
+	const { data: listing } = await admin
+		.from("listings")
+		.select("status")
+		.eq("id", current.listing_id)
+		.single();
+
+	if (!listing || listing.status !== "active") {
+		return NextResponse.json(
+			{ error: "마감된 공고의 견적은 수정할 수 없습니다." },
+			{ status: 400 },
+		);
 	}
 
 	const noteTranslation = note?.trim() ? await translateFieldServer(note) : null;
