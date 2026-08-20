@@ -30,18 +30,33 @@ export function mapMessageRow(row: MessageRow): ChatMessage {
 	};
 }
 
-export async function getMessages(quoteId: string): Promise<ChatMessage[]> {
-	const supabase = createClient();
+export const MESSAGE_PAGE_SIZE = 50;
 
-	const { data, error } = await supabase
+// 전체 이력을 한 번에 내려받지 않도록 최신순으로 한 페이지만 가져온다.
+// before를 주면 그 시각 이전(더 오래된) 페이지를 가져온다. 반환은 항상 시간 오름차순.
+export async function getMessages(
+	quoteId: string,
+	options?: { before?: string; limit?: number },
+): Promise<ChatMessage[]> {
+	const supabase = createClient();
+	const limit = options?.limit ?? MESSAGE_PAGE_SIZE;
+
+	let query = supabase
 		.from("messages")
 		.select(
 			"id, sender_id, content, is_read, created_at, source_lang, translations, message_type, attachment_url, attachment_name",
 		)
 		.eq("quote_id", quoteId)
-		.order("created_at", { ascending: true });
+		.order("created_at", { ascending: false })
+		.limit(limit);
+
+	if (options?.before) {
+		query = query.lt("created_at", options.before);
+	}
+
+	const { data, error } = await query;
 
 	if (error) throw new Error(error.message);
 
-	return (data ?? []).map((row) => mapMessageRow(row as MessageRow));
+	return (data ?? []).map((row) => mapMessageRow(row as MessageRow)).reverse();
 }

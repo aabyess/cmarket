@@ -23,32 +23,55 @@ type ChatMessageListProps = {
 	messages: ChatMessage[];
 	myId: string;
 	quoteId: string;
+	hasOlder: boolean;
+	isLoadingOlder: boolean;
+	onLoadOlder: () => Promise<void>;
 };
 
 export function ChatMessageList({
 	messages,
 	myId,
 	quoteId,
+	hasOlder,
+	isLoadingOlder,
+	onLoadOlder,
 }: ChatMessageListProps): React.ReactNode {
 	const t = useTranslations("ChatMessageList");
 	const locale = useLocale();
+	const containerRef = useRef<HTMLDivElement>(null);
 	const bottomRef = useRef<HTMLDivElement>(null);
-	const prevLengthRef = useRef(0);
+	const prevLastIdRef = useRef<string | null>(null);
 	const isInitialRef = useRef(true);
 	const [manualTranslations, setManualTranslations] = useState<Record<string, string>>({});
 	const [translatingIds, setTranslatingIds] = useState<Record<string, boolean>>({});
+
+	// 이전 대화를 위쪽에 붙일 때는 스크롤하면 안 되므로,
+	// 배열 길이가 아니라 "마지막 메시지"가 바뀌었을 때만 아래로 스크롤한다.
+	const lastMessageId = messages.length > 0 ? messages[messages.length - 1].id : null;
 
 	useEffect(() => {
 		if (isInitialRef.current) {
 			// 최초 로드 시 즉시 맨 아래로
 			bottomRef.current?.scrollIntoView({ behavior: "instant" });
 			isInitialRef.current = false;
-		} else if (messages.length > prevLengthRef.current) {
+		} else if (lastMessageId !== null && lastMessageId !== prevLastIdRef.current) {
 			// 새 메시지 수신 시만 스크롤
 			bottomRef.current?.scrollIntoView({ behavior: "smooth" });
 		}
-		prevLengthRef.current = messages.length;
-	}, [messages.length]);
+		prevLastIdRef.current = lastMessageId;
+	}, [lastMessageId]);
+
+	async function handleLoadOlderClick(): Promise<void> {
+		const container = containerRef.current;
+		const prevScrollHeight = container?.scrollHeight ?? 0;
+		await onLoadOlder();
+		// 위쪽에 붙은 내용만큼 스크롤 위치를 보정해 화면이 튀지 않게 한다.
+		requestAnimationFrame(() => {
+			if (container) {
+				container.scrollTop += container.scrollHeight - prevScrollHeight;
+			}
+		});
+	}
 
 	async function handleManualTranslate(messageId: string, content: string): Promise<void> {
 		setTranslatingIds((prev) => ({ ...prev, [messageId]: true }));
@@ -75,8 +98,22 @@ export function ChatMessageList({
 	let lastDate = "";
 
 	return (
-		<div className="bg-imsg-surface flex-1 overflow-y-auto px-4 py-4" style={{ minHeight: 0 }}>
+		<div
+			ref={containerRef}
+			className="bg-imsg-surface flex-1 overflow-y-auto px-4 py-4"
+			style={{ minHeight: 0 }}>
 			<div className="mx-auto flex min-h-full max-w-2xl flex-col justify-end">
+				{hasOlder && (
+					<div className="flex justify-center pb-2">
+						<button
+							onClick={handleLoadOlderClick}
+							disabled={isLoadingOlder}
+							className="text-imsg-secondary hover:text-imsg-blue flex items-center gap-1.5 rounded-full bg-black/5 px-4 py-1.5 text-xs font-medium transition-colors disabled:opacity-60">
+							{isLoadingOlder && <Loader2 size={12} className="animate-spin" />}
+							{t("loadOlderButton")}
+						</button>
+					</div>
+				)}
 				{messages.map((message, i) => {
 					const isMine = message.senderId === myId;
 					const createdAt = new Date(message.createdAt);

@@ -1398,7 +1398,8 @@
 	"ChatMessageList": {
 		"dateLabel": "{month}/{day}/{year}",
 		"read": "Read",
-		"translateButton": "Translate"
+		"translateButton": "Translate",
+		"loadOlderButton": "Load earlier messages"
 	},
 	"ChatView": {
 		"emptyTitle": "Select a conversation",
