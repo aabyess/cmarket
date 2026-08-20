@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -63,6 +63,16 @@ export default function ListingDescriptionEditor({ value, onChange }: ListingDes
 		onUpdate: ({ editor }) => onChange(editor.getHTML()),
 		immediatelyRender: false,
 	});
+
+	// useEditor의 content는 최초 생성 시에만 반영된다. 템플릿/AI 초안 적용처럼
+	// 외부에서 value가 바뀌어도 에디터 화면은 그대로라 별도로 동기화해야 한다.
+	// editor.getHTML()과 같을 때는 건너뛰어, 타이핑 중 onUpdate → onChange로
+	// 돌아온 value가 다시 setContent를 트리거해 커서가 튀는 것을 막는다.
+	useEffect(() => {
+		if (!editor) return;
+		if (editor.getHTML() === value) return;
+		editor.commands.setContent(value, { emitUpdate: false });
+	}, [value, editor]);
 
 	function insertPhrase(phrase: string): void {
 		editor?.chain().focus("end").insertContent(`<p>${phrase}</p>`).run();

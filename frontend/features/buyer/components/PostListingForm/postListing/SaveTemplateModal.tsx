@@ -10,6 +10,7 @@ import type { Currency, ListingCategory, ListingItem } from "@/features/buyer/ty
 
 type SaveTemplateModalProps = {
 	isOpen: boolean;
+	title: string;
 	category: ListingCategory;
 	description: string;
 	items: ListingItem[];
@@ -19,6 +20,7 @@ type SaveTemplateModalProps = {
 
 export default function SaveTemplateModal({
 	isOpen,
+	title,
 	category,
 	description,
 	items,
@@ -59,6 +61,7 @@ export default function SaveTemplateModal({
 		try {
 			await createListingTemplate({
 				name: name.trim(),
+				title,
 				category,
 				description,
 				items,

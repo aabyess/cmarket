@@ -3,6 +3,7 @@ import type { ListingCategory, ListingItem } from "@/features/buyer/types";
 export type ListingTemplate = {
 	id: string;
 	name: string;
+	title: string;
 	category: ListingCategory | null;
 	description: string;
 	items: ListingItem[];
@@ -13,6 +14,7 @@ export type ListingTemplate = {
 
 export type ListingTemplateInput = {
 	name: string;
+	title: string;
 	category: ListingCategory | null;
 	description: string;
 	items: ListingItem[];
