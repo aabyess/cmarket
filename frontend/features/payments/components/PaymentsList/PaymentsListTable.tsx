@@ -115,15 +115,18 @@ export function PaymentsListTable({
 											)
 										) : (
 											<div className="flex flex-wrap items-center justify-end gap-1.5">
-												<button
-													type="button"
-													onClick={() => onViewReceipt(contract.id)}
-													className="text-imsg-blue flex items-center gap-1 rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap transition-colors hover:bg-[#DBEAFE]">
-													<FileText size={14} />
-													{role === "seller"
-														? t("viewReceiptButtonSeller")
-														: t("viewReceiptButton")}
-												</button>
+												{/* 예전 데이터 중 영수증 없이 완료된 계약이 있어, 실제 파일이 있을 때만 노출한다 */}
+												{contract.paymentReceiptUrl && (
+													<button
+														type="button"
+														onClick={() => onViewReceipt(contract.id)}
+														className="text-imsg-blue flex items-center gap-1 rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap transition-colors hover:bg-[#DBEAFE]">
+														<FileText size={14} />
+														{role === "seller"
+															? t("viewReceiptButtonSeller")
+															: t("viewReceiptButton")}
+													</button>
+												)}
 												{status === "confirmed" && (
 													<button
 														type="button"
