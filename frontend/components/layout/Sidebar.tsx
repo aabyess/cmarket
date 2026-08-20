@@ -25,6 +25,7 @@ const BUYER_MENU_ITEMS = [
 	{ labelKey: "dashboard", key: "dashboard", icon: LayoutDashboard, href: "/buyer/dashboard", badge: null },
 	{ labelKey: "postListing", key: "post-listing", icon: FilePlus, href: "/buyer/post-listing", badge: null },
 	{ labelKey: "myListings", key: "listings", icon: ListTodo, href: "/buyer/order-list", badge: null },
+	{ labelKey: "listingTemplates", key: "listing-templates", icon: FileText, href: "/buyer/listing-templates", badge: null },
 	{ labelKey: "receivedQuotes", key: "quotes", icon: Mail, href: "/buyer/quote-review", badge: null },
 	{ labelKey: "chat", key: "chat", icon: MessageSquare, href: "/buyer/chat", badge: null },
 	{ labelKey: "contract", key: "contract", icon: FileCheck, href: "/buyer/contract", badge: null },

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Bookmark, Save } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
 import ListingCategorySection from "@/features/buyer/components/PostListingForm/postListing/ListingCategorySection";
 import ListingBasicSection from "@/features/buyer/components/PostListingForm/postListing/ListingBasicSection";
@@ -13,9 +13,12 @@ import ListingBudgetSection from "@/features/buyer/components/PostListingForm/po
 import ListingContactSection from "@/features/buyer/components/PostListingForm/postListing/ListingContactSection";
 import StickyActionBar from "@/features/buyer/components/PostListingForm/postListing/StickyActionBar";
 import AiDraftModal from "@/features/buyer/components/PostListingForm/postListing/AiDraftModal";
+import LoadTemplateModal from "@/features/buyer/components/PostListingForm/postListing/LoadTemplateModal";
+import SaveTemplateModal from "@/features/buyer/components/PostListingForm/postListing/SaveTemplateModal";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { postListing, updateListing } from "@/features/buyer/mutations";
-import type { ListingFormData, ListingDraft } from "@/features/buyer/types";
+import type { Currency, ListingFormData, ListingDraft } from "@/features/buyer/types";
+import type { ListingTemplate } from "@/features/listingTemplates/types";
 
 const DEFAULT_FORM: ListingFormData = {
 	title: "",
@@ -62,6 +65,9 @@ export function PostListingForm({ listingId, initialData, contactInfo }: PostLis
 	const [isLoading, setIsLoading] = useState(false);
 	const [isAiModalOpen, setIsAiModalOpen] = useState(false);
 	const [pendingAiDraft, setPendingAiDraft] = useState<ListingDraft | null>(null);
+	const [isLoadTemplateModalOpen, setIsLoadTemplateModalOpen] = useState(false);
+	const [isSaveTemplateModalOpen, setIsSaveTemplateModalOpen] = useState(false);
+	const [pendingTemplate, setPendingTemplate] = useState<ListingTemplate | null>(null);
 
 	// 하이드레이션 완료 후에만 초안을 불러와서 서버-클라이언트 렌더링 불일치를 방지
 	useEffect(() => {
@@ -128,6 +134,35 @@ export function PostListingForm({ listingId, initialData, contactInfo }: PostLis
 		setPendingAiDraft(null);
 	}
 
+	function applyTemplate(template: ListingTemplate): void {
+		handleChange({
+			category: template.category ?? form.category,
+			description: template.description,
+			items:
+				template.items.length > 0
+					? template.items.map((item, index) => ({
+							...item,
+							id: `template-${index}-${item.name}`,
+						}))
+					: form.items,
+			currency: (template.currency as Currency | null) ?? form.currency,
+		});
+	}
+
+	function handleTemplateReady(template: ListingTemplate): void {
+		setIsLoadTemplateModalOpen(false);
+		if (hasExistingContent()) {
+			setPendingTemplate(template);
+		} else {
+			applyTemplate(template);
+		}
+	}
+
+	function handleConfirmTemplateOverwrite(): void {
+		if (pendingTemplate) applyTemplate(pendingTemplate);
+		setPendingTemplate(null);
+	}
+
 	async function handlePublish(): Promise<void> {
 		if (!form.title) {
 			alert(t("titleRequired"));
@@ -174,13 +209,29 @@ export function PostListingForm({ listingId, initialData, contactInfo }: PostLis
 						{isEdit ? t("editSubtitle") : t("createSubtitle")}
 					</p>
 				</div>
-				<button
-					onClick={() => setIsAiModalOpen(true)}
-					className="flex shrink-0 items-center gap-1.5 rounded-lg border border-imsg-blue px-3 py-2 text-xs font-semibold text-imsg-blue transition-colors hover:bg-[#EFF6FF]"
-				>
-					<Sparkles size={14} />
-					{t("aiDraftButton")}
-				</button>
+				<div className="flex shrink-0 items-center gap-1.5">
+					<button
+						onClick={() => setIsSaveTemplateModalOpen(true)}
+						className="flex items-center gap-1.5 rounded-lg border border-imsg-blue px-3 py-2 text-xs font-semibold text-imsg-blue transition-colors hover:bg-[#EFF6FF]"
+					>
+						<Save size={14} />
+						{t("templateSaveButton")}
+					</button>
+					<button
+						onClick={() => setIsLoadTemplateModalOpen(true)}
+						className="flex items-center gap-1.5 rounded-lg border border-imsg-blue px-3 py-2 text-xs font-semibold text-imsg-blue transition-colors hover:bg-[#EFF6FF]"
+					>
+						<Bookmark size={14} />
+						{t("templateLoadButton")}
+					</button>
+					<button
+						onClick={() => setIsAiModalOpen(true)}
+						className="flex items-center gap-1.5 rounded-lg border border-imsg-blue px-3 py-2 text-xs font-semibold text-imsg-blue transition-colors hover:bg-[#EFF6FF]"
+					>
+						<Sparkles size={14} />
+						{t("aiDraftButton")}
+					</button>
+				</div>
 			</div>
 
 			<AiDraftModal
@@ -194,6 +245,27 @@ export function PostListingForm({ listingId, initialData, contactInfo }: PostLis
 				description={t("aiOverwriteDescription")}
 				onConfirm={handleConfirmAiOverwrite}
 				onClose={() => setPendingAiDraft(null)}
+			/>
+
+			<LoadTemplateModal
+				isOpen={isLoadTemplateModalOpen}
+				onClose={() => setIsLoadTemplateModalOpen(false)}
+				onSelect={handleTemplateReady}
+			/>
+			<SaveTemplateModal
+				isOpen={isSaveTemplateModalOpen}
+				category={form.category}
+				description={form.description}
+				items={form.items}
+				currency={form.currency}
+				onClose={() => setIsSaveTemplateModalOpen(false)}
+			/>
+			<ConfirmModal
+				isOpen={pendingTemplate !== null}
+				title={t("templateOverwriteTitle")}
+				description={t("templateOverwriteDescription")}
+				onConfirm={handleConfirmTemplateOverwrite}
+				onClose={() => setPendingTemplate(null)}
 			/>
 
 			<ListingCategorySection form={form} onChange={handleChange} />
