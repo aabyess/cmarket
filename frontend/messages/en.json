@@ -906,6 +906,8 @@
 		"sortNewest": "Newest",
 		"sortOldest": "Oldest",
 		"sortDeadline": "Deadline soon",
+		"sortSectionLabel": "Sort",
+		"statusSectionLabel": "Status",
 		"gridViewAriaLabel": "View as cards",
 		"listViewAriaLabel": "View as list"
 	},

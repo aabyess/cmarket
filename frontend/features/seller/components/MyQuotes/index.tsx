@@ -50,13 +50,6 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 		}
 	});
 
-	const counts: Record<MyQuotesFilter, number> = {
-		all: quotes.length,
-		pending: quotes.filter((q) => q.status === "pending").length,
-		awarded: quotes.filter((q) => q.status === "awarded").length,
-		rejected: quotes.filter((q) => q.status === "rejected").length,
-	};
-
 	useEffect(() => {
 		setPage(1);
 	}, [filter, sort, pageSize]);
@@ -88,7 +81,6 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 		<div>
 			<MyQuotesFilterBar
 				filter={filter}
-				counts={counts}
 				sort={sort}
 				viewMode={viewMode}
 				onFilterChange={setFilter}
