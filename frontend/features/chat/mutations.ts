@@ -139,11 +139,13 @@ async function startChatInternal(quoteId: string, summary: QuoteSummary): Promis
 	if (greetingError) throw greetingError;
 }
 
+export type AwardAndCreateContractResult = {
+	invoiceWarning: string | null;
+};
+
 export async function awardAndCreateContract(
-	listingId: string,
 	quoteId: string,
-	sellerId: string,
-): Promise<void> {
+): Promise<AwardAndCreateContractResult> {
 	const res = await fetch("/api/buyer/award", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
@@ -154,6 +156,8 @@ export async function awardAndCreateContract(
 		const { error } = await res.json();
 		throw new Error(error ?? "계약 확정 처리 실패");
 	}
+
+	return res.json();
 }
 
 export function useSendMessage(quoteId: string, myId: string) {
