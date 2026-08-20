@@ -939,6 +939,7 @@
 		"tabAll": "전체",
 		"tabActive": "진행중",
 		"tabClosed": "마감",
+		"statusSectionLabel": "상태",
 		"sortDeadline": "마감임박순",
 		"sortNewest": "최신등록순",
 		"sortSectionLabel": "정렬",

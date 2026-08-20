@@ -786,6 +786,7 @@
 		"tabAll": "All",
 		"tabActive": "Active",
 		"tabClosed": "Closed",
+		"statusSectionLabel": "Status",
 		"sortDeadline": "Deadline soon",
 		"sortNewest": "Newest",
 		"sortSectionLabel": "Sort",
