@@ -1646,6 +1646,7 @@
 	},
 	"BuyerDashboard": {
 		"welcome": "Selamat datang, {companyName}",
+		"welcomeSubcopy": "Mari mulai transaksi baik lainnya hari ini",
 		"tradeSummaryTitle": "Ringkasan Transaksi Saya",
 		"summaryInProgress": "Sedang Berjalan",
 		"summaryClosed": "Semua Ditutup",
