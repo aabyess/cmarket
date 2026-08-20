@@ -267,7 +267,7 @@ export async function getListingsWithQuoteCount(): Promise<ListingWithQuotes[]> 
 	const { data, error } = await supabase
 		.from("listings")
 		.select(
-			"id, title, title_source_lang, title_translations, end_date, status, currency, created_at, quotes(price, delivery_days)",
+			"id, title, title_source_lang, title_translations, end_date, status, currency, created_at, quotes(price, delivery_days, status)",
 		)
 		.eq("user_id", user.id)
 		.order("end_date", { ascending: true });
@@ -275,13 +275,17 @@ export async function getListingsWithQuoteCount(): Promise<ListingWithQuotes[]> 
 	if (error) throw new Error(error.message);
 
 	return (data ?? []).map((row) => {
-		const quotes = (row.quotes as unknown as { price: number; delivery_days: number }[]) ?? [];
+		const quotes =
+			(row.quotes as unknown as { price: number; delivery_days: number; status: string }[]) ?? [];
+		const rawStatus = row.status ?? "active";
+		const isAwarded = quotes.some((q) => q.status === "awarded");
+		const status = rawStatus === "closed" && isAwarded ? "awarded" : rawStatus;
 
 		return {
 			id: row.id,
 			title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
 			endDate: row.end_date,
-			status: row.status ?? "active",
+			status,
 			currency: row.currency,
 			quoteCount: quotes.length,
 			lowestPrice: quotes.length > 0 ? Math.min(...quotes.map((q) => Number(q.price))) : null,
@@ -420,6 +424,18 @@ export async function getListingDetail(
 	if (error || !data) return null;
 	if (data.user_id !== user.id) return null;
 
+	const rawStatus = data.status ?? "active";
+	let status: ListingStatus = rawStatus;
+	if (rawStatus === "closed") {
+		const { data: quoteRows } = await supabase
+			.from("quotes")
+			.select("status")
+			.eq("listing_id", id)
+			.eq("status", "awarded")
+			.limit(1);
+		if (quoteRows && quoteRows.length > 0) status = "awarded";
+	}
+
 	return {
 		id: data.id,
 		title: data.title,
@@ -443,7 +459,7 @@ export async function getListingDetail(
 		attachments: data.attachments ?? [],
 		contactName: data.contact_name ?? "",
 		contactPhone: data.contact_phone ?? "",
-		status: data.status ?? "active",
+		status,
 		createdAt: data.created_at,
 	};
 }

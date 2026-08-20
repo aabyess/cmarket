@@ -101,7 +101,10 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 
 						{/* 드롭다운 */}
 						{dropdownOpen && (
-							<div className="absolute left-0 right-0 top-full mt-1 rounded-xl bg-white border border-[#E5E7EB] shadow-lg overflow-hidden z-50">
+							<div
+								onClick={(e) => e.stopPropagation()}
+								className="absolute left-0 right-0 top-full mt-1 rounded-xl bg-white border border-[#E5E7EB] shadow-lg overflow-hidden z-50"
+							>
 								<div className="px-4 py-3 border-b border-[#F3F4F6]">
 									<p className="text-sm font-semibold text-[#1F2937]">{name || companyName}</p>
 									<p className="text-xs text-[#9CA3AF]">{companyName}</p>
