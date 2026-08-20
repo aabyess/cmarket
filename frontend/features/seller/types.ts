@@ -86,7 +86,3 @@ export type MyQuoteSummary = {
 	attachments: ListingAttachment[];
 	paymentTerms: string | null;
 };
-export type QuoteDraft = {
-	note: string;
-	paymentTerms: string;
-};
