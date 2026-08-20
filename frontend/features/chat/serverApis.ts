@@ -43,13 +43,53 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 
 	if (quoteIds.length === 0) return [];
 
-	const { data: messages } = await supabase
-		.from("messages")
-		.select("quote_id, content, created_at, sender_id, is_read, message_type")
-		.in("quote_id", quoteIds)
-		.order("created_at", { ascending: false });
+	// 전체 메시지 이력을 내려받지 않고 방별 최신 메시지/안읽음 수만 DB에서 집계한다.
+	// RPC 마이그레이션이 아직 적용되지 않은 환경에서는 기존 방식으로 폴백한다.
+	type RoomSummary = {
+		quote_id: string;
+		last_content: string;
+		last_message_type: string | null;
+		last_created_at: string;
+		unread_count: number;
+	};
 
-	const activeQuoteIds = [...new Set((messages ?? []).map((m) => m.quote_id))];
+	let summaries: RoomSummary[];
+
+	const { data: rpcSummaries, error: rpcError } = await supabase.rpc("get_chat_room_summaries", {
+		p_quote_ids: quoteIds,
+		p_user_id: user.id,
+	});
+
+	if (rpcError) {
+		console.error("get_chat_room_summaries rpc 실패, 전체 조회로 폴백:", rpcError.message);
+		const { data: messages } = await supabase
+			.from("messages")
+			.select("quote_id, content, created_at, sender_id, is_read, message_type")
+			.in("quote_id", quoteIds)
+			.order("created_at", { ascending: false });
+
+		const byQuote = new Map<string, RoomSummary>();
+		for (const m of messages ?? []) {
+			const existing = byQuote.get(m.quote_id);
+			if (existing) {
+				if (!m.is_read && m.sender_id !== user.id) existing.unread_count += 1;
+			} else {
+				byQuote.set(m.quote_id, {
+					quote_id: m.quote_id,
+					last_content: m.content,
+					last_message_type: m.message_type,
+					last_created_at: m.created_at,
+					unread_count: !m.is_read && m.sender_id !== user.id ? 1 : 0,
+				});
+			}
+		}
+		summaries = [...byQuote.values()];
+	} else {
+		summaries = (rpcSummaries ?? []) as RoomSummary[];
+	}
+
+	const summaryMap = new Map(summaries.map((s) => [s.quote_id, s]));
+	const activeQuoteIds = summaries.map((s) => s.quote_id);
 	if (activeQuoteIds.length === 0) return [];
 
 	const { data: quotes } = await supabase
@@ -78,31 +118,19 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 	const companyMap = new Map((companies ?? []).map((c) => [c.profile_id, c.company_name]));
 	const contractSet = new Set((contracts ?? []).map((c) => c.quote_id));
 
-	// 방마다 전체 메시지 배열을 다시 filter하면 O(방 수 × 메시지 수)가 된다. 한 번만 그룹핑한다.
-	const messagesByQuote = new Map<string, typeof messages>();
-	for (const message of messages ?? []) {
-		const group = messagesByQuote.get(message.quote_id);
-		if (group) {
-			group.push(message);
-		} else {
-			messagesByQuote.set(message.quote_id, [message]);
-		}
-	}
-
 	// PDF 카드 메시지는 content가 메타 JSON이라 목록 미리보기에 그대로 노출되면 안 된다.
 	const tRoom = await getTranslations("ChatRoomList");
 
-	function toPreview(latest: { content: string; message_type: string | null } | undefined): string {
+	function toPreview(latest: { last_content: string; last_message_type: string | null } | undefined): string {
 		if (!latest) return "";
-		if (latest.message_type === "invoice_pdf") return tRoom("invoicePdfPreview");
-		if (latest.message_type === "quote_pdf") return tRoom("quotePdfPreview");
-		return latest.content;
+		if (latest.last_message_type === "invoice_pdf") return tRoom("invoicePdfPreview");
+		if (latest.last_message_type === "quote_pdf") return tRoom("quotePdfPreview");
+		return latest.last_content;
 	}
 
 	return quoteRows
 		.map((quote) => {
-			const roomMessages = messagesByQuote.get(quote.id) ?? [];
-			const latest = roomMessages[0];
+			const summary = summaryMap.get(quote.id);
 			const partnerId = role === "seller" ? (quote.listings?.user_id ?? "") : quote.seller_id;
 
 			return {
@@ -123,9 +151,9 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 				deliveryDays: quote.delivery_days,
 				quoteStatus: quote.status,
 				hasContract: contractSet.has(quote.id),
-				lastMessage: toPreview(latest),
-				lastMessageAt: latest?.created_at ?? null,
-				unreadCount: roomMessages.filter((m) => !m.is_read && m.sender_id !== user.id).length,
+				lastMessage: toPreview(summary),
+				lastMessageAt: summary?.last_created_at ?? null,
+				unreadCount: Number(summary?.unread_count ?? 0),
 			};
 		})
 		.sort((a, b) => (b.lastMessageAt ?? "").localeCompare(a.lastMessageAt ?? ""));
