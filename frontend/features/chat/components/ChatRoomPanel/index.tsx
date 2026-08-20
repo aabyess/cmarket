@@ -69,11 +69,24 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 	}
 
 	useEffect(() => {
-		markMessagesRead(room.quoteId);
-		// 알림을 읽음 처리한 뒤 캐시를 무효화해야 벨의 빨간 점이 바로 사라진다.
-		markNotificationsByQuoteRead(room.quoteId).then(() => {
-			queryClient.invalidateQueries({ queryKey: NOTIFICATION_QUERY_KEYS.all });
-		});
+		function markRead(): void {
+			markMessagesRead(room.quoteId);
+			// 알림을 읽음 처리한 뒤 캐시를 무효화해야 벨의 빨간 점이 바로 사라진다.
+			markNotificationsByQuoteRead(room.quoteId).then(() => {
+				queryClient.invalidateQueries({ queryKey: NOTIFICATION_QUERY_KEYS.all });
+			});
+		}
+
+		// 백그라운드 탭에서도 읽음 처리를 하면 상대에게 실제로 보지 않은 메시지가
+		// "읽음"으로 표시된다. 탭이 보일 때만 처리하고, 숨겨진 동안 쌓인 건
+		// 다시 보이는 시점에 한 번에 처리한다.
+		if (document.visibilityState === "visible") markRead();
+
+		function handleVisibilityChange(): void {
+			if (document.visibilityState === "visible") markRead();
+		}
+		document.addEventListener("visibilitychange", handleVisibilityChange);
+		return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
 	}, [room.quoteId, queryClient]);
 
 	useEffect(() => {
@@ -112,7 +125,8 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 							return [...base, incoming].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 						});
 
-						if (incoming.senderId !== myId) {
+						// 탭이 백그라운드면 건너뛴다 — visibilitychange 리스너가 다시 보일 때 몰아서 처리한다.
+						if (incoming.senderId !== myId && document.visibilityState === "visible") {
 							markMessagesRead(room.quoteId);
 						}
 						return;

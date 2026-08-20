@@ -49,7 +49,25 @@ type QuoteSummary = {
 	previousDeliveryDays: number | null;
 };
 
-export async function startChat(quoteId: string, summary: QuoteSummary): Promise<void> {
+// 같은 quoteId로 startChat이 동시에 재진입되면(더블클릭, 리렌더로 인한 중복 호출 등)
+// 아래 count===0 체크를 각자 통과해 인트로 메시지가 중복 insert될 수 있다.
+// 진행 중인 Promise를 모듈 스코프에 공유해 같은 탭 안에서의 동시 실행만 막는다 —
+// 별개의 브라우저 탭이나 다른 기기에서 동시에 열리는 경우까지는 막지 못한다
+// (그건 DB 유니크 제약이 필요하지만 이번 범위 밖).
+const inFlightStartChat = new Map<string, Promise<void>>();
+
+export function startChat(quoteId: string, summary: QuoteSummary): Promise<void> {
+	const inFlight = inFlightStartChat.get(quoteId);
+	if (inFlight) return inFlight;
+
+	const promise = startChatInternal(quoteId, summary).finally(() => {
+		inFlightStartChat.delete(quoteId);
+	});
+	inFlightStartChat.set(quoteId, promise);
+	return promise;
+}
+
+async function startChatInternal(quoteId: string, summary: QuoteSummary): Promise<void> {
 	const supabase = createClient();
 
 	const { data: { user }, error: userError } = await supabase.auth.getUser();
