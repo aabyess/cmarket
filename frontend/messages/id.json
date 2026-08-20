@@ -89,6 +89,7 @@
 			"browseListings": "Lihat Permintaan",
 			"chat": "Obrolan",
 			"contract": "Manajemen Kontrak",
+			"payments": "Pembayaran",
 			"profile": "Halaman Perusahaan",
 			"plans": "Paket Langganan",
 			"support": "Pusat Bantuan"
@@ -1820,5 +1821,41 @@
 		"bankAccountSaveButton": "Simpan Rekening",
 		"bankAccountSaveSuccess": "Informasi rekening Anda telah disimpan.",
 		"bankAccountSaveError": "Terjadi kesalahan saat menyimpan informasi rekening."
+	},
+	"PaymentsPage": {
+		"title": "Pembayaran",
+		"subtitle": "Periksa status pembayaran kontrak yang telah disepakati dan kelola bukti transfer.",
+		"subtitleSeller": "Periksa apakah pembayaran sudah masuk untuk kontrak yang telah disepakati."
+	},
+	"PaymentsList": {
+		"searchPlaceholder": "Cari nomor kontrak atau judul permintaan",
+		"filterSectionLabel": "Status",
+		"filterAll": "Semua",
+		"filterAwaitingReceipt": "Menunggu bukti transfer",
+		"filterAwaitingConfirmation": "Menunggu konfirmasi",
+		"filterConfirmed": "Lunas",
+		"statusAwaitingReceiptSeller": "Menunggu bukti transfer",
+		"columnContractNumber": "No. Kontrak",
+		"columnListingTitle": "Permintaan",
+		"columnTransactionDate": "Tanggal",
+		"columnAmount": "Jumlah",
+		"columnMethod": "Metode",
+		"columnStatus": "Status",
+		"columnAction": "Aksi",
+		"methodWire": "Transfer bank",
+		"uploadReceiptButton": "Unggah bukti transfer",
+		"uploading": "Mengunggah...",
+		"viewReceiptButton": "Lihat bukti transfer",
+		"viewReceiptButtonSeller": "Periksa bukti transfer",
+		"confirmPaymentButton": "Konfirmasi pembayaran",
+		"confirmPaymentModalTitle": "Konfirmasi pembayaran ini?",
+		"confirmPaymentModalDescription": "Setelah dikonfirmasi, kontrak akan ditandai selesai.",
+		"processing": "Memproses...",
+		"receiptUploadErrorMessage": "Gagal mengunggah bukti transfer.",
+		"receiptViewErrorMessage": "Gagal memuat bukti transfer.",
+		"confirmPaymentErrorMessage": "Gagal mengonfirmasi pembayaran.",
+		"emptyTitle": "Belum ada pembayaran",
+		"emptyDescription": "Catatan pembayaran akan muncul di sini setelah kontrak disepakati.",
+		"noResults": "Tidak ada pembayaran yang cocok."
 	}
 }

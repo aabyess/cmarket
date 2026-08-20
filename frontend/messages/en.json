@@ -89,6 +89,7 @@
 			"browseListings": "Browse Listings",
 			"chat": "Chat",
 			"contract": "Contracts",
+			"payments": "Payments",
 			"profile": "Company Page",
 			"plans": "Plans",
 			"support": "Support Center"
@@ -1807,5 +1808,41 @@
 		"bankAccountSaveButton": "Save Bank Account",
 		"bankAccountSaveSuccess": "Your bank account has been saved.",
 		"bankAccountSaveError": "An error occurred while saving your bank account."
+	},
+	"PaymentsPage": {
+		"title": "Payments",
+		"subtitle": "Check payment status for confirmed contracts and manage receipts.",
+		"subtitleSeller": "Check whether payment has arrived for your confirmed contracts."
+	},
+	"PaymentsList": {
+		"searchPlaceholder": "Search by contract number or listing title",
+		"filterSectionLabel": "Status",
+		"filterAll": "All",
+		"filterAwaitingReceipt": "Awaiting receipt",
+		"filterAwaitingConfirmation": "Awaiting confirmation",
+		"filterConfirmed": "Paid",
+		"statusAwaitingReceiptSeller": "Awaiting receipt",
+		"columnContractNumber": "Contract No.",
+		"columnListingTitle": "Listing",
+		"columnTransactionDate": "Date",
+		"columnAmount": "Amount",
+		"columnMethod": "Method",
+		"columnStatus": "Status",
+		"columnAction": "Action",
+		"methodWire": "Wire transfer",
+		"uploadReceiptButton": "Upload receipt",
+		"uploading": "Uploading...",
+		"viewReceiptButton": "View receipt",
+		"viewReceiptButtonSeller": "Check receipt",
+		"confirmPaymentButton": "Confirm payment",
+		"confirmPaymentModalTitle": "Confirm this payment?",
+		"confirmPaymentModalDescription": "Once confirmed, the contract will be marked as completed.",
+		"processing": "Processing...",
+		"receiptUploadErrorMessage": "Failed to upload the receipt.",
+		"receiptViewErrorMessage": "Failed to load the receipt.",
+		"confirmPaymentErrorMessage": "Failed to confirm the payment.",
+		"emptyTitle": "No payments yet",
+		"emptyDescription": "Payment records will show up here once a contract is confirmed.",
+		"noResults": "No matching payments."
 	}
 }
