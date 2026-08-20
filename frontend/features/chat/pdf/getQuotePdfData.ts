@@ -30,6 +30,41 @@ async function translateItemsList(items: ListingItem[], locale: string): Promise
 	);
 }
 
+export type QuotePdfMeta = {
+	listingId: string;
+	buyerId: string;
+	sellerId: string;
+	title: string;
+};
+
+/** 캐시 확인·인증 등 품목 번역이나 회사 정보까지는 필요 없는 경우를 위한 경량 조회. */
+export async function getQuotePdfMeta(quoteId: string, locale: string): Promise<QuotePdfMeta | null> {
+	const admin = await createServerAdminClient();
+
+	const { data: quote, error: quoteError } = await admin
+		.from("quotes")
+		.select("listing_id, seller_id")
+		.eq("id", quoteId)
+		.single();
+
+	if (quoteError || !quote) return null;
+
+	const { data: listing, error: listingError } = await admin
+		.from("listings")
+		.select("user_id, title, title_source_lang, title_translations")
+		.eq("id", quote.listing_id)
+		.single();
+
+	if (listingError || !listing) return null;
+
+	return {
+		listingId: quote.listing_id,
+		buyerId: listing.user_id,
+		sellerId: quote.seller_id,
+		title: resolveTranslatedField(listing.title, listing.title_source_lang, listing.title_translations, locale),
+	};
+}
+
 export async function getQuotePdfData(
 	quoteId: string,
 	locale: string,
