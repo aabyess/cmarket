@@ -90,12 +90,17 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 			.maybeSingle();
 
 		if (!existingInvoice) {
-			await admin.from("messages").insert({
+			// 바이어/셀러가 거의 동시에 카드를 열면 둘 다 insert를 시도할 수 있다.
+			// messages_invoice_pdf_unique 인덱스로 막힌 중복(23505)은 정상 상황이라 무시한다.
+			const { error: insertError } = await admin.from("messages").insert({
 				quote_id: quoteId,
 				sender_id: quote.seller_id,
 				content: JSON.stringify(createInvoiceMeta(quoteId)),
 				message_type: "invoice_pdf",
 			});
+			if (insertError && insertError.code !== "23505") {
+				console.error("invoice message insert error:", insertError);
+			}
 		}
 	}
 

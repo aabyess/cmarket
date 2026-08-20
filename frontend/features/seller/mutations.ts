@@ -62,4 +62,20 @@ export async function updateQuote(quoteId: string, data: QuoteFormData): Promise
 		.eq("id", quoteId);
 
 	if (error) throw error;
+
+	// 옛 가격/납기로 만들어진 캐시 PDF가 계속 나오지 않도록 지운다.
+	// 실패해도 견적 수정 자체를 되돌리지는 않는다 — 다음 PDF 요청 때 재생성될 뿐이다.
+	try {
+		const res = await fetch("/api/quote/invalidate-pdf", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ quoteId }),
+		});
+		if (!res.ok) {
+			const { error: invalidateError } = await res.json();
+			console.error("quote PDF invalidate error:", invalidateError);
+		}
+	} catch (invalidateError) {
+		console.error("quote PDF invalidate error:", invalidateError);
+	}
 }
