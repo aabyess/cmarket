@@ -93,6 +93,7 @@
 		},
 		"dropdown": {
 			"myProfile": "My Profile",
+			"settings": "Settings",
 			"logout": "Log out"
 		}
 	},
@@ -1662,5 +1663,26 @@
 			"addressBaseRequired": "Please enter a street address.",
 			"categoryRequired": "Please select a business field."
 		}
+	},
+	"Settings": {
+		"title": "Settings",
+		"subtitle": "Manage your account, password, and language.",
+		"accountTitle": "Account Info",
+		"accountHint": "The email address you use to sign in.",
+		"emailLabel": "Email",
+		"editProfileLink": "Edit profile / company info",
+		"passwordTitle": "Change Password",
+		"passwordHint": "Verify your current password before setting a new one.",
+		"currentPasswordLabel": "Current Password",
+		"newPasswordLabel": "New Password",
+		"confirmPasswordLabel": "Confirm New Password",
+		"changePasswordButton": "Change Password",
+		"passwordTooShort": "New password must be at least 8 characters.",
+		"passwordMismatch": "New passwords do not match.",
+		"currentPasswordIncorrect": "Current password is incorrect.",
+		"passwordChangeError": "An error occurred while changing your password.",
+		"passwordChangeSuccess": "Your password has been changed.",
+		"languageTitle": "Language",
+		"languageHint": "Choose the language you want to use."
 	}
 }

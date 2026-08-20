@@ -93,6 +93,7 @@
 		},
 		"dropdown": {
 			"myProfile": "Profil Saya",
+			"settings": "Pengaturan",
 			"logout": "Keluar"
 		}
 	},
@@ -1675,5 +1676,26 @@
 			"addressBaseRequired": "Mohon masukkan alamat utama.",
 			"categoryRequired": "Mohon pilih bidang usaha."
 		}
+	},
+	"Settings": {
+		"title": "Pengaturan",
+		"subtitle": "Kelola akun, kata sandi, dan bahasa Anda.",
+		"accountTitle": "Info Akun",
+		"accountHint": "Alamat email yang Anda gunakan untuk masuk.",
+		"emailLabel": "Email",
+		"editProfileLink": "Ubah profil / info perusahaan",
+		"passwordTitle": "Ubah Kata Sandi",
+		"passwordHint": "Verifikasi kata sandi saat ini sebelum mengatur yang baru.",
+		"currentPasswordLabel": "Kata Sandi Saat Ini",
+		"newPasswordLabel": "Kata Sandi Baru",
+		"confirmPasswordLabel": "Konfirmasi Kata Sandi Baru",
+		"changePasswordButton": "Ubah Kata Sandi",
+		"passwordTooShort": "Kata sandi baru minimal 8 karakter.",
+		"passwordMismatch": "Kata sandi baru tidak cocok.",
+		"currentPasswordIncorrect": "Kata sandi saat ini salah.",
+		"passwordChangeError": "Terjadi kesalahan saat mengubah kata sandi.",
+		"passwordChangeSuccess": "Kata sandi Anda telah diubah.",
+		"languageTitle": "Bahasa",
+		"languageHint": "Pilih bahasa yang ingin Anda gunakan."
 	}
 }
