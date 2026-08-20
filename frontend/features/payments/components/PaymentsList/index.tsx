@@ -30,7 +30,9 @@ type PaymentsListProps = {
 	role: "buyer" | "seller";
 };
 
-export function PaymentsList({ contracts, role }: PaymentsListProps): React.ReactNode {
+export function PaymentsList({ contracts: allContracts, role }: PaymentsListProps): React.ReactNode {
+	// 취소된 계약은 결제창에서는 숨긴다 — 계약 관리 페이지에는 그대로 노출된다.
+	const contracts = allContracts.filter((contract) => contract.status !== "cancelled");
 	const t = useTranslations("PaymentsList");
 	const router = useRouter();
 	const locale = useLocale();
