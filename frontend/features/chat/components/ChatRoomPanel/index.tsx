@@ -35,9 +35,18 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 	const [limitExceeded, setLimitExceeded] = useState(false);
 	const [isLoadingOlder, setIsLoadingOlder] = useState(false);
 	const [reachedOldest, setReachedOldest] = useState(false);
+	const [hasOlderInitial, setHasOlderInitial] = useState<boolean | null>(null);
 
-	// 첫 페이지가 꽉 찼다면 더 오래된 메시지가 있을 수 있다.
-	const hasOlderMessages = !reachedOldest && messages.length >= MESSAGE_PAGE_SIZE;
+	// "더 오래된 페이지가 있는지"는 최초 로드 결과로 한 번만 판단한다.
+	// 캐시 배열 길이로 매번 재계산하면 실시간 INSERT로 길이가 늘어난 것만으로
+	// 이전 페이지가 없는 방에도 버튼이 잘못 뜬다.
+	useEffect(() => {
+		if (!isLoading && hasOlderInitial === null) {
+			setHasOlderInitial(messages.length >= MESSAGE_PAGE_SIZE);
+		}
+	}, [isLoading, hasOlderInitial, messages.length]);
+
+	const hasOlderMessages = (hasOlderInitial ?? false) && !reachedOldest;
 
 	async function handleLoadOlder(): Promise<void> {
 		const oldest = messages[0];
