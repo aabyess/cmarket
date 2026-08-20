@@ -1,3 +1,4 @@
+import Decimal from "decimal.js";
 import { Package } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
@@ -8,6 +9,10 @@ type ListingInfoItemsProps = {
 	currency: Currency;
 };
 
+function getItemAmount(item: ListingItem): Decimal {
+	return new Decimal(item.price).times(item.quantity);
+}
+
 export async function ListingInfoItems({
 	items,
 	currency,
@@ -15,7 +20,9 @@ export async function ListingInfoItems({
 	const t = await getTranslations("ListingInfoItems");
 	const symbol = CURRENCY_SYMBOL[currency] ?? "";
 	const hasPrice = items.some((item) => item.price > 0);
-	const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+	const total = items
+		.reduce((sum, item) => sum.plus(getItemAmount(item)), new Decimal(0))
+		.toNumber();
 
 	return (
 		<section className="rounded-2xl bg-white p-6 shadow-sm">
@@ -61,7 +68,7 @@ export async function ListingInfoItems({
 									{hasPrice && (
 										<td className="whitespace-nowrap px-4 py-3 text-right font-medium text-[#0f172a]">
 											{item.price > 0
-												? `${symbol} ${(item.price * item.quantity).toLocaleString()}`
+												? `${symbol} ${getItemAmount(item).toNumber().toLocaleString()}`
 												: "-"}
 										</td>
 									)}
