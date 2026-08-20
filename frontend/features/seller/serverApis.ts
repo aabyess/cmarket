@@ -89,20 +89,21 @@ export async function getSellerDashboardData(): Promise<SellerDashboardData> {
 
 export async function getOpenListings(): Promise<OpenListing[]> {
 	const supabase = await createServerSupabaseClient();
-	const { data: { user } } = await supabase.auth.getUser();
-	const locale = await getLocale();
 
-	const { data, error } = await supabase
-		.from("listings")
-		.select(
-			"id, title, title_source_lang, title_translations, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, created_at, status",
-		)
-		.order("end_date", { ascending: true });
+	const [{ data: { user } }, locale, { data, error }, rates] = await Promise.all([
+		supabase.auth.getUser(),
+		getLocale(),
+		supabase
+			.from("listings")
+			.select(
+				"id, title, title_source_lang, title_translations, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, created_at, status",
+			)
+			.order("end_date", { ascending: true }),
+		getExchangeRates(),
+	]);
 
 	if (error) throw new Error(error.message);
 	if (!data) return [];
-
-	const rates = await getExchangeRates();
 
 	let myQuoteListingIds = new Set<string>();
 	if (user) {
@@ -144,48 +145,47 @@ export async function getOpenListings(): Promise<OpenListing[]> {
 
 export async function getListingDetail(listingId: string): Promise<ListingDetail | null> {
 	const supabase = await createServerSupabaseClient();
-	const { data: { user } } = await supabase.auth.getUser();
-	const rates = await getExchangeRates();
-	const locale = await getLocale();
 
-	const { data, error } = await supabase
-		.from("listings")
-		.select(
-			"id, title, title_source_lang, title_translations, category, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, delivery_address, delivery_address_detail, delivery_days, delivery_method, delivery_timing_mode, delivery_deadline_date, delivery_lat, delivery_lng, attachments, created_at, user_id, status",
-		)
-		.eq("id", listingId)
-		.single();
+	const [{ data: { user } }, rates, locale, { data, error }] = await Promise.all([
+		supabase.auth.getUser(),
+		getExchangeRates(),
+		getLocale(),
+		supabase
+			.from("listings")
+			.select(
+				"id, title, title_source_lang, title_translations, category, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, delivery_address, delivery_address_detail, delivery_days, delivery_method, delivery_timing_mode, delivery_deadline_date, delivery_lat, delivery_lng, attachments, created_at, user_id, status",
+			)
+			.eq("id", listingId)
+			.single(),
+	]);
 
 	if (error || !data) return null;
 
-	const { data: company } = await supabase
-		.from("companies")
-		.select("company_name")
-		.eq("profile_id", data.user_id)
-		.single();
+	const [{ data: company }, { data: quote }] = await Promise.all([
+		supabase.from("companies").select("company_name").eq("profile_id", data.user_id).single(),
+		user
+			? supabase
+					.from("quotes")
+					.select("id, price, currency, delivery_days, note, status, items, attachments, payment_terms")
+					.eq("listing_id", listingId)
+					.eq("seller_id", user.id)
+					.maybeSingle()
+			: Promise.resolve({ data: null }),
+	]);
 
 	let myQuote: MyQuoteSummary | null = null;
-	if (user) {
-		const { data: quote } = await supabase
-			.from("quotes")
-			.select("id, price, currency, delivery_days, note, status, items, attachments, payment_terms")
-			.eq("listing_id", listingId)
-			.eq("seller_id", user.id)
-			.maybeSingle();
-
-		if (quote) {
-			myQuote = {
-				id: quote.id,
-				price: Number(quote.price),
-				currency: quote.currency as Currency,
-				deliveryDays: quote.delivery_days,
-				note: quote.note ?? "",
-				status: quote.status,
-				items: quote.items ?? [],
-				attachments: quote.attachments ?? [],
-				paymentTerms: quote.payment_terms,
-			};
-		}
+	if (quote) {
+		myQuote = {
+			id: quote.id,
+			price: Number(quote.price),
+			currency: quote.currency as Currency,
+			deliveryDays: quote.delivery_days,
+			note: quote.note ?? "",
+			status: quote.status,
+			items: quote.items ?? [],
+			attachments: quote.attachments ?? [],
+			paymentTerms: quote.payment_terms,
+		};
 	}
 
 	const totalBudget = Number(data.total_budget ?? 0);
@@ -222,9 +222,8 @@ export async function getListingDetail(listingId: string): Promise<ListingDetail
 
 export async function getMyQuotes(): Promise<MyQuote[]> {
 	const supabase = await createServerSupabaseClient();
-	const { data: { user } } = await supabase.auth.getUser();
+	const [{ data: { user } }, locale] = await Promise.all([supabase.auth.getUser(), getLocale()]);
 	if (!user) return [];
-	const locale = await getLocale();
 
 	const { data, error } = await supabase
 		.from("quotes")
@@ -280,7 +279,7 @@ export async function getMyQuotes(): Promise<MyQuote[]> {
 
 export async function getRecommendedListings(): Promise<OpenListing[]> {
 	const supabase = await createServerSupabaseClient();
-	const { data: { user } } = await supabase.auth.getUser();
+	const [{ data: { user } }, locale] = await Promise.all([supabase.auth.getUser(), getLocale()]);
 	if (!user) return [];
 
 	const { data: profile } = await supabase
@@ -303,8 +302,6 @@ export async function getRecommendedListings(): Promise<OpenListing[]> {
 	// end_date 가 null 이면 이 비교가 false 라 자연히 제외된다.
 	const today = new Date().toISOString().slice(0, 10);
 
-	const locale = await getLocale();
-
 	let query = supabase
 		.from("listings")
 		.select(
@@ -320,11 +317,9 @@ export async function getRecommendedListings(): Promise<OpenListing[]> {
 		query = query.not("id", "in", `(${quotedIds.join(",")})`);
 	}
 
-	const { data, error } = await query;
+	const [{ data, error }, rates] = await Promise.all([query, getExchangeRates()]);
 	if (error) throw new Error(error.message);
 	if (!data) return [];
-
-	const rates = await getExchangeRates();
 
 	return data.map((row) => {
 		const totalBudget = Number(row.total_budget ?? 0);
