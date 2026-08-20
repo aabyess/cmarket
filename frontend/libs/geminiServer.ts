@@ -1,6 +1,6 @@
 // libs/geminiServer.ts
 const GEMINI_API_URL =
-	"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent";
+	"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.7-flash:generateContent";
 const DEFAULT_MAX_OUTPUT_TOKENS = 4096;
 
 export class GeminiError extends Error {
