@@ -24,5 +24,7 @@ export function formatRelativeTime(isoString: string, t: RelativeTimeTranslator)
 	const diffMonths = Math.floor(diffDays / 30);
 	if (diffMonths < 12) return t("monthsAgo", { count: diffMonths });
 
-	return t("yearsAgo", { count: Math.floor(diffDays / 365) });
+	// 일수(365) 기준으로 나누면 diffMonths가 12가 되는 360~364일 구간에서 "0년 전"이 나온다.
+	// 개월 기준으로 나눠 경계를 일치시킨다.
+	return t("yearsAgo", { count: Math.floor(diffMonths / 12) });
 }
