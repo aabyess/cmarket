@@ -81,6 +81,7 @@
 		"menu": {
 			"dashboard": "Dasbor",
 			"postListing": "Buat Permintaan",
+			"tradeManagement": "Manajemen Transaksi",
 			"myListings": "Permintaan Saya",
 			"listingTemplates": "Templat Penawaran",
 			"receivedQuotes": "Penawaran Diterima",

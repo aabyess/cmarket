@@ -81,6 +81,7 @@
 		"menu": {
 			"dashboard": "대시보드",
 			"postListing": "견적 등록",
+			"tradeManagement": "나의 거래 관리",
 			"myListings": "나의 견적",
 			"listingTemplates": "견적 템플릿",
 			"receivedQuotes": "받은 견적",
