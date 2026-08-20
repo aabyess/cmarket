@@ -1632,6 +1632,7 @@
 	},
 	"BuyerDashboard": {
 		"welcome": "Welcome, {companyName}",
+		"welcomeSubcopy": "Let's start another great deal today",
 		"tradeSummaryTitle": "My Trade Summary",
 		"summaryInProgress": "In Progress",
 		"summaryClosed": "All Closed",

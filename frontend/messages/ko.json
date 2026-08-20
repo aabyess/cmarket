@@ -1632,6 +1632,7 @@
 	},
 	"BuyerDashboard": {
 		"welcome": "{companyName}님, 환영합니다",
+		"welcomeSubcopy": "오늘도 좋은 거래를 시작해보세요",
 		"tradeSummaryTitle": "나의 거래 요약",
 		"summaryInProgress": "진행중",
 		"summaryClosed": "전체 마감",
