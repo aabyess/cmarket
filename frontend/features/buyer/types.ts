@@ -35,6 +35,20 @@ export type ListingFormData = {
 	contactPhone: string;
 };
 
+export type ListingDraftItem = {
+	name: string;
+	spec: string;
+	quantity: number;
+	unit: string;
+};
+
+export type ListingDraft = {
+	title: string;
+	category: ListingCategory;
+	description: string;
+	items: ListingDraftItem[];
+};
+
 export type BuyerTodoHighlight = {
 	label: string;
 	value: string;

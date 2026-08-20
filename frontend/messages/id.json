@@ -828,7 +828,21 @@
 		"editTitle": "Ubah Permintaan Penawaran",
 		"createTitle": "Buat Permintaan Penawaran",
 		"editSubtitle": "Ubah detail permintaan penawaran Anda.",
-		"createSubtitle": "Perusahaan pemasok Korea akan mengirimkan penawaran kepada Anda."
+		"createSubtitle": "Perusahaan pemasok Korea akan mengirimkan penawaran kepada Anda.",
+		"aiDraftButton": "Buat draf dengan AI",
+		"aiOverwriteTitle": "Timpa input Anda saat ini?",
+		"aiOverwriteDescription": "Judul, deskripsi, dan barang yang sudah Anda masukkan akan diganti dengan draf hasil AI."
+	},
+	"AiDraftModal": {
+		"title": "Buat draf dengan AI",
+		"description": "Jelaskan apa yang Anda butuhkan dalam satu kalimat. AI akan mengisi judul, kategori, deskripsi, dan barang untuk Anda.",
+		"placeholder": "Contoh: Mau beli kertas fotokopi A4 dalam jumlah besar untuk kantor",
+		"cancel": "Batal",
+		"submit": "Buat draf",
+		"loading": "Membuat draf...",
+		"notConfigured": "Fitur AI belum siap.",
+		"rateLimited": "Terlalu banyak permintaan. Silakan coba lagi sebentar lagi.",
+		"genericError": "Gagal membuat draf. Silakan coba lagi."
 	},
 	"CalendarModal": {
 		"weekday_sun": "Min",
