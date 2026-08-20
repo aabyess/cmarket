@@ -136,6 +136,7 @@ export function PostListingForm({ listingId, initialData, contactInfo }: PostLis
 
 	function applyTemplate(template: ListingTemplate): void {
 		handleChange({
+			title: template.title.trim() ? template.title : form.title,
 			category: template.category ?? form.category,
 			description: template.description,
 			items:
@@ -254,6 +255,7 @@ export function PostListingForm({ listingId, initialData, contactInfo }: PostLis
 			/>
 			<SaveTemplateModal
 				isOpen={isSaveTemplateModalOpen}
+				title={form.title}
 				category={form.category}
 				description={form.description}
 				items={form.items}

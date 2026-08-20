@@ -105,6 +105,11 @@ export default function LoadTemplateModal({
 														onClick={() => onSelect(template)}
 														className="hover:border-imsg-blue w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-left transition-colors hover:bg-[#EFF6FF]">
 														<p className="text-sm font-semibold text-[#1F2937]">{template.name}</p>
+														{template.title && (
+															<p className="mt-0.5 truncate text-xs text-[#9CA3AF]">
+																{template.title}
+															</p>
+														)}
 														{toPlainText(template.description) !== "" && (
 															<p className="mt-1 line-clamp-2 text-xs text-[#6B7280]">
 																{toPlainText(template.description)}

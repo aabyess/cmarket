@@ -5,6 +5,7 @@ import type { ListingCategory, ListingItem } from "@/features/buyer/types";
 type ListingTemplateRow = {
 	id: string;
 	name: string;
+	title: string | null;
 	category: string | null;
 	description: string | null;
 	items: ListingItem[] | null;
@@ -17,6 +18,7 @@ function mapRow(row: ListingTemplateRow): ListingTemplate {
 	return {
 		id: row.id,
 		name: row.name,
+		title: row.title ?? "",
 		category: (row.category as ListingCategory | null) ?? null,
 		description: row.description ?? "",
 		items: row.items ?? [],
@@ -31,7 +33,7 @@ export async function getListingTemplates(): Promise<ListingTemplate[]> {
 
 	const { data, error } = await supabase
 		.from("listing_templates")
-		.select("id, name, category, description, items, currency, created_at, updated_at")
+		.select("id, name, title, category, description, items, currency, created_at, updated_at")
 		.order("name", { ascending: true });
 
 	if (error) throw new Error(error.message);
@@ -51,6 +53,7 @@ export async function createListingTemplate(input: ListingTemplateInput): Promis
 	const { error } = await supabase.from("listing_templates").insert({
 		profile_id: user.id,
 		name: input.name,
+		title: input.title || null,
 		category: input.category,
 		description: input.description || null,
 		items: input.items,
@@ -70,6 +73,7 @@ export async function updateListingTemplate(
 		.from("listing_templates")
 		.update({
 			name: input.name,
+			title: input.title || null,
 			category: input.category,
 			description: input.description || null,
 			items: input.items,

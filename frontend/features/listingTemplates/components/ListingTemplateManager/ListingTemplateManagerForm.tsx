@@ -43,6 +43,7 @@ export function ListingTemplateManagerForm({
 		}
 		onSubmit({
 			name: name.trim(),
+			title: template.title,
 			category,
 			description,
 			items: template.items,
