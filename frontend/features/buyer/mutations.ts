@@ -102,12 +102,25 @@ export class ListingDraftError extends Error {
 export async function draftListingWithAi(
 	prompt: string,
 	categoryHint?: string | null,
+	file?: File | null,
 ): Promise<ListingDraftResult> {
-	const res = await fetch("/api/ai/draft-listing", {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ prompt, categoryHint: categoryHint ?? undefined }),
-	});
+	let res: Response;
+
+	if (file) {
+		// FormData를 쓸 땐 Content-Type을 직접 지정하면 안 된다 — 브라우저가
+		// boundary를 포함해 알아서 붙여준다.
+		const formData = new FormData();
+		formData.append("prompt", prompt);
+		if (categoryHint) formData.append("categoryHint", categoryHint);
+		formData.append("file", file);
+		res = await fetch("/api/ai/draft-listing", { method: "POST", body: formData });
+	} else {
+		res = await fetch("/api/ai/draft-listing", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ prompt, categoryHint: categoryHint ?? undefined }),
+		});
+	}
 
 	if (!res.ok) {
 		const { error } = await res.json();

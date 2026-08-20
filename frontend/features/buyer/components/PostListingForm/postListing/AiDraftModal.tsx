@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { motion, AnimatePresence } from "motion/react";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, Upload, X } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { getCategoryLabels, CATEGORY_OPTIONS } from "@/features/buyer/constants";
 import { draftListingWithAi, ListingDraftError } from "@/features/buyer/mutations";
@@ -12,6 +12,8 @@ import { AiDraftModalPreview } from "@/features/buyer/components/PostListingForm
 import type { ListingCategory, ListingDraft } from "@/features/buyer/types";
 
 const PROMPT_MAX_LENGTH = 500;
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const ALLOWED_FILE_TYPES = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
 
 type AiDraftModalProps = {
 	isOpen: boolean;
@@ -25,14 +27,19 @@ export default function AiDraftModal({ isOpen, onClose, onDraftReady }: AiDraftM
 
 	const [prompt, setPrompt] = useState("");
 	const [categoryHint, setCategoryHint] = useState<ListingCategory | null>(null);
+	const [file, setFile] = useState<File | null>(null);
+	const [isDragging, setIsDragging] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [draft, setDraft] = useState<ListingDraft | null>(null);
 	const [clarificationQuestion, setClarificationQuestion] = useState<string | null>(null);
+	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	function resetState(): void {
 		setPrompt("");
 		setCategoryHint(null);
+		setFile(null);
+		setIsDragging(false);
 		setError(null);
 		setDraft(null);
 		setClarificationQuestion(null);
@@ -45,14 +52,14 @@ export default function AiDraftModal({ isOpen, onClose, onDraftReady }: AiDraftM
 	}
 
 	async function handleGenerate(): Promise<void> {
-		if (!prompt.trim() || isLoading) return;
+		if ((!prompt.trim() && !file) || isLoading) return;
 
 		setIsLoading(true);
 		setError(null);
 		setDraft(null);
 		setClarificationQuestion(null);
 		try {
-			const result = await draftListingWithAi(prompt.trim(), categoryHint);
+			const result = await draftListingWithAi(prompt.trim(), categoryHint, file);
 			if (result.needsClarification) {
 				setClarificationQuestion(result.question);
 			} else {
@@ -80,6 +87,26 @@ export default function AiDraftModal({ isOpen, onClose, onDraftReady }: AiDraftM
 
 	function handleToggleCategoryHint(category: ListingCategory): void {
 		setCategoryHint((prev) => (prev === category ? null : category));
+	}
+
+	function pickFile(candidate: File | undefined): void {
+		if (!candidate) return;
+		if (!ALLOWED_FILE_TYPES.includes(candidate.type)) {
+			setError(t("fileTypeError"));
+			return;
+		}
+		if (candidate.size > MAX_FILE_SIZE) {
+			setError(t("fileSizeError"));
+			return;
+		}
+		setError(null);
+		setFile(candidate);
+	}
+
+	function handleDrop(e: React.DragEvent<HTMLDivElement>): void {
+		e.preventDefault();
+		setIsDragging(false);
+		pickFile(e.dataTransfer.files[0]);
 	}
 
 	return (
@@ -132,6 +159,57 @@ export default function AiDraftModal({ isOpen, onClose, onDraftReady }: AiDraftM
 
 										<div className="space-y-1.5">
 											<label className="text-sm font-medium text-[#374151]">
+												{t("fileLabel")}
+											</label>
+											{file ? (
+												<div className="flex items-center justify-between gap-2 rounded-lg border border-[#E2E8F0] bg-[#F9FAFB] px-3 py-2.5">
+													<span className="truncate text-sm text-[#374151]">{file.name}</span>
+													<button
+														type="button"
+														onClick={() => setFile(null)}
+														disabled={isLoading}
+														aria-label={t("fileRemoveAria")}
+														className="shrink-0 text-[#9CA3AF] transition-colors hover:text-[#EF4444] disabled:opacity-50"
+													>
+														<X size={16} />
+													</button>
+												</div>
+											) : (
+												<div
+													onClick={() => fileInputRef.current?.click()}
+													onDragOver={(e) => {
+														e.preventDefault();
+														setIsDragging(true);
+													}}
+													onDragLeave={() => setIsDragging(false)}
+													onDrop={handleDrop}
+													className={cn(
+														"flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border py-5 text-center transition-colors",
+														isDragging
+															? "border-dashed border-imsg-blue bg-[#EFF6FF]"
+															: "border-[#E2E8F0] bg-[#F9FAFB] hover:border-dashed hover:border-imsg-blue",
+													)}
+												>
+													<Upload size={18} className="text-[#9CA3AF]" />
+													<p className="text-xs text-[#374151]">{t("fileDropzoneText")}</p>
+													<p className="text-xs text-[#9CA3AF]">{t("fileMaxSize")}</p>
+													<input
+														ref={fileInputRef}
+														type="file"
+														accept={ALLOWED_FILE_TYPES.join(",")}
+														disabled={isLoading}
+														className="hidden"
+														onChange={(e) => {
+															pickFile(e.target.files?.[0]);
+															e.target.value = "";
+														}}
+													/>
+												</div>
+											)}
+										</div>
+
+										<div className="space-y-1.5">
+											<label className="text-sm font-medium text-[#374151]">
 												{t("categoryHintLabel")}
 											</label>
 											<div className="flex flex-wrap gap-1.5">
@@ -173,7 +251,7 @@ export default function AiDraftModal({ isOpen, onClose, onDraftReady }: AiDraftM
 									</button>
 									<button
 										onClick={handleGenerate}
-										disabled={isLoading || !prompt.trim()}
+										disabled={isLoading || (!prompt.trim() && !file)}
 										className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-imsg-blue py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:cursor-not-allowed disabled:opacity-50"
 									>
 										{isLoading && <Loader2 size={14} className="animate-spin" />}
