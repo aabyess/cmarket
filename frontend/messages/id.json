@@ -96,6 +96,8 @@
 		"dropdown": {
 			"myProfile": "Profil Saya",
 			"settings": "Pengaturan",
+			"terms": "Syarat Layanan",
+			"privacy": "Kebijakan Privasi",
 			"logout": "Keluar"
 		}
 	},
