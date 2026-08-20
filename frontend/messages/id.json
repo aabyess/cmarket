@@ -1544,7 +1544,10 @@
 		"minutesAgo": "{count} menit lalu",
 		"hoursAgo": "{count} jam lalu",
 		"yesterday": "Kemarin",
-		"daysAgo": "{count} hari lalu"
+		"daysAgo": "{count} hari lalu",
+		"weeksAgo": "{count} minggu lalu",
+		"monthsAgo": "{count} bulan lalu",
+		"yearsAgo": "{count} tahun lalu"
 	},
 	"BuyerDashboardData": {
 		"quoteLabel": "Penawaran",

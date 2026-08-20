@@ -16,6 +16,13 @@ export function formatRelativeTime(isoString: string, t: RelativeTimeTranslator)
 	if (diffDays === 1) return t("yesterday");
 	if (diffDays < 7) return t("daysAgo", { count: diffDays });
 
-	const date = new Date(isoString);
-	return `${date.getMonth() + 1}.${date.getDate()}`;
+	// 절대 날짜(getMonth/getDate)는 서버 컴포넌트에서 호출될 때 서버 시간대(UTC) 기준이라
+	// 한국/인도네시아 사용자에게 하루 어긋나 보인다. 시간대와 무관한 상대 표기로 통일한다.
+	const diffWeeks = Math.floor(diffDays / 7);
+	if (diffWeeks < 5) return t("weeksAgo", { count: diffWeeks });
+
+	const diffMonths = Math.floor(diffDays / 30);
+	if (diffMonths < 12) return t("monthsAgo", { count: diffMonths });
+
+	return t("yearsAgo", { count: Math.floor(diffDays / 365) });
 }
