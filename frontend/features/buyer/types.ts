@@ -49,6 +49,11 @@ export type ListingDraft = {
 	items: ListingDraftItem[];
 };
 
+// 입력이 너무 모호해 초안을 지어낼 수 없으면 AI가 초안 대신 재질문을 돌려준다.
+export type ListingDraftResult =
+	| ({ needsClarification: false } & ListingDraft)
+	| { needsClarification: true; question: string };
+
 export type BuyerTodoHighlight = {
 	label: string;
 	value: string;

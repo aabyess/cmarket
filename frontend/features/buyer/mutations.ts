@@ -1,6 +1,6 @@
 import { createClient } from "@/libs/supabase";
 import { translateField } from "@/utils/translateField";
-import { ListingFormData, ListingDraft } from "@/features/buyer/types";
+import { ListingFormData, ListingDraftResult } from "@/features/buyer/types";
 
 const DEFAULT_DEADLINE_DAYS = 7;
 
@@ -99,11 +99,14 @@ export class ListingDraftError extends Error {
 	}
 }
 
-export async function draftListingWithAi(prompt: string): Promise<ListingDraft> {
+export async function draftListingWithAi(
+	prompt: string,
+	categoryHint?: string | null,
+): Promise<ListingDraftResult> {
 	const res = await fetch("/api/ai/draft-listing", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ prompt }),
+		body: JSON.stringify({ prompt, categoryHint: categoryHint ?? undefined }),
 	});
 
 	if (!res.ok) {
