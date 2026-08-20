@@ -2,16 +2,21 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import {
 	LayoutDashboard, ListTodo, Mail, MessageSquare,
 	FileCheck, HelpCircle, Search, Send, Building2,
-	LogOut, User, FilePlus, Sparkles, Settings, FileText,
+	LogOut, User, FilePlus, Sparkles, Settings, FileText, Phone,
 } from "lucide-react";
 import { NotificationBell } from "@/features/notifications/components/NotificationBell";
 import { LanguageSwitcher } from "@/components/commons/LanguageSwitcher";
 import { cn } from "@/utils/cn";
 import { createClient } from "@/libs/supabase";
+
+// TODO: 실제 지원센터 연락처 확인되면 교체
+const SUPPORT_PHONE = "02-0000-0000";
+const SUPPORT_EMAIL = "support@mitrapay.com";
 
 type UserRole = "buyer" | "seller";
 
@@ -185,6 +190,24 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 				})}
 				</div>
 			</nav>
+
+			{/* 하단: 지원센터 연락처 + 로고 */}
+			<div className="mt-auto border-t border-sidebar-border px-4 py-4">
+				<p className="text-xs font-semibold text-sidebar-foreground/60">{t("menu.support")}</p>
+				<div className="mt-1.5 space-y-1">
+					<div className="flex items-center gap-1.5 text-xs text-sidebar-foreground/50">
+						<Phone size={12} className="shrink-0" />
+						<span>{SUPPORT_PHONE}</span>
+					</div>
+					<div className="flex items-center gap-1.5 text-xs text-sidebar-foreground/50">
+						<Mail size={12} className="shrink-0" />
+						<span>{SUPPORT_EMAIL}</span>
+					</div>
+				</div>
+				<div className="mt-3 flex justify-center">
+					<Image src="/images/MitraPay.png" alt="MitraPay 로고" width={72} height={72} />
+				</div>
+			</div>
 		</aside>
 	);
 }
