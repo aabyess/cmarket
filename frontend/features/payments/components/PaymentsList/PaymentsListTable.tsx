@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { CheckCircle2, FileText, Upload } from "lucide-react";
+import { CheckCircle2, FileText, Loader2, Receipt, Upload } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
 import { getPaymentStatus, PAYMENT_METHOD } from "@/features/payments/constants";
@@ -24,8 +24,10 @@ type PaymentsListTableProps = {
 	role: "buyer" | "seller";
 	uploadingId: string | null;
 	confirmingId: string | null;
+	receiptPdfLoadingId: string | null;
 	onUploadClick: (contractId: string) => void;
 	onViewReceipt: (contractId: string) => void;
+	onViewTransactionReceipt: (contractId: string) => void;
 	onConfirmPayment: (contractId: string) => void;
 };
 
@@ -34,8 +36,10 @@ export function PaymentsListTable({
 	role,
 	uploadingId,
 	confirmingId,
+	receiptPdfLoadingId,
 	onUploadClick,
 	onViewReceipt,
+	onViewTransactionReceipt,
 	onConfirmPayment,
 }: PaymentsListTableProps): React.ReactNode {
 	const t = useTranslations("PaymentsList");
@@ -120,6 +124,22 @@ export function PaymentsListTable({
 														? t("viewReceiptButtonSeller")
 														: t("viewReceiptButton")}
 												</button>
+												{status === "confirmed" && (
+													<button
+														type="button"
+														onClick={() => onViewTransactionReceipt(contract.id)}
+														disabled={receiptPdfLoadingId === contract.id}
+														className="flex items-center gap-1 rounded-lg border border-[#BBF7D0] bg-[#F0FDF4] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#16A34A] transition-colors hover:bg-[#DCFCE7] disabled:opacity-60">
+														{receiptPdfLoadingId === contract.id ? (
+															<Loader2 size={14} className="animate-spin" />
+														) : (
+															<Receipt size={14} />
+														)}
+														{receiptPdfLoadingId === contract.id
+															? t("transactionReceiptGenerating")
+															: t("transactionReceiptButton")}
+													</button>
+												)}
 												{role === "seller" && status === "awaitingConfirmation" && (
 													<button
 														type="button"
