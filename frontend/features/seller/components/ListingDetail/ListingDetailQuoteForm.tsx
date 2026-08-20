@@ -3,11 +3,13 @@
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { CheckCircle2, Pencil, Clock, Upload, FileText, X, Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import { useLocale } from "next-intl";
+import { CheckCircle2, Pencil, Clock, Upload, FileText, X, Loader2, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import { cn } from "@/utils/cn";
-import { postQuote, updateQuote } from "@/features/seller/mutations";
+import { ConfirmModal } from "@/components/ui/confirm-modal";
+import { postQuote, updateQuote, draftQuoteWithAi, QuoteDraftError } from "@/features/seller/mutations";
 import type { Currency, ListingAttachment, ListingItem, QuoteItemPrice } from "@/features/buyer/types";
-import type { MyQuoteSummary, QuoteFormData } from "@/features/seller/types";
+import type { MyQuoteSummary, QuoteDraft, QuoteFormData } from "@/features/seller/types";
 
 const CURRENCIES: { value: Currency; label: string; symbol: string }[] = [
 	{ value: "USD", label: "USD", symbol: "$" },
@@ -68,7 +70,10 @@ export function ListingDetailQuoteForm({
 	const [isUploading, setIsUploading] = useState(false);
 	const [isDragging, setIsDragging] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [isDrafting, setIsDrafting] = useState(false);
+	const [pendingDraft, setPendingDraft] = useState<QuoteDraft | null>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
+	const locale = useLocale();
 
 	const currentSymbol = CURRENCIES.find((c) => c.value === form.currency)?.symbol ?? "$";
 	const total = computeTotal(items, form.items);
@@ -76,6 +81,40 @@ export function ListingDetailQuoteForm({
 	function handleChange(patch: Partial<QuoteFormData>) {
 		setForm((prev) => ({ ...prev, ...patch }));
 		setError(null);
+	}
+
+	function applyDraft(draft: QuoteDraft) {
+		handleChange({ note: draft.note, paymentTerms: draft.paymentTerms });
+	}
+
+	async function handleAiDraft(): Promise<void> {
+		if (isDrafting) return;
+		setIsDrafting(true);
+		setError(null);
+		try {
+			const draft = await draftQuoteWithAi(listingId, locale);
+			// 이미 써둔 내용이 있으면 덮어쓰기 전에 확인받는다.
+			if (form.note.trim() || form.paymentTerms.trim()) {
+				setPendingDraft(draft);
+			} else {
+				applyDraft(draft);
+			}
+		} catch (err) {
+			if (err instanceof QuoteDraftError && err.status === 503) {
+				setError(t("aiNotConfigured"));
+			} else if (err instanceof QuoteDraftError && err.status === 429) {
+				setError(t("aiRateLimited"));
+			} else {
+				setError(t("aiDraftError"));
+			}
+		} finally {
+			setIsDrafting(false);
+		}
+	}
+
+	function handleConfirmDraftOverwrite() {
+		if (pendingDraft) applyDraft(pendingDraft);
+		setPendingDraft(null);
 	}
 
 	function handleItemPriceChange(itemId: string, unitPrice: number) {
@@ -433,7 +472,18 @@ export function ListingDetailQuoteForm({
 				</div>
 
 				<div>
-					<label className="mb-2 block text-sm font-medium text-[#374151]">{t("paymentTermsFieldLabel")}</label>
+					<div className="mb-2 flex items-center justify-between">
+						<label className="block text-sm font-medium text-[#374151]">{t("paymentTermsFieldLabel")}</label>
+						<button
+							type="button"
+							onClick={handleAiDraft}
+							disabled={isDrafting}
+							className="flex items-center gap-1 rounded-md border border-imsg-blue px-2 py-1 text-xs font-semibold text-imsg-blue transition-colors hover:bg-[#EFF6FF] disabled:opacity-60"
+						>
+							{isDrafting ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
+							{isDrafting ? t("aiDrafting") : t("aiDraftButton")}
+						</button>
+					</div>
 					<input
 						type="text"
 						value={form.paymentTerms}
@@ -442,6 +492,14 @@ export function ListingDetailQuoteForm({
 						className="w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
 					/>
 				</div>
+
+				<ConfirmModal
+					isOpen={pendingDraft !== null}
+					title={t("aiOverwriteTitle")}
+					description={t("aiOverwriteDescription")}
+					onConfirm={handleConfirmDraftOverwrite}
+					onClose={() => setPendingDraft(null)}
+				/>
 
 				<div>
 					<label className="mb-2 block text-sm font-medium text-[#374151]">{t("noteFieldLabel")}</label>
