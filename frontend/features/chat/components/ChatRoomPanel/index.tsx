@@ -8,11 +8,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { ChatMessageList } from "@/features/chat/components/ChatMessageList";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { useMessages, CHAT_QUERY_KEYS } from "@/features/chat/queries";
+import { mapMessageRow, type MessageRow } from "@/features/chat/apis";
 import { useSendMessage, markMessagesRead, awardAndCreateContract } from "@/features/chat/mutations";
 import { markNotificationsByQuoteRead } from "@/features/notifications/apis";
 import { NOTIFICATION_QUERY_KEYS } from "@/features/notifications/queries";
 import { createClient } from "@/libs/supabase";
-import type { ChatRole, ChatRoom } from "@/features/chat/types";
+import type { ChatMessage, ChatRole, ChatRoom } from "@/features/chat/types";
 
 type ChatRoomPanelProps = {
 	room: ChatRoom;
@@ -56,17 +57,50 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 					filter: `quote_id=eq.${room.quoteId}`,
 				},
 				(payload) => {
-					queryClient.invalidateQueries({ queryKey });
+					// 이벤트마다 전체 이력을 다시 내려받으면 읽음 처리(행당 UPDATE 1건)만으로도
+					// refetch가 폭주한다. 페이로드를 캐시에 직접 반영한다.
+					if (payload.eventType === "INSERT") {
+						const incoming = mapMessageRow(payload.new as MessageRow);
+						queryClient.setQueryData<ChatMessage[]>(queryKey, (prev) => {
+							if (!prev) return prev;
+							if (prev.some((m) => m.id === incoming.id)) return prev;
 
-					if (
-						payload.eventType === "INSERT" &&
-						(payload.new as { sender_id: string }).sender_id !== myId
-					) {
-						markMessagesRead(room.quoteId);
+							// 낙관적으로 넣어둔 임시(temp-) 메시지가 실제 행으로 도착하면 교체한다.
+							const tempIndex = prev.findIndex(
+								(m) =>
+									m.id.startsWith("temp-") &&
+									m.senderId === incoming.senderId &&
+									m.content === incoming.content,
+							);
+							const base = tempIndex >= 0 ? prev.filter((_, i) => i !== tempIndex) : prev;
+
+							// 이벤트 도착 순서가 created_at 순서와 다를 수 있으므로 항상 시간순으로 유지한다.
+							return [...base, incoming].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+						});
+
+						if (incoming.senderId !== myId) {
+							markMessagesRead(room.quoteId);
+						}
+						return;
 					}
+
+					if (payload.eventType === "UPDATE") {
+						const updated = mapMessageRow(payload.new as MessageRow);
+						queryClient.setQueryData<ChatMessage[]>(queryKey, (prev) =>
+							prev?.map((m) => (m.id === updated.id ? updated : m)),
+						);
+						return;
+					}
+
+					queryClient.invalidateQueries({ queryKey });
 				},
 			)
-			.subscribe();
+			.subscribe((status) => {
+				// 구독 완료 전에 도착한 메시지는 이벤트로 오지 않으므로 연결 시점에 한 번 동기화한다.
+				if (status === "SUBSCRIBED") {
+					queryClient.invalidateQueries({ queryKey });
+				}
+			});
 
 		return () => {
 			supabase.removeChannel(channel);
