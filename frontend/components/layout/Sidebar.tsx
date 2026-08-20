@@ -7,7 +7,9 @@ import {
 	LayoutDashboard, ListTodo, Mail, MessageSquare,
 	FileCheck, HelpCircle, Search, Send, Building2,
 	LogOut, User, FilePlus, Sparkles, Settings, FileText, Phone,
+	Briefcase, ChevronDown, ChevronUp,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { NotificationBell } from "@/features/notifications/components/NotificationBell";
 import { LanguageSwitcher } from "@/components/commons/LanguageSwitcher";
 import { cn } from "@/utils/cn";
@@ -25,20 +27,49 @@ type SidebarProps = {
 	name: string;
 };
 
-const BUYER_MENU_ITEMS = [
+type MenuLeaf = {
+	labelKey: string;
+	key: string;
+	icon: LucideIcon;
+	href: string;
+	badge: number | null;
+};
+
+// 하위 항목을 접었다 펼쳤다 하는 메뉴 그룹. children이 있으면 그룹, 없으면 일반 항목이다.
+type MenuGroup = {
+	labelKey: string;
+	key: string;
+	icon: LucideIcon;
+	children: MenuLeaf[];
+};
+
+type MenuEntry = MenuLeaf | MenuGroup;
+
+function isMenuGroup(entry: MenuEntry): entry is MenuGroup {
+	return "children" in entry;
+}
+
+const BUYER_MENU_ITEMS: MenuEntry[] = [
 	{ labelKey: "dashboard", key: "dashboard", icon: LayoutDashboard, href: "/buyer/dashboard", badge: null },
 	{ labelKey: "postListing", key: "post-listing", icon: FilePlus, href: "/buyer/post-listing", badge: null },
-	{ labelKey: "myListings", key: "listings", icon: ListTodo, href: "/buyer/order-list", badge: null },
+	{
+		labelKey: "tradeManagement",
+		key: "trade-management",
+		icon: Briefcase,
+		children: [
+			{ labelKey: "myListings", key: "listings", icon: ListTodo, href: "/buyer/order-list", badge: null },
+			{ labelKey: "receivedQuotes", key: "quotes", icon: Mail, href: "/buyer/quote-review", badge: null },
+			{ labelKey: "contract", key: "contract", icon: FileCheck, href: "/buyer/contract", badge: null },
+			{ labelKey: "plans", key: "plans", icon: Sparkles, href: "/plans", badge: null },
+		],
+	},
 	{ labelKey: "listingTemplates", key: "listing-templates", icon: FileText, href: "/buyer/listing-templates", badge: null },
-	{ labelKey: "receivedQuotes", key: "quotes", icon: Mail, href: "/buyer/quote-review", badge: null },
 	{ labelKey: "chat", key: "chat", icon: MessageSquare, href: "/buyer/chat", badge: null },
-	{ labelKey: "contract", key: "contract", icon: FileCheck, href: "/buyer/contract", badge: null },
 	{ labelKey: "profile", key: "profile", icon: Building2, href: "/buyer/profile/edit", badge: null },
-	{ labelKey: "plans", key: "plans", icon: Sparkles, href: "/plans", badge: null },
 	{ labelKey: "support", key: "support", icon: HelpCircle, href: "/support", badge: null },
 ];
 
-const SELLER_MENU_ITEMS = [
+const SELLER_MENU_ITEMS: MenuLeaf[] = [
 	{ labelKey: "dashboard", key: "dashboard", icon: LayoutDashboard, href: "/seller/dashboard", badge: null },
 	{ labelKey: "browseListings", key: "browse", icon: Search, href: "/seller/listing-browse", badge: null },
 	{ labelKey: "sentQuotes", key: "quotes", icon: Send, href: "/seller/quote-submit", badge: null },
@@ -53,11 +84,25 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 	const t = useTranslations("Sidebar");
 	const pathname = usePathname();
 	const router = useRouter();
-	const menuItems = role === "seller" ? SELLER_MENU_ITEMS : BUYER_MENU_ITEMS;
+	const menuItems: MenuEntry[] = role === "seller" ? SELLER_MENU_ITEMS : BUYER_MENU_ITEMS;
 	const [dropdownOpen, setDropdownOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
+	// 기본은 펼침 상태라, 사용자가 접은 그룹의 key만 여기 담는다.
+	const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
 
 	const initial = name.charAt(0) || companyName.charAt(0) || "?";
+
+	function toggleGroup(key: string): void {
+		setCollapsedGroups((prev) => {
+			const next = new Set(prev);
+			if (next.has(key)) {
+				next.delete(key);
+			} else {
+				next.add(key);
+			}
+			return next;
+		});
+	}
 
 	useEffect(() => {
 		function handleClickOutside(e: MouseEvent) {
@@ -78,7 +123,7 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 	return (
 		<aside className="fixed left-0 top-0 h-screen w-64 hidden lg:flex flex-col bg-sidebar border-r border-sidebar-border z-40">
 			{/* 프로필 블록 */}
-			<div className="px-3 py-4 border-b border-sidebar-border relative">
+			<div className="px-3 pt-6 pb-4 border-b border-sidebar-border relative">
 				<div className="flex items-center gap-2 px-2">
 					{/* 프로필 트리거 */}
 					<div
@@ -157,12 +202,77 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 					{t("menuHeading")}
 				</p>
 				<div className="space-y-0.5">
-				{menuItems.map((item) => {
-					const isActive = item.href === "#" ? false : pathname.startsWith(item.href);
+				{menuItems.map((entry) => {
+					if (isMenuGroup(entry)) {
+						const hasActiveChild = entry.children.some((child) => pathname.startsWith(child.href));
+						// 활성 하위 경로에 있으면 접었더라도 강제로 펼친다.
+						const isOpen = hasActiveChild || !collapsedGroups.has(entry.key);
+
+						return (
+							<div key={entry.key}>
+								<button
+									type="button"
+									onClick={() => toggleGroup(entry.key)}
+									className={cn(
+										"flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
+										hasActiveChild
+											? "bg-primary/10 text-[#111827] font-semibold"
+											: "text-[#374151] hover:bg-white/70 hover:text-[#1F2937]",
+									)}
+								>
+									<entry.icon
+										size={17}
+										strokeWidth={2}
+										className={cn("shrink-0", hasActiveChild ? "text-[#111827]" : "text-[#9CA3AF]")}
+									/>
+									<span className="flex-1 text-left">{t(`menu.${entry.labelKey}`)}</span>
+									{isOpen ? (
+										<ChevronUp size={15} className="shrink-0 text-[#9CA3AF]" />
+									) : (
+										<ChevronDown size={15} className="shrink-0 text-[#9CA3AF]" />
+									)}
+								</button>
+
+								{isOpen && (
+									<div className="mt-0.5 space-y-0.5">
+										{entry.children.map((child) => {
+											const isActive = pathname.startsWith(child.href);
+											return (
+												<Link
+													key={child.key}
+													href={child.href}
+													className={cn(
+														"flex items-center gap-3 rounded-lg py-2 pl-8 pr-3 text-xs font-medium transition-all",
+														isActive
+															? "bg-primary/10 text-[#111827] font-semibold"
+															: "text-[#374151] hover:bg-white/70 hover:text-[#1F2937]",
+													)}
+												>
+													<child.icon
+														size={15}
+														strokeWidth={2}
+														className={cn("shrink-0", isActive ? "text-[#111827]" : "text-[#9CA3AF]")}
+													/>
+													<span className="flex-1">{t(`menu.${child.labelKey}`)}</span>
+													{child.badge && (
+														<span className="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-semibold bg-white/20 text-white">
+															{child.badge}
+														</span>
+													)}
+												</Link>
+											);
+										})}
+									</div>
+								)}
+							</div>
+						);
+					}
+
+					const isActive = entry.href === "#" ? false : pathname.startsWith(entry.href);
 					return (
 						<Link
-							key={item.key}
-							href={item.href}
+							key={entry.key}
+							href={entry.href}
 							className={cn(
 								"flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
 								isActive
@@ -170,7 +280,7 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 									: "text-[#374151] hover:bg-white/70 hover:text-[#1F2937]",
 							)}
 						>
-							<item.icon
+							<entry.icon
 								size={17}
 								strokeWidth={2}
 								className={cn(
@@ -178,10 +288,10 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 									isActive ? "text-[#111827]" : "text-[#9CA3AF]",
 								)}
 							/>
-							<span className="flex-1">{t(`menu.${item.labelKey}`)}</span>
-							{item.badge && (
+							<span className="flex-1">{t(`menu.${entry.labelKey}`)}</span>
+							{entry.badge && (
 								<span className="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-semibold bg-white/20 text-white">
-									{item.badge}
+									{entry.badge}
 								</span>
 							)}
 						</Link>

@@ -81,6 +81,7 @@
 		"menu": {
 			"dashboard": "Dashboard",
 			"postListing": "Post Listing",
+			"tradeManagement": "My Trades",
 			"myListings": "My Listings",
 			"listingTemplates": "Quote Templates",
 			"receivedQuotes": "Received Quotes",
