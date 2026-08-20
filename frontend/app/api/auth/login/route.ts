@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerAdminClient, createServerSupabaseClient } from "@/libs/supabaseServer";
+import { parseJsonBody } from "@/utils/parseJsonBody";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-	const { username, password } = await req.json();
+	const body = await parseJsonBody<{ username?: string; password?: string }>(req);
+	if (!body) {
+		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+	}
+	const { username, password } = body;
 	if (!username || !password) {
 		return NextResponse.json(
 			{ error: "아이디와 비밀번호를 입력해주세요." },

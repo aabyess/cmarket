@@ -1,9 +1,14 @@
 // app/api/contract/confirm-delivery/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient, createServerAdminClient } from "@/libs/supabaseServer";
+import { parseJsonBody } from "@/utils/parseJsonBody";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-	const { contractId } = await req.json();
+	const body = await parseJsonBody<{ contractId?: string }>(req);
+	if (!body) {
+		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+	}
+	const { contractId } = body;
 	if (!contractId) {
 		return NextResponse.json({ error: "필수 값이 없습니다." }, { status: 400 });
 	}

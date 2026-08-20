@@ -2,11 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient, createServerAdminClient } from "@/libs/supabaseServer";
 import { translateFieldServer } from "@/libs/translateFieldServer";
 import { FREE_PLAN_MONTHLY_CHAT_LIMIT } from "@/constants/plan";
+import { parseJsonBody } from "@/utils/parseJsonBody";
 
 const MAX_CONTENT_LENGTH = 2000;
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-	const { quoteId, content } = await req.json();
+	const body = await parseJsonBody<{ quoteId?: string; content?: string }>(req);
+	if (!body) {
+		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+	}
+	const { quoteId, content } = body;
 	if (!quoteId || !content?.trim()) {
 		return NextResponse.json({ error: "필수 값이 없습니다." }, { status: 400 });
 	}

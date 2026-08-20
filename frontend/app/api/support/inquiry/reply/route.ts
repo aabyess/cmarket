@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerAdminClient, createServerSupabaseClient } from "@/libs/supabaseServer";
+import { parseJsonBody } from "@/utils/parseJsonBody";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-	const { inquiryId, content } = await req.json();
+	const body = await parseJsonBody<{ inquiryId?: string; content?: unknown }>(req);
+	if (!body) {
+		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+	}
+	const { inquiryId, content } = body;
 
 	if (typeof content !== "string" || content.trim().length === 0) {
 		return NextResponse.json({ error: "내용을 입력해주세요." }, { status: 400 });

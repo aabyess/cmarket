@@ -2,9 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerAdminClient, createServerSupabaseClient } from "@/libs/supabaseServer";
 import { translateFieldServer } from "@/libs/translateFieldServer";
 import { upsertPrimaryBankAccount } from "@/features/siteBuilder/apis";
+import { parseJsonBody } from "@/utils/parseJsonBody";
+import type { SiteTradeSettings } from "@/features/siteBuilder/types";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-	const { logoUrl, categories, bankAccount, company, contact } = await req.json();
+	const body = await parseJsonBody<Partial<SiteTradeSettings>>(req);
+	if (!body) {
+		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+	}
+	const { logoUrl, categories, bankAccount, company, contact } = body;
 
 	const supabase = await createServerSupabaseClient();
 	const {

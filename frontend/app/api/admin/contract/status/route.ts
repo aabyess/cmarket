@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient, createServerAdminClient } from "@/libs/supabaseServer";
 import { routing } from "@/i18n/routing";
+import { parseJsonBody } from "@/utils/parseJsonBody";
 
 const CANCEL_ERROR_MESSAGES: Record<string, string> = {
 	CONTRACT_NOT_FOUND: "계약을 찾을 수 없습니다.",
@@ -24,7 +25,11 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
 	const admin = await requireAdmin();
 	if (!admin) return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
 
-	const { contractId, status } = await req.json();
+	const body = await parseJsonBody<{ contractId?: string; status?: string }>(req);
+	if (!body) {
+		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+	}
+	const { contractId, status } = body;
 	if (!contractId || !status) {
 		return NextResponse.json({ error: "필수 값이 없습니다." }, { status: 400 });
 	}

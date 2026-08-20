@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
 import { callGeminiJson, GeminiError } from "@/libs/geminiServer";
 import { sanitizeHtml } from "@/utils/sanitizeHtml";
+import { parseJsonBody } from "@/utils/parseJsonBody";
 
 const SUPPORTED_LOCALES = ["ko", "en", "id"] as const;
 type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
@@ -51,13 +52,19 @@ function stripHtml(html: string): string {
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-	const { listingId, locale } = await req.json();
+	const body = await parseJsonBody<{ listingId?: string; locale?: string }>(req);
+	if (!body) {
+		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+	}
+	const { listingId, locale } = body;
 
 	if (!listingId) {
 		return NextResponse.json({ error: "listingId가 필요합니다." }, { status: 400 });
 	}
 
-	const targetLocale: SupportedLocale = SUPPORTED_LOCALES.includes(locale) ? locale : "ko";
+	const targetLocale: SupportedLocale = SUPPORTED_LOCALES.includes(locale as SupportedLocale)
+		? (locale as SupportedLocale)
+		: "ko";
 
 	const supabase = await createServerSupabaseClient();
 	const {

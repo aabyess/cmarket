@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
+import { parseJsonBody } from "@/utils/parseJsonBody";
 
 /** 운영자 여부는 RLS 가 최종 판단한다. 여기서는 이른 실패로 메시지를 명확히 할 뿐이다. */
 async function requireAdmin(): Promise<{ userId: string } | null> {
@@ -17,7 +18,17 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 	const admin = await requireAdmin();
 	if (!admin) return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
 
-	const { id, title, content, isPinned, publish } = await req.json();
+	const body = await parseJsonBody<{
+		id?: string;
+		title?: string;
+		content?: string;
+		isPinned?: boolean;
+		publish?: boolean;
+	}>(req);
+	if (!body) {
+		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+	}
+	const { id, title, content, isPinned, publish } = body;
 
 	if (typeof title !== "string" || title.trim().length === 0) {
 		return NextResponse.json({ error: "제목을 입력해주세요." }, { status: 400 });

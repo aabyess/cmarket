@@ -2,6 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerAdminClient, createServerSupabaseClient } from "@/libs/supabaseServer";
 import { translateFieldServer } from "@/libs/translateFieldServer";
 import { routing } from "@/i18n/routing";
+import { parseJsonBody } from "@/utils/parseJsonBody";
+
+type QuoteMutationBody = {
+	listingId?: string;
+	quoteId?: string;
+	price?: unknown;
+	currency?: unknown;
+	deliveryDays?: unknown;
+	note?: string;
+	items?: unknown;
+	attachments?: unknown;
+	paymentTerms?: unknown;
+};
 
 function validateQuoteFields(
 	price: unknown,
@@ -21,8 +34,11 @@ function validateQuoteFields(
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-	const { listingId, price, currency, deliveryDays, note, items, attachments, paymentTerms } =
-		await req.json();
+	const body = await parseJsonBody<QuoteMutationBody>(req);
+	if (!body) {
+		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+	}
+	const { listingId, price, currency, deliveryDays, note, items, attachments, paymentTerms } = body;
 
 	const supabase = await createServerSupabaseClient();
 	const {
@@ -123,8 +139,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 // 견적 수정도 서버에서 처리한다 — 번역을 서버에서 만들고(위조 방지),
 // 가격 이력 기록과 캐시 PDF 무효화까지 한 곳에서 끝낸다.
 export async function PATCH(req: NextRequest): Promise<NextResponse> {
-	const { quoteId, price, currency, deliveryDays, note, items, attachments, paymentTerms } =
-		await req.json();
+	const body = await parseJsonBody<QuoteMutationBody>(req);
+	if (!body) {
+		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+	}
+	const { quoteId, price, currency, deliveryDays, note, items, attachments, paymentTerms } = body;
 
 	if (!quoteId) {
 		return NextResponse.json({ error: "quoteId가 필요합니다." }, { status: 400 });

@@ -2,9 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
 import { SITE_PAGE_LOCALE, SITE_PAGE_SLUG } from "@/features/siteBuilder/constants";
 import { isBlockArray } from "@/features/siteBuilder/utils";
+import { parseJsonBody } from "@/utils/parseJsonBody";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-	const { blocks, note } = await req.json();
+	const body = await parseJsonBody<{ blocks?: unknown; note?: unknown }>(req);
+	if (!body) {
+		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+	}
+	const { blocks, note } = body;
 
 	if (!isBlockArray(blocks)) {
 		return NextResponse.json({ error: "블록 형식이 올바르지 않습니다." }, { status: 400 });
