@@ -70,12 +70,20 @@ const BUYER_MENU_ITEMS: MenuEntry[] = [
 	{ labelKey: "support", key: "support", icon: HelpCircle, href: "/support", badge: null },
 ];
 
-const SELLER_MENU_ITEMS: MenuLeaf[] = [
+const SELLER_MENU_ITEMS: MenuEntry[] = [
 	{ labelKey: "dashboard", key: "dashboard", icon: LayoutDashboard, href: "/seller/dashboard", badge: null },
 	{ labelKey: "browseListings", key: "browse", icon: Search, href: "/seller/listing-browse", badge: null },
-	{ labelKey: "sentQuotes", key: "quotes", icon: Send, href: "/seller/quote-submit", badge: null },
+	{
+		labelKey: "tradeManagement",
+		key: "trade-management",
+		icon: Briefcase,
+		children: [
+			{ labelKey: "sentQuotes", key: "quotes", icon: Send, href: "/seller/quote-submit", badge: null },
+			{ labelKey: "contract", key: "contract", icon: FileCheck, href: "/seller/contract", badge: null },
+			{ labelKey: "payments", key: "payments", icon: CreditCard, href: "/seller/payments", badge: null },
+		],
+	},
 	{ labelKey: "chat", key: "chat", icon: MessageSquare, href: "/seller/chat", badge: null },
-	{ labelKey: "contract", key: "contract", icon: FileCheck, href: "/seller/contract", badge: null },
 	{ labelKey: "profile", key: "profile", icon: Building2, href: "/seller/profile/edit", badge: null },
 	{ labelKey: "plans", key: "plans", icon: Sparkles, href: "/plans", badge: null },
 	{ labelKey: "support", key: "support", icon: HelpCircle, href: "/support", badge: null },
@@ -154,7 +162,7 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 						{dropdownOpen && (
 							<div
 								onClick={(e) => e.stopPropagation()}
-								className="absolute left-0 right-0 top-full mt-1 rounded-xl bg-white border border-[#E5E7EB] shadow-lg overflow-hidden z-50"
+								className="absolute left-0 top-full z-50 mt-1 w-56 overflow-hidden rounded-xl border border-[#E5E7EB] bg-white shadow-lg"
 							>
 								<div className="px-4 py-3 border-b border-[#F3F4F6]">
 									<p className="text-sm font-semibold text-[#1F2937]">{name || companyName}</p>
