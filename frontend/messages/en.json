@@ -661,7 +661,21 @@
 		"editTitle": "Edit Quote Request",
 		"createTitle": "Create Quote Request",
 		"editSubtitle": "Edit the details of your quote request.",
-		"createSubtitle": "Korean suppliers will send you quotes."
+		"createSubtitle": "Korean suppliers will send you quotes.",
+		"aiDraftButton": "Draft with AI",
+		"aiOverwriteTitle": "Overwrite your current input?",
+		"aiOverwriteDescription": "The title, description, and items you've already entered will be replaced with the AI-generated draft."
+	},
+	"AiDraftModal": {
+		"title": "Draft with AI",
+		"description": "Describe what you need in one line. AI will fill in the title, category, description, and items for you.",
+		"placeholder": "e.g. Looking to bulk-buy A4 copy paper for the office",
+		"cancel": "Cancel",
+		"submit": "Generate draft",
+		"loading": "Generating...",
+		"notConfigured": "The AI feature isn't ready yet.",
+		"rateLimited": "Too many requests. Please try again in a moment.",
+		"genericError": "Failed to generate a draft. Please try again."
 	},
 	"CalendarModal": {
 		"weekday_sun": "Sun",

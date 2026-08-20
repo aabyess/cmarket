@@ -1,6 +1,6 @@
 import { createClient } from "@/libs/supabase";
 import { translateField } from "@/utils/translateField";
-import { ListingFormData } from "@/features/buyer/types";
+import { ListingFormData, ListingDraft } from "@/features/buyer/types";
 
 const DEFAULT_DEADLINE_DAYS = 7;
 
@@ -87,6 +87,31 @@ export async function updateListing(id: string, data: ListingFormData): Promise<
 		.eq("user_id", user.id);
 
 	if (error) throw error;
+}
+
+export class ListingDraftError extends Error {
+	status: number;
+
+	constructor(status: number, message: string) {
+		super(message);
+		this.name = "ListingDraftError";
+		this.status = status;
+	}
+}
+
+export async function draftListingWithAi(prompt: string): Promise<ListingDraft> {
+	const res = await fetch("/api/ai/draft-listing", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ prompt }),
+	});
+
+	if (!res.ok) {
+		const { error } = await res.json();
+		throw new ListingDraftError(res.status, error ?? "AI 초안 생성에 실패했습니다.");
+	}
+
+	return res.json();
 }
 
 export async function deleteListing(id: string): Promise<void> {
