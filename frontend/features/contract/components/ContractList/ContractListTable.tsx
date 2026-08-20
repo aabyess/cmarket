@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { CheckCircle2, FileText, Upload, PackageCheck, Trash2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { Contract, ContractStatus } from "@/features/contract/types";
@@ -45,6 +45,7 @@ export function ContractListTable({
 	onOpenDetail,
 }: ContractListTableProps): React.ReactNode {
 	const t = useTranslations("ContractListTable");
+	const locale = useLocale();
 	const statusLabels: Record<ContractStatus, string> = {
 		ongoing: t("statusOngoing"),
 		completed: t("statusCompleted"),
@@ -97,7 +98,7 @@ export function ContractListTable({
 									{t("days", { count: contract.quote.deliveryDays })}
 								</td>
 								<td className="px-4 py-3 text-[#9CA3AF]">
-									{new Date(contract.createdAt).toLocaleDateString("ko-KR")}
+									{new Date(contract.createdAt).toLocaleDateString(locale)}
 								</td>
 								{/* 액션 칸 — 버튼 클릭이 행 이동으로 번지지 않게 막는다 */}
 								<td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
@@ -181,7 +182,7 @@ export function ContractListTable({
 													<PackageCheck size={14} />
 													{t("deliveryConfirmedTitle", {
 														date: new Date(contract.deliveryConfirmedAt).toLocaleDateString(
-															"ko-KR",
+															locale,
 														),
 													})}
 												</span>

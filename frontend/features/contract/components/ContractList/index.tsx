@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import {
 	FileCheck,
@@ -51,6 +51,7 @@ const STATUS_ORDER: Record<ContractStatus, number> = {
 
 export function ContractList({ contracts, role }: ContractListProps) {
 	const t = useTranslations("ContractList");
+	const locale = useLocale();
 	const router = useRouter();
 	const statusLabels: Record<ContractStatus, string> = {
 		ongoing: t("statusOngoing"),
@@ -323,7 +324,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 								<span className="flex items-center gap-1.5">
 									<Calendar size={13} />
 									{t("contractedOn", {
-										date: new Date(contract.createdAt).toLocaleDateString("ko-KR"),
+										date: new Date(contract.createdAt).toLocaleDateString(locale),
 									})}
 								</span>
 							</div>
@@ -333,7 +334,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 								<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#F0FDF4] px-3.5 py-2.5 text-xs font-medium text-[#16A34A]">
 									<CheckCircle2 size={14} />
 									{t("paymentConfirmed", {
-										date: new Date(contract.paymentConfirmedAt).toLocaleDateString("ko-KR"),
+										date: new Date(contract.paymentConfirmedAt).toLocaleDateString(locale),
 									})}
 								</div>
 							)}
@@ -343,7 +344,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 								<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#F0FDF4] px-3.5 py-2.5 text-xs font-medium text-[#16A34A]">
 									<PackageCheck size={14} />
 									{t("deliveryConfirmed", {
-										date: new Date(contract.deliveryConfirmedAt).toLocaleDateString("ko-KR"),
+										date: new Date(contract.deliveryConfirmedAt).toLocaleDateString(locale),
 									})}
 								</div>
 							)}

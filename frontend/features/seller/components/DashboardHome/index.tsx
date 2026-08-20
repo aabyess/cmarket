@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { ArrowRight, Bell, Building2, Clock, MessageSquare, Search } from "lucide-react";
 import { cn } from "@/utils/cn";
@@ -18,6 +18,7 @@ export function DashboardHome({
 	recommendedListings,
 }: DashboardHomeProps): React.JSX.Element {
 	const t = useTranslations("SellerDashboard");
+	const locale = useLocale();
 	const router = useRouter();
 
 	function handleNavigate(href: string): void {
@@ -172,7 +173,7 @@ export function DashboardHome({
 												</p>
 												<div className="mt-1.5 flex items-center gap-1 text-sm text-imsg-secondary">
 													<Clock size={11} />
-													<span>{t("deadlinePrefix")} {new Date(listing.endDate).toLocaleDateString("ko-KR")}</span>
+													<span>{t("deadlinePrefix")} {new Date(listing.endDate).toLocaleDateString(locale)}</span>
 												</div>
 											</div>
 
