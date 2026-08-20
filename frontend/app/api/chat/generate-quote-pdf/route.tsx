@@ -7,6 +7,7 @@ import { QuotePdfDocument, type QuotePdfLabels } from "@/features/chat/pdf/Quote
 import { getCategoryLabels } from "@/features/buyer/constants";
 import { countryToLocale } from "@/utils/countryToLocale";
 import { routing } from "@/i18n/routing";
+import { parseJsonBody } from "@/utils/parseJsonBody";
 
 const BUCKET = "quote-documents";
 const SIGNED_URL_TTL = 60 * 10;
@@ -140,7 +141,11 @@ async function generateQuoteDoc(
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-	const { quoteId, locale: rawLocale, sendPair } = await req.json();
+	const body = await parseJsonBody<{ quoteId?: string; locale?: unknown; sendPair?: boolean }>(req);
+	if (!body) {
+		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+	}
+	const { quoteId, locale: rawLocale, sendPair } = body;
 	if (!quoteId) {
 		return NextResponse.json({ error: "quoteId가 필요합니다." }, { status: 400 });
 	}

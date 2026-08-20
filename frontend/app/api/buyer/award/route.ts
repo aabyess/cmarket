@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient, createServerAdminClient } from "@/libs/supabaseServer";
 import { createInvoiceMeta } from "@/features/chat/pdf/getInvoicePdfData";
 import { translateFieldServer } from "@/libs/translateFieldServer";
+import { parseJsonBody } from "@/utils/parseJsonBody";
 
 const ERROR_MESSAGES: Record<string, string> = {
 	QUOTE_NOT_FOUND: "견적을 찾을 수 없습니다.",
@@ -12,7 +13,11 @@ const ERROR_MESSAGES: Record<string, string> = {
 };
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-	const { quoteId } = await req.json();
+	const body = await parseJsonBody<{ quoteId?: string }>(req);
+	if (!body) {
+		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+	}
+	const { quoteId } = body;
 	if (!quoteId) {
 		return NextResponse.json({ error: "quoteId가 필요합니다." }, { status: 400 });
 	}

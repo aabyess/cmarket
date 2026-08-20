@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient, createServerAdminClient } from "@/libs/supabaseServer";
+import { parseJsonBody } from "@/utils/parseJsonBody";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
@@ -77,7 +78,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 }
 
 export async function DELETE(req: NextRequest): Promise<NextResponse> {
-	const { contractId } = await req.json();
+	const body = await parseJsonBody<{ contractId?: string }>(req);
+	if (!body) {
+		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+	}
+	const { contractId } = body;
 	if (!contractId) {
 		return NextResponse.json({ error: "contractId가 필요합니다." }, { status: 400 });
 	}

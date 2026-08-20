@@ -5,6 +5,7 @@ import { createServerSupabaseClient, createServerAdminClient } from "@/libs/supa
 import { getInvoicePdfData, type InvoiceMeta } from "@/features/chat/pdf/getInvoicePdfData";
 import { InvoicePdfDocument, type InvoicePdfLabels } from "@/features/chat/pdf/InvoicePdfDocument";
 import { routing } from "@/i18n/routing";
+import { parseJsonBody } from "@/utils/parseJsonBody";
 
 const BUCKET = "quote-documents";
 const SIGNED_URL_TTL = 60 * 10;
@@ -70,7 +71,11 @@ async function ensureMessageRecorded(
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-	const { quoteId, locale: rawLocale } = await req.json();
+	const body = await parseJsonBody<{ quoteId?: string; locale?: unknown }>(req);
+	if (!body) {
+		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+	}
+	const { quoteId, locale: rawLocale } = body;
 	if (!quoteId) {
 		return NextResponse.json({ error: "quoteId가 필요합니다." }, { status: 400 });
 	}

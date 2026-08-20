@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
+import { parseJsonBody } from "@/utils/parseJsonBody";
 
 // DeepL 유료 쿼터를 쓰는 프록시라 로그인 사용자만 허용하고 길이를 제한한다.
 const MAX_TEXT_LENGTH = 5000;
@@ -13,7 +14,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
 	}
 
-	const { text, targetLang } = await req.json();
+	const body = await parseJsonBody<{ text?: string; targetLang?: string }>(req);
+	if (!body) {
+		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+	}
+	const { text, targetLang } = body;
 
 	if (!text?.trim()) {
 		return NextResponse.json({ translatedText: null, detectedLang: null });

@@ -2,9 +2,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerAdminClient, createServerSupabaseClient } from "@/libs/supabaseServer";
 import { upsertPrimaryBankAccount } from "@/features/siteBuilder/apis";
+import { parseJsonBody } from "@/utils/parseJsonBody";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-	const { bankName, accountNumber, accountHolder, swiftCode, currency } = await req.json();
+	const body = await parseJsonBody<{
+		bankName?: string;
+		accountNumber?: string;
+		accountHolder?: string;
+		swiftCode?: string;
+		currency?: string;
+	}>(req);
+	if (!body) {
+		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+	}
+	const { bankName, accountNumber, accountHolder, swiftCode, currency } = body;
 
 	if (!bankName || !accountNumber || !accountHolder) {
 		return NextResponse.json(

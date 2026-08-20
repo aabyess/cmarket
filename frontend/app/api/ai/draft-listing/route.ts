@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
 import { callGeminiJson, GeminiError } from "@/libs/geminiServer";
 import { sanitizeHtml } from "@/utils/sanitizeHtml";
+import { parseJsonBody } from "@/utils/parseJsonBody";
 
 const PROMPT_MAX_LENGTH = 500;
 const CATEGORY_ALLOWLIST = ["office", "lab", "machinery", "chemical", "other"] as const;
@@ -90,7 +91,11 @@ function isValidCategory(value: unknown): value is ListingCategory {
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-	const { prompt } = await req.json();
+	const body = await parseJsonBody<{ prompt?: string }>(req);
+	if (!body) {
+		return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+	}
+	const { prompt } = body;
 
 	if (typeof prompt !== "string" || !prompt.trim()) {
 		return NextResponse.json({ error: "설명을 입력해주세요." }, { status: 400 });
