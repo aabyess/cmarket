@@ -35,12 +35,19 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 	// 본인 계약인지 확인 (buyer만 업로드 가능)
 	const { data: contract } = await admin
 		.from("contracts")
-		.select("buyer_id, payment_receipt_url, payment_confirmed_at")
+		.select("buyer_id, payment_receipt_url, payment_confirmed_at, status")
 		.eq("id", contractId)
 		.single();
 
 	if (!contract || contract.buyer_id !== user.id) {
 		return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
+	}
+
+	if (contract.status !== "ongoing") {
+		return NextResponse.json(
+			{ error: "진행 중인 계약만 영수증을 올릴 수 있습니다." },
+			{ status: 400 },
+		);
 	}
 
 	// 판매자가 이미 입금 확인한 뒤에는 영수증 교체 불가
