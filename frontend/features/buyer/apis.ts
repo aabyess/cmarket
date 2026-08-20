@@ -72,12 +72,12 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 
 	// "받은 견적" 배지는 안읽은 알림 수가 아니라, 진행중 공고에 실제로 달린 견적 수를 보여준다.
 	// (알림을 다 읽으면 0이 되어 "받은 견적이 없다"처럼 보이던 문제)
-	// status가 "active"라도 마감일이 지난 공고는 화면에서 "마감"으로 보이므로 집계에서 뺀다.
+	// status가 "active"라도 마감일이 지났거나 마감일이 없는 공고는 할 일 목록과 기준을 맞춰 집계에서 뺀다.
 	const now = Date.now();
 	const activeQuoteCount = listingRows
 		.filter(
 			(row) =>
-				row.status === "active" && (row.end_date === null || new Date(row.end_date).getTime() > now),
+				row.status === "active" && row.end_date !== null && new Date(row.end_date).getTime() > now,
 		)
 		.reduce((sum, row) => sum + (((row.quotes as unknown as { id: string }[]) ?? []).length), 0);
 

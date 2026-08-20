@@ -139,6 +139,8 @@ export function QuotePdfCard({
 			>
 				<div className="flex h-40 items-center justify-center bg-white/90">
 					{thumbnailUrl ? (
+						// canvas로 만든 data URL 썸네일이라 next/image 최적화 대상이 아니다
+						// eslint-disable-next-line @next/next/no-img-element
 						<img src={thumbnailUrl} alt={t("previewAlt")} className="h-full w-full object-contain" />
 					) : thumbnailFailed ? (
 						<FileText size={28} className="text-[#9CA3AF]" />
