@@ -7,7 +7,7 @@ import {
 	LayoutDashboard, ListTodo, Mail, MessageSquare,
 	FileCheck, HelpCircle, Search, Send, Building2,
 	LogOut, User, FilePlus, Sparkles, Settings, FileText, Phone,
-	Briefcase, ChevronDown, ChevronUp, Shield,
+	Briefcase, ChevronDown, ChevronUp, Shield, CreditCard,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { NotificationBell } from "@/features/notifications/components/NotificationBell";
@@ -60,6 +60,7 @@ const BUYER_MENU_ITEMS: MenuEntry[] = [
 			{ labelKey: "myListings", key: "listings", icon: ListTodo, href: "/buyer/order-list", badge: null },
 			{ labelKey: "receivedQuotes", key: "quotes", icon: Mail, href: "/buyer/quote-review", badge: null },
 			{ labelKey: "contract", key: "contract", icon: FileCheck, href: "/buyer/contract", badge: null },
+			{ labelKey: "payments", key: "payments", icon: CreditCard, href: "/buyer/payments", badge: null },
 			{ labelKey: "listingTemplates", key: "listing-templates", icon: FileText, href: "/buyer/listing-templates", badge: null },
 		],
 	},

@@ -89,6 +89,7 @@
 			"browseListings": "견적요청 보기",
 			"chat": "채팅",
 			"contract": "계약 관리",
+			"payments": "결제창",
 			"profile": "기업 홈페이지",
 			"plans": "요금제",
 			"support": "지원센터"
@@ -1807,5 +1808,41 @@
 		"bankAccountSaveButton": "계좌 정보 저장",
 		"bankAccountSaveSuccess": "계좌 정보가 저장됐어요.",
 		"bankAccountSaveError": "계좌 정보 저장 중 오류가 발생했습니다."
+	},
+	"PaymentsPage": {
+		"title": "결제창",
+		"subtitle": "확정된 계약의 결제 내역을 확인하고 영수증을 관리하세요.",
+		"subtitleSeller": "확정된 계약의 입금 여부를 확인하세요."
+	},
+	"PaymentsList": {
+		"searchPlaceholder": "계약번호 또는 공고명 검색",
+		"filterSectionLabel": "상태",
+		"filterAll": "전체",
+		"filterAwaitingReceipt": "영수증 업로드 대기",
+		"filterAwaitingConfirmation": "입금 확인 대기",
+		"filterConfirmed": "결제 완료",
+		"statusAwaitingReceiptSeller": "영수증 대기",
+		"columnContractNumber": "계약번호",
+		"columnListingTitle": "공고명",
+		"columnTransactionDate": "거래일자",
+		"columnAmount": "거래금액",
+		"columnMethod": "결제방식",
+		"columnStatus": "상태",
+		"columnAction": "액션",
+		"methodWire": "송금",
+		"uploadReceiptButton": "영수증 업로드",
+		"uploading": "업로드 중...",
+		"viewReceiptButton": "영수증 보기",
+		"viewReceiptButtonSeller": "영수증 확인",
+		"confirmPaymentButton": "입금 확인",
+		"confirmPaymentModalTitle": "입금을 확인하시겠어요?",
+		"confirmPaymentModalDescription": "입금 확인 후에는 계약이 완료 처리됩니다.",
+		"processing": "처리 중...",
+		"receiptUploadErrorMessage": "영수증 업로드에 실패했습니다.",
+		"receiptViewErrorMessage": "영수증을 불러오지 못했습니다.",
+		"confirmPaymentErrorMessage": "입금 확인에 실패했습니다.",
+		"emptyTitle": "결제 내역이 없어요",
+		"emptyDescription": "계약이 확정되면 결제 내역이 여기 표시돼요.",
+		"noResults": "해당하는 결제 내역이 없어요."
 	}
 }
