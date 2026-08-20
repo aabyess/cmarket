@@ -1716,6 +1716,10 @@
 		"passwordChangeError": "An error occurred while changing your password.",
 		"passwordChangeSuccess": "Your password has been changed.",
 		"languageTitle": "Language",
-		"languageHint": "Choose the language you want to use."
+		"languageHint": "Choose the language you want to use.",
+		"bankAccountRequiredFields": "Please enter the bank name, account number, and account holder.",
+		"bankAccountSaveButton": "Save Bank Account",
+		"bankAccountSaveSuccess": "Your bank account has been saved.",
+		"bankAccountSaveError": "An error occurred while saving your bank account."
 	}
 }

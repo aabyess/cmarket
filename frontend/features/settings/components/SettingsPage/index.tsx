@@ -9,30 +9,36 @@ import { routing } from "@/i18n/routing";
 import { cva } from "class-variance-authority";
 import { AlertCircle, ArrowRight, CheckCircle2, Globe, Loader2, Lock, Mail } from "lucide-react";
 import { createClient } from "@/libs/supabase";
+import { SettingsPageBankAccount } from "@/features/settings/components/SettingsPage/SettingsPageBankAccount";
+import type { SiteBankAccount } from "@/features/siteBuilder/types";
 
 type SettingsPageProps = {
 	role: "buyer" | "seller";
 	email: string;
+	bankAccount: SiteBankAccount | null;
 };
 
-type Feedback = { kind: "SUCCESS" | "ERROR"; message: string };
+export type Feedback = { kind: "SUCCESS" | "ERROR"; message: string };
 
-const SECTION_CLASS = "rounded-2xl border border-[#E5E7EB] bg-white p-6";
-const HEADING_CLASS = "flex items-center gap-2 text-sm font-semibold text-[#1F2937]";
-const HINT_CLASS = "mb-4 mt-1 text-xs text-[#9CA3AF]";
-const INPUT_CLASS =
+export const SECTION_CLASS = "rounded-2xl border border-[#E5E7EB] bg-white p-6";
+export const HEADING_CLASS = "flex items-center gap-2 text-sm font-semibold text-[#1F2937]";
+export const HINT_CLASS = "mb-4 mt-1 text-xs text-[#9CA3AF]";
+export const INPUT_CLASS =
 	"w-full rounded-lg border border-[#E5E7EB] px-3.5 py-2.5 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue";
-const LABEL_CLASS = "mb-1.5 block text-xs font-medium text-[#374151]";
+export const LABEL_CLASS = "mb-1.5 block text-xs font-medium text-[#374151]";
 
-const feedbackBox = cva("mb-4 flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium", {
-	variants: {
-		kind: {
-			SUCCESS: "border border-[#BBF7D0] bg-[#F0FDF4] text-[#16A34A]",
-			ERROR: "border border-[#FECACA] bg-[#FEF2F2] text-[#DC2626]",
+export const feedbackBox = cva(
+	"mb-4 flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium",
+	{
+		variants: {
+			kind: {
+				SUCCESS: "border border-[#BBF7D0] bg-[#F0FDF4] text-[#16A34A]",
+				ERROR: "border border-[#FECACA] bg-[#FEF2F2] text-[#DC2626]",
+			},
 		},
+		defaultVariants: { kind: "SUCCESS" },
 	},
-	defaultVariants: { kind: "SUCCESS" },
-});
+);
 
 const localeButton = cva("rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors", {
 	variants: {
@@ -44,7 +50,7 @@ const localeButton = cva("rounded-lg border px-4 py-2.5 text-sm font-medium tran
 	defaultVariants: { active: false },
 });
 
-export function SettingsPage({ role, email }: SettingsPageProps): React.JSX.Element {
+export function SettingsPage({ role, email, bankAccount }: SettingsPageProps): React.JSX.Element {
 	const t = useTranslations("Settings");
 	const tLocales = useTranslations("Locales");
 	const locale = useLocale();
@@ -211,6 +217,8 @@ export function SettingsPage({ role, email }: SettingsPageProps): React.JSX.Elem
 					))}
 				</div>
 			</div>
+
+			{role === "seller" && bankAccount && <SettingsPageBankAccount bankAccount={bankAccount} />}
 		</div>
 	);
 }

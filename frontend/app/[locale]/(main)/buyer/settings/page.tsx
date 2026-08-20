@@ -18,7 +18,7 @@ export default async function BuyerSettingsPage(): Promise<React.JSX.Element> {
 				<h1 className="text-2xl font-bold text-[#1F2937]">{t("title")}</h1>
 				<p className="mt-1 text-sm text-[#6B7280]">{t("subtitle")}</p>
 			</div>
-			<SettingsPage role="buyer" email={user?.email ?? ""} />
+			<SettingsPage role="buyer" email={user?.email ?? ""} bankAccount={null} />
 		</div>
 	);
 }
