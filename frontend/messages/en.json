@@ -84,6 +84,7 @@
 			"myListings": "My Listings",
 			"receivedQuotes": "Received Quotes",
 			"sentQuotes": "Sent Quotes",
+			"quoteTemplates": "Quote Templates",
 			"browseListings": "Browse Listings",
 			"chat": "Chat",
 			"contract": "Contracts",
@@ -96,6 +97,40 @@
 			"settings": "Settings",
 			"logout": "Log out"
 		}
+	},
+	"QuoteTemplatesPage": {
+		"title": "Quote Templates",
+		"subtitle": "Save quote forms you use often and load them when writing a quote."
+	},
+	"QuoteTemplateManager": {
+		"description": "Manage your saved templates.",
+		"newTemplateButton": "New template",
+		"loading": "Loading...",
+		"emptyState": "No templates saved yet.",
+		"noNotePreview": "No note",
+		"updatedAtLabel": "Updated {date}",
+		"editAria": "Edit",
+		"deleteAria": "Delete",
+		"editTitle": "Edit template",
+		"createTitle": "New template",
+		"nameLabel": "Template name",
+		"namePlaceholder": "e.g. A4 paper, Chemicals 1",
+		"noteLabel": "Note",
+		"notePlaceholder": "Enter the proposal note",
+		"paymentTermsLabel": "Payment terms",
+		"paymentTermsPlaceholder": "e.g. T/T 50% deposit, 50% before shipment",
+		"deliveryDaysLabel": "Delivery days",
+		"deliveryDaysPlaceholder": "30",
+		"currencyLabel": "Currency",
+		"currencyPlaceholder": "None",
+		"nameRequiredError": "Please enter a template name.",
+		"cancelButton": "Cancel",
+		"saveButton": "Save",
+		"saving": "Saving...",
+		"saveError": "Failed to save. Please try again.",
+		"deleteError": "Failed to delete. Please try again.",
+		"deleteConfirmTitle": "Delete this template?",
+		"deleteConfirmDescription": "This can't be undone."
 	},
 	"Login": {
 		"title": "Log In",
