@@ -256,13 +256,16 @@ export function PaymentsList({ contracts, role }: PaymentsListProps): React.Reac
 										)
 									) : (
 										<div className="mt-4 flex flex-wrap gap-2">
-											<button
-												type="button"
-												onClick={() => handleViewReceipt(contract.id)}
-												className="text-imsg-blue flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] py-2.5 text-xs font-medium transition-colors hover:bg-[#DBEAFE]">
-												<FileText size={14} />
-												{role === "seller" ? t("viewReceiptButtonSeller") : t("viewReceiptButton")}
-											</button>
+											{/* 예전 데이터 중 영수증 없이 완료된 계약이 있어, 실제 파일이 있을 때만 노출한다 */}
+											{contract.paymentReceiptUrl && (
+												<button
+													type="button"
+													onClick={() => handleViewReceipt(contract.id)}
+													className="text-imsg-blue flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] py-2.5 text-xs font-medium transition-colors hover:bg-[#DBEAFE]">
+													<FileText size={14} />
+													{role === "seller" ? t("viewReceiptButtonSeller") : t("viewReceiptButton")}
+												</button>
+											)}
 											{status === "confirmed" && (
 												<button
 													type="button"
