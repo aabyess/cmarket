@@ -18,11 +18,18 @@ export class GeminiError extends Error {
 
 type JsonSchema = Record<string, unknown>;
 
+type GeminiFilePart = {
+	mimeType: string;
+	data: string;
+};
+
 type CallGeminiJsonParams = {
 	system: string;
 	prompt: string;
 	schema: JsonSchema;
 	maxOutputTokens?: number;
+	// base64 inline data로 첨부하는 파일(PDF/이미지). 안 넘기면 기존과 동일하게 텍스트만 보낸다.
+	fileParts?: GeminiFilePart[];
 };
 
 function buildUrl(model: string): string {
@@ -36,15 +43,21 @@ export async function callGeminiJson<T>({
 	prompt,
 	schema,
 	maxOutputTokens = DEFAULT_MAX_OUTPUT_TOKENS,
+	fileParts,
 }: CallGeminiJsonParams): Promise<T> {
 	const apiKey = process.env.GEMINI_API_KEY;
 	if (!apiKey) {
 		throw new GeminiError("AI_NOT_CONFIGURED", "GEMINI_API_KEY가 설정되지 않았습니다.");
 	}
 
+	const parts: unknown[] = [{ text: prompt }];
+	for (const file of fileParts ?? []) {
+		parts.push({ inlineData: { mimeType: file.mimeType, data: file.data } });
+	}
+
 	const body = JSON.stringify({
 		systemInstruction: { parts: [{ text: system }] },
-		contents: [{ role: "user", parts: [{ text: prompt }] }],
+		contents: [{ role: "user", parts }],
 		generationConfig: {
 			maxOutputTokens,
 			responseMimeType: "application/json",
