@@ -94,6 +94,12 @@ export function NotificationBell(): React.ReactNode {
 			return;
 		}
 
+		// quote_id가 없는 옛 알림은 특정 방으로 못 보내므로 채팅 목록으로 보낸다.
+		if (!notification.quoteId) {
+			router.push(chatBasePath);
+			return;
+		}
+
 		router.push(`${chatBasePath}?quoteId=${notification.quoteId}`);
 	}
 
