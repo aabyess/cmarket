@@ -82,7 +82,7 @@
 			"dashboard": "대시보드",
 			"postListing": "견적 등록",
 			"myListings": "나의 견적",
-			"listingTemplates": "공고 템플릿",
+			"listingTemplates": "견적 템플릿",
 			"receivedQuotes": "받은 견적",
 			"sentQuotes": "보낸 견적",
 			"browseListings": "견적요청 보기",
@@ -99,7 +99,7 @@
 		}
 	},
 	"ListingTemplatesPage": {
-		"title": "공고 템플릿",
+		"title": "견적 템플릿",
 		"subtitle": "자주 쓰는 공고 양식을 저장해두고 공고 등록 시 불러와 쓸 수 있어요."
 	},
 	"ListingTemplateManager": {
@@ -851,7 +851,7 @@
 		"aiOverwriteDescription": "이미 입력된 제목/설명/품목이 AI가 작성한 초안으로 교체됩니다.",
 		"templateSaveButton": "템플릿으로 저장",
 		"templateLoadButton": "템플릿 불러오기",
-		"templateModalTitle": "공고 템플릿 불러오기",
+		"templateModalTitle": "견적 템플릿 불러오기",
 		"templateModalDescription": "저장해둔 템플릿을 선택하면 카테고리/설명/품목에 바로 채워져요.",
 		"templateLoadError": "템플릿을 불러오지 못했어요.",
 		"templateEmptyTitle": "저장된 템플릿이 없어요",
