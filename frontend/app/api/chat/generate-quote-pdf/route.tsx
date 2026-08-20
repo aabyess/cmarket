@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { getTranslations } from "next-intl/server";
 import { createServerSupabaseClient, createServiceRoleClient } from "@/libs/supabaseServer";
-import { getQuotePdfData } from "@/features/chat/pdf/getQuotePdfData";
+import { getQuotePdfData, getQuotePdfMeta } from "@/features/chat/pdf/getQuotePdfData";
 import { QuotePdfDocument, type QuotePdfLabels } from "@/features/chat/pdf/QuotePdfDocument";
 import { getCategoryLabels } from "@/features/buyer/constants";
 import { countryToLocale } from "@/utils/countryToLocale";
@@ -60,16 +60,12 @@ async function generateQuoteDoc(
 	senderId: string,
 	translateItems = false,
 ): Promise<GenerateResult | { error: string }> {
-	const data = await getQuotePdfData(quoteId, locale, translateItems);
-	if (!data) return { error: "견적을 찾을 수 없습니다." };
+	const meta = await getQuotePdfMeta(quoteId, locale);
+	if (!meta) return { error: "견적을 찾을 수 없습니다." };
 
 	const storagePath = `${quoteId}/quote-${locale}.pdf`;
-
-	const [t, tCategory] = await Promise.all([
-		getTranslations({ locale, namespace: "QuotePdfDocument" }),
-		getTranslations({ locale, namespace: "ListingCategory" }),
-	]);
-	const fileName = `${t("fileNamePrefix")}_${data.listing.title}.pdf`;
+	const t = await getTranslations({ locale, namespace: "QuotePdfDocument" });
+	const fileName = `${t("fileNamePrefix")}_${meta.title}.pdf`;
 
 	const { data: existingSigned } = await admin.storage.from(BUCKET).createSignedUrl(storagePath, SIGNED_URL_TTL);
 
@@ -77,6 +73,12 @@ async function generateQuoteDoc(
 		await ensureMessageRecorded(admin, quoteId, senderId, storagePath, fileName);
 		return { attachmentUrl: storagePath, attachmentName: fileName, signedUrl: existingSigned.signedUrl };
 	}
+
+	// 캐시가 없을 때만 품목 번역·회사 정보까지 포함한 전체 데이터를 모은다.
+	const data = await getQuotePdfData(quoteId, locale, translateItems);
+	if (!data) return { error: "견적을 찾을 수 없습니다." };
+
+	const tCategory = await getTranslations({ locale, namespace: "ListingCategory" });
 
 	const labels: QuotePdfLabels = {
 		title: t("title"),
@@ -159,12 +161,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
 	}
 
-	const data = await getQuotePdfData(quoteId, locale);
-	if (!data) {
+	const meta = await getQuotePdfMeta(quoteId, locale);
+	if (!meta) {
 		return NextResponse.json({ error: "견적을 찾을 수 없습니다." }, { status: 404 });
 	}
 
-	if (data.buyerId !== user.id && data.sellerId !== user.id) {
+	if (meta.buyerId !== user.id && meta.sellerId !== user.id) {
 		return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
 	}
 
@@ -175,11 +177,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		const { data: profiles } = await admin
 			.from("profiles")
 			.select("id, country")
-			.in("id", [data.buyerId, data.sellerId]);
+			.in("id", [meta.buyerId, meta.sellerId]);
 		const countryMap = new Map((profiles ?? []).map((p) => [p.id, p.country]));
 
-		const buyerLocale = countryToLocale(countryMap.get(data.buyerId));
-		const sellerLocale = countryToLocale(countryMap.get(data.sellerId));
+		const buyerLocale = countryToLocale(countryMap.get(meta.buyerId));
+		const sellerLocale = countryToLocale(countryMap.get(meta.sellerId));
 
 		const original = await generateQuoteDoc(admin, quoteId, buyerLocale, user.id);
 		if ("error" in original) {
