@@ -2075,5 +2075,10 @@
 			"requiredDocuments": [],
 			"estimatedDuration": "Perlu diperiksa individual"
 		}
+	},
+	"CompanyReviewsSection": {
+		"title": "{count} ulasan",
+		"showMoreButton": "Tampilkan ulasan lainnya",
+		"anonymousCompany": "Perusahaan tidak diketahui"
 	}
 }

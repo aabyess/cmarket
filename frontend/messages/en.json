@@ -2062,5 +2062,10 @@
 			"requiredDocuments": [],
 			"estimatedDuration": "Check individually"
 		}
+	},
+	"CompanyReviewsSection": {
+		"title": "{count} reviews",
+		"showMoreButton": "Show more reviews",
+		"anonymousCompany": "Unknown company"
 	}
 }
