@@ -206,8 +206,10 @@
 	"SignupComplete": {
 		"title": "Pendaftaran Selesai!",
 		"welcome": "Selamat datang di MitraPay.",
-		"countdown": "Akan diarahkan ke dashboard dalam {seconds} detik.",
-		"start": "Mulai sekarang"
+		"roleActionBuyer": "Buat permintaan pertama Anda",
+		"roleActionSeller": "Lihat daftar permintaan",
+		"verificationAction": "Verifikasi perusahaan untuk kepercayaan lebih",
+		"start": "Langsung ke dasbor"
 	},
 	"SignupInfoKorea": {
 		"step": "3 / 4",
@@ -1798,7 +1800,7 @@
 		"viewAll": "Lihat Semua",
 		"todoEmptyTitle": "Tidak ada tugas saat ini",
 		"todoEmptyDescription": "{count} permintaan sedang berjalan. Kami akan memberi tahu Anda saat penawaran tiba.",
-		"todoEmptyAction": "Lihat permintaan yang sedang berjalan",
+		"todoEmptyAction": "Buat permintaan baru",
 		"urgentBadge": "Mendesak",
 		"shortcutsTitle": "Pintasan",
 		"shortcutQuotesLabel": "Penawaran Diterima",
