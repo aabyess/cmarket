@@ -3,6 +3,7 @@ import { cva } from "class-variance-authority";
 import { getLocale, getTranslations } from "next-intl/server";
 import { ListingInfo } from "@/features/shared/components/ListingInfo";
 import { getCategoryLabels, CURRENCY_SYMBOL } from "@/features/buyer/constants";
+import { SniChecklistSection } from "@/features/sni/components/SniChecklistSection";
 import { sanitizeHtml } from "@/utils/sanitizeHtml";
 import type { ListingDetail } from "@/features/seller/types";
 
@@ -110,6 +111,8 @@ export async function ListingDetailInfo({ listing }: ListingDetailInfoProps): Pr
 					))}
 				</div>
 			</section>
+
+			<SniChecklistSection category={listing.category} />
 
 			{listing.description && (
 				<section className="rounded-2xl bg-white p-6 shadow-sm">
