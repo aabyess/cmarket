@@ -1,3 +1,5 @@
+import type { VerificationStatus } from "@/features/verification/types";
+
 export type Currency = "USD" | "IDR" | "KRW";
 
 export type ListingItem = {
@@ -120,6 +122,7 @@ export type SellerInfo = {
 	address: string;
 	businessType: string;
 	businessItem: string;
+	verificationStatus: VerificationStatus;
 	logoUrl: string | null;
 	ratingAverage: number | null;
 	ratingCount: number;
