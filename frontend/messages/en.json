@@ -1580,7 +1580,10 @@
 		"hideRoomErrorMessage": "An error occurred while leaving the chat.",
 		"hideRoomModalTitle": "Leave this chat?",
 		"hideRoomModalDescription": "The conversation history is kept, and this chat will reappear if the other party sends a new message.",
-		"hideRoomModalConfirm": "Leave"
+		"hideRoomModalConfirm": "Leave",
+		"editQuoteButton": "Edit Quote",
+		"resendQuoteButton": "Send Quote",
+		"resendQuoteErrorMessage": "Failed to send the quote."
 	},
 	"ChatMessageList": {
 		"dateLabel": "{month}/{day}/{year}",

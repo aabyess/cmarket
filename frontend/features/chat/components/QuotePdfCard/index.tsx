@@ -27,7 +27,8 @@ type ResolvedDoc = {
 };
 
 function extractDocLocale(attachmentUrl: string | null): string | null {
-	const match = attachmentUrl?.match(/quote-([a-z]{2,5})\.pdf$/);
+	// 리비전 인지형 경로(quote-ko-1723456789.pdf)도, 구경로(quote-ko.pdf)도 잡는다.
+	const match = attachmentUrl?.match(/quote-([a-z]{2,5})(?:-\d+)?\.pdf$/);
 	return match?.[1] ?? null;
 }
 

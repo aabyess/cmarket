@@ -339,7 +339,10 @@
 		"hideRoomErrorMessage": "Terjadi kesalahan saat keluar dari chat.",
 		"hideRoomModalTitle": "Keluar dari chat ini?",
 		"hideRoomModalDescription": "Riwayat percakapan akan tetap tersimpan, dan chat ini akan muncul kembali jika pihak lain mengirim pesan baru.",
-		"hideRoomModalConfirm": "Keluar"
+		"hideRoomModalConfirm": "Keluar",
+		"editQuoteButton": "Ubah Penawaran",
+		"resendQuoteButton": "Kirim Penawaran",
+		"resendQuoteErrorMessage": "Gagal mengirim penawaran."
 	},
 	"ChatMessageList": {
 		"dateLabel": "{day}/{month}/{year}",

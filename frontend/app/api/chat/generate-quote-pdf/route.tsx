@@ -77,7 +77,10 @@ async function generateQuoteDoc(
 	const meta = await getQuotePdfMeta(quoteId, locale);
 	if (!meta) return { error: "견적을 찾을 수 없습니다." };
 
-	const storagePath = `${quoteId}/quote-${locale}.pdf`;
+	// 경로에 리비전(견적 수정 시각) epoch를 붙인다 — 수정 전과 같은 경로로는
+	// 유니크 인덱스+dedup 때문에 새 메시지가 안 생기므로, 수정될 때마다 경로 자체를 바꾼다.
+	const revisionTs = new Date(meta.revisionTimestamp).getTime();
+	const storagePath = `${quoteId}/quote-${locale}-${revisionTs}.pdf`;
 	const t = await getTranslations({ locale, namespace: "QuotePdfDocument" });
 	const fileName = `${t("fileNamePrefix")}_${meta.title}.pdf`;
 

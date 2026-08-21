@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerAdminClient, createServerSupabaseClient } from "@/libs/supabaseServer";
 import { translateFieldServer } from "@/libs/translateFieldServer";
-import { routing } from "@/i18n/routing";
 import { parseJsonBody } from "@/utils/parseJsonBody";
 
 type QuoteMutationBody = {
@@ -219,14 +218,22 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
 		return NextResponse.json({ error: updateError.message }, { status: 500 });
 	}
 
-	// 옛 가격/납기로 만들어진 캐시 PDF가 계속 나오지 않도록 지운다.
+	// 옛 가격/납기로 만들어진 캐시 PDF가 계속 나오지 않도록 지운다. PDF 경로가
+	// 리비전(revised_at) 인지형이라 고정 경로를 지우는 것만으론 부족해, quoteId
+	// 폴더 전체를 나열해 지운다(버전드 파일도 정리됨).
 	// 실패해도 수정을 되돌리지 않는다 — 다음 PDF 요청 때 재생성될 뿐이다.
-	const { error: removeError } = await admin.storage
-		.from("quote-documents")
-		.remove(routing.locales.map((locale) => `${quoteId}/quote-${locale}.pdf`));
+	const { data: existingFiles, error: listError } = await admin.storage.from("quote-documents").list(quoteId);
 
-	if (removeError) {
-		console.error("quote PDF invalidate error:", removeError);
+	if (listError) {
+		console.error("quote PDF invalidate list error:", listError);
+	} else if (existingFiles && existingFiles.length > 0) {
+		const { error: removeError } = await admin.storage
+			.from("quote-documents")
+			.remove(existingFiles.map((file) => `${quoteId}/${file.name}`));
+
+		if (removeError) {
+			console.error("quote PDF invalidate error:", removeError);
+		}
 	}
 
 	return NextResponse.json({ success: true });

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { ArrowUp, ChevronLeft, LogOut, Sparkles } from "lucide-react";
+import { ArrowUp, ChevronLeft, Loader2, LogOut, PencilLine, Send, Sparkles } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { ChatMessageList } from "@/features/chat/components/ChatMessageList";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
@@ -35,6 +35,7 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 	const [isAwarding, setIsAwarding] = useState(false);
 	const [isHideModalOpen, setIsHideModalOpen] = useState(false);
 	const [isHiding, setIsHiding] = useState(false);
+	const [isResendingQuote, setIsResendingQuote] = useState(false);
 	const [limitExceeded, setLimitExceeded] = useState(false);
 	const [isLoadingOlder, setIsLoadingOlder] = useState(false);
 	const [reachedOldest, setReachedOldest] = useState(false);
@@ -169,6 +170,33 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 		});
 	}
 
+	function handleEditQuote(): void {
+		router.push(`/seller/listing-browse/${room.listingId}`);
+	}
+
+	// 실시간 구독(위 postgres_changes 이펙트)이 새 quote_pdf 메시지를 받으면
+	// ChatMessageList가 마지막 메시지 변경을 감지해 자동으로 아래로 스크롤한다 —
+	// 여기서 따로 스크롤을 호출할 필요가 없다.
+	async function handleResendQuote(): Promise<void> {
+		setIsResendingQuote(true);
+		try {
+			const res = await fetch("/api/chat/generate-quote-pdf", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ quoteId: room.quoteId, sendPair: true }),
+			});
+			if (!res.ok) {
+				const { error } = await res.json();
+				throw new Error(error);
+			}
+		} catch (err) {
+			console.error(err);
+			alert(t("resendQuoteErrorMessage"));
+		} finally {
+			setIsResendingQuote(false);
+		}
+	}
+
 	async function handleConfirmAward(): Promise<void> {
 		setIsAwarding(true);
 		try {
@@ -228,8 +256,8 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 					<span className="text-xs text-imsg-secondary">{room.listingTitle}</span>
 				</div>
 				<div className="flex items-center gap-1.5">
-					{myRole === "buyer" &&
-						(room.quoteStatus === "awarded" ? (
+					{myRole === "buyer" ? (
+						room.quoteStatus === "awarded" ? (
 							<span className="rounded-full bg-imsg-blue/10 px-3 py-1.5 text-xs font-semibold text-imsg-blue">
 								{t("statusAwarded")}
 							</span>
@@ -244,7 +272,28 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 							>
 								{t("awardButton")}
 							</button>
-						))}
+						)
+					) : (
+						room.quoteStatus === "pending" && (
+							<>
+								<button
+									onClick={handleEditQuote}
+									className="flex items-center gap-1 rounded-full border border-[#E5E7EB] px-2.5 py-1.5 text-xs font-semibold text-[#374151] transition-colors hover:bg-imsg-surface"
+								>
+									<PencilLine size={12} />
+									{t("editQuoteButton")}
+								</button>
+								<button
+									onClick={handleResendQuote}
+									disabled={isResendingQuote}
+									className="flex items-center gap-1 rounded-full bg-imsg-blue px-2.5 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-600 disabled:opacity-60"
+								>
+									{isResendingQuote ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+									{t("resendQuoteButton")}
+								</button>
+							</>
+						)
+					)}
 					<button
 						onClick={() => setIsHideModalOpen(true)}
 						aria-label={t("hideRoomAria")}

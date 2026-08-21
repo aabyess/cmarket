@@ -339,7 +339,10 @@
 		"hideRoomErrorMessage": "채팅방 나가기 중 오류가 발생했습니다.",
 		"hideRoomModalTitle": "이 채팅방을 나가시겠어요?",
 		"hideRoomModalDescription": "나가도 대화 기록은 보존되며, 상대방이 새 메시지를 보내면 다시 표시됩니다.",
-		"hideRoomModalConfirm": "나가기"
+		"hideRoomModalConfirm": "나가기",
+		"editQuoteButton": "견적서 수정",
+		"resendQuoteButton": "견적서 보내기",
+		"resendQuoteErrorMessage": "견적서 전송에 실패했습니다."
 	},
 	"ChatMessageList": {
 		"dateLabel": "{year}년 {month}월 {day}일",
