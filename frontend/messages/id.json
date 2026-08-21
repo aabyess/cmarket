@@ -1384,7 +1384,18 @@
 		"confirmLabel": "Konfirmasi Kontrak",
 		"confirmTitle": "Konfirmasi kontrak dengan penawaran ini?",
 		"emptyDescription": "Penawaran pertama biasanya tiba dalam 2-3 hari.",
-		"emptyTitle": "Belum ada penawaran"
+		"emptyTitle": "Belum ada penawaran",
+		"showAllToggle": "Lihat semua {count} penawaran",
+		"collapseToggle": "Sembunyikan"
+	},
+	"QuoteReviewRecommendedCard": {
+		"title": "Rekomendasi pemasok terbaik",
+		"priceLabel": "Harga penawaran",
+		"deliveryLabel": "Waktu pengiriman",
+		"daysSuffix": "{days} hari",
+		"reason": "Peringkat #{priceRank} dalam harga dan #{deliveryRank} dalam pengiriman dari {total} penawaran — skor keseluruhan tertinggi",
+		"awardButton": "Konfirmasi Kontrak",
+		"chatButton": "Hubungi"
 	},
 	"QuoteCompareTable": {
 		"approxPriceIdr": "Sekitar Rp {amount}",

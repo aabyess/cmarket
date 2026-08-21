@@ -1198,7 +1198,18 @@
 		"confirmLabel": "Confirm Contract",
 		"confirmTitle": "Confirm the contract with this quote?",
 		"emptyDescription": "Your first quote usually arrives within 2-3 days.",
-		"emptyTitle": "No quotes yet"
+		"emptyTitle": "No quotes yet",
+		"showAllToggle": "Show all {count} quotes",
+		"collapseToggle": "Collapse"
+	},
+	"QuoteReviewRecommendedCard": {
+		"title": "Recommended supplier",
+		"priceLabel": "Quote price",
+		"deliveryLabel": "Delivery time",
+		"daysSuffix": "{days} days",
+		"reason": "Ranked #{priceRank} in price and #{deliveryRank} in delivery out of {total} quotes — the best overall score",
+		"awardButton": "Confirm Contract",
+		"chatButton": "Contact"
 	},
 	"QuoteCompareTable": {
 		"approxPriceIdr": "Approx. Rp {amount}",

@@ -1,16 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { Mail } from "lucide-react";
+import { ChevronDown, ChevronUp, Mail } from "lucide-react";
 import { QuoteReviewQuoteCard } from "@/features/buyer/components/QuoteReview/QuoteReviewQuoteCard";
+import { QuoteReviewRecommendedCard } from "@/features/buyer/components/QuoteReview/QuoteReviewRecommendedCard";
 import { QuoteCompareTable } from "@/features/buyer/components/QuoteReview/QuoteCompareTable";
+import { getRecommendedQuote, selectTopQuotes } from "@/features/buyer/components/QuoteReview/quoteReviewUtils";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import { startChat } from "@/features/chat/mutations";
 import { ChatStartLoadingModal } from "@/features/chat/components/ChatStartLoadingModal";
 import type { ListingItem, ReceivedQuote } from "@/features/buyer/types";
+
+const TOP_QUOTES_LIMIT = 5;
 
 type QuoteReviewProps = {
 	quotes: ReceivedQuote[];
@@ -27,11 +31,17 @@ export function QuoteReview({ quotes, listingItems, backHref }: QuoteReviewProps
 	const [awardingId, setAwardingId] = useState<string | null>(null);
 	const [confirmQuoteId, setConfirmQuoteId] = useState<string | null>(null);
 	const [viewMode, setViewMode] = useState<ViewMode>("list");
+	const [showAllQuotes, setShowAllQuotes] = useState(false);
 
 	const comparablePrices = quotes.map((q) => q.priceInIdr).filter((p): p is number => p !== null);
 	const lowestPriceInIdr = comparablePrices.length > 0 ? Math.min(...comparablePrices) : null;
 	const fastestDays = quotes.length > 0 ? Math.min(...quotes.map((q) => q.deliveryDays)) : null;
 	const hasAwardedQuote = quotes.some((q) => q.status === "awarded");
+
+	const topQuotes = useMemo(() => selectTopQuotes(quotes, TOP_QUOTES_LIMIT), [quotes]);
+	const visibleQuotes = showAllQuotes ? quotes : topQuotes;
+	const hasMoreQuotes = quotes.length > TOP_QUOTES_LIMIT;
+	const recommendation = useMemo(() => getRecommendedQuote(quotes), [quotes]);
 
 	async function handleStartChat(quoteId: string): Promise<void> {
 		setStartingId(quoteId);
@@ -107,7 +117,7 @@ export function QuoteReview({ quotes, listingItems, backHref }: QuoteReviewProps
 
 			{viewMode === "grid" ? (
 				<div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-					{quotes.map((quote) => (
+					{visibleQuotes.map((quote) => (
 						<QuoteReviewQuoteCard
 							key={quote.id}
 							quote={quote}
@@ -124,7 +134,38 @@ export function QuoteReview({ quotes, listingItems, backHref }: QuoteReviewProps
 					))}
 				</div>
 			) : (
-				<QuoteCompareTable quotes={quotes} />
+				<QuoteCompareTable quotes={visibleQuotes} />
+			)}
+
+			{hasMoreQuotes && (
+				<button
+					type="button"
+					onClick={() => setShowAllQuotes((prev) => !prev)}
+					className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white py-2.5 text-sm font-medium text-[#374151] transition-colors hover:bg-imsg-surface">
+					{showAllQuotes ? (
+						<>
+							<ChevronUp size={14} />
+							{t("collapseToggle")}
+						</>
+					) : (
+						<>
+							<ChevronDown size={14} />
+							{t("showAllToggle", { count: quotes.length })}
+						</>
+					)}
+				</button>
+			)}
+
+			{recommendation && (
+				<QuoteReviewRecommendedCard
+					recommendation={recommendation}
+					backHref={backHref}
+					isAwardDisabled={hasAwardedQuote}
+					isStartingChat={startingId === recommendation.quote.id}
+					isAwarding={awardingId === recommendation.quote.id}
+					onStartChat={handleStartChat}
+					onRequestAward={setConfirmQuoteId}
+				/>
 			)}
 
 			<ConfirmModal
