@@ -385,6 +385,32 @@
 		"genericErrorMessage": "An error occurred while processing your request.",
 		"emptyTitle": "No contracts yet"
 	},
+	"AdminUsersPage": {
+		"title": "Members",
+		"summary": "{count} total"
+	},
+	"AdminUsersList": {
+		"tabAll": "All",
+		"tabBuyer": "Buyers",
+		"tabSeller": "Sellers",
+		"searchPlaceholder": "Search by company name or username",
+		"columnCompany": "Company",
+		"columnRepresentative": "Representative",
+		"columnRole": "Role",
+		"columnCountry": "Country",
+		"columnPlan": "Plan",
+		"columnJoinedAt": "Joined",
+		"roleBuyer": "Buyer",
+		"roleSeller": "Seller",
+		"roleAdmin": "Admin",
+		"countryKorea": "Korea",
+		"countryIndonesia": "Indonesia",
+		"countryUnknown": "-",
+		"noCompanyName": "No company name",
+		"noRepresentative": "-",
+		"planChangeErrorMessage": "An error occurred while changing the plan.",
+		"emptyTitle": "No members yet"
+	},
 	"AdminInquiriesPage": {
 		"title": "Inquiries",
 		"summary": "{total} total · {openCount} pending"
