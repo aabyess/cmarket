@@ -3,6 +3,7 @@
 
 import { Sidebar } from "@/components/layout/Sidebar";
 import { usePersistentState } from "@/hooks/usePersistentState";
+import { SIDEBAR_TRANSITION_CLASS } from "@/components/layout/sidebarTransition";
 import { cn } from "@/utils/cn";
 
 type AppShellProps = {
@@ -24,7 +25,13 @@ export function AppShell({ role, companyName, name, children }: AppShellProps): 
 				isCollapsed={isCollapsed}
 				onToggleCollapsed={() => setIsCollapsed((prev) => !prev)}
 			/>
-			<div className={cn("flex-1 transition-[margin] duration-200", isCollapsed ? "lg:ml-20" : "lg:ml-64")}>
+			<div
+				className={cn(
+					"flex-1 transition-[margin]",
+					SIDEBAR_TRANSITION_CLASS,
+					isCollapsed ? "lg:ml-20" : "lg:ml-64",
+				)}
+			>
 				<main>{children}</main>
 			</div>
 		</div>

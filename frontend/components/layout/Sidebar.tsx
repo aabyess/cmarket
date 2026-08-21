@@ -15,6 +15,7 @@ import { LanguageSwitcher } from "@/components/commons/LanguageSwitcher";
 import { cn } from "@/utils/cn";
 import { createClient } from "@/libs/supabase";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { SIDEBAR_TRANSITION_CLASS, getSidebarLayoutTransition } from "@/components/layout/sidebarTransition";
 
 // TODO: 실제 지원센터 연락처 확인되면 교체
 const SUPPORT_PHONE = "02-0000-0000";
@@ -102,6 +103,15 @@ export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapse
 	// 기본은 펼침 상태라, 사용자가 접은 그룹의 key만 여기 담는다.
 	const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
 	const prefersReducedMotion = useReducedMotion();
+	const layoutTransition = getSidebarLayoutTransition(prefersReducedMotion);
+	// 라벨 텍스트가 unmount로 뚝 사라지지 않고 살짝 크로스페이드되도록 opacity만 애니메이션한다
+	// (너비 트랜지션은 aside 자체가 이미 하고 있어 라벨까지 너비를 따로 계산할 필요는 없다).
+	const labelFade = {
+		initial: prefersReducedMotion ? false : { opacity: 0 },
+		animate: { opacity: 1 },
+		exit: { opacity: 0 },
+		transition: layoutTransition,
+	} as const;
 
 	const initial = name.charAt(0) || companyName.charAt(0) || "?";
 
@@ -151,7 +161,8 @@ export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapse
 	return (
 		<aside
 			className={cn(
-				"fixed left-0 top-0 hidden h-screen flex-col overflow-visible border-r border-sidebar-border bg-sidebar transition-[width] duration-200 lg:flex z-40",
+				"fixed left-0 top-0 hidden h-screen flex-col overflow-visible border-r border-sidebar-border bg-sidebar transition-[width] lg:flex z-40",
+				SIDEBAR_TRANSITION_CLASS,
 				isCollapsed ? "w-20" : "w-64",
 			)}
 		>
@@ -186,16 +197,21 @@ export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapse
 						)}
 					>
 						{/* 아바타 */}
-						<div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
+						<motion.div
+							layout
+							transition={layoutTransition}
+							className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
 							{initial}
-						</div>
+						</motion.div>
 						{/* 이름 + 회사 */}
-						{!isCollapsed && (
-							<div className="min-w-0 flex-1 text-left">
-								<p className="truncate text-sm font-semibold text-sidebar-foreground">{name || companyName}</p>
-								<p className="truncate text-xs text-sidebar-foreground/60">{companyName}</p>
-							</div>
-						)}
+						<AnimatePresence initial={false}>
+							{!isCollapsed && (
+								<motion.div key="profile-text" {...labelFade} className="min-w-0 flex-1 text-left">
+									<p className="truncate text-sm font-semibold text-sidebar-foreground">{name || companyName}</p>
+									<p className="truncate text-xs text-sidebar-foreground/60">{companyName}</p>
+								</motion.div>
+							)}
+						</AnimatePresence>
 
 						{/* 드롭다운 */}
 						{dropdownOpen && (
@@ -258,22 +274,29 @@ export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapse
 
 					{/* 알림/언어 - 프로필과 분리된 독립 영역. 레일 폭에서는 두 컴포넌트가 좁은
 					    공간에서 어떻게 보일지 시각 확인이 어려워 접었을 땐 숨긴다. */}
-					{!isCollapsed && (
-						<>
-							<LanguageSwitcher />
-							<NotificationBell />
-						</>
-					)}
+					<AnimatePresence initial={false}>
+						{!isCollapsed && (
+							<motion.div key="profile-actions" {...labelFade} className="flex items-center gap-2">
+								<LanguageSwitcher />
+								<NotificationBell />
+							</motion.div>
+						)}
+					</AnimatePresence>
 				</div>
 			</div>
 
 			{/* 메뉴 */}
 			<nav className="flex-1 px-3 py-4 overflow-y-auto">
-				{!isCollapsed && (
-					<p className="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-sidebar-foreground/40">
-						{t("menuHeading")}
-					</p>
-				)}
+				<AnimatePresence initial={false}>
+					{!isCollapsed && (
+						<motion.p
+							key="menu-heading"
+							{...labelFade}
+							className="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-sidebar-foreground/40">
+							{t("menuHeading")}
+						</motion.p>
+					)}
+				</AnimatePresence>
 				<div className="space-y-0.5">
 				{menuItems.map((entry) => {
 					if (isMenuGroup(entry)) {
@@ -297,21 +320,28 @@ export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapse
 											: "text-[#374151] hover:bg-white/70 hover:text-[#1F2937]",
 									)}
 								>
-									<entry.icon
-										size={17}
-										strokeWidth={2}
-										className={cn("shrink-0", hasActiveChild ? "text-[#111827]" : "text-[#9CA3AF]")}
-									/>
-									{!isCollapsed && (
-										<>
-											<span className="flex-1 text-left">{t(`menu.${entry.labelKey}`)}</span>
-											{isOpen ? (
-												<ChevronUp size={15} className="shrink-0 text-[#9CA3AF]" />
-											) : (
-												<ChevronDown size={15} className="shrink-0 text-[#9CA3AF]" />
-											)}
-										</>
-									)}
+									<motion.span layout transition={layoutTransition} className="flex shrink-0 items-center justify-center">
+										<entry.icon
+											size={17}
+											strokeWidth={2}
+											className={hasActiveChild ? "text-[#111827]" : "text-[#9CA3AF]"}
+										/>
+									</motion.span>
+									<AnimatePresence initial={false}>
+										{!isCollapsed && (
+											<motion.span
+												key="group-label"
+												{...labelFade}
+												className="flex flex-1 items-center justify-between gap-2">
+												<span className="text-left">{t(`menu.${entry.labelKey}`)}</span>
+												{isOpen ? (
+													<ChevronUp size={15} className="shrink-0 text-[#9CA3AF]" />
+												) : (
+													<ChevronDown size={15} className="shrink-0 text-[#9CA3AF]" />
+												)}
+											</motion.span>
+										)}
+									</AnimatePresence>
 								</button>
 
 								<AnimatePresence initial={false}>
@@ -377,24 +407,28 @@ export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapse
 									: "text-[#374151] hover:bg-white/70 hover:text-[#1F2937]",
 							)}
 						>
-							<entry.icon
-								size={17}
-								strokeWidth={2}
-								className={cn(
-									"shrink-0",
-									isActive ? "text-[#111827]" : "text-[#9CA3AF]",
+							<motion.span layout transition={layoutTransition} className="flex shrink-0 items-center justify-center">
+								<entry.icon
+									size={17}
+									strokeWidth={2}
+									className={isActive ? "text-[#111827]" : "text-[#9CA3AF]"}
+								/>
+							</motion.span>
+							<AnimatePresence initial={false}>
+								{!isCollapsed && (
+									<motion.span
+										key="leaf-label"
+										{...labelFade}
+										className="flex flex-1 items-center justify-between gap-2">
+										<span>{t(`menu.${entry.labelKey}`)}</span>
+										{entry.badge && (
+											<span className="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-semibold bg-white/20 text-white">
+												{entry.badge}
+											</span>
+										)}
+									</motion.span>
 								)}
-							/>
-							{!isCollapsed && (
-								<>
-									<span className="flex-1">{t(`menu.${entry.labelKey}`)}</span>
-									{entry.badge && (
-										<span className="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-semibold bg-white/20 text-white">
-											{entry.badge}
-										</span>
-									)}
-								</>
-							)}
+							</AnimatePresence>
 						</Link>
 					);
 				})}
@@ -402,21 +436,26 @@ export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapse
 			</nav>
 
 			{/* 하단: 지원센터 연락처 — 레일 폭에는 들어갈 공간이 없어 접혔을 땐 숨긴다. */}
-			{!isCollapsed && (
-				<div className="mt-auto border-t border-sidebar-border px-4 py-4">
-					<p className="text-xs font-semibold text-sidebar-foreground/60">{t("menu.support")}</p>
-					<div className="mt-1.5 space-y-1">
-						<div className="flex items-center gap-1.5 text-xs text-sidebar-foreground/50">
-							<Phone size={12} className="shrink-0" />
-							<span>{SUPPORT_PHONE}</span>
+			<AnimatePresence initial={false}>
+				{!isCollapsed && (
+					<motion.div
+						key="support-block"
+						{...labelFade}
+						className="mt-auto border-t border-sidebar-border px-4 py-4">
+						<p className="text-xs font-semibold text-sidebar-foreground/60">{t("menu.support")}</p>
+						<div className="mt-1.5 space-y-1">
+							<div className="flex items-center gap-1.5 text-xs text-sidebar-foreground/50">
+								<Phone size={12} className="shrink-0" />
+								<span>{SUPPORT_PHONE}</span>
+							</div>
+							<div className="flex items-center gap-1.5 text-xs text-sidebar-foreground/50">
+								<Mail size={12} className="shrink-0" />
+								<span>{SUPPORT_EMAIL}</span>
+							</div>
 						</div>
-						<div className="flex items-center gap-1.5 text-xs text-sidebar-foreground/50">
-							<Mail size={12} className="shrink-0" />
-							<span>{SUPPORT_EMAIL}</span>
-						</div>
-					</div>
-				</div>
-			)}
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</aside>
 	);
 }
