@@ -3,12 +3,13 @@
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { Loader2, Sparkles, Upload, X } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { getCategoryLabels, CATEGORY_OPTIONS } from "@/features/buyer/constants";
 import { draftListingWithAi, ListingDraftError } from "@/features/buyer/mutations";
 import { AiDraftModalPreview } from "@/features/buyer/components/PostListingForm/postListing/AiDraftModalPreview";
+import { getModalPanelTransition } from "@/utils/modalMotion";
 import type { ListingCategory, ListingDraft } from "@/features/buyer/types";
 
 const PROMPT_MAX_LENGTH = 500;
@@ -24,6 +25,7 @@ type AiDraftModalProps = {
 export default function AiDraftModal({ isOpen, onClose, onDraftReady }: AiDraftModalProps): React.ReactNode {
 	const t = useTranslations("AiDraftModal");
 	const categoryLabels = getCategoryLabels(useTranslations("ListingCategory"));
+	const prefersReducedMotion = useReducedMotion();
 
 	const [prompt, setPrompt] = useState("");
 	const [categoryHint, setCategoryHint] = useState<ListingCategory | null>(null);
@@ -128,7 +130,7 @@ export default function AiDraftModal({ isOpen, onClose, onDraftReady }: AiDraftM
 								initial={{ opacity: 0, scale: 0.95, y: 8 }}
 								animate={{ opacity: 1, scale: 1, y: 0 }}
 								exit={{ opacity: 0, scale: 0.95, y: 8 }}
-								transition={{ duration: 0.18, ease: "easeOut" }}
+								transition={getModalPanelTransition(prefersReducedMotion)}
 								className="flex max-h-[85vh] flex-col overflow-hidden rounded-2xl bg-white shadow-xl"
 							>
 								<div className="flex items-center gap-1.5 border-b border-[#E5E7EB] px-6 py-4">

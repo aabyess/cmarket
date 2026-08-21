@@ -1,10 +1,11 @@
 "use client";
 
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { X } from "lucide-react";
 import type { SignupCountry, TermDocument } from "@/features/auth/terms";
 import { TERMS_UI_TEXT } from "@/features/auth/terms";
+import { getModalPanelTransition } from "@/utils/modalMotion";
 
 type SignupTermsDetailModalProps = {
 	country: SignupCountry;
@@ -18,6 +19,7 @@ export function SignupTermsDetailModal({
 	onClose,
 }: SignupTermsDetailModalProps): React.JSX.Element {
 	const text = TERMS_UI_TEXT[country];
+	const prefersReducedMotion = useReducedMotion();
 
 	return (
 		<AnimatePresence>
@@ -37,7 +39,7 @@ export function SignupTermsDetailModal({
 							initial={{ opacity: 0, scale: 0.97, y: 8 }}
 							animate={{ opacity: 1, scale: 1, y: 0 }}
 							exit={{ opacity: 0, scale: 0.97, y: 8 }}
-							transition={{ duration: 0.18 }}
+							transition={getModalPanelTransition(prefersReducedMotion)}
 							className="w-full max-w-2xl">
 							<DialogPanel className="flex max-h-[80vh] flex-col overflow-hidden rounded-2xl bg-white shadow-xl">
 								<div className="flex items-start justify-between gap-4 border-b border-[#E5E7EB] px-6 py-4">

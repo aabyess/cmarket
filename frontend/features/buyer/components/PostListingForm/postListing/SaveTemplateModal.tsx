@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { CheckCircle2, Loader2, Save } from "lucide-react";
 import { createListingTemplate } from "@/features/listingTemplates/apis";
+import { getModalPanelTransition } from "@/utils/modalMotion";
 import type { Currency, ListingCategory, ListingItem } from "@/features/buyer/types";
 
 type SaveTemplateModalProps = {
@@ -28,6 +29,7 @@ export default function SaveTemplateModal({
 	onClose,
 }: SaveTemplateModalProps): React.ReactNode {
 	const t = useTranslations("PostListingForm");
+	const prefersReducedMotion = useReducedMotion();
 	const [name, setName] = useState("");
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -95,7 +97,7 @@ export default function SaveTemplateModal({
 								initial={{ opacity: 0, scale: 0.95, y: 8 }}
 								animate={{ opacity: 1, scale: 1, y: 0 }}
 								exit={{ opacity: 0, scale: 0.95, y: 8 }}
-								transition={{ duration: 0.18, ease: "easeOut" }}
+								transition={getModalPanelTransition(prefersReducedMotion)}
 								className="rounded-2xl bg-white p-6 shadow-xl">
 								<div className="mb-1 flex items-center gap-1.5">
 									<Save size={18} className="text-imsg-blue" />

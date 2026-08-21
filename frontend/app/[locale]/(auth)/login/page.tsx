@@ -5,11 +5,12 @@ import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { Eye, EyeOff } from "lucide-react";
 import { useLogin } from "@/features/auth/mutations";
 import { SecurityModal } from "@/features/auth/components/SecurityModal";
 import { cn } from "@/utils/cn";
+import { getModalPanelTransition } from "@/utils/modalMotion";
 import Image from "next/image";
 import { getUserRole } from "@/features/auth/apis";
 import { LanguageSwitcher } from "@/components/commons/LanguageSwitcher";
@@ -18,6 +19,7 @@ const SAVED_USERNAME_KEY = "saved_username";
 
 export default function LoginPage() {
 	const t = useTranslations("Login");
+	const prefersReducedMotion = useReducedMotion();
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const [username, setUsername] = useState("");
@@ -100,7 +102,7 @@ export default function LoginPage() {
 									initial={{ opacity: 0, scale: 0.95, y: 8 }}
 									animate={{ opacity: 1, scale: 1, y: 0 }}
 									exit={{ opacity: 0, scale: 0.95, y: 8 }}
-									transition={{ duration: 0.18, ease: "easeOut" }}
+									transition={getModalPanelTransition(prefersReducedMotion)}
 									className="rounded-2xl bg-white p-6 shadow-xl"
 								>
 									<DialogTitle className="text-base font-semibold text-[#1F2937]">

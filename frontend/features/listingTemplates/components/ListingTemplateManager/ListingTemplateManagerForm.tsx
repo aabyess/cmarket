@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { getCategoryLabels, CATEGORY_OPTIONS } from "@/features/buyer/constants";
+import { getModalPanelTransition } from "@/utils/modalMotion";
 import type { ListingTemplate, ListingTemplateInput } from "@/features/listingTemplates/types";
 
 type ListingTemplateManagerFormProps = {
@@ -22,6 +23,7 @@ export function ListingTemplateManagerForm({
 }: ListingTemplateManagerFormProps): React.ReactNode {
 	const t = useTranslations("ListingTemplateManager");
 	const categoryLabels = getCategoryLabels(useTranslations("ListingCategory"));
+	const prefersReducedMotion = useReducedMotion();
 	const [name, setName] = useState("");
 	const [category, setCategory] = useState<ListingTemplateInput["category"]>(null);
 	const [description, setDescription] = useState("");
@@ -70,7 +72,7 @@ export function ListingTemplateManagerForm({
 								initial={{ opacity: 0, scale: 0.95, y: 8 }}
 								animate={{ opacity: 1, scale: 1, y: 0 }}
 								exit={{ opacity: 0, scale: 0.95, y: 8 }}
-								transition={{ duration: 0.18, ease: "easeOut" }}
+								transition={getModalPanelTransition(prefersReducedMotion)}
 								className="rounded-2xl bg-white p-6 shadow-xl">
 								<DialogTitle className="text-base font-semibold text-[#1F2937]">
 									{t("editTitle")}

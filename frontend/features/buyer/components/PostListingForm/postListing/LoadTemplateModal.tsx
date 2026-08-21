@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { Bookmark, Loader2, X } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { getListingTemplates } from "@/features/listingTemplates/apis";
+import { getModalPanelTransition } from "@/utils/modalMotion";
 import type { ListingTemplate } from "@/features/listingTemplates/types";
 
 type LoadTemplateModalProps = {
@@ -29,6 +30,7 @@ export default function LoadTemplateModal({
 	onSelect,
 }: LoadTemplateModalProps): React.ReactNode {
 	const t = useTranslations("PostListingForm");
+	const prefersReducedMotion = useReducedMotion();
 	const [templates, setTemplates] = useState<ListingTemplate[] | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
@@ -60,7 +62,7 @@ export default function LoadTemplateModal({
 								initial={{ opacity: 0, scale: 0.95, y: 8 }}
 								animate={{ opacity: 1, scale: 1, y: 0 }}
 								exit={{ opacity: 0, scale: 0.95, y: 8 }}
-								transition={{ duration: 0.18, ease: "easeOut" }}
+								transition={getModalPanelTransition(prefersReducedMotion)}
 								className="rounded-2xl bg-white p-6 shadow-xl">
 								<div className="mb-1 flex items-center justify-between gap-1.5">
 									<div className="flex items-center gap-1.5">
