@@ -919,6 +919,7 @@
 	"ListingBrowseTable": {
 		"columnStatus": "Status",
 		"columnTitle": "Listing",
+		"columnRegisteredAt": "Posted",
 		"columnBudget": "Budget",
 		"columnDelivery": "Delivery to",
 		"columnMyQuote": "My quote",
@@ -930,12 +931,15 @@
 	},
 	"ListingBrowseCard": {
 		"closed": "Closed",
-		"daysLeft": "D-{days}",
+		"deadlineWithDays": "Due {date} (D-{days})",
+		"registeredOn": "Posted {date}",
 		"quoteSent": "Quote sent",
 		"budgetLabel": "Budget",
 		"budgetPrivate": "Private",
 		"aboutKrw": "about ₩ {value}",
-		"deliveryLabel": "Delivery location"
+		"deliveryLabel": "Delivery location",
+		"joinButton": "Join now",
+		"viewMyQuoteButton": "View my quote"
 	},
 	"ListingDetailInfo": {
 		"budgetLabel": "Budget",

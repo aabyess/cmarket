@@ -1,7 +1,7 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import { Clock, Package, MapPin, CheckCircle2 } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { Clock, CalendarDays, Package, MapPin, CheckCircle2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { Currency } from "@/features/buyer/types";
 import type { OpenListing } from "@/features/seller/types";
@@ -32,16 +32,26 @@ type ListingBrowseCardProps = {
 
 export function ListingBrowseCard({ listing, onClick }: ListingBrowseCardProps) {
 	const t = useTranslations("ListingBrowseCard");
+	const locale = useLocale();
 	const remaining = getRemaining(listing.endDate, listing.status);
-	const remainingText = remaining.isClosed ? t("closed") : t("daysLeft", { days: remaining.days });
+	const deadlineDateText = new Date(listing.endDate).toLocaleDateString(locale, {
+		month: "numeric",
+		day: "numeric",
+	});
+	const remainingText = remaining.isClosed
+		? t("closed")
+		: t("deadlineWithDays", { date: deadlineDateText, days: remaining.days });
+	const registeredText = t("registeredOn", {
+		date: new Date(listing.createdAt).toLocaleDateString(locale, { month: "numeric", day: "numeric" }),
+	});
 	const symbol = CURRENCY_SYMBOL[listing.currency];
 	const itemNames = listing.items.map((item) => item.name).filter(Boolean).join(", ");
 	const location = [listing.deliveryCity, listing.deliveryProvinsi].filter(Boolean).join(", ");
 
 	return (
-		<button
+		<div
 			onClick={onClick}
-			className="flex flex-col rounded-2xl border border-[#E5E7EB] bg-white p-4 text-left transition-all hover:border-[#BFDBFE] hover:shadow-sm"
+			className="flex cursor-pointer flex-col rounded-2xl border border-[#E5E7EB] bg-white p-4 text-left transition-all hover:border-[#BFDBFE] hover:shadow-sm"
 		>
 			<div className="mb-2 flex items-start justify-between gap-2">
 				<span
@@ -77,6 +87,11 @@ export function ListingBrowseCard({ listing, onClick }: ListingBrowseCardProps) 
 				</p>
 			)}
 
+			<p className="mt-1.5 flex items-center gap-1.5 text-xs text-[#9CA3AF]">
+				<CalendarDays size={12} className="shrink-0" />
+				{registeredText}
+			</p>
+
 			<div className="mt-3 grid grid-cols-2 gap-2 border-t border-[#F3F4F6] pt-3">
 				<div className="min-w-0">
 					<p className="text-xs text-[#9CA3AF]">{t("budgetLabel")}</p>
@@ -105,6 +120,18 @@ export function ListingBrowseCard({ listing, onClick }: ListingBrowseCardProps) 
 					</p>
 				</div>
 			</div>
-		</button>
+
+			<button
+				type="button"
+				onClick={(e) => {
+					e.stopPropagation();
+					onClick();
+				}}
+				disabled={remaining.isClosed}
+				className="mt-3 flex items-center justify-center gap-1.5 rounded-xl bg-imsg-blue py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:cursor-not-allowed disabled:bg-[#F3F4F6] disabled:text-[#9CA3AF]"
+			>
+				{remaining.isClosed ? t("closed") : listing.hasMyQuote ? t("viewMyQuoteButton") : t("joinButton")}
+			</button>
+		</div>
 	);
 }

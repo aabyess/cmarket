@@ -1,7 +1,7 @@
 // features/seller/components/ListingBrowse/ListingBrowseTable.tsx
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { CheckCircle2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { Currency } from "@/features/buyer/types";
@@ -33,6 +33,7 @@ type ListingBrowseTableProps = {
 
 export function ListingBrowseTable({ listings, onRowClick }: ListingBrowseTableProps): React.ReactNode {
 	const t = useTranslations("ListingBrowseTable");
+	const locale = useLocale();
 
 	return (
 		<div className="overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white">
@@ -41,6 +42,7 @@ export function ListingBrowseTable({ listings, onRowClick }: ListingBrowseTableP
 					<tr className="border-b border-[#E5E7EB] bg-[#F9FAFB] text-left text-xs font-medium text-[#9CA3AF]">
 						<th className="px-4 py-3">{t("columnStatus")}</th>
 						<th className="px-4 py-3">{t("columnTitle")}</th>
+						<th className="px-4 py-3">{t("columnRegisteredAt")}</th>
 						<th className="px-4 py-3">{t("columnBudget")}</th>
 						<th className="px-4 py-3">{t("columnDelivery")}</th>
 						<th className="px-4 py-3">{t("columnMyQuote")}</th>
@@ -76,6 +78,9 @@ export function ListingBrowseTable({ listings, onRowClick }: ListingBrowseTableP
 								</td>
 								<td className="max-w-[320px] truncate px-4 py-3 font-medium text-[#1F2937]">
 									{listing.title}
+								</td>
+								<td className="px-4 py-3 whitespace-nowrap text-[#6B7280]">
+									{new Date(listing.createdAt).toLocaleDateString(locale)}
 								</td>
 								<td className="px-4 py-3 text-[#1F2937]">
 									{listing.budgetPublic

@@ -1105,6 +1105,7 @@
 	"ListingBrowseTable": {
 		"columnStatus": "Status",
 		"columnTitle": "Permintaan",
+		"columnRegisteredAt": "Tanggal posting",
 		"columnBudget": "Anggaran",
 		"columnDelivery": "Tujuan pengiriman",
 		"columnMyQuote": "Penawaran saya",
@@ -1116,12 +1117,15 @@
 	},
 	"ListingBrowseCard": {
 		"closed": "Ditutup",
-		"daysLeft": "D-{days}",
+		"deadlineWithDays": "Tenggat {date} (D-{days})",
+		"registeredOn": "Diposting {date}",
 		"quoteSent": "Penawaran terkirim",
 		"budgetLabel": "Anggaran",
 		"budgetPrivate": "Tidak dipublikasikan",
 		"aboutKrw": "sekitar ₩ {value}",
-		"deliveryLabel": "Lokasi pengiriman"
+		"deliveryLabel": "Lokasi pengiriman",
+		"joinButton": "Ikut sekarang",
+		"viewMyQuoteButton": "Lihat penawaran saya"
 	},
 	"ListingDetailInfo": {
 		"budgetLabel": "Anggaran",
