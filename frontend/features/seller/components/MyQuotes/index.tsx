@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Send } from "lucide-react";
+import { usePersistentState } from "@/hooks/usePersistentState";
 import { MyQuotesCard } from "@/features/seller/components/MyQuotes/MyQuotesCard";
 import { MyQuotesFilterBar } from "@/features/seller/components/MyQuotes/MyQuotesFilterBar";
 import { MyQuotesTable } from "@/features/seller/components/MyQuotes/MyQuotesTable";
@@ -19,6 +20,20 @@ function isListingClosed(listingEndDate: string): boolean {
 	return new Date(listingEndDate).getTime() <= Date.now();
 }
 
+type MyQuotesPrefs = {
+	filter: MyQuotesFilter;
+	sort: MyQuotesSort;
+	viewMode: MyQuotesViewMode;
+	pageSize: number;
+};
+
+const DEFAULT_PREFS: MyQuotesPrefs = {
+	filter: "all",
+	sort: "newest",
+	viewMode: "grid",
+	pageSize: 9,
+};
+
 type MyQuotesProps = {
 	quotes: MyQuote[];
 };
@@ -26,11 +41,25 @@ type MyQuotesProps = {
 export function MyQuotes({ quotes }: MyQuotesProps) {
 	const t = useTranslations("MyQuotes");
 	const router = useRouter();
-	const [filter, setFilter] = useState<MyQuotesFilter>("all");
-	const [sort, setSort] = useState<MyQuotesSort>("newest");
-	const [viewMode, setViewMode] = useState<MyQuotesViewMode>("grid");
+	const [prefs, setPrefs] = usePersistentState<MyQuotesPrefs>("mitrapay:seller-my-quotes", DEFAULT_PREFS);
+	const { filter, sort, viewMode, pageSize } = prefs;
 	const [page, setPage] = useState(1);
-	const [pageSize, setPageSize] = useState(9);
+
+	function setFilter(filter: MyQuotesFilter): void {
+		setPrefs((prev) => ({ ...prev, filter }));
+	}
+
+	function setSort(sort: MyQuotesSort): void {
+		setPrefs((prev) => ({ ...prev, sort }));
+	}
+
+	function setViewMode(viewMode: MyQuotesViewMode): void {
+		setPrefs((prev) => ({ ...prev, viewMode }));
+	}
+
+	function setPageSize(pageSize: number): void {
+		setPrefs((prev) => ({ ...prev, pageSize }));
+	}
 
 	const statusFiltered = filter === "all" ? quotes : quotes.filter((quote) => quote.status === filter);
 

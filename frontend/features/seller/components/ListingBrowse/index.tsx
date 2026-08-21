@@ -6,6 +6,7 @@ import { useRouter } from "@/i18n/navigation";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { Search, FileSearch, ArrowUpDown } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { usePersistentState } from "@/hooks/usePersistentState";
 import { ListingBrowseCard } from "@/features/seller/components/ListingBrowse/ListingBrowseCard";
 import { ListingBrowseTable } from "@/features/seller/components/ListingBrowse/ListingBrowseTable";
 import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
@@ -20,6 +21,22 @@ const TAB_VALUES: StatusTab[] = ["all", "active", "closed"];
 const SORT_VALUES: SortOption[] = ["deadline", "newest"];
 const QUOTE_FILTER_VALUES: QuoteFilter[] = ["all", "quoted", "notQuoted"];
 
+type ListingBrowsePrefs = {
+	statusTab: StatusTab;
+	sort: SortOption;
+	quoteFilter: QuoteFilter;
+	viewMode: ViewMode;
+	pageSize: number;
+};
+
+const DEFAULT_PREFS: ListingBrowsePrefs = {
+	statusTab: "all",
+	sort: "deadline",
+	quoteFilter: "all",
+	viewMode: "grid",
+	pageSize: 9,
+};
+
 function isListingClosed(listing: OpenListing): boolean {
 	return listing.status !== "active" || new Date(listing.endDate).getTime() <= Date.now();
 }
@@ -32,12 +49,29 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 	const t = useTranslations("ListingBrowse");
 	const router = useRouter();
 	const [keyword, setKeyword] = useState("");
-	const [statusTab, setStatusTab] = useState<StatusTab>("all");
-	const [sort, setSort] = useState<SortOption>("deadline");
-	const [quoteFilter, setQuoteFilter] = useState<QuoteFilter>("all");
-	const [viewMode, setViewMode] = useState<ViewMode>("grid");
+	const [prefs, setPrefs] = usePersistentState<ListingBrowsePrefs>("mitrapay:seller-browse", DEFAULT_PREFS);
+	const { statusTab, sort, quoteFilter, viewMode, pageSize } = prefs;
 	const [page, setPage] = useState(1);
-	const [pageSize, setPageSize] = useState(9);
+
+	function setStatusTab(statusTab: StatusTab): void {
+		setPrefs((prev) => ({ ...prev, statusTab }));
+	}
+
+	function setSort(sort: SortOption): void {
+		setPrefs((prev) => ({ ...prev, sort }));
+	}
+
+	function setQuoteFilter(quoteFilter: QuoteFilter): void {
+		setPrefs((prev) => ({ ...prev, quoteFilter }));
+	}
+
+	function setViewMode(viewMode: ViewMode): void {
+		setPrefs((prev) => ({ ...prev, viewMode }));
+	}
+
+	function setPageSize(pageSize: number): void {
+		setPrefs((prev) => ({ ...prev, pageSize }));
+	}
 
 	const tabLabels: Record<StatusTab, string> = {
 		all: t("tabAll"),
