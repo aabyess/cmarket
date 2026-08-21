@@ -78,6 +78,8 @@
 	},
 	"Sidebar": {
 		"menuHeading": "Menu",
+		"collapseAria": "Ciutkan sidebar",
+		"expandAria": "Perluas sidebar",
 		"menu": {
 			"dashboard": "Dasbor",
 			"postListing": "Buat Permintaan",

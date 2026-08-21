@@ -78,6 +78,8 @@
 	},
 	"Sidebar": {
 		"menuHeading": "메뉴",
+		"collapseAria": "사이드바 접기",
+		"expandAria": "사이드바 펼치기",
 		"menu": {
 			"dashboard": "대시보드",
 			"postListing": "견적 등록",

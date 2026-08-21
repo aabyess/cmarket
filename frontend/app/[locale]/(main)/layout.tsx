@@ -1,4 +1,4 @@
-import { Sidebar } from "@/components/layout/Sidebar";
+import { AppShell } from "@/components/layout/AppShell";
 import { getUserSummary } from "@/features/auth/serverApis";
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
@@ -10,11 +10,8 @@ export default async function MainLayout({ children }: { children: React.ReactNo
 	const name = summary?.name ?? "";
 
 	return (
-		<div className="flex min-h-screen bg-[#F7F8F8]">
-			<Sidebar role={role} companyName={companyName} name={name} />
-			<div className="flex-1 lg:ml-64">
-				<main>{children}</main>
-			</div>
-		</div>
+		<AppShell role={role} companyName={companyName} name={name}>
+			{children}
+		</AppShell>
 	);
 }
