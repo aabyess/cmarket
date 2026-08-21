@@ -2,6 +2,7 @@ import { Building2, FileText } from "lucide-react";
 import { cva } from "class-variance-authority";
 import { getLocale, getTranslations } from "next-intl/server";
 import { ListingInfo } from "@/features/shared/components/ListingInfo";
+import { ListingBookmarkButton } from "@/features/seller/components/ListingBookmarkButton";
 import { getCategoryLabels, CURRENCY_SYMBOL } from "@/features/buyer/constants";
 import { SniChecklistSection } from "@/features/sni/components/SniChecklistSection";
 import { sanitizeHtml } from "@/utils/sanitizeHtml";
@@ -32,7 +33,9 @@ function daysUntil(endDate: string): number {
 	);
 }
 
-export async function ListingDetailInfo({ listing }: ListingDetailInfoProps): Promise<React.JSX.Element> {
+export async function ListingDetailInfo({
+	listing,
+}: ListingDetailInfoProps): Promise<React.JSX.Element> {
 	const [t, categoryT, locale] = await Promise.all([
 		getTranslations("ListingDetailInfo"),
 		getTranslations("ListingCategory"),
@@ -47,7 +50,9 @@ export async function ListingDetailInfo({ listing }: ListingDetailInfoProps): Pr
 	const summary = [
 		{
 			label: t("budgetLabel"),
-			value: listing.budgetPublic ? `${symbol} ${listing.totalBudget.toLocaleString()}` : t("budgetPrivate"),
+			value: listing.budgetPublic
+				? `${symbol} ${listing.totalBudget.toLocaleString()}`
+				: t("budgetPrivate"),
 			sub:
 				listing.budgetPublic && listing.budgetInKrw !== null && listing.currency !== "KRW"
 					? t("aboutKrw", { value: Math.round(listing.budgetInKrw).toLocaleString() })
@@ -59,13 +64,21 @@ export async function ListingDetailInfo({ listing }: ListingDetailInfoProps): Pr
 		{
 			label: t("deadlineLabel"),
 			value: new Date(listing.endDate).toLocaleDateString(locale),
-			sub: remaining > 0 ? t("daysLeft", { days: remaining }) : remaining === 0 ? t("closingToday") : t("closed"),
+			sub:
+				remaining > 0
+					? t("daysLeft", { days: remaining })
+					: remaining === 0
+						? t("closingToday")
+						: t("closed"),
 			accent: remaining >= 0 && remaining <= 3,
 		},
 		{
 			label: t("itemsLabel"),
 			value: t("itemsCount", { count: listing.items.length }),
-			sub: units.size === 1 ? t("totalQuantity", { quantity: totalQuantity.toLocaleString(), unit: [...units][0] }) : null,
+			sub:
+				units.size === 1
+					? t("totalQuantity", { quantity: totalQuantity.toLocaleString(), unit: [...units][0] })
+					: null,
 			accent: false,
 		},
 	];
@@ -78,35 +91,48 @@ export async function ListingDetailInfo({ listing }: ListingDetailInfoProps): Pr
 						className={statusChip({
 							state: remaining < 0 ? "closed" : remaining <= 3 ? "closing" : "open",
 						})}>
-						{remaining < 0 ? t("closed") : remaining === 0 ? t("closingToday") : t("daysLeft", { days: remaining })}
+						{remaining < 0
+							? t("closed")
+							: remaining === 0
+								? t("closingToday")
+								: t("daysLeft", { days: remaining })}
 					</span>
-					<span className="rounded-full bg-imsg-surface px-2.5 py-1 text-xs font-medium text-imsg-secondary">
+					<span className="bg-imsg-surface text-imsg-secondary rounded-full px-2.5 py-1 text-xs font-medium">
 						{categoryLabels[listing.category]}
 					</span>
-					<span className="text-xs text-imsg-secondary">
+					<span className="text-imsg-secondary text-xs">
 						{t("registeredOn", { date: new Date(listing.createdAt).toLocaleDateString(locale) })}
 					</span>
 				</div>
 
-				<h1 className="text-2xl font-bold tracking-tight text-[#0f172a]">{listing.title}</h1>
-				<p className="mt-1.5 flex items-center gap-1.5 text-sm text-imsg-secondary">
+				<div className="flex items-start justify-between gap-3">
+					<h1 className="text-2xl font-bold tracking-tight text-[#0f172a]">{listing.title}</h1>
+					<ListingBookmarkButton
+						listingId={listing.id}
+						initialBookmarked={listing.isBookmarked}
+						size="md"
+					/>
+				</div>
+				<p className="text-imsg-secondary mt-1.5 flex items-center gap-1.5 text-sm">
 					<Building2 size={14} />
 					{listing.companyName || t("companyFallback")}
 				</p>
 
 				<div className="mt-5 grid grid-cols-1 divide-y divide-[#F2F2F7] border-t border-[#F2F2F7] pt-5 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
 					{summary.map((cell) => (
-						<div key={cell.label} className="py-3 first:pt-0 last:pb-0 sm:px-5 sm:py-0 sm:first:pl-0">
-							<p className="text-sm font-medium text-imsg-secondary">{cell.label}</p>
+						<div
+							key={cell.label}
+							className="py-3 first:pt-0 last:pb-0 sm:px-5 sm:py-0 sm:first:pl-0">
+							<p className="text-imsg-secondary text-sm font-medium">{cell.label}</p>
 							<p
 								className={
 									cell.accent
-										? "mt-1 text-2xl font-bold tracking-tight text-imsg-blue"
+										? "text-imsg-blue mt-1 text-2xl font-bold tracking-tight"
 										: "mt-1 text-2xl font-bold tracking-tight text-[#0f172a]"
 								}>
 								{cell.value}
 							</p>
-							{cell.sub && <p className="mt-0.5 text-sm text-imsg-secondary">{cell.sub}</p>}
+							{cell.sub && <p className="text-imsg-secondary mt-0.5 text-sm">{cell.sub}</p>}
 						</div>
 					))}
 				</div>

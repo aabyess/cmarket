@@ -1,5 +1,19 @@
 import type { QuoteFormData } from "@/features/seller/types";
 
+// 별 추가 성공 시 발주기업에게 알림을 보내야 해서(남의 행이라 RLS를 통과 못함) 서버 라우트를 거친다.
+export async function setListingBookmark(listingId: string, bookmarked: boolean): Promise<void> {
+	const res = await fetch("/api/listing/bookmark", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ listingId, bookmarked }),
+	});
+
+	if (!res.ok) {
+		const { error } = await res.json();
+		throw new Error(error ?? "관심 공고 처리에 실패했습니다.");
+	}
+}
+
 // 발주사에게 알림을 남겨야 하는데 그건 남의 행이라 RLS 를 통과하지 못한다.
 // 견적 저장과 알림 생성을 한 곳에서 처리하려고 서버 라우트를 거친다.
 // 번역도 서버에서 만든다 — 클라이언트가 만든 번역은 원문과 다르게 위조될 수 있다.

@@ -4,6 +4,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { CheckCircle2 } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { ListingBookmarkButton } from "@/features/seller/components/ListingBookmarkButton";
 import type { Currency } from "@/features/buyer/types";
 import type { OpenListing } from "@/features/seller/types";
 
@@ -29,9 +30,14 @@ function getRemaining(
 type ListingBrowseTableProps = {
 	listings: OpenListing[];
 	onRowClick: (id: string) => void;
+	onBookmarkChange: (listingId: string, isBookmarked: boolean) => void;
 };
 
-export function ListingBrowseTable({ listings, onRowClick }: ListingBrowseTableProps): React.ReactNode {
+export function ListingBrowseTable({
+	listings,
+	onRowClick,
+	onBookmarkChange,
+}: ListingBrowseTableProps): React.ReactNode {
 	const t = useTranslations("ListingBrowseTable");
 	const locale = useLocale();
 
@@ -40,6 +46,9 @@ export function ListingBrowseTable({ listings, onRowClick }: ListingBrowseTableP
 			<table className="w-full border-collapse text-sm">
 				<thead>
 					<tr className="border-b border-[#E5E7EB] bg-[#F9FAFB] text-left text-xs font-medium text-[#9CA3AF]">
+						<th className="px-4 py-3">
+							<span className="sr-only">{t("columnBookmark")}</span>
+						</th>
 						<th className="px-4 py-3">{t("columnStatus")}</th>
 						<th className="px-4 py-3">{t("columnTitle")}</th>
 						<th className="px-4 py-3">{t("columnRegisteredAt")}</th>
@@ -60,19 +69,24 @@ export function ListingBrowseTable({ listings, onRowClick }: ListingBrowseTableP
 							<tr
 								key={listing.id}
 								onClick={() => onRowClick(listing.id)}
-								className="cursor-pointer transition-colors hover:bg-[#F9FAFB]"
-							>
+								className="cursor-pointer transition-colors hover:bg-[#F9FAFB]">
+								<td className="px-2 py-3" onClick={(e) => e.stopPropagation()}>
+									<ListingBookmarkButton
+										listingId={listing.id}
+										initialBookmarked={listing.isBookmarked}
+										onChange={(isBookmarked) => onBookmarkChange(listing.id, isBookmarked)}
+									/>
+								</td>
 								<td className="px-4 py-3">
 									<span
 										className={cn(
-											"whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium",
+											"rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap",
 											remaining.isClosed
 												? "bg-[#F3F4F6] text-[#6B7280]"
 												: remaining.isUrgent
 													? "bg-[#FEF2F2] text-[#DC2626]"
-													: "bg-[#EFF6FF] text-imsg-blue",
-										)}
-									>
+													: "text-imsg-blue bg-[#EFF6FF]",
+										)}>
 										{remaining.isClosed ? t("closed") : t("daysLeft", { days: remaining.days })}
 									</span>
 								</td>

@@ -27,6 +27,7 @@ export const MOCK_RECOMMENDED_LISTINGS: OpenListing[] = [
 		deliveryCity: "Kabupaten Solok",
 		createdAt: "2026-08-01",
 		hasMyQuote: false,
+		isBookmarked: false,
 		status: "active",
 	},
 	{
@@ -43,6 +44,7 @@ export const MOCK_RECOMMENDED_LISTINGS: OpenListing[] = [
 		deliveryCity: "Bandung",
 		createdAt: "2026-08-05",
 		hasMyQuote: false,
+		isBookmarked: false,
 		status: "active",
 	},
 ];

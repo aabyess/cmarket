@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { Clock, CalendarDays, Package, MapPin, CheckCircle2 } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { ListingBookmarkButton } from "@/features/seller/components/ListingBookmarkButton";
 import type { Currency } from "@/features/buyer/types";
 import type { OpenListing } from "@/features/seller/types";
 
@@ -28,9 +29,10 @@ function getRemaining(
 type ListingBrowseCardProps = {
 	listing: OpenListing;
 	onClick: () => void;
+	onBookmarkChange: (listingId: string, isBookmarked: boolean) => void;
 };
 
-export function ListingBrowseCard({ listing, onClick }: ListingBrowseCardProps) {
+export function ListingBrowseCard({ listing, onClick, onBookmarkChange }: ListingBrowseCardProps) {
 	const t = useTranslations("ListingBrowseCard");
 	const locale = useLocale();
 	const remaining = getRemaining(listing.endDate, listing.status);
@@ -42,41 +44,52 @@ export function ListingBrowseCard({ listing, onClick }: ListingBrowseCardProps) 
 		? t("closed")
 		: t("deadlineWithDays", { date: deadlineDateText, days: remaining.days });
 	const registeredText = t("registeredOn", {
-		date: new Date(listing.createdAt).toLocaleDateString(locale, { month: "numeric", day: "numeric" }),
+		date: new Date(listing.createdAt).toLocaleDateString(locale, {
+			month: "numeric",
+			day: "numeric",
+		}),
 	});
 	const symbol = CURRENCY_SYMBOL[listing.currency];
-	const itemNames = listing.items.map((item) => item.name).filter(Boolean).join(", ");
+	const itemNames = listing.items
+		.map((item) => item.name)
+		.filter(Boolean)
+		.join(", ");
 	const location = [listing.deliveryCity, listing.deliveryProvinsi].filter(Boolean).join(", ");
 
 	return (
 		<div
 			onClick={onClick}
-			className="flex cursor-pointer flex-col rounded-2xl border border-[#E5E7EB] bg-white p-4 text-left transition-all hover:border-[#BFDBFE] hover:shadow-sm"
-		>
+			className="flex cursor-pointer flex-col rounded-2xl border border-[#E5E7EB] bg-white p-4 text-left transition-all hover:border-[#BFDBFE] hover:shadow-sm">
 			<div className="mb-2 flex items-start justify-between gap-2">
 				<span
 					className={cn(
-						"flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium",
+						"flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap",
 						remaining.isClosed
 							? "bg-[#F3F4F6] text-[#6B7280]"
 							: remaining.isUrgent
 								? "bg-[#FEF2F2] text-[#DC2626]"
-								: "bg-[#EFF6FF] text-imsg-blue",
-					)}
-				>
+								: "text-imsg-blue bg-[#EFF6FF]",
+					)}>
 					<Clock size={11} />
 					{remainingText}
 				</span>
 
-				{listing.hasMyQuote && (
-					<span className="flex shrink-0 items-center gap-1 rounded-full bg-[#ECFDF5] px-2 py-0.5 text-xs font-medium text-[#059669]">
-						<CheckCircle2 size={11} />
-						{t("quoteSent")}
-					</span>
-				)}
+				<div className="flex shrink-0 items-center gap-1">
+					{listing.hasMyQuote && (
+						<span className="flex items-center gap-1 rounded-full bg-[#ECFDF5] px-2 py-0.5 text-xs font-medium text-[#059669]">
+							<CheckCircle2 size={11} />
+							{t("quoteSent")}
+						</span>
+					)}
+					<ListingBookmarkButton
+						listingId={listing.id}
+						initialBookmarked={listing.isBookmarked}
+						onChange={(isBookmarked) => onBookmarkChange(listing.id, isBookmarked)}
+					/>
+				</div>
 			</div>
 
-			<p className="line-clamp-2 min-h-[42px] text-sm font-medium leading-snug text-[#1F2937]">
+			<p className="line-clamp-2 min-h-[42px] text-sm leading-snug font-medium text-[#1F2937]">
 				{listing.title}
 			</p>
 
@@ -107,7 +120,9 @@ export function ListingBrowseCard({ listing, onClick }: ListingBrowseCardProps) 
 							)}
 						</>
 					) : (
-						<p className="mt-0.5 truncate text-sm font-medium text-[#1F2937]">{t("budgetPrivate")}</p>
+						<p className="mt-0.5 truncate text-sm font-medium text-[#1F2937]">
+							{t("budgetPrivate")}
+						</p>
 					)}
 				</div>
 				<div className="min-w-0">
@@ -115,9 +130,7 @@ export function ListingBrowseCard({ listing, onClick }: ListingBrowseCardProps) 
 						<MapPin size={11} />
 						{t("deliveryLabel")}
 					</p>
-					<p className="mt-0.5 truncate text-sm font-medium text-[#1F2937]">
-						{location || "-"}
-					</p>
+					<p className="mt-0.5 truncate text-sm font-medium text-[#1F2937]">{location || "-"}</p>
 				</div>
 			</div>
 
@@ -128,9 +141,12 @@ export function ListingBrowseCard({ listing, onClick }: ListingBrowseCardProps) 
 					onClick();
 				}}
 				disabled={remaining.isClosed}
-				className="mt-3 flex items-center justify-center gap-1.5 rounded-xl bg-imsg-blue py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:cursor-not-allowed disabled:bg-[#F3F4F6] disabled:text-[#9CA3AF]"
-			>
-				{remaining.isClosed ? t("closed") : listing.hasMyQuote ? t("viewMyQuoteButton") : t("joinButton")}
+				className="bg-imsg-blue mt-3 flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:cursor-not-allowed disabled:bg-[#F3F4F6] disabled:text-[#9CA3AF]">
+				{remaining.isClosed
+					? t("closed")
+					: listing.hasMyQuote
+						? t("viewMyQuoteButton")
+						: t("joinButton")}
 			</button>
 		</div>
 	);
