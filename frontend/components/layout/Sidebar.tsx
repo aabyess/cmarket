@@ -242,8 +242,10 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 									onClick={() => toggleGroup(entry.key)}
 									className={cn(
 										"flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
+										// 하위 항목이 활성일 때 그룹 헤더까지 파랗게 칠하면 두 개가 선택된 것처럼
+										// 보인다. 헤더는 배경 강조 없이 글자 굵기만 살짝 다르게 둔다.
 										hasActiveChild
-											? "bg-primary/10 text-[#111827] font-semibold"
+											? "text-[#111827] font-semibold hover:bg-white/70"
 											: "text-[#374151] hover:bg-white/70 hover:text-[#1F2937]",
 									)}
 								>
