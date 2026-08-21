@@ -35,6 +35,8 @@ export type QuotePdfMeta = {
 	buyerId: string;
 	sellerId: string;
 	title: string;
+	/** 리비전 인지형 저장 경로를 만드는 데 쓴다 — 수정되면 바뀌어 새 PDF/메시지를 만들고, 안 바뀌면 같은 경로로 dedup된다. */
+	revisionTimestamp: string;
 };
 
 /** 캐시 확인·인증 등 품목 번역이나 회사 정보까지는 필요 없는 경우를 위한 경량 조회. */
@@ -43,7 +45,7 @@ export async function getQuotePdfMeta(quoteId: string, locale: string): Promise<
 
 	const { data: quote, error: quoteError } = await admin
 		.from("quotes")
-		.select("listing_id, seller_id")
+		.select("listing_id, seller_id, created_at, revised_at")
 		.eq("id", quoteId)
 		.single();
 
@@ -62,6 +64,7 @@ export async function getQuotePdfMeta(quoteId: string, locale: string): Promise<
 		buyerId: listing.user_id,
 		sellerId: quote.seller_id,
 		title: resolveTranslatedField(listing.title, listing.title_source_lang, listing.title_translations, locale),
+		revisionTimestamp: quote.revised_at ?? quote.created_at,
 	};
 }
 
