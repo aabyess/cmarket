@@ -1678,7 +1678,7 @@
 	},
 	"SellerDashboard": {
 		"welcome": "Welcome, {companyName}",
-		"exploreButton": "Browse Listings",
+		"welcomeSubcopy": "Discover new opportunities today",
 		"tradeSummaryTitle": "My Trade Summary",
 		"summaryListingsLabel": "Listings",
 		"summaryListingsSubLabel": "My Category Recommendations",

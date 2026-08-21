@@ -68,19 +68,28 @@ export function DashboardHome({
 	return (
 		<div className="mx-auto max-w-[1200px] px-6 py-6 lg:px-8 xl:px-10">
 			{/* 배너 */}
-			<div className="mb-6 flex items-center justify-between rounded-2xl border border-[#E5E7EB] bg-white px-8 py-7">
-				<div>
-					<p className="text-sm font-medium text-imsg-secondary">MitraPay</p>
+			<div className="relative mb-6 overflow-hidden rounded-2xl border border-[#E5E7EB] bg-gradient-to-r from-[#EEF4FF] via-[#F5F9FF] to-white px-8 py-7">
+				<div
+					aria-hidden
+					className="pointer-events-none absolute -right-8 -top-10 size-40 rounded-full bg-imsg-blue/10 blur-2xl"
+				/>
+				<div
+					aria-hidden
+					className="pointer-events-none absolute -right-4 bottom-[-2.5rem] size-28 rounded-full bg-imsg-blue/10 blur-xl"
+				/>
+				<div
+					aria-hidden
+					className="pointer-events-none absolute right-10 top-1/2 hidden size-16 -translate-y-1/2 items-center justify-center rounded-2xl bg-white/70 shadow-sm ring-1 ring-white sm:flex">
+					<Search size={28} className="text-imsg-blue" />
+				</div>
+
+				<div className="relative max-w-[75%] sm:max-w-[60%]">
+					<p className="text-sm font-semibold text-imsg-blue">MitraPay</p>
 					<h1 className="mt-1 text-2xl font-bold tracking-tight text-[#0f172a]">
 						{t("welcome", { companyName })}
 					</h1>
+					<p className="mt-1.5 text-sm text-imsg-secondary">{t("welcomeSubcopy")}</p>
 				</div>
-				<button
-					onClick={() => handleNavigate("/seller/listing-browse")}
-					className="flex shrink-0 items-center gap-1.5 rounded-full bg-imsg-blue px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-blue-600 active:scale-95">
-					<Search size={15} strokeWidth={2.5} />
-					{t("exploreButton")}
-				</button>
 			</div>
 
 			{/* 나의 거래 요약 */}
