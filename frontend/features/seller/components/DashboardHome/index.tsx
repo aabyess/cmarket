@@ -4,18 +4,21 @@ import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { ArrowRight, Bell, Building2, Clock, MessageSquare, Search } from "lucide-react";
 import { cn } from "@/utils/cn";
-import type { OpenListing, SellerDashboardData } from "@/features/seller/types";
+import { SellerDashboardTodo } from "@/features/seller/components/DashboardHome/SellerDashboardTodo";
+import type { OpenListing, SellerDashboardData, SellerTodo } from "@/features/seller/types";
 
 type DashboardHomeProps = {
 	companyName: string;
 	data: SellerDashboardData;
 	recommendedListings: OpenListing[];
+	todos: SellerTodo[];
 };
 
 export function DashboardHome({
 	companyName,
 	data,
 	recommendedListings,
+	todos,
 }: DashboardHomeProps): React.JSX.Element {
 	const t = useTranslations("SellerDashboard");
 	const locale = useLocale();
@@ -91,6 +94,9 @@ export function DashboardHome({
 					<p className="mt-1.5 text-sm text-imsg-secondary">{t("welcomeSubcopy")}</p>
 				</div>
 			</div>
+
+			{/* 할 일 */}
+			<SellerDashboardTodo todos={todos} />
 
 			{/* 나의 거래 요약 */}
 			<div className="mb-6">
