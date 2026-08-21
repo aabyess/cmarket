@@ -61,9 +61,13 @@ export type BuyerTodoHighlight = {
 	value: string;
 };
 
+export type BuyerTodoKind = "quotePending" | "paymentPending";
+
 export type BuyerTodo = {
 	id: string;
+	kind: BuyerTodoKind;
 	listingId: string;
+	contractId: string | null;
 	title: string;
 	description: string;
 	deadlineText: string | null;

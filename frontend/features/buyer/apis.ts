@@ -48,20 +48,27 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 
 	if (!user) return empty;
 
-	const [{ data: listings }, { data: recentNotifications }] = await Promise.all([
-		supabase
-			.from("listings")
-			.select("id, title, title_source_lang, title_translations, status, currency, end_date, quotes(id, price)")
-			.eq("user_id", user.id),
-		supabase
-			.from("notifications")
-			.select(
-				"id, type, quote_id, title, title_source_lang, title_translations, content, content_source_lang, content_translations, created_at",
-			)
-			.eq("profile_id", user.id)
-			.order("created_at", { ascending: false })
-			.limit(5),
-	]);
+	const [{ data: listings }, { data: recentNotifications }, { data: awaitingReceiptContracts }] =
+		await Promise.all([
+			supabase
+				.from("listings")
+				.select("id, title, title_source_lang, title_translations, status, currency, end_date, quotes(id, price)")
+				.eq("user_id", user.id),
+			supabase
+				.from("notifications")
+				.select(
+					"id, type, quote_id, title, title_source_lang, title_translations, content, content_source_lang, content_translations, created_at",
+				)
+				.eq("profile_id", user.id)
+				.order("created_at", { ascending: false })
+				.limit(5),
+			supabase
+				.from("contracts")
+				.select("id, listing_id, created_at, listings(title, title_source_lang, title_translations)")
+				.eq("buyer_id", user.id)
+				.eq("status", "ongoing")
+				.is("payment_receipt_url", null),
+		]);
 
 	const listingRows = listings ?? [];
 
@@ -91,7 +98,9 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 					.neq("sender_id", user.id)
 			: { count: 0 };
 
-	const todos: BuyerTodo[] = listingRows
+	type TodoEntry = { todo: BuyerTodo; isUrgent: boolean; sortTime: number };
+
+	const quoteTodoEntries: TodoEntry[] = listingRows
 		.filter((row) => row.status === "active" && row.end_date !== null)
 		.map((row) => ({
 			row,
@@ -106,11 +115,13 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 			const isUrgent = daysLeft > 0 && daysLeft <= 3;
 
 			return {
-				id: row.id,
-				endDate: row.end_date,
+				isUrgent,
+				sortTime: new Date(row.end_date).getTime(),
 				todo: {
 					id: row.id,
+					kind: "quotePending",
 					listingId: row.id,
+					contractId: null,
 					title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
 					description: t("quotesSummary", { count: quotes.length, price: `${symbol}${lowestPrice.toLocaleString()}` }),
 					deadlineText: daysLeft > 0 ? t("deadlineDays", { days: daysLeft }) : t("deadlineClosed"),
@@ -118,10 +129,48 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 					highlights: isUrgent ? [{ label: t("urgentLabel"), value: `D-${daysLeft}` }] : [],
 				} satisfies BuyerTodo,
 			};
+		});
+
+	// 결제 대기 — 계약은 확정됐지만 아직 영수증을 업로드하지 않은 건. 경과일이 곧 "얼마나
+	// 미뤄뒀는지"라 긴급 판단 기준도 남은 일수가 아니라 경과일이다.
+	const paymentTodoEntries: TodoEntry[] = (awaitingReceiptContracts ?? []).map((row) => {
+		const listing = row.listings as unknown as {
+			title: string;
+			title_source_lang: string | null;
+			title_translations: Record<string, string> | null;
+		} | null;
+		const createdTime = new Date(row.created_at).getTime();
+		const elapsedDays = Math.floor((Date.now() - createdTime) / (1000 * 60 * 60 * 24));
+		const isUrgent = elapsedDays >= 3;
+
+		return {
+			isUrgent,
+			sortTime: createdTime,
+			todo: {
+				id: `payment-${row.id}`,
+				kind: "paymentPending",
+				listingId: row.listing_id,
+				contractId: row.id,
+				title: listing
+					? resolveTranslatedField(listing.title, listing.title_source_lang, listing.title_translations, locale)
+					: "",
+				description: t("paymentPendingDescription"),
+				deadlineText: elapsedDays === 0 ? t("paymentJustConfirmed") : t("paymentElapsedDays", { days: elapsedDays }),
+				actionLabel: t("uploadReceiptAction"),
+				highlights: isUrgent ? [{ label: t("paymentUrgentLabel"), value: t("paymentElapsedDays", { days: elapsedDays }) }] : [],
+			} satisfies BuyerTodo,
+		};
+	});
+
+	// 두 종류를 합쳐 긴급 항목을 먼저, 그 안에서는 각자 기준 시각(공고 마감일/계약 확정일)
+	// 오름차순으로 정렬한다 — 견적 항목만 있던 기존 동작과 동일한 순서를 유지한다.
+	const todos: BuyerTodo[] = [...quoteTodoEntries, ...paymentTodoEntries]
+		.sort((a, b) => {
+			if (a.isUrgent !== b.isUrgent) return a.isUrgent ? -1 : 1;
+			return a.sortTime - b.sortTime;
 		})
-		.sort((a, b) => a.endDate.localeCompare(b.endDate))
 		.slice(0, 5)
-		.map(({ todo }) => todo);
+		.map((entry) => entry.todo);
 
 	const activities: BuyerActivity[] = (recentNotifications ?? []).map((row) => ({
 		id: row.id,
