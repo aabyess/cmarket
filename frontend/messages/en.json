@@ -1208,12 +1208,12 @@
 		"deliveryLabel": "Delivery time",
 		"daysSuffix": "{days} days",
 		"reason": "Ranked #{priceRank} in price and #{deliveryRank} in delivery out of {total} quotes — the best overall score",
-		"awardButton": "Confirm Contract",
+		"awardButton": "Choose this supplier",
 		"chatButton": "Contact"
 	},
 	"QuoteCompareTable": {
 		"approxPriceIdr": "Approx. Rp {amount}",
-		"awardAction": "Confirm Contract",
+		"awardAction": "Choose",
 		"awardClosed": "Contract Closed",
 		"awardedBadge": "Confirmed",
 		"awardedStatus": "Confirmed",
@@ -1274,7 +1274,7 @@
 		"itemsBreakdownToggle": "View item breakdown",
 		"paymentTermsLabel": "Payment terms",
 		"attachmentOpenButton": "Open",
-		"awardButton": "Confirm Contract",
+		"awardButton": "Choose this supplier",
 		"chatButton": "Contact"
 	},
 	"QuoteReviewListingTable": {
@@ -1482,7 +1482,7 @@
 		"backToListAria": "Back to chat list",
 		"statusAwarded": "Contract Confirmed",
 		"statusRejected": "Closed",
-		"awardButton": "Confirm Contract",
+		"awardButton": "Choose this supplier",
 		"quotePriceLabel": "Quote Price",
 		"deliveryLabel": "Delivery",
 		"deliveryDays": "{days} days",

@@ -322,7 +322,7 @@
 		"backToListAria": "Kembali ke daftar chat",
 		"statusAwarded": "Dikonfirmasi",
 		"statusRejected": "Ditutup",
-		"awardButton": "Konfirmasi Kontrak",
+		"awardButton": "Pilih perusahaan ini",
 		"quotePriceLabel": "Harga Penawaran",
 		"deliveryLabel": "Pengiriman",
 		"deliveryDays": "{days} hari",
@@ -1394,12 +1394,12 @@
 		"deliveryLabel": "Waktu pengiriman",
 		"daysSuffix": "{days} hari",
 		"reason": "Peringkat #{priceRank} dalam harga dan #{deliveryRank} dalam pengiriman dari {total} penawaran — skor keseluruhan tertinggi",
-		"awardButton": "Konfirmasi Kontrak",
+		"awardButton": "Pilih perusahaan ini",
 		"chatButton": "Hubungi"
 	},
 	"QuoteCompareTable": {
 		"approxPriceIdr": "Sekitar Rp {amount}",
-		"awardAction": "Konfirmasi Kontrak",
+		"awardAction": "Pilih",
 		"awardClosed": "Kontrak Ditutup",
 		"awardedBadge": "Dikonfirmasi",
 		"awardedStatus": "Dikonfirmasi",
@@ -1460,7 +1460,7 @@
 		"itemsBreakdownToggle": "Lihat rincian per item",
 		"paymentTermsLabel": "Syarat pembayaran",
 		"attachmentOpenButton": "Buka",
-		"awardButton": "Konfirmasi Kontrak",
+		"awardButton": "Pilih perusahaan ini",
 		"chatButton": "Hubungi"
 	},
 	"QuoteReviewListingTable": {
