@@ -1,5 +1,5 @@
 import { Link, redirect } from "@/i18n/navigation";
-import { FileCheck, FileText, FolderOpen, LayoutDashboard, Mail } from "lucide-react";
+import { FileCheck, FileText, FolderOpen, LayoutDashboard, Mail, Users } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { getIsAdmin } from "@/features/support/serverApis";
 import { LogoutButton } from "@/features/auth/components/LogoutButton";
@@ -21,6 +21,7 @@ export default async function AdminLayout({
 
 	const MENU = [
 		{ href: "/admin", label: t("menuDashboard"), icon: LayoutDashboard },
+		{ href: "/admin/users", label: t("menuUsers"), icon: Users },
 		{ href: "/admin/contracts", label: t("menuContracts"), icon: FileCheck },
 		{ href: "/admin/notices", label: t("menuNotices"), icon: FileText },
 		{ href: "/admin/resources", label: t("menuResources"), icon: FolderOpen },
