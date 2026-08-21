@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { FileText } from "lucide-react";
+import { usePersistentState } from "@/hooks/usePersistentState";
 import { OrderListCard } from "@/features/buyer/components/OrderList/OrderListCard";
 import { OrderListTable } from "@/features/buyer/components/OrderList/OrderListTable";
 import {
@@ -14,6 +15,20 @@ import {
 import type { ListingStatus, ListingSummary } from "@/features/buyer/types";
 import { Pagination } from "@/components/commons/Pagination";
 
+type OrderListPrefs = {
+	sort: SortOption;
+	statusFilter: ListingStatus | null;
+	viewMode: ViewMode;
+	pageSize: number;
+};
+
+const DEFAULT_PREFS: OrderListPrefs = {
+	sort: "newest",
+	statusFilter: null,
+	viewMode: "list",
+	pageSize: 10,
+};
+
 type OrderListProps = {
 	listings: ListingSummary[];
 };
@@ -22,18 +37,28 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 	const t = useTranslations("OrderList");
 	const router = useRouter();
 	const [search, setSearch] = useState("");
-	const [sort, setSort] = useState<SortOption>("newest");
-	const [statusFilter, setStatusFilter] = useState<ListingStatus | null>(null);
-	const [viewMode, setViewMode] = useState<ViewMode>("list");
+	const [prefs, setPrefs] = usePersistentState<OrderListPrefs>("mitrapay:buyer-order-list", DEFAULT_PREFS);
+	const { sort, statusFilter, viewMode, pageSize } = prefs;
 	const [page, setPage] = useState(1);
-	const [pageSize, setPageSize] = useState(10);
+
+	function setSort(sort: SortOption): void {
+		setPrefs((prev) => ({ ...prev, sort }));
+	}
 
 	function selectStatus(status: ListingStatus): void {
-		setStatusFilter((prev) => (prev === status ? null : status));
+		setPrefs((prev) => ({ ...prev, statusFilter: prev.statusFilter === status ? null : status }));
 	}
 
 	function clearStatus(): void {
-		setStatusFilter(null);
+		setPrefs((prev) => ({ ...prev, statusFilter: null }));
+	}
+
+	function setViewMode(viewMode: ViewMode): void {
+		setPrefs((prev) => ({ ...prev, viewMode }));
+	}
+
+	function setPageSize(pageSize: number): void {
+		setPrefs((prev) => ({ ...prev, pageSize }));
 	}
 
 	const statusCounts = useMemo(() => {
