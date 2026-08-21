@@ -17,6 +17,20 @@ export type SellerDashboardData = {
 	activities: { title: string; timeText: string }[];
 };
 
+export type SellerTodoKind = "quotePending" | "awarded" | "deliveryDue" | "paymentConfirm";
+
+export type SellerTodo = {
+	id: string;
+	kind: SellerTodoKind;
+	listingId: string | null;
+	contractId: string | null;
+	title: string;
+	description: string;
+	deadlineText: string | null;
+	actionLabel: string;
+	highlights: { label: string; value: string }[];
+};
+
 // 목록(탐색) 화면은 카드/검색에 쓰는 name/spec만 있으면 되고, quantity/unit/price는
 // 어디서도 쓰지 않는다 — 전체 필드를 내려보내면 공고가 많을 때 페이로드가 불필요하게 커진다.
 export type ListingBrowseItem = Pick<ListingItem, "name" | "spec">;

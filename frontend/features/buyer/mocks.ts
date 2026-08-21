@@ -5,7 +5,9 @@ export const MOCK_DASHBOARD_DATA: BuyerDashboardData = {
 	todos: [
 		{
 			id: "todo-1",
+			kind: "quotePending",
 			listingId: "LT002",
+			contractId: null,
 			title: "진동 측정기에 견적 12건이 도착했어요",
 			description: "최저가 ₩42,000,000 · 가장 빠른 납기 5일",
 			deadlineText: "마감까지 2일",
@@ -17,7 +19,9 @@ export const MOCK_DASHBOARD_DATA: BuyerDashboardData = {
 		},
 		{
 			id: "todo-2",
+			kind: "quotePending",
 			listingId: "LT001",
+			contractId: null,
 			title: "사무용품 500개 묶음",
 			description: "견적 8건 · 최저가 ₩12,400,000",
 			deadlineText: "마감 D-5",
@@ -29,7 +33,9 @@ export const MOCK_DASHBOARD_DATA: BuyerDashboardData = {
 		},
 		{
 			id: "todo-3",
+			kind: "quotePending",
 			listingId: "LT003",
+			contractId: null,
 			title: "케미컬 용제",
 			description: "공급기업이 서류를 올렸어요",
 			deadlineText: null,

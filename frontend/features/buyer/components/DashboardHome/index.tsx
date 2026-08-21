@@ -21,6 +21,10 @@ export function DashboardHome({ companyName, data, tradeSummary }: DashboardHome
 	}
 
 	function handleTodoAction(todo: BuyerTodo) {
+		if (todo.kind === "paymentPending") {
+			router.push("/buyer/payments");
+			return;
+		}
 		router.push(`/buyer/quote-review?listingId=${todo.listingId}`);
 	}
 
