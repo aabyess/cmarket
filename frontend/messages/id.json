@@ -1615,7 +1615,7 @@
 		"confirmReceiptTitle": "Periksa Bukti Transfer",
 		"days": "{count} hari",
 		"deleteReceiptTitle": "Hapus bukti transfer",
-		"deliveryConfirmedTitle": "Penerimaan barang dikonfirmasi · {date}",
+		"deliveryConfirmedTitle": "Penerimaan dikonfirmasi",
 		"noPartnerCompanyName": "Tanpa Nama Perusahaan",
 		"reuploadReceiptTitle": "Unggah Ulang Bukti Transfer",
 		"statusCancelled": "Dibatalkan",

@@ -1602,7 +1602,7 @@
 		"confirmReceiptTitle": "영수증 확인",
 		"days": "{count}일",
 		"deleteReceiptTitle": "영수증 삭제",
-		"deliveryConfirmedTitle": "수령 확인 완료 · {date}",
+		"deliveryConfirmedTitle": "수령 확인 완료",
 		"noPartnerCompanyName": "기업명 없음",
 		"reuploadReceiptTitle": "영수증 재업로드",
 		"statusCancelled": "취소됨",
