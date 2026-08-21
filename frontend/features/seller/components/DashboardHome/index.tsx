@@ -5,13 +5,16 @@ import { useRouter } from "@/i18n/navigation";
 import { ArrowRight, Bell, Building2, Clock, MessageSquare, Search } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { SellerDashboardTodo } from "@/features/seller/components/DashboardHome/SellerDashboardTodo";
+import { OnboardingChecklist } from "@/features/onboarding/components/OnboardingChecklist";
 import type { OpenListing, SellerDashboardData, SellerTodo } from "@/features/seller/types";
+import type { OnboardingChecklist as OnboardingChecklistData } from "@/features/onboarding/types";
 
 type DashboardHomeProps = {
 	companyName: string;
 	data: SellerDashboardData;
 	recommendedListings: OpenListing[];
 	todos: SellerTodo[];
+	onboardingChecklist: OnboardingChecklistData;
 };
 
 export function DashboardHome({
@@ -19,6 +22,7 @@ export function DashboardHome({
 	data,
 	recommendedListings,
 	todos,
+	onboardingChecklist,
 }: DashboardHomeProps): React.JSX.Element {
 	const t = useTranslations("SellerDashboard");
 	const locale = useLocale();
@@ -94,6 +98,8 @@ export function DashboardHome({
 					<p className="mt-1.5 text-sm text-imsg-secondary">{t("welcomeSubcopy")}</p>
 				</div>
 			</div>
+
+			<OnboardingChecklist checklist={onboardingChecklist} />
 
 			{/* 할 일 */}
 			<SellerDashboardTodo todos={todos} />

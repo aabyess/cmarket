@@ -1734,6 +1734,17 @@
 		"monthsAgo": "{count} months ago",
 		"yearsAgo": "{count} years ago"
 	},
+	"OnboardingChecklist": {
+		"title": "Getting Started",
+		"progress": "{completed}/{total} done",
+		"closeAria": "Close",
+		"reopenLabel": "Show checklist ({completed}/{total})",
+		"itemVerification": "Apply for company verification",
+		"itemFirstActionBuyer": "Post your first listing",
+		"itemFirstActionSeller": "Submit your first quote",
+		"itemBankAccount": "Register your bank account",
+		"itemLogo": "Add your company logo"
+	},
 	"BuyerDashboardData": {
 		"quoteLabel": "Quotes",
 		"listingLabel": "Listings",
