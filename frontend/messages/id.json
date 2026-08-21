@@ -1520,7 +1520,9 @@
 		"noQuotesYet": "Belum ada penawaran",
 		"noResultsDescription": "Coba sesuaikan kata kunci atau filter Anda.",
 		"noResultsTitle": "Tidak ada permintaan yang sesuai",
-		"quoteCountLabel": "{count} penawaran"
+		"quoteCountLabel": "{count} penawaran",
+		"registeredAndDeadline": "Diposting {registered} · Tenggat {deadline}",
+		"budgetLabel": "Anggaran {amount}"
 	},
 	"QuoteReviewQuoteCard": {
 		"awardedBadge": "Dikonfirmasi",
@@ -1544,6 +1546,7 @@
 		"closed": "Ditutup",
 		"columnFastestDelivery": "Pengiriman Tercepat",
 		"columnLowestPrice": "Harga Terendah",
+		"columnCategory": "Kategori",
 		"columnQuoteCount": "Penawaran Diterima",
 		"columnStatus": "Status",
 		"columnTitle": "Nama Permintaan",

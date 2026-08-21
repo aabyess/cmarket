@@ -157,6 +157,8 @@ export type ListingWithQuotes = {
 	endDate: string;
 	status: ListingStatus;
 	currency: Currency;
+	category: ListingCategory;
+	totalBudget: number | null;
 	quoteCount: number;
 	lowestPrice: number | null;
 	fastestDays: number | null;
