@@ -132,6 +132,9 @@ export function ChatMessageList({
 					const next = messages[i + 1];
 					const sameAsPrev = prev?.senderId === message.senderId;
 					const sameAsNext = next?.senderId === message.senderId;
+					// 텍스트 버블끼리만 촘촘하게 붙이고, 이미지/파일/카드류가 끼면 여백을 더 준다.
+					const isCompactWithPrev =
+						sameAsPrev && message.messageType === "text" && prev?.messageType === "text";
 					const showTime = !sameAsNext;
 					const isLastMine = isMine && message.id === lastReadMineId;
 
@@ -150,7 +153,7 @@ export function ChatMessageList({
 					const showTranslateButton = !isMine && !hasAutoTranslation && !manualTranslation;
 
 					return (
-						<div key={message.id} className={sameAsPrev ? "mt-0.5" : "mt-3"}>
+						<div key={message.id} className={isCompactWithPrev ? "mt-0.5" : sameAsPrev ? "mt-2.5" : "mt-3"}>
 							{showDate && (
 								<div className="my-4 flex justify-center">
 									<span className="text-imsg-secondary rounded-full bg-black/5 px-3 py-1 text-xs font-medium">

@@ -567,11 +567,14 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 													? { duration: 0 }
 													: { type: "spring", stiffness: 400, damping: 26, delay: i * 0.04 }
 											}
-											className="flex flex-col items-center gap-1.5 disabled:opacity-60">
+											className="flex w-16 flex-col items-center gap-1.5 disabled:opacity-60">
 											<span className="bg-imsg-blue flex size-14 items-center justify-center rounded-full text-white shadow-md">
 												<tool.icon size={22} />
 											</span>
-											<span className="text-imsg-secondary text-xs font-medium">{tool.label}</span>
+											{/* 라벨 길이가 달라도 원형 버튼 간격이 흔들리지 않게 칸 폭을 고정한다. */}
+											<span className="text-imsg-secondary w-full text-center text-xs font-medium whitespace-nowrap">
+												{tool.label}
+											</span>
 										</motion.button>
 									))}
 								</div>
