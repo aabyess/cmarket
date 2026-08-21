@@ -7,7 +7,7 @@ import {
 	LayoutDashboard, ListTodo, Mail, MessageSquare,
 	FileCheck, HelpCircle, Search, Send, Building2,
 	LogOut, User, FilePlus, Sparkles, Settings, FileText, Phone,
-	Briefcase, ChevronDown, ChevronUp, Shield, CreditCard,
+	Briefcase, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Shield, CreditCard,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { NotificationBell } from "@/features/notifications/components/NotificationBell";
@@ -25,6 +25,8 @@ type SidebarProps = {
 	role: UserRole;
 	companyName: string;
 	name: string;
+	isCollapsed: boolean;
+	onToggleCollapsed: () => void;
 };
 
 type MenuLeaf = {
@@ -89,7 +91,7 @@ const SELLER_MENU_ITEMS: MenuEntry[] = [
 	{ labelKey: "support", key: "support", icon: HelpCircle, href: "/support", badge: null },
 ];
 
-export function Sidebar({ role, companyName, name }: SidebarProps) {
+export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapsed }: SidebarProps) {
 	const t = useTranslations("Sidebar");
 	const pathname = usePathname();
 	const router = useRouter();
@@ -113,6 +115,21 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 		});
 	}
 
+	// 레일(아이콘만) 상태에서 그룹을 클릭하면 플라이아웃 대신 사이드바를 펼치면서
+	// 그 그룹도 함께 열어준다.
+	function handleGroupClick(key: string): void {
+		if (isCollapsed) {
+			onToggleCollapsed();
+			setCollapsedGroups((prev) => {
+				const next = new Set(prev);
+				next.delete(key);
+				return next;
+			});
+			return;
+		}
+		toggleGroup(key);
+	}
+
 	useEffect(() => {
 		function handleClickOutside(e: MouseEvent) {
 			if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -130,10 +147,25 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 	}
 
 	return (
-		<aside className="fixed left-0 top-0 h-screen w-64 hidden lg:flex flex-col bg-sidebar border-r border-sidebar-border z-40">
+		<aside
+			className={cn(
+				"fixed left-0 top-0 hidden h-screen flex-col overflow-visible border-r border-sidebar-border bg-sidebar transition-[width] duration-200 lg:flex z-40",
+				isCollapsed ? "w-20" : "w-64",
+			)}
+		>
+			{/* 접기/펼치기 토글 — 사이드바 우측 경계에 반쯤 걸쳐 배치 */}
+			<button
+				type="button"
+				onClick={onToggleCollapsed}
+				aria-label={isCollapsed ? t("expandAria") : t("collapseAria")}
+				className="absolute -right-3 top-6 z-50 flex size-6 items-center justify-center rounded-full border border-sidebar-border bg-white text-sidebar-foreground/60 shadow-sm transition-colors hover:bg-imsg-surface hover:text-sidebar-foreground"
+			>
+				{isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+			</button>
+
 			{/* 프로필 블록 */}
 			<div className="px-3 pt-6 pb-4 border-b border-sidebar-border relative">
-				<div className="flex items-center gap-2 px-2">
+				<div className={cn("flex items-center gap-2 px-2", isCollapsed && "justify-center px-0")}>
 					{/* 프로필 트리거 */}
 					<div
 						ref={dropdownRef}
@@ -146,17 +178,22 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 								setDropdownOpen((prev) => !prev);
 							}
 						}}
-						className="relative flex min-w-0 flex-1 items-center gap-3 rounded-lg py-1 outline-none hover:bg-black/5 transition-colors cursor-pointer"
+						className={cn(
+							"relative flex min-w-0 items-center gap-3 rounded-lg py-1 outline-none hover:bg-black/5 transition-colors cursor-pointer",
+							isCollapsed ? "shrink-0" : "flex-1",
+						)}
 					>
 						{/* 아바타 */}
 						<div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
 							{initial}
 						</div>
 						{/* 이름 + 회사 */}
-						<div className="min-w-0 flex-1 text-left">
-							<p className="truncate text-sm font-semibold text-sidebar-foreground">{name || companyName}</p>
-							<p className="truncate text-xs text-sidebar-foreground/60">{companyName}</p>
-						</div>
+						{!isCollapsed && (
+							<div className="min-w-0 flex-1 text-left">
+								<p className="truncate text-sm font-semibold text-sidebar-foreground">{name || companyName}</p>
+								<p className="truncate text-xs text-sidebar-foreground/60">{companyName}</p>
+							</div>
+						)}
 
 						{/* 드롭다운 */}
 						{dropdownOpen && (
@@ -217,17 +254,24 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 						)}
 					</div>
 
-					{/* 알림/언어 - 프로필과 분리된 독립 영역 */}
-					<LanguageSwitcher />
-					<NotificationBell />
+					{/* 알림/언어 - 프로필과 분리된 독립 영역. 레일 폭에서는 두 컴포넌트가 좁은
+					    공간에서 어떻게 보일지 시각 확인이 어려워 접었을 땐 숨긴다. */}
+					{!isCollapsed && (
+						<>
+							<LanguageSwitcher />
+							<NotificationBell />
+						</>
+					)}
 				</div>
 			</div>
 
 			{/* 메뉴 */}
 			<nav className="flex-1 px-3 py-4 overflow-y-auto">
-				<p className="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-sidebar-foreground/40">
-					{t("menuHeading")}
-				</p>
+				{!isCollapsed && (
+					<p className="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-sidebar-foreground/40">
+						{t("menuHeading")}
+					</p>
+				)}
 				<div className="space-y-0.5">
 				{menuItems.map((entry) => {
 					if (isMenuGroup(entry)) {
@@ -239,9 +283,11 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 							<div key={entry.key}>
 								<button
 									type="button"
-									onClick={() => toggleGroup(entry.key)}
+									onClick={() => handleGroupClick(entry.key)}
+									title={isCollapsed ? t(`menu.${entry.labelKey}`) : undefined}
 									className={cn(
 										"flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
+										isCollapsed && "justify-center px-0",
 										// 하위 항목이 활성일 때 그룹 헤더까지 파랗게 칠하면 두 개가 선택된 것처럼
 										// 보인다. 헤더는 배경 강조 없이 글자 굵기만 살짝 다르게 둔다.
 										hasActiveChild
@@ -254,15 +300,19 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 										strokeWidth={2}
 										className={cn("shrink-0", hasActiveChild ? "text-[#111827]" : "text-[#9CA3AF]")}
 									/>
-									<span className="flex-1 text-left">{t(`menu.${entry.labelKey}`)}</span>
-									{isOpen ? (
-										<ChevronUp size={15} className="shrink-0 text-[#9CA3AF]" />
-									) : (
-										<ChevronDown size={15} className="shrink-0 text-[#9CA3AF]" />
+									{!isCollapsed && (
+										<>
+											<span className="flex-1 text-left">{t(`menu.${entry.labelKey}`)}</span>
+											{isOpen ? (
+												<ChevronUp size={15} className="shrink-0 text-[#9CA3AF]" />
+											) : (
+												<ChevronDown size={15} className="shrink-0 text-[#9CA3AF]" />
+											)}
+										</>
 									)}
 								</button>
 
-								{isOpen && (
+								{isOpen && !isCollapsed && (
 									<div className="mt-0.5 space-y-0.5">
 										{entry.children.map((child) => {
 											const isActive = pathname.startsWith(child.href);
@@ -302,8 +352,10 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 						<Link
 							key={entry.key}
 							href={entry.href}
+							title={isCollapsed ? t(`menu.${entry.labelKey}`) : undefined}
 							className={cn(
 								"flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
+								isCollapsed && "justify-center px-0",
 								isActive
 									? "bg-primary/10 text-[#111827] font-semibold"
 									: "text-[#374151] hover:bg-white/70 hover:text-[#1F2937]",
@@ -317,11 +369,15 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 									isActive ? "text-[#111827]" : "text-[#9CA3AF]",
 								)}
 							/>
-							<span className="flex-1">{t(`menu.${entry.labelKey}`)}</span>
-							{entry.badge && (
-								<span className="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-semibold bg-white/20 text-white">
-									{entry.badge}
-								</span>
+							{!isCollapsed && (
+								<>
+									<span className="flex-1">{t(`menu.${entry.labelKey}`)}</span>
+									{entry.badge && (
+										<span className="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-semibold bg-white/20 text-white">
+											{entry.badge}
+										</span>
+									)}
+								</>
 							)}
 						</Link>
 					);
@@ -329,20 +385,22 @@ export function Sidebar({ role, companyName, name }: SidebarProps) {
 				</div>
 			</nav>
 
-			{/* 하단: 지원센터 연락처 */}
-			<div className="mt-auto border-t border-sidebar-border px-4 py-4">
-				<p className="text-xs font-semibold text-sidebar-foreground/60">{t("menu.support")}</p>
-				<div className="mt-1.5 space-y-1">
-					<div className="flex items-center gap-1.5 text-xs text-sidebar-foreground/50">
-						<Phone size={12} className="shrink-0" />
-						<span>{SUPPORT_PHONE}</span>
-					</div>
-					<div className="flex items-center gap-1.5 text-xs text-sidebar-foreground/50">
-						<Mail size={12} className="shrink-0" />
-						<span>{SUPPORT_EMAIL}</span>
+			{/* 하단: 지원센터 연락처 — 레일 폭에는 들어갈 공간이 없어 접혔을 땐 숨긴다. */}
+			{!isCollapsed && (
+				<div className="mt-auto border-t border-sidebar-border px-4 py-4">
+					<p className="text-xs font-semibold text-sidebar-foreground/60">{t("menu.support")}</p>
+					<div className="mt-1.5 space-y-1">
+						<div className="flex items-center gap-1.5 text-xs text-sidebar-foreground/50">
+							<Phone size={12} className="shrink-0" />
+							<span>{SUPPORT_PHONE}</span>
+						</div>
+						<div className="flex items-center gap-1.5 text-xs text-sidebar-foreground/50">
+							<Mail size={12} className="shrink-0" />
+							<span>{SUPPORT_EMAIL}</span>
+						</div>
 					</div>
 				</div>
-			</div>
+			)}
 		</aside>
 	);
 }

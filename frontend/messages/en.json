@@ -78,6 +78,8 @@
 	},
 	"Sidebar": {
 		"menuHeading": "Menu",
+		"collapseAria": "Collapse sidebar",
+		"expandAria": "Expand sidebar",
 		"menu": {
 			"dashboard": "Dashboard",
 			"postListing": "Post Listing",
