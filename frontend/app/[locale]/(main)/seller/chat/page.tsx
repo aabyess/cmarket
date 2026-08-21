@@ -8,7 +8,7 @@ type SellerChatPageProps = {
 
 export default async function SellerChatPage({ searchParams }: SellerChatPageProps) {
 	const { quoteId } = await searchParams;
-	const context = await getChatContext("seller");
+	const context = await getChatContext("seller", quoteId);
 	if (!context) notFound();
 
 	return <ChatView context={context} initialQuoteId={quoteId} />;

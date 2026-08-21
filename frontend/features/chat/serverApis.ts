@@ -19,7 +19,7 @@ type QuoteRow = {
 	} | null;
 };
 
-export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
+export async function getChatRooms(role: ChatRole, alwaysIncludeQuoteId?: string): Promise<ChatRoom[]> {
 	const supabase = await createServerSupabaseClient();
 	const {
 		data: { user },
@@ -169,6 +169,8 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 			};
 		})
 		.filter((room) => {
+			// 알림 클릭 등 ?quoteId= 직접 진입은 목록 필터를 거치지 않고 그대로 열려야 한다.
+			if (room.quoteId === alwaysIncludeQuoteId) return true;
 			const hiddenAt = hiddenAtMap.get(room.quoteId);
 			if (!hiddenAt) return true;
 			// 숨긴 뒤 도착한 새 메시지가 있으면 자동으로 다시 노출한다(마지막 메시지 시각이
@@ -178,14 +180,14 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 		.sort((a, b) => (b.lastMessageAt ?? "").localeCompare(a.lastMessageAt ?? ""));
 }
 
-export async function getChatContext(role: ChatRole): Promise<ChatContext | null> {
+export async function getChatContext(role: ChatRole, alwaysIncludeQuoteId?: string): Promise<ChatContext | null> {
 	const supabase = await createServerSupabaseClient();
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
 	if (!user) return null;
 
-	const rooms = await getChatRooms(role);
+	const rooms = await getChatRooms(role, alwaysIncludeQuoteId);
 
 	return { myId: user.id, myRole: role, rooms };
 }
