@@ -334,7 +334,12 @@
 		"awardModalDescription": "{partnerName}을(를) 최종 공급기업으로 확정합니다. 확정하면 계약이 생성되고 인보이스(청구서)가 채팅으로 자동 발행됩니다. 다른 견적은 미선정 처리되며, 확정 후에는 변경할 수 없어요.",
 		"awardModalConfirm": "계약 확정하기",
 		"limitExceededBanner": "이번 달 무료 번역 한도를 모두 사용했어요. 메시지는 번역 없이 전송돼요.",
-		"limitExceededBannerLink": "Pro 요금제 보기"
+		"limitExceededBannerLink": "Pro 요금제 보기",
+		"hideRoomAria": "채팅방 나가기",
+		"hideRoomErrorMessage": "채팅방 나가기 중 오류가 발생했습니다.",
+		"hideRoomModalTitle": "이 채팅방을 나가시겠어요?",
+		"hideRoomModalDescription": "나가도 대화 기록은 보존되며, 상대방이 새 메시지를 보내면 다시 표시됩니다.",
+		"hideRoomModalConfirm": "나가기"
 	},
 	"ChatMessageList": {
 		"dateLabel": "{year}년 {month}월 {day}일",

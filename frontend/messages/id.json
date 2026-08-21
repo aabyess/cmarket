@@ -334,7 +334,12 @@
 		"awardModalDescription": "{partnerName} akan dikonfirmasi sebagai pemasok akhir. Setelah dikonfirmasi, kontrak akan dibuat dan invoice (tagihan) akan otomatis diterbitkan di chat. Penawaran lainnya akan ditandai tidak terpilih, dan tindakan ini tidak dapat diubah.",
 		"awardModalConfirm": "Konfirmasi Kontrak",
 		"limitExceededBanner": "Anda telah mencapai batas terjemahan gratis bulan ini. Pesan akan dikirim tanpa terjemahan.",
-		"limitExceededBannerLink": "Lihat Paket Pro"
+		"limitExceededBannerLink": "Lihat Paket Pro",
+		"hideRoomAria": "Keluar dari chat",
+		"hideRoomErrorMessage": "Terjadi kesalahan saat keluar dari chat.",
+		"hideRoomModalTitle": "Keluar dari chat ini?",
+		"hideRoomModalDescription": "Riwayat percakapan akan tetap tersimpan, dan chat ini akan muncul kembali jika pihak lain mengirim pesan baru.",
+		"hideRoomModalConfirm": "Keluar"
 	},
 	"ChatMessageList": {
 		"dateLabel": "{day}/{month}/{year}",

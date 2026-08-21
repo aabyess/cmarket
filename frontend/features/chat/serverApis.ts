@@ -55,10 +55,13 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 
 	let summaries: RoomSummary[];
 
-	const { data: rpcSummaries, error: rpcError } = await supabase.rpc("get_chat_room_summaries", {
-		p_quote_ids: quoteIds,
-		p_user_id: user.id,
-	});
+	const [{ data: rpcSummaries, error: rpcError }, { data: hiddenRooms }] = await Promise.all([
+		supabase.rpc("get_chat_room_summaries", {
+			p_quote_ids: quoteIds,
+			p_user_id: user.id,
+		}),
+		supabase.from("chat_hidden_rooms").select("quote_id, hidden_at").eq("profile_id", user.id).in("quote_id", quoteIds),
+	]);
 
 	if (rpcError) {
 		console.error("get_chat_room_summaries rpc 실패, 전체 조회로 폴백:", rpcError.message);
@@ -134,6 +137,8 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 		return latest.last_content;
 	}
 
+	const hiddenAtMap = new Map((hiddenRooms ?? []).map((row) => [row.quote_id, row.hidden_at]));
+
 	return quoteRows
 		.map((quote) => {
 			const summary = summaryMap.get(quote.id);
@@ -162,6 +167,13 @@ export async function getChatRooms(role: ChatRole): Promise<ChatRoom[]> {
 				lastMessageAt: summary?.last_created_at ?? null,
 				unreadCount: Number(summary?.unread_count ?? 0),
 			};
+		})
+		.filter((room) => {
+			const hiddenAt = hiddenAtMap.get(room.quoteId);
+			if (!hiddenAt) return true;
+			// 숨긴 뒤 도착한 새 메시지가 있으면 자동으로 다시 노출한다(마지막 메시지 시각이
+			// hidden_at보다 뒤). hidden_rooms 행 자체는 지우지 않고 그대로 둔다.
+			return room.lastMessageAt !== null && room.lastMessageAt > hiddenAt;
 		})
 		.sort((a, b) => (b.lastMessageAt ?? "").localeCompare(a.lastMessageAt ?? ""));
 }

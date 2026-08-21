@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { ArrowUp, ChevronLeft, Sparkles } from "lucide-react";
+import { ArrowUp, ChevronLeft, LogOut, Sparkles } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { ChatMessageList } from "@/features/chat/components/ChatMessageList";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
@@ -33,6 +33,8 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 	const [input, setInput] = useState("");
 	const [isAwardModalOpen, setIsAwardModalOpen] = useState(false);
 	const [isAwarding, setIsAwarding] = useState(false);
+	const [isHideModalOpen, setIsHideModalOpen] = useState(false);
+	const [isHiding, setIsHiding] = useState(false);
 	const [limitExceeded, setLimitExceeded] = useState(false);
 	const [isLoadingOlder, setIsLoadingOlder] = useState(false);
 	const [reachedOldest, setReachedOldest] = useState(false);
@@ -184,6 +186,29 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 		}
 	}
 
+	async function handleHideRoom(): Promise<void> {
+		setIsHiding(true);
+		try {
+			const res = await fetch("/api/chat/hide-room", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ quoteId: room.quoteId }),
+			});
+			if (!res.ok) {
+				const { error } = await res.json();
+				throw new Error(error);
+			}
+			setIsHideModalOpen(false);
+			onBack();
+			router.refresh();
+		} catch (err) {
+			console.error(err);
+			alert(t("hideRoomErrorMessage"));
+		} finally {
+			setIsHiding(false);
+		}
+	}
+
 	return (
 		<section className="flex min-h-0 flex-1 flex-col bg-imsg-surface">
 			{/* 헤더 */}
@@ -202,26 +227,32 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 					</span>
 					<span className="text-xs text-imsg-secondary">{room.listingTitle}</span>
 				</div>
-				{myRole === "buyer" ? (
-					room.quoteStatus === "awarded" ? (
-						<span className="rounded-full bg-imsg-blue/10 px-3 py-1.5 text-xs font-semibold text-imsg-blue">
-							{t("statusAwarded")}
-						</span>
-					) : room.quoteStatus === "rejected" ? (
-						<span className="rounded-full bg-[#F3F4F6] px-3 py-1.5 text-xs font-semibold text-[#9CA3AF]">
-							{t("statusRejected")}
-						</span>
-					) : (
-						<button
-							onClick={() => setIsAwardModalOpen(true)}
-							className="rounded-full bg-imsg-blue px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-600"
-						>
-							{t("awardButton")}
-						</button>
-					)
-				) : (
-					<div className="size-9" />
-				)}
+				<div className="flex items-center gap-1.5">
+					{myRole === "buyer" &&
+						(room.quoteStatus === "awarded" ? (
+							<span className="rounded-full bg-imsg-blue/10 px-3 py-1.5 text-xs font-semibold text-imsg-blue">
+								{t("statusAwarded")}
+							</span>
+						) : room.quoteStatus === "rejected" ? (
+							<span className="rounded-full bg-[#F3F4F6] px-3 py-1.5 text-xs font-semibold text-[#9CA3AF]">
+								{t("statusRejected")}
+							</span>
+						) : (
+							<button
+								onClick={() => setIsAwardModalOpen(true)}
+								className="rounded-full bg-imsg-blue px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-600"
+							>
+								{t("awardButton")}
+							</button>
+						))}
+					<button
+						onClick={() => setIsHideModalOpen(true)}
+						aria-label={t("hideRoomAria")}
+						className="flex size-9 items-center justify-center rounded-full text-imsg-secondary transition-colors hover:bg-imsg-surface"
+					>
+						<LogOut size={18} />
+					</button>
+				</div>
 			</header>
 
 			{/* 견적 정보 */}
@@ -297,6 +328,16 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 				isLoading={isAwarding}
 				onConfirm={handleConfirmAward}
 				onClose={() => setIsAwardModalOpen(false)}
+			/>
+
+			<ConfirmModal
+				isOpen={isHideModalOpen}
+				title={t("hideRoomModalTitle")}
+				description={t("hideRoomModalDescription")}
+				confirmLabel={t("hideRoomModalConfirm")}
+				isLoading={isHiding}
+				onConfirm={handleHideRoom}
+				onClose={() => setIsHideModalOpen(false)}
 			/>
 		</section>
 	);
