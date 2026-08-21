@@ -2062,5 +2062,10 @@
 			"requiredDocuments": [],
 			"estimatedDuration": "개별확인 필요"
 		}
+	},
+	"CompanyReviewsSection": {
+		"title": "리뷰 {count}건",
+		"showMoreButton": "리뷰 더 보기",
+		"anonymousCompany": "알 수 없는 기업"
 	}
 }

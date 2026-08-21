@@ -3,16 +3,20 @@ import { ChevronLeft, FileText } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { PublicSiteIdentity } from "@/features/siteBuilder/components/PublicSite/PublicSiteIdentity";
 import { SiteRenderer } from "@/features/siteBuilder/components/SiteRenderer";
+import { CompanyReviewsSection } from "@/features/reviews/components/CompanyReviewsSection";
 import type { PublicSite } from "@/features/siteBuilder/types";
+import type { CompanyReviewsSummary } from "@/features/reviews/serverApis";
 
 type PublicSiteProps = {
 	site: PublicSite;
+	reviewsSummary: CompanyReviewsSummary;
 	backHref: string;
 	backLabel: string;
 };
 
 export async function PublicSiteView({
 	site,
+	reviewsSummary,
 	backHref,
 	backLabel,
 }: PublicSiteProps): Promise<React.JSX.Element> {
@@ -38,6 +42,11 @@ export async function PublicSiteView({
 						logoUrl={site.logoUrl}
 						withHeading
 					/>
+					<CompanyReviewsSection
+						reviews={reviewsSummary.reviews}
+						totalCount={reviewsSummary.totalCount}
+						averageRating={reviewsSummary.averageRating}
+					/>
 				</div>
 			) : (
 				<div className="space-y-5">
@@ -54,6 +63,12 @@ export async function PublicSiteView({
 						<p className="text-base font-medium text-[#0f172a]">{t("emptyTitle")}</p>
 						<p className="mt-1 text-sm text-imsg-secondary">{t("emptyDescription")}</p>
 					</section>
+
+					<CompanyReviewsSection
+						reviews={reviewsSummary.reviews}
+						totalCount={reviewsSummary.totalCount}
+						averageRating={reviewsSummary.averageRating}
+					/>
 				</div>
 			)}
 		</div>
