@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
 import { cn } from "@/utils/cn";
+import { RatingSummary } from "@/features/reviews/components/RatingSummary";
 import type { ListingItem, ReceivedQuote } from "@/features/buyer/types";
 
 type QuoteReviewQuoteCardProps = {
@@ -149,6 +150,12 @@ export function QuoteReviewQuoteCard({
 							date: new Date(quote.createdAt).toLocaleDateString(DATE_LOCALE[locale] ?? "en-US"),
 						})}
 						{quote.revisedAt && ` · ${t("revisedSuffix")}`}
+						{quote.seller.ratingCount > 0 && (
+							<>
+								{" · "}
+								<RatingSummary average={quote.seller.ratingAverage} count={quote.seller.ratingCount} />
+							</>
+						)}
 					</span>
 				</span>
 

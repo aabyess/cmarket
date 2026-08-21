@@ -349,8 +349,8 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 
 	const sellerIds = data.map((row) => row.seller_id);
 
-	// 세 조회는 서로 독립이므로 병렬로 실행한다.
-	const [{ data: companies }, { data: profiles }, rates] = await Promise.all([
+	// 네 조회는 서로 독립이므로 병렬로 실행한다.
+	const [{ data: companies }, { data: profiles }, { data: reviews }, rates] = await Promise.all([
 		admin
 			.from("companies")
 			.select(
@@ -358,17 +358,27 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 			)
 			.in("profile_id", sellerIds),
 		admin.from("company_profiles").select("profile_id, logo_url").in("profile_id", sellerIds),
+		admin.from("reviews").select("reviewee_id, rating").in("reviewee_id", sellerIds),
 		getExchangeRates(),
 	]);
 
 	const companyMap = new Map((companies ?? []).map((c) => [c.profile_id, c]));
 	const profileMap = new Map((profiles ?? []).map((p) => [p.profile_id, p]));
 
+	const ratingSums = new Map<string, { sum: number; count: number }>();
+	for (const review of reviews ?? []) {
+		const entry = ratingSums.get(review.reviewee_id) ?? { sum: 0, count: 0 };
+		entry.sum += review.rating;
+		entry.count += 1;
+		ratingSums.set(review.reviewee_id, entry);
+	}
+
 	return data.map((row) => {
 		const company = companyMap.get(row.seller_id);
 		const profile = profileMap.get(row.seller_id);
 		const price = Number(row.price);
-	
+		const ratingStats = ratingSums.get(row.seller_id);
+
 		return {
 			id: row.id,
 			listingId: row.listing_id,
@@ -407,6 +417,8 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 						)
 					: "",
 				logoUrl: profile?.logo_url ?? null,
+				ratingAverage: ratingStats ? Math.round((ratingStats.sum / ratingStats.count) * 10) / 10 : null,
+				ratingCount: ratingStats?.count ?? 0,
 			},
 		};
 	});
