@@ -176,9 +176,11 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 			router.refresh();
 		} catch (err) {
 			console.error(err);
-			alert(t("awardErrorMessage"));
+			// 서버가 내려주는 구체적 사유(이미 마감된 공고 등)를 그대로 보여준다.
+			alert(err instanceof Error && err.message ? err.message : t("awardErrorMessage"));
 		} finally {
 			setIsAwarding(false);
+			setIsAwardModalOpen(false);
 		}
 	}
 
