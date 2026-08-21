@@ -2,51 +2,19 @@ import { createClient } from "@/libs/supabase";
 import { translateField } from "@/utils/translateField";
 import { ListingFormData, ListingDraftResult } from "@/features/buyer/types";
 
-const DEFAULT_DEADLINE_DAYS = 7;
-
-function getAutoDeadline(): string {
-	const deadline = new Date();
-	deadline.setDate(deadline.getDate() + DEFAULT_DEADLINE_DAYS);
-	return deadline.toISOString();
-}
-
-export async function postListing(data: ListingFormData) {
-	const supabase = createClient();
-
-	const { data: { user }, error: userError } = await supabase.auth.getUser();
-	if (userError || !user) throw new Error("로그인이 필요합니다.");
-
-	const titleTranslation = await translateField(data.title);
-
-	const { error } = await supabase.from("listings").insert({
-		user_id: user.id,
-		title: data.title,
-		title_source_lang: titleTranslation?.sourceLang ?? null,
-		title_translations: titleTranslation?.translations ?? null,
-		category: data.category,
-		description: data.description,
-		items: data.items,
-		currency: data.currency,
-		budget_public: data.budgetPublic,
-		total_budget: data.totalBudget,
-		end_date: getAutoDeadline(),
-		delivery_days: data.deliveryDays,
-		delivery_method: data.deliveryMethod,
-		delivery_provinsi: data.deliveryProvinsi,
-		delivery_city: data.deliveryCity,
-		delivery_address: data.deliveryAddress,
-		delivery_address_detail: data.deliveryAddressDetail,
-		delivery_lat: data.deliveryLat,
-		delivery_lng: data.deliveryLng,
-		delivery_timing_mode: data.deliveryTimingMode,
-		delivery_deadline_date: data.deliveryDeadlineDate,
-		attachments: data.attachments,
-		contact_name: data.contactName,
-		contact_phone: data.contactPhone,
-		status: "active",
+// 공고 등록은 관심 카테고리 셀러 알림(서비스롤로 다른 사용자 프로필을 조회해야 함)까지
+// 함께 처리해야 해서 서버 라우트로 옮겼다 — 알림 로직이 클라이언트로 새어나가지 않는다.
+export async function postListing(data: ListingFormData): Promise<void> {
+	const res = await fetch("/api/listing", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(data),
 	});
 
-	if (error) throw error;
+	if (!res.ok) {
+		const { error } = await res.json();
+		throw new Error(error ?? "공고 등록에 실패했습니다.");
+	}
 }
 
 export async function updateListing(id: string, data: ListingFormData): Promise<void> {
