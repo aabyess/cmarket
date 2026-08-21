@@ -1,8 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
+import { Popover, PopoverButton } from "@headlessui/react";
 import { ArrowUpDown, Search } from "lucide-react";
+import { AnimatedPopoverPanel } from "@/components/commons/AnimatedPopoverPanel";
 import { cn } from "@/utils/cn";
 
 export type QuoteSortOption = "deadline" | "newest" | "quoteCount" | "lowestPrice";
@@ -82,27 +83,33 @@ export function QuoteReviewFilterBar({
 			<div className="mx-1 h-6 w-px bg-[#E5E7EB]" />
 
 			<Popover className="relative">
-				<PopoverButton className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
-					<ArrowUpDown size={14} />
-					{sortLabels[sort]}
-				</PopoverButton>
+				{({ open }) => (
+					<>
+						<PopoverButton className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
+							<ArrowUpDown size={14} />
+							{sortLabels[sort]}
+						</PopoverButton>
 
-				<PopoverPanel className="absolute right-0 z-20 mt-2 w-44 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
-					{SORT_VALUES.map((option) => (
-						<button
-							key={option}
-							onClick={() => onSortChange(option)}
-							className={cn(
-								"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
-								sort === option
-									? "bg-[#EFF6FF] text-imsg-blue"
-									: "text-[#374151] hover:bg-[#F9FAFB]",
-							)}
-						>
-							{sortLabels[option]}
-						</button>
-					))}
-				</PopoverPanel>
+						<AnimatedPopoverPanel
+							open={open}
+							className="absolute right-0 z-20 mt-2 w-44 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
+							{SORT_VALUES.map((option) => (
+								<button
+									key={option}
+									onClick={() => onSortChange(option)}
+									className={cn(
+										"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
+										sort === option
+											? "bg-[#EFF6FF] text-imsg-blue"
+											: "text-[#374151] hover:bg-[#F9FAFB]",
+									)}
+								>
+									{sortLabels[option]}
+								</button>
+							))}
+						</AnimatedPopoverPanel>
+					</>
+				)}
 			</Popover>
 		</div>
 	);

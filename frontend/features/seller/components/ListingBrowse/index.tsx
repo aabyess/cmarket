@@ -3,8 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
+import { Popover, PopoverButton } from "@headlessui/react";
 import { Search, FileSearch, ArrowUpDown, Star, Columns2, Columns3 } from "lucide-react";
+import { AnimatedPopoverPanel } from "@/components/commons/AnimatedPopoverPanel";
 import { cn } from "@/utils/cn";
 import { usePersistentState } from "@/hooks/usePersistentState";
 import { ListingBrowseCard } from "@/features/seller/components/ListingBrowse/ListingBrowseCard";
@@ -190,67 +191,73 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 					</button>
 
 					<Popover className="relative">
-						<PopoverButton className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
-							<ArrowUpDown size={14} />
-							{sortTriggerLabel}
-						</PopoverButton>
+						{({ open }) => (
+							<>
+								<PopoverButton className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
+									<ArrowUpDown size={14} />
+									{sortTriggerLabel}
+								</PopoverButton>
 
-						<PopoverPanel className="absolute right-0 z-20 mt-2 w-44 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
-							<p className="px-3 pt-1.5 pb-1 text-[11px] font-semibold text-[#9CA3AF]">
-								{t("sortSectionLabel")}
-							</p>
-							{SORT_VALUES.map((option) => (
-								<button
-									key={option}
-									onClick={() => setSort(option)}
-									className={cn(
-										"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
-										sort === option
-											? "text-imsg-blue bg-[#EFF6FF]"
-											: "text-[#374151] hover:bg-[#F9FAFB]",
-									)}>
-									{sortLabels[option]}
-								</button>
-							))}
+								<AnimatedPopoverPanel
+									open={open}
+									className="absolute right-0 z-20 mt-2 w-44 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
+									<p className="px-3 pt-1.5 pb-1 text-[11px] font-semibold text-[#9CA3AF]">
+										{t("sortSectionLabel")}
+									</p>
+									{SORT_VALUES.map((option) => (
+										<button
+											key={option}
+											onClick={() => setSort(option)}
+											className={cn(
+												"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
+												sort === option
+													? "text-imsg-blue bg-[#EFF6FF]"
+													: "text-[#374151] hover:bg-[#F9FAFB]",
+											)}>
+											{sortLabels[option]}
+										</button>
+									))}
 
-							<div className="my-1.5 border-t border-[#E5E7EB]" />
+									<div className="my-1.5 border-t border-[#E5E7EB]" />
 
-							<p className="px-3 pt-1.5 pb-1 text-[11px] font-semibold text-[#9CA3AF]">
-								{t("statusSectionLabel")}
-							</p>
-							{TAB_VALUES.map((option) => (
-								<button
-									key={option}
-									onClick={() => setStatusTab(option)}
-									className={cn(
-										"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
-										statusTab === option
-											? "text-imsg-blue bg-[#EFF6FF]"
-											: "text-[#374151] hover:bg-[#F9FAFB]",
-									)}>
-									{tabLabels[option]}
-								</button>
-							))}
+									<p className="px-3 pt-1.5 pb-1 text-[11px] font-semibold text-[#9CA3AF]">
+										{t("statusSectionLabel")}
+									</p>
+									{TAB_VALUES.map((option) => (
+										<button
+											key={option}
+											onClick={() => setStatusTab(option)}
+											className={cn(
+												"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
+												statusTab === option
+													? "text-imsg-blue bg-[#EFF6FF]"
+													: "text-[#374151] hover:bg-[#F9FAFB]",
+											)}>
+											{tabLabels[option]}
+										</button>
+									))}
 
-							<div className="my-1.5 border-t border-[#E5E7EB]" />
+									<div className="my-1.5 border-t border-[#E5E7EB]" />
 
-							<p className="px-3 pt-1.5 pb-1 text-[11px] font-semibold text-[#9CA3AF]">
-								{t("quoteFilterSectionLabel")}
-							</p>
-							{QUOTE_FILTER_VALUES.map((option) => (
-								<button
-									key={option}
-									onClick={() => setQuoteFilter(option)}
-									className={cn(
-										"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
-										quoteFilter === option
-											? "text-imsg-blue bg-[#EFF6FF]"
-											: "text-[#374151] hover:bg-[#F9FAFB]",
-									)}>
-									{quoteFilterLabels[option]}
-								</button>
-							))}
-						</PopoverPanel>
+									<p className="px-3 pt-1.5 pb-1 text-[11px] font-semibold text-[#9CA3AF]">
+										{t("quoteFilterSectionLabel")}
+									</p>
+									{QUOTE_FILTER_VALUES.map((option) => (
+										<button
+											key={option}
+											onClick={() => setQuoteFilter(option)}
+											className={cn(
+												"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
+												quoteFilter === option
+													? "text-imsg-blue bg-[#EFF6FF]"
+													: "text-[#374151] hover:bg-[#F9FAFB]",
+											)}>
+											{quoteFilterLabels[option]}
+										</button>
+									))}
+								</AnimatedPopoverPanel>
+							</>
+						)}
 					</Popover>
 
 					{/* 카드 뷰에서만 열 수(2/3) 선택 — ViewModeToggle과 같은 톤의 세그먼트 */}

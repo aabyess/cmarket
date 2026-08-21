@@ -2,8 +2,9 @@
 
 import { useTranslations } from "next-intl";
 import { cva } from "class-variance-authority";
-import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
+import { Popover, PopoverButton } from "@headlessui/react";
 import { ArrowUpDown, LayoutGrid, List } from "lucide-react";
+import { AnimatedPopoverPanel } from "@/components/commons/AnimatedPopoverPanel";
 import { cn } from "@/utils/cn";
 import type { QuoteStatus } from "@/features/seller/types";
 
@@ -63,50 +64,56 @@ export function MyQuotesFilterBar({
 	return (
 		<div className="mb-4 flex items-center justify-end gap-2">
 			<Popover className="relative">
-				<PopoverButton className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
-					<ArrowUpDown size={14} />
-					{sortTriggerLabel}
-				</PopoverButton>
+				{({ open }) => (
+					<>
+						<PopoverButton className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
+							<ArrowUpDown size={14} />
+							{sortTriggerLabel}
+						</PopoverButton>
 
-				<PopoverPanel className="absolute right-0 z-20 mt-2 w-44 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
-					<p className="px-3 pb-1 pt-1.5 text-[11px] font-semibold text-[#9CA3AF]">
-						{t("sortSectionLabel")}
-					</p>
-					{SORT_VALUES.map((option) => (
-						<button
-							key={option}
-							type="button"
-							onClick={() => onSortChange(option)}
-							className={cn(
-								"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
-								sort === option
-									? "bg-[#EFF6FF] text-imsg-blue"
-									: "text-[#374151] hover:bg-[#F9FAFB]",
-							)}>
-							{sortLabels[option]}
-						</button>
-					))}
+						<AnimatedPopoverPanel
+							open={open}
+							className="absolute right-0 z-20 mt-2 w-44 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
+							<p className="px-3 pb-1 pt-1.5 text-[11px] font-semibold text-[#9CA3AF]">
+								{t("sortSectionLabel")}
+							</p>
+							{SORT_VALUES.map((option) => (
+								<button
+									key={option}
+									type="button"
+									onClick={() => onSortChange(option)}
+									className={cn(
+										"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
+										sort === option
+											? "bg-[#EFF6FF] text-imsg-blue"
+											: "text-[#374151] hover:bg-[#F9FAFB]",
+									)}>
+									{sortLabels[option]}
+								</button>
+							))}
 
-					<div className="my-1.5 border-t border-[#E5E7EB]" />
+							<div className="my-1.5 border-t border-[#E5E7EB]" />
 
-					<p className="px-3 pb-1 pt-1.5 text-[11px] font-semibold text-[#9CA3AF]">
-						{t("statusSectionLabel")}
-					</p>
-					{FILTER_VALUES.map((option) => (
-						<button
-							key={option}
-							type="button"
-							onClick={() => onFilterChange(option)}
-							className={cn(
-								"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
-								filter === option
-									? "bg-[#EFF6FF] text-imsg-blue"
-									: "text-[#374151] hover:bg-[#F9FAFB]",
-							)}>
-							{filterLabels[option]}
-						</button>
-					))}
-				</PopoverPanel>
+							<p className="px-3 pb-1 pt-1.5 text-[11px] font-semibold text-[#9CA3AF]">
+								{t("statusSectionLabel")}
+							</p>
+							{FILTER_VALUES.map((option) => (
+								<button
+									key={option}
+									type="button"
+									onClick={() => onFilterChange(option)}
+									className={cn(
+										"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
+										filter === option
+											? "bg-[#EFF6FF] text-imsg-blue"
+											: "text-[#374151] hover:bg-[#F9FAFB]",
+									)}>
+									{filterLabels[option]}
+								</button>
+							))}
+						</AnimatedPopoverPanel>
+					</>
+				)}
 			</Popover>
 
 			<div className="flex items-center gap-1 rounded-xl border border-[#E5E7EB] bg-white p-1">

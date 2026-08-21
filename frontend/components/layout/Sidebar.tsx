@@ -16,6 +16,7 @@ import { cn } from "@/utils/cn";
 import { createClient } from "@/libs/supabase";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { SIDEBAR_TRANSITION_CLASS, getSidebarLayoutTransition } from "@/components/layout/sidebarTransition";
+import { getDropdownMotionProps } from "@/utils/dropdownMotion";
 
 // TODO: 실제 지원센터 연락처 확인되면 교체
 const SUPPORT_PHONE = "02-0000-0000";
@@ -214,10 +215,12 @@ export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapse
 						</AnimatePresence>
 
 						{/* 드롭다운 */}
+						<AnimatePresence>
 						{dropdownOpen && (
-							<div
+							<motion.div
 								onClick={(e) => e.stopPropagation()}
 								className="absolute left-0 top-full z-50 mt-1 w-56 overflow-hidden rounded-xl border border-[#E5E7EB] bg-white shadow-lg"
+								{...getDropdownMotionProps(prefersReducedMotion)}
 							>
 								<div className="px-4 py-3 border-b border-[#F3F4F6]">
 									<p className="text-sm font-semibold text-[#1F2937]">{name || companyName}</p>
@@ -268,8 +271,9 @@ export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapse
 										{t("dropdown.logout")}
 									</button>
 								</div>
-							</div>
+							</motion.div>
 						)}
+						</AnimatePresence>
 					</div>
 
 					{/* 알림/언어 - 프로필과 분리된 독립 영역. 레일 폭에서는 두 컴포넌트가 좁은
