@@ -2243,7 +2243,12 @@
 		"accountHolderLabel": "예금주",
 		"provinsiLabel": "주(州)",
 		"cityLabel": "도시",
-		"addressLabel": "상세 주소"
+		"addressLabel": "상세 주소",
+		"viewOnMapHint": "지도에서 보기",
+		"mapModalTitle": "납품지 위치",
+		"mapLoading": "지도를 불러오는 중...",
+		"mapUnavailable": "지도를 표시할 수 없어요. 아래 링크로 구글 지도에서 확인해주세요.",
+		"openInGoogleMaps": "구글 지도에서 열기"
 	},
 	"ListingBookmarkButton": {
 		"addAria": "관심 공고로 등록",

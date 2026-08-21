@@ -2243,7 +2243,12 @@
 		"accountHolderLabel": "Nama Pemilik Rekening",
 		"provinsiLabel": "Provinsi",
 		"cityLabel": "Kota",
-		"addressLabel": "Alamat"
+		"addressLabel": "Alamat",
+		"viewOnMapHint": "Lihat di peta",
+		"mapModalTitle": "Lokasi Pengiriman",
+		"mapLoading": "Memuat peta...",
+		"mapUnavailable": "Peta tidak dapat ditampilkan. Silakan cek di Google Maps melalui tautan di bawah.",
+		"openInGoogleMaps": "Buka di Google Maps"
 	},
 	"ListingBookmarkButton": {
 		"addAria": "Tambahkan ke favorit",

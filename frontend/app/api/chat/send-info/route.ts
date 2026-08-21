@@ -11,6 +11,8 @@ type ListingRow = {
 	delivery_provinsi: string | null;
 	delivery_city: string | null;
 	delivery_address: string | null;
+	delivery_lat: number | null;
+	delivery_lng: number | null;
 };
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
@@ -34,7 +36,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
 	const { data: quote } = await admin
 		.from("quotes")
-		.select("seller_id, listings(user_id, delivery_provinsi, delivery_city, delivery_address)")
+		.select(
+			"seller_id, listings(user_id, delivery_provinsi, delivery_city, delivery_address, delivery_lat, delivery_lng)",
+		)
 		.eq("id", quoteId)
 		.single();
 
@@ -80,6 +84,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 			provinsi: listing.delivery_provinsi,
 			city: listing.delivery_city,
 			address: listing.delivery_address ?? "",
+			lat: listing.delivery_lat,
+			lng: listing.delivery_lng,
 		});
 	}
 

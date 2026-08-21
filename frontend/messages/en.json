@@ -2243,7 +2243,12 @@
 		"accountHolderLabel": "Account Holder",
 		"provinsiLabel": "Province",
 		"cityLabel": "City",
-		"addressLabel": "Address"
+		"addressLabel": "Address",
+		"viewOnMapHint": "View on map",
+		"mapModalTitle": "Delivery Location",
+		"mapLoading": "Loading map...",
+		"mapUnavailable": "The map can't be shown. Please check it on Google Maps via the link below.",
+		"openInGoogleMaps": "Open in Google Maps"
 	},
 	"ListingBookmarkButton": {
 		"addAria": "Add to bookmarks",
