@@ -4,15 +4,18 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Mail, ArrowRight, Clock, Bell, MessageSquare, Handshake } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { OnboardingChecklist } from "@/features/onboarding/components/OnboardingChecklist";
 import type { BuyerActivity, BuyerDashboardData, BuyerTodo, BuyerTradeSummary } from "@/features/buyer/types";
+import type { OnboardingChecklist as OnboardingChecklistData } from "@/features/onboarding/types";
 
 type DashboardHomeProps = {
 	companyName: string;
 	data: BuyerDashboardData;
 	tradeSummary: BuyerTradeSummary;
+	onboardingChecklist: OnboardingChecklistData;
 };
 
-export function DashboardHome({ companyName, data, tradeSummary }: DashboardHomeProps) {
+export function DashboardHome({ companyName, data, tradeSummary, onboardingChecklist }: DashboardHomeProps) {
 	const t = useTranslations("BuyerDashboard");
 	const router = useRouter();
 
@@ -74,6 +77,8 @@ export function DashboardHome({ companyName, data, tradeSummary }: DashboardHome
 					<p className="mt-1.5 text-sm text-imsg-secondary">{t("welcomeSubcopy")}</p>
 				</div>
 			</div>
+
+			<OnboardingChecklist checklist={onboardingChecklist} />
 
 			{/* 나의 거래 요약 */}
 			<div className="mb-6">

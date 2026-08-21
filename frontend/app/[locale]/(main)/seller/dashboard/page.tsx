@@ -5,13 +5,15 @@ import {
 	getRecommendedListings,
 	getSellerTodos,
 } from "@/features/seller/serverApis";
+import { getOnboardingChecklist } from "@/features/onboarding/serverApis";
 
 export default async function SellerDashboardPage() {
-	const [companyName, data, recommendedListings, todos] = await Promise.all([
+	const [companyName, data, recommendedListings, todos, onboardingChecklist] = await Promise.all([
 		getSellerCompanyName(),
 		getSellerDashboardData(),
 		getRecommendedListings(),
 		getSellerTodos(),
+		getOnboardingChecklist("seller"),
 	]);
 
 	return (
@@ -20,6 +22,7 @@ export default async function SellerDashboardPage() {
 			data={data}
 			recommendedListings={recommendedListings}
 			todos={todos}
+			onboardingChecklist={onboardingChecklist}
 		/>
 	);
 }
