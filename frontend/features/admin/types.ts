@@ -13,4 +13,10 @@ export type AdminUser = {
 	username: string;
 	companyName: string;
 	representative: string;
+	businessNumber: string;
+	npwp: string;
+	nib: string;
+	address: string;
+	businessType: string;
+	businessItem: string;
 };

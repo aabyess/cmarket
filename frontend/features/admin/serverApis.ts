@@ -16,7 +16,7 @@ export async function getAdminUsers(): Promise<AdminUser[]> {
 
 	const { data: companies } = await admin
 		.from("companies")
-		.select("profile_id, company_name, representative")
+		.select("profile_id, company_name, representative, business_number, npwp, nib, address, business_type, business_item")
 		.in(
 			"profile_id",
 			data.map((row) => row.id),
@@ -36,6 +36,12 @@ export async function getAdminUsers(): Promise<AdminUser[]> {
 			username: row.username,
 			companyName: company?.company_name ?? "",
 			representative: company?.representative ?? "",
+			businessNumber: company?.business_number ?? "",
+			npwp: company?.npwp ?? "",
+			nib: company?.nib ?? "",
+			address: company?.address ?? "",
+			businessType: company?.business_type ?? "",
+			businessItem: company?.business_item ?? "",
 		};
 	});
 }

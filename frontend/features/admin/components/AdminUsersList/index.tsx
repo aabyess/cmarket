@@ -7,6 +7,8 @@ import { useRouter } from "@/i18n/navigation";
 import { Search } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { Pagination } from "@/components/commons/Pagination";
+import { ConfirmModal } from "@/components/ui/confirm-modal";
+import { AdminUserEditModal } from "@/features/admin/components/AdminUsersList/AdminUserEditModal";
 import type { Plan } from "@/constants/plan";
 import type { AdminUser, AdminUserRole } from "@/features/admin/types";
 
@@ -35,6 +37,9 @@ export function AdminUsersList({ users, currentUserId }: AdminUsersListProps): R
 	const [updatingId, setUpdatingId] = useState<string | null>(null);
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(20);
+	const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
+	const [deletingUser, setDeletingUser] = useState<AdminUser | null>(null);
+	const [isDeleting, setIsDeleting] = useState(false);
 
 	const tabLabels: Record<StatusTab, string> = {
 		all: t("tabAll"),
@@ -92,6 +97,29 @@ export function AdminUsersList({ users, currentUserId }: AdminUsersListProps): R
 		}
 	}
 
+	async function handleConfirmDelete(): Promise<void> {
+		if (!deletingUser) return;
+		setIsDeleting(true);
+		try {
+			const res = await fetch("/api/admin/user-delete", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ profileId: deletingUser.id }),
+			});
+			if (!res.ok) {
+				const { error } = await res.json();
+				throw new Error(error);
+			}
+			setDeletingUser(null);
+			router.refresh();
+		} catch (err) {
+			console.error(err);
+			alert(err instanceof Error && err.message ? err.message : t("deleteErrorMessage"));
+		} finally {
+			setIsDeleting(false);
+		}
+	}
+
 	return (
 		<div>
 			<div className="mb-4 flex flex-wrap items-center gap-3">
@@ -143,6 +171,7 @@ export function AdminUsersList({ users, currentUserId }: AdminUsersListProps): R
 									<th className="px-4 py-3">{t("columnCountry")}</th>
 									<th className="px-4 py-3">{t("columnPlan")}</th>
 									<th className="px-4 py-3">{t("columnJoinedAt")}</th>
+									<th className="px-4 py-3">{t("columnActions")}</th>
 								</tr>
 							</thead>
 							<tbody className="divide-y divide-[#F3F4F6]">
@@ -188,6 +217,21 @@ export function AdminUsersList({ users, currentUserId }: AdminUsersListProps): R
 											<td className="whitespace-nowrap px-4 py-3 text-[#9CA3AF]">
 												{new Date(user.createdAt).toLocaleDateString("ko-KR")}
 											</td>
+											<td className="whitespace-nowrap px-4 py-3">
+												<div className="flex items-center gap-1.5">
+													<button
+														onClick={() => setEditingUser(user)}
+														className="rounded-lg border border-[#E5E7EB] px-2.5 py-1.5 text-xs font-medium text-[#374151] transition-colors hover:bg-imsg-surface">
+														{t("editAction")}
+													</button>
+													<button
+														onClick={() => setDeletingUser(user)}
+														disabled={isSelf || user.role === "admin"}
+														className="rounded-lg border border-[#FEE2E2] px-2.5 py-1.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:cursor-not-allowed disabled:opacity-40">
+														{t("deleteAction")}
+													</button>
+												</div>
+											</td>
 										</tr>
 									);
 								})}
@@ -207,6 +251,27 @@ export function AdminUsersList({ users, currentUserId }: AdminUsersListProps): R
 					pageSizeOptions={[20, 50, 100]}
 				/>
 			)}
+
+			<AdminUserEditModal
+				user={editingUser}
+				onClose={() => setEditingUser(null)}
+				onSaved={() => router.refresh()}
+			/>
+
+			<ConfirmModal
+				isOpen={Boolean(deletingUser)}
+				variant="danger"
+				title={t("deleteModalTitle")}
+				description={
+					deletingUser
+						? t("deleteModalDescription", { companyName: deletingUser.companyName || t("noCompanyName") })
+						: undefined
+				}
+				confirmLabel={t("deleteAction")}
+				isLoading={isDeleting}
+				onConfirm={handleConfirmDelete}
+				onClose={() => setDeletingUser(null)}
+			/>
 		</div>
 	);
 }
