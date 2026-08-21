@@ -9,6 +9,7 @@ import { cn } from "@/utils/cn";
 import { startChat } from "@/features/chat/mutations";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { ChatStartLoadingModal } from "@/features/chat/components/ChatStartLoadingModal";
+import { getPriceDeliveryHighlight } from "@/features/buyer/components/QuoteReview/quoteReviewUtils";
 import type { Currency, ReceivedQuote } from "@/features/buyer/types";
 
 const CURRENCY_SYMBOL: Record<Currency, string> = {
@@ -29,11 +30,14 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 	const [awardingId, setAwardingId] = useState<string | null>(null);
 	const [confirmQuoteId, setConfirmQuoteId] = useState<string | null>(null);
 
-	const comparablePrices = quotes
-		.map((q) => q.priceInIdr)
-		.filter((p): p is number => p !== null);
-	const lowestPriceInIdr = comparablePrices.length > 0 ? Math.min(...comparablePrices) : null;
-	const fastestDays = Math.min(...quotes.map((q) => q.deliveryDays));
+	const {
+		lowestPriceInIdr,
+		highestPriceInIdr,
+		fastestDays,
+		slowestDays,
+		hasPriceHighlight,
+		hasDeliveryHighlight,
+	} = getPriceDeliveryHighlight(quotes);
 	const hasAwardedQuote = quotes.some((q) => q.status === "awarded");
 
 	async function handleStartChat(quoteId: string) {
@@ -111,6 +115,12 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 							const isLowest = lowestPriceInIdr !== null && quote.priceInIdr === lowestPriceInIdr;
 							const isFastest = quote.deliveryDays === fastestDays;
 							const isAwarded = quote.status === "awarded";
+							// 배지(위 isLowest/isFastest)와 별개로, 셀 자체 색상 강조는 최저=최고일 때(견적 1건 등)
+							// 의미가 없어 hasPriceHighlight/hasDeliveryHighlight로 따로 게이팅한다.
+							const isHighestPrice = hasPriceHighlight && quote.priceInIdr === highestPriceInIdr;
+							const isLowestPriceCell = hasPriceHighlight && isLowest;
+							const isSlowestDelivery = hasDeliveryHighlight && quote.deliveryDays === slowestDays;
+							const isFastestDeliveryCell = hasDeliveryHighlight && isFastest;
 
 							return (
 								<tr
@@ -174,8 +184,12 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 									<td className="whitespace-nowrap px-4 py-3.5 text-right align-top">
 										<span
 											className={cn(
-												"font-semibold",
-												isLowest ? "text-[#D97706]" : "text-[#1F2937]",
+												"rounded-md px-1.5 py-0.5 font-semibold",
+												isLowestPriceCell
+													? "bg-[#F0FDF4] text-[#16A34A]"
+													: isHighestPrice
+														? "bg-[#FEF2F2] text-[#DC2626]"
+														: "text-[#1F2937]",
 											)}
 										>
 											{symbol} {quote.price.toLocaleString()}
@@ -187,7 +201,16 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 										)}
 									</td>
 									<td className="whitespace-nowrap px-4 py-3.5 text-right align-top">
-										<span className={cn("font-semibold", isFastest ? "text-[#16A34A]" : "text-[#1F2937]")}>
+										<span
+											className={cn(
+												"rounded-md px-1.5 py-0.5 font-semibold",
+												isFastestDeliveryCell
+													? "bg-[#F0FDF4] text-[#16A34A]"
+													: isSlowestDelivery
+														? "bg-[#FEF2F2] text-[#DC2626]"
+														: "text-[#1F2937]",
+											)}
+										>
 											{t("days", { count: quote.deliveryDays })}
 										</span>
 									</td>

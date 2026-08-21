@@ -54,6 +54,38 @@ function findFastestQuote(quotes: ReceivedQuote[]): ReceivedQuote | undefined {
 	return quotes.reduce((fastest, quote) => (quote.deliveryDays < fastest.deliveryDays ? quote : fastest));
 }
 
+export type PriceDeliveryHighlight = {
+	lowestPriceInIdr: number | null;
+	highestPriceInIdr: number | null;
+	fastestDays: number | null;
+	slowestDays: number | null;
+	// 값이 하나뿐이거나(견적 1건) 전부 같으면 최저=최고라 강조가 무의미하므로 false.
+	hasPriceHighlight: boolean;
+	hasDeliveryHighlight: boolean;
+};
+
+// 견적 비교 표/카드의 가격·납기 셀 색상 강조에 쓰는 기준값. priceInIdr는 통화가
+// 섞여 있어 원 단위(price)가 아니라 IDR 환산값으로 비교한다.
+export function getPriceDeliveryHighlight(quotes: ReceivedQuote[]): PriceDeliveryHighlight {
+	const comparablePrices = quotes.map((quote) => quote.priceInIdr).filter((price): price is number => price !== null);
+	const lowestPriceInIdr = comparablePrices.length > 0 ? Math.min(...comparablePrices) : null;
+	const highestPriceInIdr = comparablePrices.length > 0 ? Math.max(...comparablePrices) : null;
+
+	const deliveryDaysList = quotes.map((quote) => quote.deliveryDays);
+	const fastestDays = deliveryDaysList.length > 0 ? Math.min(...deliveryDaysList) : null;
+	const slowestDays = deliveryDaysList.length > 0 ? Math.max(...deliveryDaysList) : null;
+
+	return {
+		lowestPriceInIdr,
+		highestPriceInIdr,
+		fastestDays,
+		slowestDays,
+		hasPriceHighlight:
+			lowestPriceInIdr !== null && highestPriceInIdr !== null && lowestPriceInIdr !== highestPriceInIdr,
+		hasDeliveryHighlight: fastestDays !== null && slowestDays !== null && fastestDays !== slowestDays,
+	};
+}
+
 export type QuoteRecommendation = {
 	quote: ReceivedQuote;
 	priceRank: number;
