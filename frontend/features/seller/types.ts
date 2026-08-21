@@ -49,6 +49,7 @@ export type OpenListing = {
 	deliveryCity: string;
 	createdAt: string;
 	hasMyQuote: boolean;
+	isBookmarked: boolean;
 	status: "active" | "closed" | "awarded";
 };
 export type ListingDetail = Omit<OpenListing, "items"> & {

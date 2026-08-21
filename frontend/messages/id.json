@@ -1239,7 +1239,10 @@
 		"emptySearchTitle": "Tidak ada hasil pencarian",
 		"emptyDefaultTitle": "Tidak ada permintaan yang sesuai",
 		"emptySearchDescription": "Coba cari dengan kata kunci lain.",
-		"emptyDefaultDescription": "Kami akan memberi tahu Anda saat ada permintaan baru."
+		"emptyDefaultDescription": "Kami akan memberi tahu Anda saat ada permintaan baru.",
+		"bookmarkedOnlyFilter": "Favorit",
+		"emptyBookmarkTitle": "Belum ada permintaan favorit",
+		"emptyBookmarkDescription": "Ketuk ikon bintang untuk menyimpan permintaan yang Anda minati."
 	},
 	"ListingBrowseTable": {
 		"columnStatus": "Status",
@@ -1252,7 +1255,8 @@
 		"daysLeft": "D-{days}",
 		"budgetPrivate": "Privat",
 		"quoteSent": "Penawaran terkirim",
-		"noQuote": "Belum dikirim"
+		"noQuote": "Belum dikirim",
+		"columnBookmark": "Favorit"
 	},
 	"ListingBrowseCard": {
 		"closed": "Ditutup",
@@ -2238,5 +2242,10 @@
 		"provinsiLabel": "Provinsi",
 		"cityLabel": "Kota",
 		"addressLabel": "Alamat"
+	},
+	"ListingBookmarkButton": {
+		"addAria": "Tambahkan ke favorit",
+		"removeAria": "Hapus dari favorit",
+		"errorMessage": "Gagal memperbarui favorit."
 	}
 }

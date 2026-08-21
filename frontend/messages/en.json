@@ -1037,7 +1037,10 @@
 		"emptySearchTitle": "No search results",
 		"emptyDefaultTitle": "No matching listings",
 		"emptySearchDescription": "Try a different keyword.",
-		"emptyDefaultDescription": "We'll let you know when new listings are posted."
+		"emptyDefaultDescription": "We'll let you know when new listings are posted.",
+		"bookmarkedOnlyFilter": "Bookmarked",
+		"emptyBookmarkTitle": "No bookmarked listings",
+		"emptyBookmarkDescription": "Tap the star icon to save listings you're interested in."
 	},
 	"ListingBrowseTable": {
 		"columnStatus": "Status",
@@ -1050,7 +1053,8 @@
 		"daysLeft": "D-{days}",
 		"budgetPrivate": "Private",
 		"quoteSent": "Quote sent",
-		"noQuote": "Not sent"
+		"noQuote": "Not sent",
+		"columnBookmark": "Bookmark"
 	},
 	"ListingBrowseCard": {
 		"closed": "Closed",
@@ -2238,5 +2242,10 @@
 		"provinsiLabel": "Province",
 		"cityLabel": "City",
 		"addressLabel": "Address"
+	},
+	"ListingBookmarkButton": {
+		"addAria": "Add to bookmarks",
+		"removeAria": "Remove from bookmarks",
+		"errorMessage": "Failed to update the bookmark."
 	}
 }

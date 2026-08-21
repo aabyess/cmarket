@@ -14,7 +14,9 @@ const DESCRIPTION_PREVIEW_LENGTH = 500;
 
 export async function getSellerCompanyName(): Promise<string> {
 	const supabase = await createServerSupabaseClient();
-	const { data: { user } } = await supabase.auth.getUser();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
 	if (!user) return "";
 
 	const { data } = await supabase
@@ -28,7 +30,9 @@ export async function getSellerCompanyName(): Promise<string> {
 
 export async function getSellerDashboardData(): Promise<SellerDashboardData> {
 	const supabase = await createServerSupabaseClient();
-	const { data: { user } } = await supabase.auth.getUser();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
 
 	if (!user) {
 		return {
@@ -41,18 +45,22 @@ export async function getSellerDashboardData(): Promise<SellerDashboardData> {
 		};
 	}
 
-	const [{ count: openListingCount }, { data: quotes }, { count: contractCount }, { data: recentQuotes }] =
-		await Promise.all([
-			supabase.from("listings").select("*", { count: "exact", head: true }).eq("status", "active"),
-			supabase.from("quotes").select("status").eq("seller_id", user.id),
-			supabase.from("contracts").select("*", { count: "exact", head: true }).eq("seller_id", user.id),
-			supabase
-				.from("quotes")
-				.select("status, created_at, listings(title, title_source_lang, title_translations)")
-				.eq("seller_id", user.id)
-				.order("created_at", { ascending: false })
-				.limit(5),
-		]);
+	const [
+		{ count: openListingCount },
+		{ data: quotes },
+		{ count: contractCount },
+		{ data: recentQuotes },
+	] = await Promise.all([
+		supabase.from("listings").select("*", { count: "exact", head: true }).eq("status", "active"),
+		supabase.from("quotes").select("status").eq("seller_id", user.id),
+		supabase.from("contracts").select("*", { count: "exact", head: true }).eq("seller_id", user.id),
+		supabase
+			.from("quotes")
+			.select("status, created_at, listings(title, title_source_lang, title_translations)")
+			.eq("seller_id", user.id)
+			.order("created_at", { ascending: false })
+			.limit(5),
+	]);
 
 	const quoteCount = quotes?.length ?? 0;
 	const pendingQuoteCount = quotes?.filter((q) => q.status === "pending").length ?? 0;
@@ -71,7 +79,12 @@ export async function getSellerDashboardData(): Promise<SellerDashboardData> {
 			title_translations: Record<string, string> | null;
 		} | null;
 		const listingTitle = listing
-			? resolveTranslatedField(listing.title, listing.title_source_lang, listing.title_translations, locale)
+			? resolveTranslatedField(
+					listing.title,
+					listing.title_source_lang,
+					listing.title_translations,
+					locale,
+				)
 			: "";
 		const title =
 			row.status === "awarded"
@@ -153,9 +166,15 @@ export async function getSellerTodos(): Promise<SellerTodo[]> {
 				kind: "quotePending",
 				listingId: row.listing_id,
 				contractId: null,
-				title: resolveTranslatedField(listing.title, listing.title_source_lang, listing.title_translations, locale),
+				title: resolveTranslatedField(
+					listing.title,
+					listing.title_source_lang,
+					listing.title_translations,
+					locale,
+				),
 				description: t("quotePendingDescription"),
-				deadlineText: daysLeft > 0 ? t("quoteDeadlineDays", { days: daysLeft }) : t("quoteDeadlineClosed"),
+				deadlineText:
+					daysLeft > 0 ? t("quoteDeadlineDays", { days: daysLeft }) : t("quoteDeadlineClosed"),
 				actionLabel: t("quoteAction"),
 				highlights: isUrgent ? [{ label: t("quoteUrgentLabel"), value: `D-${daysLeft}` }] : [],
 			},
@@ -170,7 +189,12 @@ export async function getSellerTodos(): Promise<SellerTodo[]> {
 		} | null;
 		const quote = row.quotes as unknown as { delivery_days: number } | null;
 		const title = listing
-			? resolveTranslatedField(listing.title, listing.title_source_lang, listing.title_translations, locale)
+			? resolveTranslatedField(
+					listing.title,
+					listing.title_source_lang,
+					listing.title_translations,
+					locale,
+				)
 			: "";
 		const createdTime = new Date(row.created_at).getTime();
 		// 영수증 업로드 시각을 별도로 저장하지 않아(스키마에 컬럼 없음), 입금 확인 대기 항목의
@@ -221,7 +245,12 @@ export async function getSellerTodos(): Promise<SellerTodo[]> {
 								: t("deliveryOverdueDays", { days: -daysLeft }),
 					actionLabel: t("deliveryAction"),
 					highlights: isUrgent
-						? [{ label: t("deliveryUrgentLabel"), value: daysLeft >= 0 ? `D-${daysLeft}` : `D+${-daysLeft}` }]
+						? [
+								{
+									label: t("deliveryUrgentLabel"),
+									value: daysLeft >= 0 ? `D-${daysLeft}` : `D+${-daysLeft}`,
+								},
+							]
 						: [],
 				},
 			});
@@ -241,10 +270,18 @@ export async function getSellerTodos(): Promise<SellerTodo[]> {
 					contractId: row.id,
 					title,
 					description: t("paymentConfirmDescription"),
-					deadlineText: ageDays === 0 ? t("paymentConfirmToday") : t("paymentConfirmElapsedDays", { days: ageDays }),
+					deadlineText:
+						ageDays === 0
+							? t("paymentConfirmToday")
+							: t("paymentConfirmElapsedDays", { days: ageDays }),
 					actionLabel: t("paymentConfirmAction"),
 					highlights: isUrgent
-						? [{ label: t("paymentConfirmUrgentLabel"), value: t("paymentConfirmElapsedDays", { days: ageDays }) }]
+						? [
+								{
+									label: t("paymentConfirmUrgentLabel"),
+									value: t("paymentConfirmElapsedDays", { days: ageDays }),
+								},
+							]
 						: [],
 				},
 			});
@@ -260,7 +297,14 @@ export async function getSellerTodos(): Promise<SellerTodo[]> {
 export async function getOpenListings(): Promise<OpenListing[]> {
 	const supabase = await createServerSupabaseClient();
 
-	const [{ data: { user } }, locale, { data, error }, rates] = await Promise.all([
+	const [
+		{
+			data: { user },
+		},
+		locale,
+		{ data, error },
+		rates,
+	] = await Promise.all([
 		supabase.auth.getUser(),
 		getLocale(),
 		supabase
@@ -276,12 +320,14 @@ export async function getOpenListings(): Promise<OpenListing[]> {
 	if (!data) return [];
 
 	let myQuoteListingIds = new Set<string>();
+	let bookmarkedListingIds = new Set<string>();
 	if (user) {
-		const { data: myQuotes } = await supabase
-			.from("quotes")
-			.select("listing_id")
-			.eq("seller_id", user.id);
+		const [{ data: myQuotes }, { data: bookmarks }] = await Promise.all([
+			supabase.from("quotes").select("listing_id").eq("seller_id", user.id),
+			supabase.from("listing_bookmarks").select("listing_id").eq("profile_id", user.id),
+		]);
 		myQuoteListingIds = new Set((myQuotes ?? []).map((q) => q.listing_id));
+		bookmarkedListingIds = new Set((bookmarks ?? []).map((b) => b.listing_id));
 	}
 
 	return data
@@ -290,7 +336,12 @@ export async function getOpenListings(): Promise<OpenListing[]> {
 
 			return {
 				id: row.id,
-				title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
+				title: resolveTranslatedField(
+					row.title,
+					row.title_source_lang,
+					row.title_translations,
+					locale,
+				),
 				description: htmlToPlainText(row.description ?? "", DESCRIPTION_PREVIEW_LENGTH),
 				items: ((row.items ?? []) as ListingItem[]).map((item) => ({
 					name: item.name,
@@ -306,6 +357,7 @@ export async function getOpenListings(): Promise<OpenListing[]> {
 				createdAt: row.created_at,
 				status: row.status ?? "active",
 				hasMyQuote: myQuoteListingIds.has(row.id),
+				isBookmarked: bookmarkedListingIds.has(row.id),
 			};
 		})
 		.sort((a, b) => {
@@ -319,7 +371,14 @@ export async function getOpenListings(): Promise<OpenListing[]> {
 export async function getListingDetail(listingId: string): Promise<ListingDetail | null> {
 	const supabase = await createServerSupabaseClient();
 
-	const [{ data: { user } }, rates, locale, { data, error }] = await Promise.all([
+	const [
+		{
+			data: { user },
+		},
+		rates,
+		locale,
+		{ data, error },
+	] = await Promise.all([
 		supabase.auth.getUser(),
 		getExchangeRates(),
 		getLocale(),
@@ -334,14 +393,24 @@ export async function getListingDetail(listingId: string): Promise<ListingDetail
 
 	if (error || !data) return null;
 
-	const [{ data: company }, { data: quote }] = await Promise.all([
+	const [{ data: company }, { data: quote }, { data: bookmark }] = await Promise.all([
 		supabase.from("companies").select("company_name").eq("profile_id", data.user_id).single(),
 		user
 			? supabase
 					.from("quotes")
-					.select("id, price, currency, delivery_days, note, status, items, attachments, payment_terms")
+					.select(
+						"id, price, currency, delivery_days, note, status, items, attachments, payment_terms",
+					)
 					.eq("listing_id", listingId)
 					.eq("seller_id", user.id)
+					.maybeSingle()
+			: Promise.resolve({ data: null }),
+		user
+			? supabase
+					.from("listing_bookmarks")
+					.select("id")
+					.eq("listing_id", listingId)
+					.eq("profile_id", user.id)
 					.maybeSingle()
 			: Promise.resolve({ data: null }),
 	]);
@@ -365,7 +434,12 @@ export async function getListingDetail(listingId: string): Promise<ListingDetail
 
 	return {
 		id: data.id,
-		title: resolveTranslatedField(data.title, data.title_source_lang, data.title_translations, locale),
+		title: resolveTranslatedField(
+			data.title,
+			data.title_source_lang,
+			data.title_translations,
+			locale,
+		),
 		description: data.description ?? "",
 		items: data.items,
 		currency: data.currency,
@@ -390,12 +464,18 @@ export async function getListingDetail(listingId: string): Promise<ListingDetail
 		companyName: company?.company_name ?? "",
 		myQuote,
 		hasMyQuote: myQuote !== null,
+		isBookmarked: bookmark !== null,
 	};
 }
 
 export async function getMyQuotes(): Promise<MyQuote[]> {
 	const supabase = await createServerSupabaseClient();
-	const [{ data: { user } }, locale] = await Promise.all([supabase.auth.getUser(), getLocale()]);
+	const [
+		{
+			data: { user },
+		},
+		locale,
+	] = await Promise.all([supabase.auth.getUser(), getLocale()]);
 	if (!user) return [];
 
 	const { data, error } = await supabase
@@ -418,9 +498,7 @@ export async function getMyQuotes(): Promise<MyQuote[]> {
 		.select("profile_id, company_name")
 		.in("profile_id", buyerIds);
 
-	const companyMap = new Map(
-		(companies ?? []).map((c) => [c.profile_id, c.company_name]),
-	);
+	const companyMap = new Map((companies ?? []).map((c) => [c.profile_id, c.company_name]));
 
 	return data.map((row) => {
 		const listing = row.listings as unknown as {
@@ -431,7 +509,12 @@ export async function getMyQuotes(): Promise<MyQuote[]> {
 			user_id: string;
 		} | null;
 		const listingTitle = listing
-			? resolveTranslatedField(listing.title, listing.title_source_lang, listing.title_translations, locale)
+			? resolveTranslatedField(
+					listing.title,
+					listing.title_source_lang,
+					listing.title_translations,
+					locale,
+				)
 			: "";
 
 		return {
@@ -442,7 +525,12 @@ export async function getMyQuotes(): Promise<MyQuote[]> {
 			price: Number(row.price),
 			currency: row.currency,
 			deliveryDays: row.delivery_days,
-			note: resolveTranslatedField(row.note ?? "", row.note_source_lang, row.note_translations, locale),
+			note: resolveTranslatedField(
+				row.note ?? "",
+				row.note_source_lang,
+				row.note_translations,
+				locale,
+			),
 			status: row.status,
 			createdAt: row.created_at,
 			listingEndDate: listing?.end_date ?? "",
@@ -452,7 +540,12 @@ export async function getMyQuotes(): Promise<MyQuote[]> {
 
 export async function getRecommendedListings(): Promise<OpenListing[]> {
 	const supabase = await createServerSupabaseClient();
-	const [{ data: { user } }, locale] = await Promise.all([supabase.auth.getUser(), getLocale()]);
+	const [
+		{
+			data: { user },
+		},
+		locale,
+	] = await Promise.all([supabase.auth.getUser(), getLocale()]);
 	if (!user) return [];
 
 	const { data: profile } = await supabase
@@ -499,7 +592,12 @@ export async function getRecommendedListings(): Promise<OpenListing[]> {
 
 		return {
 			id: row.id,
-			title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
+			title: resolveTranslatedField(
+				row.title,
+				row.title_source_lang,
+				row.title_translations,
+				locale,
+			),
 			description: row.description ?? "",
 			items: row.items,
 			currency: row.currency,
@@ -512,6 +610,8 @@ export async function getRecommendedListings(): Promise<OpenListing[]> {
 			createdAt: row.created_at,
 			status: "active" as const,
 			hasMyQuote: false,
+			// 추천 목록은 별도 카드로 렌더링되고 북마크 토글을 노출하지 않아 항상 false로 둔다.
+			isBookmarked: false,
 		};
 	});
 }
