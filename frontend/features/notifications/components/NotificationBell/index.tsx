@@ -12,6 +12,7 @@ import {
 	deleteNotification,
 } from "@/features/notifications/apis";
 import { createClient } from "@/libs/supabase";
+import { motion, useReducedMotion } from "motion/react";
 import { cn } from "@/utils/cn";
 import { resolveTranslatedField } from "@/utils/resolveTranslatedField";
 import type { Notification } from "@/features/notifications/types";
@@ -35,6 +36,9 @@ export function NotificationBell(): React.ReactNode {
 	const queryClient = useQueryClient();
 	const { data: notifications = [] } = useNotifications();
 	const [isOpen, setIsOpen] = useState(false);
+	// 0이면 아직 실시간 알림이 안 온 상태(마운트 시 울리지 않음). 도착마다 1씩 증가.
+	const [ringKey, setRingKey] = useState(0);
+	const prefersReducedMotion = useReducedMotion();
 	const ref = useRef<HTMLDivElement>(null);
 
 	const unreadCount = notifications.filter((n) => !n.isRead).length;
@@ -70,6 +74,8 @@ export function NotificationBell(): React.ReactNode {
 					},
 					() => {
 						queryClient.invalidateQueries({ queryKey: NOTIFICATION_QUERY_KEYS.all });
+						// 새 알림 도착 순간 종을 한 번 흔든다. key를 바꿔 연속 도착에도 매번 재생.
+						setRingKey((prev) => prev + 1);
 					},
 				)
 				.subscribe();
@@ -142,7 +148,18 @@ export function NotificationBell(): React.ReactNode {
 			<button
 				onClick={() => setIsOpen(!isOpen)}
 				className="text-sidebar-foreground relative flex h-7 w-7 items-center justify-center rounded-md transition-colors outline-none hover:bg-black/5 hover:text-[#1F2937]">
-				<Bell size={16} />
+				{/* 실시간 알림 도착 시 종이 한 번 흔들린다 — key가 바뀔 때마다 재생 */}
+				<motion.span
+					key={ringKey}
+					animate={
+						ringKey === 0 || prefersReducedMotion
+							? undefined
+							: { rotate: [0, -18, 14, -10, 6, -3, 0] }
+					}
+					transition={{ duration: 0.7, ease: "easeInOut" }}
+					className="flex origin-top items-center justify-center">
+					<Bell size={16} />
+				</motion.span>
 				{unreadCount > 0 && (
 					<span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
 				)}
