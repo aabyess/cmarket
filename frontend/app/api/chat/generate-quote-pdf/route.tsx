@@ -27,17 +27,25 @@ async function ensureMessageRecorded(
 	storagePath: string,
 	fileName: string,
 ): Promise<void> {
-	const { data: existing } = await admin
+	// maybeSingle()은 중복 행이 이미 2개 이상이면 에러(data null)를 돌려줘서
+	// "기존 메시지 없음"으로 오판해 insert를 반복하는 무한 루프가 있었다.
+	// limit(1) 배열 조회로 바꾸고, 조회가 실패하면 insert하지 않는 쪽으로 실패시킨다.
+	const { data: existing, error: selectError } = await admin
 		.from("messages")
 		.select("id")
 		.eq("quote_id", quoteId)
 		.eq("message_type", "quote_pdf")
 		.eq("attachment_url", storagePath)
-		.maybeSingle();
+		.limit(1);
 
-	if (existing) return;
+	if (selectError) {
+		console.error("quote_pdf message lookup error:", selectError);
+		return;
+	}
+	if (existing && existing.length > 0) return;
 
-	await admin.from("messages").insert({
+	// 동시 요청 경합으로 유니크 인덱스에 막힌 중복(23505)은 정상 상황이라 무시한다.
+	const { error: insertError } = await admin.from("messages").insert({
 		quote_id: quoteId,
 		sender_id: senderId,
 		content: fileName,
@@ -45,6 +53,9 @@ async function ensureMessageRecorded(
 		attachment_url: storagePath,
 		attachment_name: fileName,
 	});
+	if (insertError && insertError.code !== "23505") {
+		console.error("quote_pdf message insert error:", insertError);
+	}
 }
 
 type GenerateResult = {
@@ -59,6 +70,9 @@ async function generateQuoteDoc(
 	locale: Locale,
 	senderId: string,
 	translateItems = false,
+	// 채팅 메시지 기록은 최초 전송(sendPair) 시점에만. 뷰어(썸네일/열기) 경로에서
+	// 기록까지 하면 카드 렌더링이 메시지를 낳는 되먹임 구조가 된다.
+	recordMessage = false,
 ): Promise<GenerateResult | { error: string }> {
 	const meta = await getQuotePdfMeta(quoteId, locale);
 	if (!meta) return { error: "견적을 찾을 수 없습니다." };
@@ -70,7 +84,9 @@ async function generateQuoteDoc(
 	const { data: existingSigned } = await admin.storage.from(BUCKET).createSignedUrl(storagePath, SIGNED_URL_TTL);
 
 	if (existingSigned) {
-		await ensureMessageRecorded(admin, quoteId, senderId, storagePath, fileName);
+		if (recordMessage) {
+			await ensureMessageRecorded(admin, quoteId, senderId, storagePath, fileName);
+		}
 		return { attachmentUrl: storagePath, attachmentName: fileName, signedUrl: existingSigned.signedUrl };
 	}
 
@@ -131,7 +147,9 @@ async function generateQuoteDoc(
 
 	if (uploadError) return { error: uploadError.message };
 
-	await ensureMessageRecorded(admin, quoteId, senderId, storagePath, fileName);
+	if (recordMessage) {
+		await ensureMessageRecorded(admin, quoteId, senderId, storagePath, fileName);
+	}
 
 	const { data: signed, error: signError } = await admin.storage
 		.from(BUCKET)
@@ -183,7 +201,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		const buyerLocale = countryToLocale(countryMap.get(meta.buyerId));
 		const sellerLocale = countryToLocale(countryMap.get(meta.sellerId));
 
-		const original = await generateQuoteDoc(admin, quoteId, buyerLocale, user.id);
+		const original = await generateQuoteDoc(admin, quoteId, buyerLocale, user.id, false, true);
 		if ("error" in original) {
 			return NextResponse.json({ error: original.error }, { status: 500 });
 		}
@@ -192,7 +210,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 			return NextResponse.json({ original, translation: null });
 		}
 
-		const translation = await generateQuoteDoc(admin, quoteId, sellerLocale, user.id, true);
+		const translation = await generateQuoteDoc(admin, quoteId, sellerLocale, user.id, true, true);
 		if ("error" in translation) {
 			return NextResponse.json({ error: translation.error }, { status: 500 });
 		}
