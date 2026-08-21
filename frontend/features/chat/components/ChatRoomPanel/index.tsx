@@ -303,6 +303,8 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 		}
 	}
 
+	const isSendingTool = isUploadingImage || isResendingQuote;
+
 	const tools: ChatTool[] = [
 		{
 			key: "image",
@@ -420,7 +422,24 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 			)}
 
 			{/* 입력창 */}
-			<div className="border-t border-[#E5E7EB]/60 bg-white/80 px-4 py-3 backdrop-blur-xl">
+			<div className="relative border-t border-[#E5E7EB]/60 bg-white/80 px-4 py-3 backdrop-blur-xl">
+				<AnimatePresence>
+					{isSendingTool && (
+						<motion.div
+							key="sending-chip"
+							initial={prefersReducedMotion ? false : { opacity: 0, y: 8, scale: 0.9 }}
+							animate={{ opacity: 1, y: 0, scale: 1 }}
+							exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.9 }}
+							transition={
+								prefersReducedMotion ? { duration: 0 } : { type: "spring", stiffness: 400, damping: 26 }
+							}
+							className="absolute -top-9 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-black/80 px-3 py-1.5 text-xs text-white shadow-md"
+						>
+							<Loader2 size={12} className="animate-spin" />
+							{isUploadingImage ? t("uploadingImage") : t("resendingQuote")}
+						</motion.div>
+					)}
+				</AnimatePresence>
 				<div className="mx-auto flex max-w-2xl items-center gap-2">
 					<div ref={toolsRef} className="relative shrink-0">
 						<AnimatePresence>
@@ -452,11 +471,16 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 						</AnimatePresence>
 						<button
 							onClick={() => setIsToolsOpen((prev) => !prev)}
+							disabled={isSendingTool}
 							aria-label={t("toolsToggleAria")}
 							aria-expanded={isToolsOpen}
-							className="flex size-9 items-center justify-center rounded-full bg-imsg-surface text-imsg-secondary transition-all hover:bg-black/5"
+							className="flex size-9 items-center justify-center rounded-full bg-imsg-surface text-imsg-secondary transition-all hover:bg-black/5 disabled:opacity-60"
 						>
-							<Plus className={cn("size-5 transition-transform", isToolsOpen && "rotate-45")} />
+							{isSendingTool ? (
+								<Loader2 className="size-5 animate-spin" />
+							) : (
+								<Plus className={cn("size-5 transition-transform", isToolsOpen && "rotate-45")} />
+							)}
 						</button>
 					</div>
 					<div className="flex flex-1 items-center rounded-full bg-imsg-surface px-4 py-2.5">
@@ -490,12 +514,6 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 					className="hidden"
 					onChange={handleFileChange}
 				/>
-				{isUploadingImage && (
-					<div className="mx-auto mt-2 flex max-w-2xl items-center gap-1.5 text-xs text-imsg-secondary">
-						<Loader2 size={12} className="animate-spin" />
-						{t("uploadingImage")}
-					</div>
-				)}
 			</div>
 
 			<ConfirmModal

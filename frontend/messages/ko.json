@@ -351,7 +351,8 @@
 		"toolImage": "이미지",
 		"toolQuote": "견적서",
 		"uploadImageErrorMessage": "이미지 전송에 실패했습니다.",
-		"uploadingImage": "이미지 전송 중..."
+		"uploadingImage": "이미지 전송 중...",
+		"resendingQuote": "견적서 전송 중..."
 	},
 	"ChatMessageList": {
 		"dateLabel": "{year}년 {month}월 {day}일",

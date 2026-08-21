@@ -1592,7 +1592,8 @@
 		"toolImage": "Image",
 		"toolQuote": "Quote",
 		"uploadImageErrorMessage": "Failed to send the image.",
-		"uploadingImage": "Sending image..."
+		"uploadingImage": "Sending image...",
+		"resendingQuote": "Sending quote..."
 	},
 	"ChatMessageList": {
 		"dateLabel": "{month}/{day}/{year}",
