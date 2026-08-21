@@ -111,15 +111,19 @@ export function ChatRoomList({ rooms, activeQuoteId, onSelect }: ChatRoomListPro
 							</div>
 
 							<div className="min-w-0 flex-1 border-b border-[#E5E7EB]/70 py-3 last:border-b-0">
+								{/* 어떤 거래 건인지가 먼저다 — 견적(공고) 제목을 첫 줄로, 기업명은 보조로. */}
 								<div className="flex items-baseline justify-between gap-2">
 									<span className="truncate text-sm font-semibold text-foreground">
-										{room.partnerName}
+										{room.listingTitle}
 									</span>
 									<span className="shrink-0 text-xs text-imsg-secondary">
 										{formatTime(room.lastMessageAt)}
 									</span>
 								</div>
-								<div className="flex items-center justify-between gap-2">
+								<span className="block truncate text-xs font-medium text-[#6B7280]">
+									{room.partnerName}
+								</span>
+								<div className="mt-0.5 flex items-center justify-between gap-2">
 									<span className="truncate text-xs text-imsg-secondary">
 										{room.lastMessage}
 									</span>
