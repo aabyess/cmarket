@@ -4,13 +4,11 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { File, Loader2 } from "lucide-react";
-import { cn } from "@/utils/cn";
 
 type ChatFileCardProps = {
 	quoteId: string;
 	attachmentUrl: string | null;
 	attachmentName: string | null;
-	isMine: boolean;
 };
 
 type SignedFileUrl = { url: string; size: number | null };
@@ -32,7 +30,6 @@ export function ChatFileCard({
 	quoteId,
 	attachmentUrl,
 	attachmentName,
-	isMine,
 }: ChatFileCardProps): React.ReactNode {
 	const t = useTranslations("ChatFileCard");
 	const [size, setSize] = useState<number | null>(null);
@@ -77,10 +74,7 @@ export function ChatFileCard({
 		<button
 			onClick={handleOpen}
 			disabled={isOpening || failed}
-			className={cn(
-				"flex w-64 items-center gap-3 rounded-[20px] bg-[#E9E9EB] px-4 py-3 text-left disabled:opacity-70",
-				isMine ? "ml-auto" : "mr-auto",
-			)}>
+			className="flex w-64 items-center gap-3 rounded-[20px] bg-[#E9E9EB] px-4 py-3 text-left disabled:opacity-70">
 			<span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-[#6B7280]">
 				{isOpening ? <Loader2 size={16} className="animate-spin" /> : <File size={16} />}
 			</span>

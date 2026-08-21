@@ -3,7 +3,6 @@
 
 import { useTranslations } from "next-intl";
 import { Banknote, MapPin } from "lucide-react";
-import { cn } from "@/utils/cn";
 
 type BankAccountInfo = {
 	kind: "bankAccount";
@@ -26,11 +25,10 @@ function parseInfoContent(content: string): InfoContent | null {
 
 type ChatInfoCardProps = {
 	content: string;
-	isMine: boolean;
 };
 
 // 계좌번호·주소는 자동 번역으로 왜곡되면 안 되므로, 라벨만 i18n을 쓰고 값은 원문 그대로 보여준다.
-export function ChatInfoCard({ content, isMine }: ChatInfoCardProps): React.ReactNode {
+export function ChatInfoCard({ content }: ChatInfoCardProps): React.ReactNode {
 	const t = useTranslations("ChatInfoCard");
 	const info = parseInfoContent(content);
 
@@ -51,10 +49,7 @@ export function ChatInfoCard({ content, isMine }: ChatInfoCardProps): React.Reac
 
 	return (
 		<div
-			className={cn(
-				"w-fit max-w-[280px] rounded-[20px] border border-[#E5E7EB] bg-white p-3.5",
-				isMine ? "ml-auto" : "mr-auto",
-			)}>
+			className="w-fit max-w-[280px] rounded-[20px] border border-[#E5E7EB] bg-white p-3.5">
 			<p className="text-imsg-secondary mb-2 flex items-center gap-1.5 text-xs font-semibold">
 				{info.kind === "bankAccount" ? <Banknote size={13} /> : <MapPin size={13} />}
 				{info.kind === "bankAccount" ? t("bankAccountTitle") : t("addressTitle")}
