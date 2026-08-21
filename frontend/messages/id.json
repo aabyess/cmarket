@@ -1561,7 +1561,10 @@
 		"uploading": "Mengunggah...",
 		"uploadReceipt": "Unggah Bukti Transfer",
 		"viewReceipt": "Lihat Bukti Transfer",
-		"waitingForReceipt": "Menunggu bukti transfer dari pembeli"
+		"waitingForReceipt": "Menunggu bukti transfer dari pembeli",
+		"reviewButton": "Beri penilaian",
+		"reviewedBadge": "Sudah dinilai ★{rating}",
+		"reviewErrorMessage": "Gagal mengirim penilaian."
 	},
 	"ContractListTable": {
 		"cancelContract": "Batalkan Kontrak",
@@ -1584,7 +1587,9 @@
 		"statusCompleted": "Selesai",
 		"statusOngoing": "Berjalan",
 		"uploadReceiptTitle": "Unggah Bukti Transfer",
-		"viewReceiptTitle": "Lihat Bukti Transfer"
+		"viewReceiptTitle": "Lihat Bukti Transfer",
+		"reviewButton": "Beri penilaian",
+		"reviewedBadge": "Sudah dinilai ★{rating}"
 	},
 	"ContractListTabs": {
 		"searchPlaceholder": "Cari permintaan",
@@ -1937,6 +1942,18 @@
 		"confirmPaymentErrorMessage": "Gagal mengonfirmasi pembayaran.",
 		"emptyTitle": "Belum ada pembayaran",
 		"emptyDescription": "Catatan pembayaran akan muncul di sini setelah kontrak disepakati.",
-		"noResults": "Tidak ada pembayaran yang cocok."
+		"noResults": "Tidak ada pembayaran yang cocok.",
+		"reviewButton": "Beri penilaian",
+		"reviewedBadge": "Sudah dinilai ★{rating}",
+		"reviewErrorMessage": "Gagal mengirim penilaian."
+	},
+	"ReviewModal": {
+		"title": "Bagaimana transaksinya?",
+		"description": "Nilai pengalaman Anda dengan mitra transaksi.",
+		"starAria": "{value} bintang",
+		"commentPlaceholder": "Tulis komentar tentang transaksi ini (opsional)",
+		"cancel": "Batal",
+		"submit": "Kirim",
+		"submitting": "Mengirim..."
 	}
 }

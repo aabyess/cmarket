@@ -1375,7 +1375,10 @@
 		"uploading": "Uploading...",
 		"uploadReceipt": "Upload Payment Receipt",
 		"viewReceipt": "View Receipt",
-		"waitingForReceipt": "Waiting for the buyer's payment receipt"
+		"waitingForReceipt": "Waiting for the buyer's payment receipt",
+		"reviewButton": "Leave a review",
+		"reviewedBadge": "Reviewed ★{rating}",
+		"reviewErrorMessage": "Failed to submit the review."
 	},
 	"ContractListTable": {
 		"cancelContract": "Cancel Contract",
@@ -1398,7 +1401,9 @@
 		"statusCompleted": "Delivered",
 		"statusOngoing": "In Progress",
 		"uploadReceiptTitle": "Upload Receipt",
-		"viewReceiptTitle": "View Receipt"
+		"viewReceiptTitle": "View Receipt",
+		"reviewButton": "Leave a review",
+		"reviewedBadge": "Reviewed ★{rating}"
 	},
 	"ContractListTabs": {
 		"searchPlaceholder": "Search listing, partner",
@@ -1924,6 +1929,18 @@
 		"confirmPaymentErrorMessage": "Failed to confirm the payment.",
 		"emptyTitle": "No payments yet",
 		"emptyDescription": "Payment records will show up here once a contract is confirmed.",
-		"noResults": "No matching payments."
+		"noResults": "No matching payments.",
+		"reviewButton": "Leave a review",
+		"reviewedBadge": "Reviewed ★{rating}",
+		"reviewErrorMessage": "Failed to submit the review."
+	},
+	"ReviewModal": {
+		"title": "How was the deal?",
+		"description": "Rate your experience with the other party.",
+		"starAria": "{value} stars",
+		"commentPlaceholder": "Leave a comment about the deal (optional)",
+		"cancel": "Cancel",
+		"submit": "Submit",
+		"submitting": "Submitting..."
 	}
 }
