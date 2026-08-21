@@ -7,7 +7,6 @@ import { MessageSquare, Building2, CheckCircle2, ExternalLink } from "lucide-rea
 import { SafeImage } from "@/components/commons/SafeImage";
 import { cn } from "@/utils/cn";
 import { startChat } from "@/features/chat/mutations";
-import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { ChatStartLoadingModal } from "@/features/chat/components/ChatStartLoadingModal";
 import { getPriceDeliveryHighlight } from "@/features/buyer/components/QuoteReview/quoteReviewUtils";
 import type { Currency, ReceivedQuote } from "@/features/buyer/types";
@@ -27,8 +26,6 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 	const router = useRouter();
 	const [startingId, setStartingId] = useState<string | null>(null);
 	const [chatStartStep, setChatStartStep] = useState<"preparing" | "navigating" | null>(null);
-	const [awardingId, setAwardingId] = useState<string | null>(null);
-	const [confirmQuoteId, setConfirmQuoteId] = useState<string | null>(null);
 
 	const {
 		lowestPriceInIdr,
@@ -38,7 +35,6 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 		hasPriceHighlight,
 		hasDeliveryHighlight,
 	} = getPriceDeliveryHighlight(quotes);
-	const hasAwardedQuote = quotes.some((q) => q.status === "awarded");
 
 	async function handleStartChat(quoteId: string) {
 		setStartingId(quoteId);
@@ -65,32 +61,6 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 			setStartingId(null);
 		} finally {
 			setChatStartStep(null);
-		}
-	}
-
-	async function handleAward(quoteId: string) {
-		setAwardingId(quoteId);
-		try {
-			const res = await fetch("/api/buyer/award", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ quoteId }),
-			});
-			if (!res.ok) {
-				const { error } = await res.json();
-				throw new Error(error);
-			}
-			const { invoiceWarning } = await res.json();
-			if (invoiceWarning) {
-				alert(invoiceWarning);
-			}
-			router.push(`/buyer/chat?quoteId=${quoteId}`);
-		} catch (err) {
-			console.error(err);
-			alert(t("awardErrorMessage"));
-		} finally {
-			setAwardingId(null);
-			setConfirmQuoteId(null);
 		}
 	}
 
@@ -219,24 +189,13 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 									</td>
 									<td className="whitespace-nowrap px-4 py-3.5 align-top">
 										<div className="flex gap-1.5">
+											{/* 낙찰(기업 확정)은 채팅방에서만 — 여기서는 기업 홈페이지 진입만 제공한다. */}
 											<button
-												onClick={() => setConfirmQuoteId(quote.id)}
-												disabled={awardingId === quote.id || hasAwardedQuote}
-												className={cn(
-													"flex items-center justify-center gap-1 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors",
-													isAwarded
-														? "border border-[#D1FAE5] bg-[#F0FDF4] text-[#059669]"
-														: "border border-[#E5E7EB] bg-white text-[#374151] hover:border-imsg-blue hover:text-imsg-blue disabled:opacity-60",
-												)}
+												onClick={() => router.push(`/companies/${quote.seller.profileId}`)}
+												className="flex items-center justify-center gap-1 whitespace-nowrap rounded-lg border border-[#E5E7EB] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#374151] transition-colors hover:border-imsg-blue hover:text-imsg-blue"
 											>
-												<CheckCircle2 size={12} />
-												{isAwarded
-													? t("awardedStatus")
-													: hasAwardedQuote
-														? t("awardClosed")
-														: awardingId === quote.id
-															? t("processing")
-															: t("awardAction")}
+												<ExternalLink size={12} />
+												{t("homepageAction")}
 											</button>
 											<button
 												onClick={() => handleStartChat(quote.id)}
@@ -254,16 +213,6 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 					</tbody>
 				</table>
 			</div>
-			<ConfirmModal
-				isOpen={confirmQuoteId !== null}
-				title={t("modalTitle")}
-				description={t("modalDescription")}
-				confirmLabel={t("modalConfirmLabel")}
-				variant="danger"
-				isLoading={awardingId === confirmQuoteId}
-				onConfirm={() => confirmQuoteId && handleAward(confirmQuoteId)}
-				onClose={() => setConfirmQuoteId(null)}
-			/>
 		</div>
 	);
 }

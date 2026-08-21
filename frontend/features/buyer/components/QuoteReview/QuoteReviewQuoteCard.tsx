@@ -7,7 +7,6 @@ import { cva } from "class-variance-authority";
 import { SafeImage } from "@/components/commons/SafeImage";
 import {
 	Building2,
-	CheckCircle2,
 	ChevronDown,
 	ChevronUp,
 	ExternalLink,
@@ -30,11 +29,8 @@ type QuoteReviewQuoteCardProps = {
 	isFastest: boolean;
 	isHighestPrice: boolean;
 	isSlowestDelivery: boolean;
-	isAwardDisabled: boolean;
 	isStartingChat: boolean;
-	isAwarding: boolean;
 	onStartChat: (quoteId: string) => void;
-	onRequestAward: (quoteId: string) => void;
 };
 
 const card = cva("rounded-2xl bg-white p-5 shadow-sm transition-shadow duration-200", {
@@ -72,11 +68,8 @@ export function QuoteReviewQuoteCard({
 	isFastest,
 	isHighestPrice,
 	isSlowestDelivery,
-	isAwardDisabled,
 	isStartingChat,
-	isAwarding,
 	onStartChat,
-	onRequestAward,
 }: QuoteReviewQuoteCardProps): React.JSX.Element {
 	const t = useTranslations("QuoteReviewQuoteCard");
 	const locale = useLocale();
@@ -128,7 +121,7 @@ export function QuoteReviewQuoteCard({
 				)}
 			</div>
 
-			{/* 회사 정보 전체가 홈페이지로 가는 링크다. 작은 아이콘만으로는 눌러야 하는 줄 모른다. */}
+			{/* 회사 정보 전체가 홈페이지로 가는 링크. 명시적 진입은 하단 "기업 홈페이지" 버튼이 담당한다. */}
 			<Link
 				href={`/companies/${quote.seller.profileId}?from=${encodeURIComponent(backHref)}`}
 				className="group mb-4 -mx-2 flex items-center gap-3 rounded-xl px-2 py-2 transition-colors duration-200 hover:bg-imsg-surface">
@@ -159,10 +152,6 @@ export function QuoteReviewQuoteCard({
 					</span>
 				</span>
 
-				<span className="flex shrink-0 items-center gap-1 rounded-full border border-[#E5E7EB] px-3 py-1.5 text-xs font-semibold text-[#374151] transition-colors duration-200 group-hover:border-imsg-blue group-hover:bg-white group-hover:text-imsg-blue">
-					<ExternalLink size={11} />
-					{t("companyHomepage")}
-				</span>
 			</Link>
 
 			<div className="mb-4 flex flex-wrap items-end gap-x-8 gap-y-3 rounded-xl bg-[#FAFAFC] px-4 py-3.5">
@@ -284,14 +273,13 @@ export function QuoteReviewQuoteCard({
 			)}
 
 			<div className="flex gap-2">
-				<button
-					type="button"
-					onClick={() => onRequestAward(quote.id)}
-					disabled={isAwardDisabled || isAwarding}
-					className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] py-2.5 text-sm font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-imsg-surface disabled:cursor-not-allowed disabled:opacity-40">
-					{isAwarding ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
-					{t("awardButton")}
-				</button>
+				{/* 낙찰(기업 확정)은 채팅방에서만 — 여기서는 기업을 더 알아보는 동선을 제공한다. */}
+				<Link
+					href={`/companies/${quote.seller.profileId}?from=${encodeURIComponent(backHref)}`}
+					className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] py-2.5 text-sm font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-imsg-surface">
+					<ExternalLink size={14} />
+					{t("companyHomepage")}
+				</Link>
 				<button
 					type="button"
 					onClick={() => onStartChat(quote.id)}

@@ -3,7 +3,7 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Building2, CheckCircle2, ExternalLink, Loader2, MessageSquare, Sparkles } from "lucide-react";
+import { Building2, ExternalLink, Loader2, MessageSquare, Sparkles } from "lucide-react";
 import { SafeImage } from "@/components/commons/SafeImage";
 import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
 import type { QuoteRecommendation } from "@/features/buyer/components/QuoteReview/quoteReviewUtils";
@@ -11,21 +11,15 @@ import type { QuoteRecommendation } from "@/features/buyer/components/QuoteRevie
 type QuoteReviewRecommendedCardProps = {
 	recommendation: QuoteRecommendation;
 	backHref: string;
-	isAwardDisabled: boolean;
 	isStartingChat: boolean;
-	isAwarding: boolean;
 	onStartChat: (quoteId: string) => void;
-	onRequestAward: (quoteId: string) => void;
 };
 
 export function QuoteReviewRecommendedCard({
 	recommendation,
 	backHref,
-	isAwardDisabled,
 	isStartingChat,
-	isAwarding,
 	onStartChat,
-	onRequestAward,
 }: QuoteReviewRecommendedCardProps): React.JSX.Element {
 	const t = useTranslations("QuoteReviewRecommendedCard");
 	const { quote, priceRank, deliveryRank, totalCount } = recommendation;
@@ -80,14 +74,13 @@ export function QuoteReviewRecommendedCard({
 			</p>
 
 			<div className="flex gap-2">
-				<button
-					type="button"
-					onClick={() => onRequestAward(quote.id)}
-					disabled={isAwardDisabled || isAwarding}
-					className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-imsg-blue bg-white py-2.5 text-sm font-semibold text-imsg-blue transition-colors duration-200 hover:bg-[#EFF6FF] disabled:cursor-not-allowed disabled:opacity-40">
-					{isAwarding ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
-					{t("awardButton")}
-				</button>
+				{/* 낙찰(기업 확정)은 채팅방에서만 — 여기서는 기업을 더 알아보는 동선을 제공한다. */}
+				<Link
+					href={`/companies/${quote.seller.profileId}?from=${encodeURIComponent(backHref)}`}
+					className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-imsg-blue bg-white py-2.5 text-sm font-semibold text-imsg-blue transition-colors duration-200 hover:bg-[#EFF6FF]">
+					<ExternalLink size={14} />
+					{t("homepageButton")}
+				</Link>
 				<button
 					type="button"
 					onClick={() => onStartChat(quote.id)}

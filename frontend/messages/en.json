@@ -1237,10 +1237,6 @@
 		"statusClosed": "Closed"
 	},
 	"QuoteReview": {
-		"awardErrorMessage": "An error occurred while confirming the contract.",
-		"confirmDescription": "Once confirmed, a contract is created and the supplier's invoice is automatically issued in the chat. Other quotes can no longer be selected, and the supplier will be notified of the contract.",
-		"confirmLabel": "Confirm Contract",
-		"confirmTitle": "Confirm the contract with this quote?",
 		"emptyDescription": "Your first quote usually arrives within 2-3 days.",
 		"emptyTitle": "No quotes yet",
 		"showAllToggle": "Show all {count} quotes",
@@ -1252,16 +1248,12 @@
 		"deliveryLabel": "Delivery time",
 		"daysSuffix": "{days} days",
 		"reason": "Ranked #{priceRank} in price and #{deliveryRank} in delivery out of {total} quotes — the best overall score",
-		"awardButton": "Choose this supplier",
-		"chatButton": "Contact"
+		"chatButton": "Contact",
+		"homepageButton": "Company page"
 	},
 	"QuoteCompareTable": {
 		"approxPriceIdr": "Approx. Rp {amount}",
-		"awardAction": "Choose",
-		"awardClosed": "Contract Closed",
 		"awardedBadge": "Confirmed",
-		"awardedStatus": "Confirmed",
-		"awardErrorMessage": "An error occurred while confirming the contract.",
 		"days": "{count} days",
 		"columnBusinessType": "Business Type",
 		"columnCompany": "Supplier",
@@ -1269,14 +1261,11 @@
 		"columnPrice": "Quoted Price",
 		"fastestDeliveryBadge": "Fastest Delivery",
 		"lowestPriceBadge": "Lowest Price",
-		"modalConfirmLabel": "Confirm Contract",
-		"modalDescription": "Once confirmed, a contract is created and an invoice is automatically issued in the chat. This can't easily be undone afterward.",
-		"modalTitle": "Confirm this contract?",
 		"navigating": "Redirecting...",
 		"noName": "No Name",
-		"processing": "Processing...",
 		"representativePrefix": "Rep. {name}",
-		"startChat": "Contact"
+		"startChat": "Contact",
+		"homepageAction": "Website"
 	},
 	"QuoteReviewFilterBar": {
 		"filterAll": "All",
@@ -1318,7 +1307,6 @@
 		"itemsBreakdownToggle": "View item breakdown",
 		"paymentTermsLabel": "Payment terms",
 		"attachmentOpenButton": "Open",
-		"awardButton": "Choose this supplier",
 		"chatButton": "Contact"
 	},
 	"QuoteReviewListingTable": {

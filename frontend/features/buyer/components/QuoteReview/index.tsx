@@ -12,7 +12,6 @@ import {
 	getRecommendedQuote,
 	selectTopQuotes,
 } from "@/features/buyer/components/QuoteReview/quoteReviewUtils";
-import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import { startChat } from "@/features/chat/mutations";
 import { ChatStartLoadingModal } from "@/features/chat/components/ChatStartLoadingModal";
@@ -32,15 +31,12 @@ export function QuoteReview({ quotes, listingItems, backHref }: QuoteReviewProps
 	const router = useRouter();
 	const [startingId, setStartingId] = useState<string | null>(null);
 	const [chatStartStep, setChatStartStep] = useState<"preparing" | "navigating" | null>(null);
-	const [awardingId, setAwardingId] = useState<string | null>(null);
-	const [confirmQuoteId, setConfirmQuoteId] = useState<string | null>(null);
 	const [viewMode, setViewMode] = useState<ViewMode>("list");
 	const [showAllQuotes, setShowAllQuotes] = useState(false);
 
 	const comparablePrices = quotes.map((q) => q.priceInIdr).filter((p): p is number => p !== null);
 	const lowestPriceInIdr = comparablePrices.length > 0 ? Math.min(...comparablePrices) : null;
 	const fastestDays = quotes.length > 0 ? Math.min(...quotes.map((q) => q.deliveryDays)) : null;
-	const hasAwardedQuote = quotes.some((q) => q.status === "awarded");
 	// 카드 가격/납기 값의 최고가·최장납기 색상 강조(항상 전체 quotes 기준 — 상위5 토글과 무관).
 	const { highestPriceInIdr, slowestDays, hasPriceHighlight, hasDeliveryHighlight } =
 		getPriceDeliveryHighlight(quotes);
@@ -78,30 +74,6 @@ export function QuoteReview({ quotes, listingItems, backHref }: QuoteReviewProps
 		}
 	}
 
-	async function handleAward(quoteId: string): Promise<void> {
-		setAwardingId(quoteId);
-		try {
-			const res = await fetch("/api/buyer/award", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ quoteId }),
-			});
-			if (!res.ok) {
-				const { error } = await res.json();
-				throw new Error(error);
-			}
-			const { invoiceWarning } = await res.json();
-			if (invoiceWarning) alert(invoiceWarning);
-			router.push(`/buyer/chat?quoteId=${quoteId}`);
-		} catch (err) {
-			console.error(err);
-			alert(t("awardErrorMessage"));
-		} finally {
-			setAwardingId(null);
-			setConfirmQuoteId(null);
-		}
-	}
-
 	if (quotes.length === 0) {
 		return (
 			<div className="rounded-2xl bg-white p-12 text-center shadow-sm">
@@ -134,11 +106,8 @@ export function QuoteReview({ quotes, listingItems, backHref }: QuoteReviewProps
 							isFastest={quote.deliveryDays === fastestDays}
 							isHighestPrice={hasPriceHighlight && quote.priceInIdr === highestPriceInIdr}
 							isSlowestDelivery={hasDeliveryHighlight && quote.deliveryDays === slowestDays}
-							isAwardDisabled={hasAwardedQuote}
 							isStartingChat={startingId === quote.id}
-							isAwarding={awardingId === quote.id}
 							onStartChat={handleStartChat}
-							onRequestAward={setConfirmQuoteId}
 						/>
 					))}
 				</div>
@@ -169,24 +138,10 @@ export function QuoteReview({ quotes, listingItems, backHref }: QuoteReviewProps
 				<QuoteReviewRecommendedCard
 					recommendation={recommendation}
 					backHref={backHref}
-					isAwardDisabled={hasAwardedQuote}
 					isStartingChat={startingId === recommendation.quote.id}
-					isAwarding={awardingId === recommendation.quote.id}
 					onStartChat={handleStartChat}
-					onRequestAward={setConfirmQuoteId}
 				/>
 			)}
-
-			<ConfirmModal
-				isOpen={confirmQuoteId !== null}
-				title={t("confirmTitle")}
-				description={t("confirmDescription")}
-				confirmLabel={t("confirmLabel")}
-				variant="default"
-				isLoading={awardingId === confirmQuoteId}
-				onConfirm={() => confirmQuoteId && handleAward(confirmQuoteId)}
-				onClose={() => setConfirmQuoteId(null)}
-			/>
 		</>
 	);
 }
