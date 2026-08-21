@@ -136,17 +136,18 @@ export function ContractListTable({
 										<div className="flex flex-col items-stretch gap-2">
 											{(contract.deliveryConfirmedAt ||
 												(contract.paymentConfirmedAt && myReviewMap.has(contract.id))) && (
-												<div className="flex flex-col items-end gap-1">
+												<div className="flex flex-col items-stretch gap-1.5">
+													{/* 버튼과 같은 폭·높이의 연한 배지로 맞춰 칸 전체가 한 덩어리로 정렬되게 한다. */}
 													{contract.deliveryConfirmedAt && (
-														<span className="flex items-center gap-1 text-xs text-[#16A34A]">
-															<PackageCheck size={12} />
+														<span className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#F0FDF4] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#16A34A]">
+															<PackageCheck size={14} />
 															{/* 좁은 액션 칸에서 날짜까지 넣으면 두 줄로 깨져서 테이블에선 라벨만 보여준다(카드 뷰는 날짜 유지). */}
 															{t("deliveryConfirmedTitle")}
 														</span>
 													)}
 													{contract.paymentConfirmedAt && myReviewMap.has(contract.id) && (
-														<span className="flex items-center gap-1 text-xs text-[#D97706]">
-															<Star size={12} className="fill-[#D97706]" />
+														<span className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#FFFBEB] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#D97706]">
+															<Star size={14} className="fill-[#D97706]" />
 															{t("reviewedBadge", {
 																rating: myReviewMap.get(contract.id)?.rating ?? 0,
 															})}
