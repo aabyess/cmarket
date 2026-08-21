@@ -1,13 +1,14 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { CheckCircle2, FileText, Loader2, Receipt, Upload } from "lucide-react";
+import { CheckCircle2, FileText, Loader2, Receipt, Star, Upload } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
 import { getPaymentStatus, PAYMENT_METHOD } from "@/features/payments/constants";
 import type { Currency } from "@/features/buyer/types";
 import type { Contract } from "@/features/contract/types";
 import type { PaymentStatus } from "@/features/payments/types";
+import type { MyReview } from "@/features/reviews/types";
 
 const STATUS_STYLE: Record<PaymentStatus, string> = {
 	awaitingReceipt: "bg-[#F3F4F6] text-[#6B7280]",
@@ -25,10 +26,12 @@ type PaymentsListTableProps = {
 	uploadingId: string | null;
 	confirmingId: string | null;
 	receiptPdfLoadingId: string | null;
+	myReviewMap: Map<string, MyReview>;
 	onUploadClick: (contractId: string) => void;
 	onViewReceipt: (contractId: string) => void;
 	onViewTransactionReceipt: (contractId: string) => void;
 	onConfirmPayment: (contractId: string) => void;
+	onReview: (contractId: string) => void;
 };
 
 export function PaymentsListTable({
@@ -37,10 +40,12 @@ export function PaymentsListTable({
 	uploadingId,
 	confirmingId,
 	receiptPdfLoadingId,
+	myReviewMap,
 	onUploadClick,
 	onViewReceipt,
 	onViewTransactionReceipt,
 	onConfirmPayment,
+	onReview,
 }: PaymentsListTableProps): React.ReactNode {
 	const t = useTranslations("PaymentsList");
 	const locale = useLocale();
@@ -143,6 +148,21 @@ export function PaymentsListTable({
 															: t("transactionReceiptButton")}
 													</button>
 												)}
+												{status === "confirmed" &&
+													(myReviewMap.has(contract.id) ? (
+														<span className="flex items-center gap-1 rounded-lg border border-[#FDE68A] bg-[#FFFBEB] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#D97706]">
+															<Star size={14} className="fill-[#D97706]" />
+															{t("reviewedBadge", { rating: myReviewMap.get(contract.id)?.rating ?? 0 })}
+														</span>
+													) : (
+														<button
+															type="button"
+															onClick={() => onReview(contract.id)}
+															className="flex items-center gap-1 rounded-lg border border-[#E5E7EB] bg-white px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#374151] transition-colors hover:bg-imsg-surface">
+															<Star size={14} />
+															{t("reviewButton")}
+														</button>
+													))}
 												{role === "seller" && status === "awaitingConfirmation" && (
 													<button
 														type="button"

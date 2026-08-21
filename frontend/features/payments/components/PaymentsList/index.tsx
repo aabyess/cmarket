@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@/i18n/navigation";
-import { CheckCircle2, CreditCard, FileText, Loader2, Receipt, Upload } from "lucide-react";
+import { CheckCircle2, CreditCard, FileText, Loader2, Receipt, Star, Upload } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { usePersistentState } from "@/hooks/usePersistentState";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
@@ -12,6 +13,9 @@ import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
 import { getPaymentStatus, PAYMENT_METHOD } from "@/features/payments/constants";
 import { PaymentsListFilterBar } from "@/features/payments/components/PaymentsList/PaymentsListFilterBar";
 import { PaymentsListTable } from "@/features/payments/components/PaymentsList/PaymentsListTable";
+import { ReviewModal } from "@/features/reviews/components/ReviewModal";
+import { REVIEWS_QUERY_KEYS, useMyReviews } from "@/features/reviews/queries";
+import { submitReview } from "@/features/reviews/mutations";
 import type { Currency } from "@/features/buyer/types";
 import type { Contract } from "@/features/contract/types";
 import type { PaymentFilter, PaymentStatus } from "@/features/payments/types";
@@ -47,6 +51,10 @@ export function PaymentsList({ contracts: allContracts, role }: PaymentsListProp
 	const t = useTranslations("PaymentsList");
 	const router = useRouter();
 	const locale = useLocale();
+	const queryClient = useQueryClient();
+	const contractIds = contracts.map((contract) => contract.id);
+	const { data: myReviews = [] } = useMyReviews(contractIds);
+	const myReviewMap = new Map(myReviews.map((review) => [review.contractId, review]));
 	const statusLabels: Record<PaymentStatus, string> = {
 		awaitingReceipt:
 			role === "seller" ? t("statusAwaitingReceiptSeller") : t("filterAwaitingReceipt"),
@@ -63,6 +71,8 @@ export function PaymentsList({ contracts: allContracts, role }: PaymentsListProp
 	const [confirmId, setConfirmId] = useState<string | null>(null);
 	const [receiptPdfLoadingId, setReceiptPdfLoadingId] = useState<string | null>(null);
 	const [page, setPage] = useState(1);
+	const [reviewContractId, setReviewContractId] = useState<string | null>(null);
+	const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 	const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
 	function setFilter(filter: PaymentFilter): void {
@@ -154,6 +164,21 @@ export function PaymentsList({ contracts: allContracts, role }: PaymentsListProp
 		}
 	}
 
+	async function handleSubmitReview(rating: number, comment: string): Promise<void> {
+		if (!reviewContractId) return;
+		setIsSubmittingReview(true);
+		try {
+			await submitReview({ contractId: reviewContractId, rating, comment: comment || undefined });
+			queryClient.invalidateQueries({ queryKey: REVIEWS_QUERY_KEYS.myReviews(contractIds) });
+			setReviewContractId(null);
+		} catch (err) {
+			console.error(err);
+			alert(t("reviewErrorMessage"));
+		} finally {
+			setIsSubmittingReview(false);
+		}
+	}
+
 	const keyword = search.trim().toLowerCase();
 	const visibleContracts = contracts
 		.filter((contract) => filter === "all" || getPaymentStatus(contract) === filter)
@@ -223,10 +248,12 @@ export function PaymentsList({ contracts: allContracts, role }: PaymentsListProp
 						uploadingId={uploadingId}
 						confirmingId={confirmingId}
 						receiptPdfLoadingId={receiptPdfLoadingId}
+						myReviewMap={myReviewMap}
 						onUploadClick={(contractId) => fileInputRefs.current[contractId]?.click()}
 						onViewReceipt={handleViewReceipt}
 						onViewTransactionReceipt={handleViewTransactionReceipt}
 						onConfirmPayment={setConfirmId}
+						onReview={setReviewContractId}
 					/>
 
 					{/* 좁은 화면용 카드 스택 */}
@@ -303,6 +330,21 @@ export function PaymentsList({ contracts: allContracts, role }: PaymentsListProp
 														: t("transactionReceiptButton")}
 												</button>
 											)}
+											{status === "confirmed" &&
+												(myReviewMap.has(contract.id) ? (
+													<span className="flex flex-1 items-center justify-center gap-1 rounded-xl border border-[#FDE68A] bg-[#FFFBEB] py-2.5 text-xs font-medium text-[#D97706]">
+														<Star size={14} className="fill-[#D97706]" />
+														{t("reviewedBadge", { rating: myReviewMap.get(contract.id)?.rating ?? 0 })}
+													</span>
+												) : (
+													<button
+														type="button"
+														onClick={() => setReviewContractId(contract.id)}
+														className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white py-2.5 text-xs font-medium text-[#374151] transition-colors hover:bg-imsg-surface">
+														<Star size={14} />
+														{t("reviewButton")}
+													</button>
+												))}
 											{role === "seller" && status === "awaitingConfirmation" && (
 												<button
 													type="button"
@@ -342,6 +384,13 @@ export function PaymentsList({ contracts: allContracts, role }: PaymentsListProp
 				isLoading={confirmingId === confirmId}
 				onConfirm={() => confirmId && handleConfirmPayment(confirmId)}
 				onClose={() => setConfirmId(null)}
+			/>
+
+			<ReviewModal
+				isOpen={reviewContractId !== null}
+				isLoading={isSubmittingReview}
+				onSubmit={handleSubmitReview}
+				onClose={() => setReviewContractId(null)}
 			/>
 		</>
 	);

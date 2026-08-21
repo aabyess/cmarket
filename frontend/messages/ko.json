@@ -1548,7 +1548,10 @@
 		"uploading": "업로드 중...",
 		"uploadReceipt": "송금 영수증 업로드",
 		"viewReceipt": "영수증 보기",
-		"waitingForReceipt": "바이어의 송금 영수증을 기다리는 중"
+		"waitingForReceipt": "바이어의 송금 영수증을 기다리는 중",
+		"reviewButton": "평가하기",
+		"reviewedBadge": "평가 완료 ★{rating}",
+		"reviewErrorMessage": "평가 등록에 실패했습니다."
 	},
 	"ContractListTable": {
 		"cancelContract": "계약 취소",
@@ -1571,7 +1574,9 @@
 		"statusCompleted": "납품 완료",
 		"statusOngoing": "진행 중",
 		"uploadReceiptTitle": "영수증 업로드",
-		"viewReceiptTitle": "영수증 보기"
+		"viewReceiptTitle": "영수증 보기",
+		"reviewButton": "평가하기",
+		"reviewedBadge": "평가 완료 ★{rating}"
 	},
 	"ContractListTabs": {
 		"searchPlaceholder": "공고명, 거래처 검색",
@@ -1924,6 +1929,18 @@
 		"confirmPaymentErrorMessage": "입금 확인에 실패했습니다.",
 		"emptyTitle": "결제 내역이 없어요",
 		"emptyDescription": "계약이 확정되면 결제 내역이 여기 표시돼요.",
-		"noResults": "해당하는 결제 내역이 없어요."
+		"noResults": "해당하는 결제 내역이 없어요.",
+		"reviewButton": "평가하기",
+		"reviewedBadge": "평가 완료 ★{rating}",
+		"reviewErrorMessage": "평가 등록에 실패했습니다."
+	},
+	"ReviewModal": {
+		"title": "거래는 어떠셨나요?",
+		"description": "상대방과의 거래 경험을 평가해주세요.",
+		"starAria": "{value}점",
+		"commentPlaceholder": "거래에 대한 의견을 남겨주세요 (선택)",
+		"cancel": "취소",
+		"submit": "제출",
+		"submitting": "제출 중..."
 	}
 }
