@@ -1092,6 +1092,7 @@
 	"ListingBrowseTable": {
 		"columnStatus": "상태",
 		"columnTitle": "공고명",
+		"columnRegisteredAt": "등록일",
 		"columnBudget": "예산",
 		"columnDelivery": "배송지",
 		"columnMyQuote": "내 견적",
@@ -1103,12 +1104,15 @@
 	},
 	"ListingBrowseCard": {
 		"closed": "마감",
-		"daysLeft": "D-{days}",
+		"deadlineWithDays": "{date} (D-{days})",
+		"registeredOn": "{date} 등록",
 		"quoteSent": "견적 보냄",
 		"budgetLabel": "예산",
 		"budgetPrivate": "비공개",
 		"aboutKrw": "약 ₩ {value}",
-		"deliveryLabel": "배송지"
+		"deliveryLabel": "배송지",
+		"joinButton": "참여하기",
+		"viewMyQuoteButton": "내 견적 보기"
 	},
 	"ListingDetailInfo": {
 		"budgetLabel": "예산",
