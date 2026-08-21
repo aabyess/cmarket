@@ -13,6 +13,7 @@ import { useSendMessage, markMessagesRead, awardAndCreateContract } from "@/feat
 import { markNotificationsByQuoteRead } from "@/features/notifications/apis";
 import { NOTIFICATION_QUERY_KEYS } from "@/features/notifications/queries";
 import { createClient } from "@/libs/supabase";
+import { VerificationBadge } from "@/features/verification/components/VerificationBadge";
 import type { ChatMessage, ChatRole, ChatRoom } from "@/features/chat/types";
 
 type ChatRoomPanelProps = {
@@ -193,8 +194,9 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 					<ChevronLeft className="size-6" strokeWidth={2.5} />
 				</button>
 				<div className="flex flex-col items-center">
-					<span className="text-base font-semibold leading-tight text-foreground">
+					<span className="flex items-center gap-1.5 text-base font-semibold leading-tight text-foreground">
 						{room.partnerName}
+						<VerificationBadge status={room.partnerVerificationStatus} />
 					</span>
 					<span className="text-xs text-imsg-secondary">{room.listingTitle}</span>
 				</div>

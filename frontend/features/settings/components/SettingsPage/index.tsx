@@ -10,12 +10,17 @@ import { cva } from "class-variance-authority";
 import { AlertCircle, ArrowRight, CheckCircle2, Globe, Loader2, Lock, Mail } from "lucide-react";
 import { createClient } from "@/libs/supabase";
 import { SettingsPageBankAccount } from "@/features/settings/components/SettingsPage/SettingsPageBankAccount";
+import { SettingsPageVerification } from "@/features/settings/components/SettingsPage/SettingsPageVerification";
 import type { SiteBankAccount } from "@/features/siteBuilder/types";
+import type { CompanyVerification } from "@/features/verification/types";
 
 type SettingsPageProps = {
 	role: "buyer" | "seller";
 	email: string;
 	bankAccount: SiteBankAccount | null;
+	country: "korea" | "indonesia" | null;
+	businessNumber: string;
+	verification: CompanyVerification | null;
 };
 
 export type Feedback = { kind: "SUCCESS" | "ERROR"; message: string };
@@ -50,7 +55,14 @@ const localeButton = cva("rounded-lg border px-4 py-2.5 text-sm font-medium tran
 	defaultVariants: { active: false },
 });
 
-export function SettingsPage({ role, email, bankAccount }: SettingsPageProps): React.JSX.Element {
+export function SettingsPage({
+	role,
+	email,
+	bankAccount,
+	country,
+	businessNumber,
+	verification,
+}: SettingsPageProps): React.JSX.Element {
 	const t = useTranslations("Settings");
 	const tLocales = useTranslations("Locales");
 	const locale = useLocale();
@@ -217,6 +229,13 @@ export function SettingsPage({ role, email, bankAccount }: SettingsPageProps): R
 					))}
 				</div>
 			</div>
+
+			<SettingsPageVerification
+				country={country}
+				businessNumber={businessNumber}
+				verification={verification}
+				profileEditHref={profileEditHref}
+			/>
 
 			{role === "seller" && bankAccount && <SettingsPageBankAccount bankAccount={bankAccount} />}
 		</div>

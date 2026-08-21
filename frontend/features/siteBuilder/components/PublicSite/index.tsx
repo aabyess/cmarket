@@ -32,11 +32,20 @@ export async function PublicSiteView({
 			{site.isPublished ? (
 				<div className="space-y-5">
 					<SiteRenderer blocks={site.blocks} />
-					<PublicSiteIdentity company={site.company} logoUrl={site.logoUrl} withHeading />
+					<PublicSiteIdentity
+						company={site.company}
+						verificationStatus={site.verificationStatus}
+						logoUrl={site.logoUrl}
+						withHeading
+					/>
 				</div>
 			) : (
 				<div className="space-y-5">
-					<PublicSiteIdentity company={site.company} logoUrl={site.logoUrl} />
+					<PublicSiteIdentity
+						company={site.company}
+						verificationStatus={site.verificationStatus}
+						logoUrl={site.logoUrl}
+					/>
 
 					<section className="rounded-2xl bg-white px-6 py-12 text-center shadow-sm">
 						<div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-imsg-surface">

@@ -354,7 +354,7 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 		admin
 			.from("companies")
 			.select(
-				"profile_id, company_name, representative, address, business_type, business_type_source_lang, business_type_translations, business_item, business_item_source_lang, business_item_translations",
+				"profile_id, company_name, representative, address, business_type, business_type_source_lang, business_type_translations, business_item, business_item_source_lang, business_item_translations, verification_status",
 			)
 			.in("profile_id", sellerIds),
 		admin.from("company_profiles").select("profile_id, logo_url").in("profile_id", sellerIds),
@@ -416,6 +416,7 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 							locale,
 						)
 					: "",
+				verificationStatus: company?.verification_status ?? "unverified",
 				logoUrl: profile?.logo_url ?? null,
 				ratingAverage: ratingStats ? Math.round((ratingStats.sum / ratingStats.count) * 10) / 10 : null,
 				ratingCount: ratingStats?.count ?? 0,

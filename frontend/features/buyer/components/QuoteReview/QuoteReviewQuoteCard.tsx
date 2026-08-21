@@ -20,6 +20,7 @@ import {
 import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
 import { cn } from "@/utils/cn";
 import { RatingSummary } from "@/features/reviews/components/RatingSummary";
+import { VerificationBadge } from "@/features/verification/components/VerificationBadge";
 import type { ListingItem, ReceivedQuote } from "@/features/buyer/types";
 
 type QuoteReviewQuoteCardProps = {
@@ -141,8 +142,11 @@ export function QuoteReviewQuoteCard({
 				)}
 
 				<span className="min-w-0 flex-1">
-					<span className="block text-base font-semibold text-[#0f172a]">
-						{quote.seller.companyName}
+					<span className="flex items-center gap-1.5">
+						<span className="block truncate text-base font-semibold text-[#0f172a]">
+							{quote.seller.companyName}
+						</span>
+						<VerificationBadge status={quote.seller.verificationStatus} />
 					</span>
 					<span className="mt-0.5 block text-xs text-imsg-secondary">
 						{t("representativePrefix", { name: quote.seller.representative || "-" })} ·{" "}

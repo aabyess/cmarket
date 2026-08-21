@@ -7,6 +7,7 @@ import { Building2, ExternalLink, Loader2, MessageSquare, Sparkles } from "lucid
 import { SafeImage } from "@/components/commons/SafeImage";
 import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
 import { RatingSummary } from "@/features/reviews/components/RatingSummary";
+import { VerificationBadge } from "@/features/verification/components/VerificationBadge";
 import type { QuoteRecommendation } from "@/features/buyer/components/QuoteReview/quoteReviewUtils";
 
 type QuoteReviewRecommendedCardProps = {
@@ -52,6 +53,7 @@ export function QuoteReviewRecommendedCard({
 				<span className="flex min-w-0 flex-1 items-center gap-1.5 text-base font-semibold text-[#0f172a]">
 					<span className="truncate">{quote.seller.companyName}</span>
 					<ExternalLink size={11} className="shrink-0 text-[#9CA3AF]" />
+					<VerificationBadge status={quote.seller.verificationStatus} />
 					{quote.seller.ratingCount > 0 && (
 						<RatingSummary
 							average={quote.seller.ratingAverage}

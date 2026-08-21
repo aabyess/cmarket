@@ -25,6 +25,9 @@ export const Buyer: Story = {
 		role: "buyer",
 		email: "buyer@example.com",
 		bankAccount: null,
+		country: "indonesia",
+		businessNumber: "",
+		verification: null,
 	},
 };
 
@@ -39,6 +42,9 @@ export const Seller: Story = {
 			swiftCode: "",
 			currency: "KRW",
 		},
+		country: "korea",
+		businessNumber: "",
+		verification: null,
 	},
 };
 
@@ -53,5 +59,8 @@ export const SellerWithBankAccount: Story = {
 			swiftCode: "CZNBKRSE",
 			currency: "KRW",
 		},
+		country: "korea",
+		businessNumber: "123-45-67890",
+		verification: { status: "verified", method: "nts_api", verifiedAt: "2026-08-01T00:00:00Z", documentUrl: null, note: null, requestedAt: null },
 	},
 };
