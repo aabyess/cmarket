@@ -59,8 +59,13 @@ async function deleteUserCascade(
 	await admin.from("notifications").delete().eq("profile_id", profileId);
 	await admin.from("bank_accounts").delete().eq("profile_id", profileId);
 	await admin.from("listing_templates").delete().eq("profile_id", profileId);
+	await admin.from("quote_templates").delete().eq("profile_id", profileId);
 	await admin.from("chat_hidden_rooms").delete().eq("profile_id", profileId);
+	// support_inquiries/support_inquiry_replies, listing_bookmarks는 profiles FK가
+	// on delete cascade로 생성돼 명시 삭제가 필요 없다. support_inquiries는 안전망 차원에서만 추가.
+	await admin.from("support_inquiries").delete().eq("profile_id", profileId);
 	await admin.from("contacts").delete().eq("profile_id", profileId);
+	await admin.from("company_profiles").delete().eq("profile_id", profileId);
 	await admin.from("companies").delete().eq("profile_id", profileId);
 	await admin.from("profiles").delete().eq("id", profileId);
 }
