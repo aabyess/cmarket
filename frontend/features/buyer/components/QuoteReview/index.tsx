@@ -7,7 +7,11 @@ import { ChevronDown, ChevronUp, Mail } from "lucide-react";
 import { QuoteReviewQuoteCard } from "@/features/buyer/components/QuoteReview/QuoteReviewQuoteCard";
 import { QuoteReviewRecommendedCard } from "@/features/buyer/components/QuoteReview/QuoteReviewRecommendedCard";
 import { QuoteCompareTable } from "@/features/buyer/components/QuoteReview/QuoteCompareTable";
-import { getRecommendedQuote, selectTopQuotes } from "@/features/buyer/components/QuoteReview/quoteReviewUtils";
+import {
+	getPriceDeliveryHighlight,
+	getRecommendedQuote,
+	selectTopQuotes,
+} from "@/features/buyer/components/QuoteReview/quoteReviewUtils";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import { startChat } from "@/features/chat/mutations";
@@ -37,6 +41,9 @@ export function QuoteReview({ quotes, listingItems, backHref }: QuoteReviewProps
 	const lowestPriceInIdr = comparablePrices.length > 0 ? Math.min(...comparablePrices) : null;
 	const fastestDays = quotes.length > 0 ? Math.min(...quotes.map((q) => q.deliveryDays)) : null;
 	const hasAwardedQuote = quotes.some((q) => q.status === "awarded");
+	// 카드 가격/납기 값의 최고가·최장납기 색상 강조(항상 전체 quotes 기준 — 상위5 토글과 무관).
+	const { highestPriceInIdr, slowestDays, hasPriceHighlight, hasDeliveryHighlight } =
+		getPriceDeliveryHighlight(quotes);
 
 	const topQuotes = useMemo(() => selectTopQuotes(quotes, TOP_QUOTES_LIMIT), [quotes]);
 	const visibleQuotes = showAllQuotes ? quotes : topQuotes;
@@ -125,6 +132,8 @@ export function QuoteReview({ quotes, listingItems, backHref }: QuoteReviewProps
 							backHref={backHref}
 							isLowestPrice={lowestPriceInIdr !== null && quote.priceInIdr === lowestPriceInIdr}
 							isFastest={quote.deliveryDays === fastestDays}
+							isHighestPrice={hasPriceHighlight && quote.priceInIdr === highestPriceInIdr}
+							isSlowestDelivery={hasDeliveryHighlight && quote.deliveryDays === slowestDays}
 							isAwardDisabled={hasAwardedQuote}
 							isStartingChat={startingId === quote.id}
 							isAwarding={awardingId === quote.id}

@@ -28,6 +28,8 @@ type QuoteReviewQuoteCardProps = {
 	backHref: string;
 	isLowestPrice: boolean;
 	isFastest: boolean;
+	isHighestPrice: boolean;
+	isSlowestDelivery: boolean;
 	isAwardDisabled: boolean;
 	isStartingChat: boolean;
 	isAwarding: boolean;
@@ -68,6 +70,8 @@ export function QuoteReviewQuoteCard({
 	backHref,
 	isLowestPrice,
 	isFastest,
+	isHighestPrice,
+	isSlowestDelivery,
 	isAwardDisabled,
 	isStartingChat,
 	isAwarding,
@@ -167,7 +171,11 @@ export function QuoteReviewQuoteCard({
 					<p
 						className={cn(
 							"text-2xl font-bold tracking-tight",
-							isLowestPrice ? "text-[#D97706]" : "text-[#0f172a]",
+							isLowestPrice
+								? "text-[#16A34A]"
+								: isHighestPrice
+									? "text-[#DC2626]"
+									: "text-[#0f172a]",
 						)}>
 						{symbol} {quote.price.toLocaleString()}
 					</p>
@@ -188,7 +196,11 @@ export function QuoteReviewQuoteCard({
 					<p
 						className={cn(
 							"text-2xl font-bold tracking-tight",
-							isFastest ? "text-[#16A34A]" : "text-[#0f172a]",
+							isFastest
+								? "text-[#16A34A]"
+								: isSlowestDelivery
+									? "text-[#DC2626]"
+									: "text-[#0f172a]",
 						)}>
 						{t("daysSuffix", { days: quote.deliveryDays })}
 					</p>
