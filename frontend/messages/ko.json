@@ -558,6 +558,32 @@
 		"genericErrorMessage": "처리 중 오류가 발생했습니다.",
 		"emptyTitle": "등록된 계약이 없어요"
 	},
+	"AdminUsersPage": {
+		"title": "회원 관리",
+		"summary": "총 {count}명"
+	},
+	"AdminUsersList": {
+		"tabAll": "전체",
+		"tabBuyer": "바이어",
+		"tabSeller": "셀러",
+		"searchPlaceholder": "회사명, 아이디로 검색",
+		"columnCompany": "회사명",
+		"columnRepresentative": "대표자",
+		"columnRole": "역할",
+		"columnCountry": "국가",
+		"columnPlan": "플랜",
+		"columnJoinedAt": "가입일",
+		"roleBuyer": "바이어",
+		"roleSeller": "셀러",
+		"roleAdmin": "운영자",
+		"countryKorea": "한국",
+		"countryIndonesia": "인도네시아",
+		"countryUnknown": "-",
+		"noCompanyName": "기업명 없음",
+		"noRepresentative": "-",
+		"planChangeErrorMessage": "플랜 변경 중 오류가 발생했습니다.",
+		"emptyTitle": "가입한 회원이 없어요"
+	},
 	"AdminInquiriesPage": {
 		"title": "1:1 문의",
 		"summary": "전체 {total}건 · 답변 대기 {openCount}건"

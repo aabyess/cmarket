@@ -558,6 +558,32 @@
 		"genericErrorMessage": "Terjadi kesalahan saat memproses permintaan.",
 		"emptyTitle": "Belum ada kontrak terdaftar"
 	},
+	"AdminUsersPage": {
+		"title": "Manajemen Anggota",
+		"summary": "Total {count} anggota"
+	},
+	"AdminUsersList": {
+		"tabAll": "Semua",
+		"tabBuyer": "Pembeli",
+		"tabSeller": "Pemasok",
+		"searchPlaceholder": "Cari berdasarkan nama perusahaan atau username",
+		"columnCompany": "Perusahaan",
+		"columnRepresentative": "Perwakilan",
+		"columnRole": "Peran",
+		"columnCountry": "Negara",
+		"columnPlan": "Paket",
+		"columnJoinedAt": "Bergabung",
+		"roleBuyer": "Pembeli",
+		"roleSeller": "Pemasok",
+		"roleAdmin": "Admin",
+		"countryKorea": "Korea",
+		"countryIndonesia": "Indonesia",
+		"countryUnknown": "-",
+		"noCompanyName": "Tanpa Nama Perusahaan",
+		"noRepresentative": "-",
+		"planChangeErrorMessage": "Terjadi kesalahan saat mengubah paket.",
+		"emptyTitle": "Belum ada anggota terdaftar"
+	},
 	"AdminInquiriesPage": {
 		"title": "Tanya Jawab",
 		"summary": "Total {total} · Menunggu jawaban {openCount}"
