@@ -121,6 +121,8 @@ export type SellerInfo = {
 	businessType: string;
 	businessItem: string;
 	logoUrl: string | null;
+	ratingAverage: number | null;
+	ratingCount: number;
 };
 
 export type ReceivedQuote = {

@@ -9,6 +9,7 @@ import { cn } from "@/utils/cn";
 import { startChat } from "@/features/chat/mutations";
 import { ChatStartLoadingModal } from "@/features/chat/components/ChatStartLoadingModal";
 import { getPriceDeliveryHighlight } from "@/features/buyer/components/QuoteReview/quoteReviewUtils";
+import { RatingSummary } from "@/features/reviews/components/RatingSummary";
 import type { Currency, ReceivedQuote } from "@/features/buyer/types";
 
 const CURRENCY_SYMBOL: Record<Currency, string> = {
@@ -126,6 +127,14 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 												{quote.seller.representative && (
 													<p className="truncate text-xs text-[#9CA3AF]">
 														{t("representativePrefix", { name: quote.seller.representative })}
+													</p>
+												)}
+												{quote.seller.ratingCount > 0 && (
+													<p className="text-xs">
+														<RatingSummary
+															average={quote.seller.ratingAverage}
+															count={quote.seller.ratingCount}
+														/>
 													</p>
 												)}
 											</div>
