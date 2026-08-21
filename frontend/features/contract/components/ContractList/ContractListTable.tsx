@@ -2,9 +2,29 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { CheckCircle2, FileText, Upload, PackageCheck, Star, Trash2 } from "lucide-react";
+import { cva } from "class-variance-authority";
 import { cn } from "@/utils/cn";
 import type { Contract, ContractStatus } from "@/features/contract/types";
 import type { MyReview } from "@/features/reviews/types";
+
+// 행동 버튼의 3단계 위계 — 주요(굵은 색상) → 보조(옅은 테두리) → 위험(계약 취소,
+// 텍스트만 남겨 시각적으로 가장 약하게). 모든 행에서 버튼이 같은 스타일 규칙을
+// 따르게 해 조합이 달라도 시작 위치·크기가 흔들리지 않도록 한다.
+const actionButton = cva(
+	"flex w-full items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-60",
+	{
+		variants: {
+			tone: {
+				primary: "bg-[#16A34A] text-white hover:bg-[#15803D]",
+				primaryDisabled: "border border-[#E5E7EB] text-[#9CA3AF]",
+				secondary: "text-imsg-blue border border-[#BFDBFE] bg-[#EFF6FF] hover:bg-[#DBEAFE]",
+				secondaryNeutral: "border border-[#E5E7EB] text-[#374151] hover:bg-[#F9FAFB]",
+				danger: "border border-[#FECACA] bg-[#FEF2F2] text-[#DC2626] hover:bg-[#FEE2E2]",
+				dangerGhost: "text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#DC2626]",
+			},
+		},
+	},
+);
 
 const CURRENCY_SYMBOL: Record<string, string> = {
 	USD: "$",
@@ -105,107 +125,110 @@ export function ContractListTable({
 								<td className="px-4 py-3 text-[#9CA3AF]">
 									{new Date(contract.createdAt).toLocaleDateString(locale)}
 								</td>
-								{/* 액션 칸 — 버튼 클릭이 행 이동으로 번지지 않게 막는다 */}
-								<td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+								{/* 액션 칸 — 버튼 클릭이 행 이동으로 번지지 않게 막는다.
+								    폭을 고정하고 버튼을 세로로 쌓아(w-full) 행마다 조합이 달라도
+								    시작 위치·크기가 흔들리지 않게 한다. 상태 표기(수령확인완료/평가완료)는
+								    버튼과 분리해 조용한 텍스트로만 보여준다. */}
+								<td className="w-44 px-4 py-3 align-top" onClick={(e) => e.stopPropagation()}>
 									{contract.status === "cancelled" ? (
 										<span className="block text-right text-xs text-[#9CA3AF]">-</span>
 									) : (
-										<div className="flex flex-wrap items-center justify-end gap-1">
-											{contract.status === "ongoing" && role === "buyer" && (
-												<>
-													{contract.paymentReceiptUrl ? (
-														<button
-															onClick={() => onViewReceipt(contract.id)}
-															className="text-imsg-blue flex items-center gap-1 rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap transition-colors hover:bg-[#DBEAFE]">
-															<FileText size={14} />
-															{t("viewReceiptTitle")}
-														</button>
-													) : null}
+										<div className="flex flex-col items-stretch gap-2">
+											{(contract.deliveryConfirmedAt ||
+												(contract.paymentConfirmedAt && myReviewMap.has(contract.id))) && (
+												<div className="flex flex-col items-end gap-1">
+													{contract.deliveryConfirmedAt && (
+														<span className="flex items-center gap-1 text-xs text-[#16A34A]">
+															<PackageCheck size={12} />
+															{t("deliveryConfirmedTitle", {
+																date: new Date(contract.deliveryConfirmedAt).toLocaleDateString(
+																	locale,
+																),
+															})}
+														</span>
+													)}
+													{contract.paymentConfirmedAt && myReviewMap.has(contract.id) && (
+														<span className="flex items-center gap-1 text-xs text-[#D97706]">
+															<Star size={12} className="fill-[#D97706]" />
+															{t("reviewedBadge", {
+																rating: myReviewMap.get(contract.id)?.rating ?? 0,
+															})}
+														</span>
+													)}
+												</div>
+											)}
+
+											<div className="flex flex-col gap-1.5">
+												{/* 주요 행동 */}
+												{role === "buyer" && !contract.deliveryConfirmedAt && (
+													<button
+														onClick={() => onRequestDeliveryConfirm(contract.id)}
+														disabled={loadingId === contract.id}
+														className={actionButton({ tone: "primary" })}>
+														<PackageCheck size={14} />
+														{t("confirmDeliveryTitle")}
+													</button>
+												)}
+												{contract.status === "ongoing" && role === "buyer" && (
 													<button
 														onClick={() => onUploadClick(contract.id)}
 														disabled={uploadingId === contract.id}
-														className="flex items-center gap-1 rounded-lg border border-[#E5E7EB] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#374151] transition-colors hover:bg-[#F9FAFB] disabled:opacity-60">
+														className={actionButton({ tone: "primary" })}>
 														<Upload size={14} />
 														{contract.paymentReceiptUrl
 															? t("reuploadReceiptTitle")
 															: t("uploadReceiptTitle")}
 													</button>
-													{contract.paymentReceiptUrl ? (
-														<button
-															onClick={() => onRequestReceiptDelete(contract.id)}
-															disabled={loadingId === contract.id}
-															className="flex items-center gap-1 rounded-lg border border-[#FECACA] bg-[#FEF2F2] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#DC2626] transition-colors hover:bg-[#FEE2E2] disabled:opacity-60">
-															<Trash2 size={14} />
-															{t("deleteReceiptTitle")}
-														</button>
-													) : null}
-												</>
-											)}
-											{contract.status === "ongoing" && role === "seller" && (
-												<>
-													{contract.paymentReceiptUrl && (
-														<button
-															onClick={() => onViewReceipt(contract.id)}
-															className="text-imsg-blue flex items-center gap-1 rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap transition-colors hover:bg-[#DBEAFE]">
-															<FileText size={14} />
-															{t("confirmReceiptTitle")}
-														</button>
-													)}
+												)}
+												{contract.status === "ongoing" && role === "seller" && (
 													<button
 														onClick={() => onRequestConfirm(contract.id)}
 														disabled={loadingId === contract.id || !contract.paymentReceiptUrl}
-														className={cn(
-															"flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium whitespace-nowrap transition-colors disabled:opacity-60",
-															contract.paymentReceiptUrl
-																? "bg-[#16A34A] text-white hover:bg-[#15803D]"
-																: "border border-[#E5E7EB] text-[#9CA3AF]",
-														)}>
+														className={actionButton({
+															tone: contract.paymentReceiptUrl ? "primary" : "primaryDisabled",
+														})}>
 														<CheckCircle2 size={14} />
 														{t("confirmPaymentTitle")}
 													</button>
-												</>
-											)}
-											{contract.status === "ongoing" && !contract.paymentReceiptUrl && (
-												<button
-													onClick={() => onRequestCancel(contract.id)}
-													disabled={loadingId === contract.id}
-													className="rounded-lg border border-[#E5E7EB] px-2.5 py-1.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60">
-													{t("cancelContract")}
-												</button>
-											)}
-											{role === "buyer" && !contract.deliveryConfirmedAt && (
-												<button
-													onClick={() => onRequestDeliveryConfirm(contract.id)}
-													disabled={loadingId === contract.id}
-													className="flex items-center gap-1 rounded-lg border border-[#BBF7D0] bg-[#F0FDF4] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#16A34A] transition-colors hover:bg-[#DCFCE7] disabled:opacity-60">
-													<PackageCheck size={14} />
-													{t("confirmDeliveryTitle")}
-												</button>
-											)}
-											{contract.deliveryConfirmedAt && (
-												<span className="flex items-center gap-1 text-xs font-medium whitespace-nowrap text-[#16A34A]">
-													<PackageCheck size={14} />
-													{t("deliveryConfirmedTitle", {
-														date: new Date(contract.deliveryConfirmedAt).toLocaleDateString(
-															locale,
-														),
-													})}
-												</span>
-											)}
-											{contract.paymentConfirmedAt &&
-												(myReviewMap.has(contract.id) ? (
-													<span className="flex items-center gap-1 rounded-lg border border-[#FDE68A] bg-[#FFFBEB] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#D97706]">
-														<Star size={14} className="fill-[#D97706]" />
-														{t("reviewedBadge", { rating: myReviewMap.get(contract.id)?.rating ?? 0 })}
-													</span>
-												) : (
+												)}
+
+												{/* 보조 행동 */}
+												{contract.status === "ongoing" && contract.paymentReceiptUrl && (
+													<button
+														onClick={() => onViewReceipt(contract.id)}
+														className={actionButton({ tone: "secondary" })}>
+														<FileText size={14} />
+														{role === "seller" ? t("confirmReceiptTitle") : t("viewReceiptTitle")}
+													</button>
+												)}
+												{contract.status === "ongoing" && role === "buyer" && contract.paymentReceiptUrl && (
+													<button
+														onClick={() => onRequestReceiptDelete(contract.id)}
+														disabled={loadingId === contract.id}
+														className={actionButton({ tone: "danger" })}>
+														<Trash2 size={14} />
+														{t("deleteReceiptTitle")}
+													</button>
+												)}
+												{contract.paymentConfirmedAt && !myReviewMap.has(contract.id) && (
 													<button
 														onClick={() => onRequestReview(contract.id)}
-														className="flex items-center gap-1 rounded-lg border border-[#E5E7EB] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#374151] transition-colors hover:bg-[#F9FAFB]">
+														className={actionButton({ tone: "secondaryNeutral" })}>
 														<Star size={14} />
 														{t("reviewButton")}
 													</button>
-												))}
+												)}
+
+												{/* 위험 행동 — 계약 자체를 끝내는 조작이라 가장 눈에 덜 띄게 둔다 */}
+												{contract.status === "ongoing" && !contract.paymentReceiptUrl && (
+													<button
+														onClick={() => onRequestCancel(contract.id)}
+														disabled={loadingId === contract.id}
+														className={actionButton({ tone: "dangerGhost" })}>
+														{t("cancelContract")}
+													</button>
+												)}
+											</div>
 										</div>
 									)}
 								</td>
