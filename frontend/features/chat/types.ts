@@ -10,6 +10,7 @@ export type ChatRoom = {
 	partnerId: string;
 	partnerName: string;
 	partnerVerificationStatus: VerificationStatus;
+	partnerLogoUrl: string | null;
 	price: number;
 	currency: Currency;
 	deliveryDays: number;

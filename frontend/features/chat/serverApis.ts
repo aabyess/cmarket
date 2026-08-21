@@ -119,12 +119,13 @@ export async function getChatRooms(
 		),
 	];
 
-	// 두 조회는 서로 독립이므로 병렬로 실행한다.
-	const [{ data: companies }, { data: contracts }] = await Promise.all([
+	// 세 조회는 서로 독립이므로 병렬로 실행한다.
+	const [{ data: companies }, { data: companyProfiles }, { data: contracts }] = await Promise.all([
 		supabase
 			.from("companies")
 			.select("profile_id, company_name, verification_status")
 			.in("profile_id", partnerIds),
+		supabase.from("company_profiles").select("profile_id, logo_url").in("profile_id", partnerIds),
 		supabase.from("contracts").select("quote_id").in("quote_id", activeQuoteIds),
 	]);
 
@@ -135,6 +136,7 @@ export async function getChatRooms(
 			c.verification_status as ChatRoom["partnerVerificationStatus"],
 		]),
 	);
+	const logoMap = new Map((companyProfiles ?? []).map((c) => [c.profile_id, c.logo_url]));
 	const contractSet = new Set((contracts ?? []).map((c) => c.quote_id));
 
 	// PDF 카드 메시지는 content가 메타 JSON이라 목록 미리보기에 그대로 노출되면 안 된다.
@@ -173,6 +175,7 @@ export async function getChatRooms(
 				partnerId,
 				partnerName: companyMap.get(partnerId) ?? "",
 				partnerVerificationStatus: verificationMap.get(partnerId) ?? "unverified",
+				partnerLogoUrl: logoMap.get(partnerId) ?? null,
 				price: Number(quote.price),
 				currency: quote.currency as ChatRoom["currency"],
 				deliveryDays: quote.delivery_days,

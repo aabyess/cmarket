@@ -438,10 +438,14 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 					<ChevronLeft className="size-6" strokeWidth={2.5} />
 				</button>
 				<div className="flex flex-col items-center">
-					<span className="text-foreground flex items-center gap-1.5 text-base leading-tight font-semibold">
-						{room.partnerName}
+					<div className="flex items-center gap-1.5">
+						<Link
+							href={`/companies/${room.partnerId}`}
+							className="text-foreground hover:text-imsg-blue text-base leading-tight font-semibold transition-colors hover:underline">
+							{room.partnerName}
+						</Link>
 						<VerificationBadge status={room.partnerVerificationStatus} />
-					</span>
+					</div>
 					<span className="text-imsg-secondary text-xs">{room.listingTitle}</span>
 				</div>
 				<div className="flex items-center gap-1.5">
