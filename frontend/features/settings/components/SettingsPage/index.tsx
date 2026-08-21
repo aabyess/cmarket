@@ -128,6 +128,14 @@ export function SettingsPage({
 
 	return (
 		<div className="space-y-5">
+			{/* 대시보드 "기업 인증하러 가기"의 목적지라 가장 먼저 보이게 최상단에 둔다. */}
+			<SettingsPageVerification
+				country={country}
+				businessNumber={businessNumber}
+				verification={verification}
+				profileEditHref={profileEditHref}
+			/>
+
 			<div className={SECTION_CLASS}>
 				<h2 className={HEADING_CLASS}>
 					<Mail size={16} className="text-[#6B7280]" />
@@ -229,13 +237,6 @@ export function SettingsPage({
 					))}
 				</div>
 			</div>
-
-			<SettingsPageVerification
-				country={country}
-				businessNumber={businessNumber}
-				verification={verification}
-				profileEditHref={profileEditHref}
-			/>
 
 			{role === "seller" && bankAccount && <SettingsPageBankAccount bankAccount={bankAccount} />}
 		</div>
