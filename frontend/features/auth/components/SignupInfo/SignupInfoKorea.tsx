@@ -303,7 +303,7 @@ export function SignupInfoKorea() {
 				businessItem: form.businessItem,
 			},
 			{
-				onSuccess: () => router.push("/signup/complete"),
+				onSuccess: () => router.push("/signup/complete?role=seller"),
 				onError: (err) => alert(err.message),
 			},
 		);

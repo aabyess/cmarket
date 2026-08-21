@@ -340,7 +340,7 @@ export function SignupInfoIndonesia() {
         businessItem: form.businessItem,
       },
       {
-        onSuccess: () => router.push("/signup/complete"),
+        onSuccess: () => router.push("/signup/complete?role=buyer"),
         onError: (err) => alert(err.message),
       },
     );

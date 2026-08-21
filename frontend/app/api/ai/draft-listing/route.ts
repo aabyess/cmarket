@@ -129,6 +129,14 @@ function isValidCategory(value: unknown): value is ListingCategory {
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+	const authClient = await createServerSupabaseClient();
+	const {
+		data: { user },
+	} = await authClient.auth.getUser();
+	if (!user) {
+		return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
+	}
+
 	const contentType = req.headers.get("content-type") ?? "";
 
 	let prompt = "";
@@ -182,14 +190,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		}
 		const buffer = Buffer.from(await file.arrayBuffer());
 		fileParts = [{ mimeType: file.type, data: buffer.toString("base64") }];
-	}
-
-	const authClient = await createServerSupabaseClient();
-	const {
-		data: { user },
-	} = await authClient.auth.getUser();
-	if (!user) {
-		return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
 	}
 
 	// 사용자가 카테고리 힌트 칩을 선택했으면 프롬프트에 참고 정보로 덧붙인다.
