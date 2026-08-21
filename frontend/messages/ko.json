@@ -322,7 +322,7 @@
 		"backToListAria": "채팅 목록으로 돌아가기",
 		"statusAwarded": "계약 확정됨",
 		"statusRejected": "마감",
-		"awardButton": "계약 확정",
+		"awardButton": "이 기업 선택하기",
 		"quotePriceLabel": "견적가",
 		"deliveryLabel": "납품",
 		"deliveryDays": "{days}일",
@@ -1381,12 +1381,12 @@
 		"deliveryLabel": "납품 소요",
 		"daysSuffix": "{days}일",
 		"reason": "{total}개 견적 중 가격 {priceRank}위, 납기 {deliveryRank}위로 종합 점수가 가장 높아요",
-		"awardButton": "계약 확정",
+		"awardButton": "이 기업 선택하기",
 		"chatButton": "문의하기"
 	},
 	"QuoteCompareTable": {
 		"approxPriceIdr": "약 Rp {amount}",
-		"awardAction": "계약 확정",
+		"awardAction": "기업 확정",
 		"awardClosed": "계약 마감",
 		"awardedBadge": "확정",
 		"awardedStatus": "확정됨",
@@ -1447,7 +1447,7 @@
 		"itemsBreakdownToggle": "품목별 가격 보기",
 		"paymentTermsLabel": "결제조건",
 		"attachmentOpenButton": "열기",
-		"awardButton": "계약 확정",
+		"awardButton": "이 기업 선택하기",
 		"chatButton": "문의하기"
 	},
 	"QuoteReviewListingTable": {
