@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
-import { Search, FileSearch, ArrowUpDown, Star } from "lucide-react";
+import { Search, FileSearch, ArrowUpDown, Star, Columns2, Columns3 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { usePersistentState } from "@/hooks/usePersistentState";
 import { ListingBrowseCard } from "@/features/seller/components/ListingBrowse/ListingBrowseCard";
@@ -21,12 +21,15 @@ const TAB_VALUES: StatusTab[] = ["all", "active", "closed"];
 const SORT_VALUES: SortOption[] = ["deadline", "newest"];
 const QUOTE_FILTER_VALUES: QuoteFilter[] = ["all", "quoted", "notQuoted"];
 
+type GridColumns = 2 | 3;
+
 type ListingBrowsePrefs = {
 	statusTab: StatusTab;
 	sort: SortOption;
 	quoteFilter: QuoteFilter;
 	bookmarkedOnly: boolean;
 	viewMode: ViewMode;
+	gridColumns: GridColumns;
 	pageSize: number;
 };
 
@@ -36,6 +39,7 @@ const DEFAULT_PREFS: ListingBrowsePrefs = {
 	quoteFilter: "all",
 	bookmarkedOnly: false,
 	viewMode: "grid",
+	gridColumns: 3,
 	pageSize: 9,
 };
 
@@ -56,6 +60,8 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 		DEFAULT_PREFS,
 	);
 	const { statusTab, sort, quoteFilter, bookmarkedOnly, viewMode, pageSize } = prefs;
+	// 예전에 저장된 prefs에는 gridColumns가 없을 수 있어 기본값으로 보정한다.
+	const gridColumns: GridColumns = prefs.gridColumns === 2 ? 2 : 3;
 	const [page, setPage] = useState(1);
 	// 목록 필터링(관심 공고만 보기)에 즉시 반영되어야 해서 각 카드/행의 낙관적 토글 결과를
 	// 여기서도 별도로 추적한다. 초기값은 서버에서 내려준 listings의 isBookmarked를 따른다.
@@ -247,6 +253,34 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 						</PopoverPanel>
 					</Popover>
 
+					{/* 카드 뷰에서만 열 수(2/3) 선택 — ViewModeToggle과 같은 톤의 세그먼트 */}
+					{viewMode === "grid" && (
+						<div className="flex items-center gap-0.5 rounded-lg bg-[#F3F4F6] p-0.5">
+							<button
+								type="button"
+								onClick={() => setPrefs((prev) => ({ ...prev, gridColumns: 2 }))}
+								aria-label={t("columnsTwoAria")}
+								title={t("columnsTwoAria")}
+								className={cn(
+									"flex size-7 items-center justify-center rounded-md transition-colors",
+									gridColumns === 2 ? "bg-imsg-blue text-white" : "text-[#6B7280] hover:bg-white",
+								)}>
+								<Columns2 size={15} />
+							</button>
+							<button
+								type="button"
+								onClick={() => setPrefs((prev) => ({ ...prev, gridColumns: 3 }))}
+								aria-label={t("columnsThreeAria")}
+								title={t("columnsThreeAria")}
+								className={cn(
+									"flex size-7 items-center justify-center rounded-md transition-colors",
+									gridColumns === 3 ? "bg-imsg-blue text-white" : "text-[#6B7280] hover:bg-white",
+								)}>
+								<Columns3 size={15} />
+							</button>
+						</div>
+					)}
+
 					<ViewModeToggle value={viewMode} onChange={setViewMode} />
 				</div>
 			</div>
@@ -278,7 +312,11 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 					onBookmarkChange={handleBookmarkChange}
 				/>
 			) : (
-				<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+				<div
+					className={cn(
+						"grid grid-cols-1 gap-3 sm:grid-cols-2",
+						gridColumns === 3 && "xl:grid-cols-3",
+					)}>
 					{paginatedListings.map((listing) => (
 						<ListingBrowseCard
 							key={listing.id}

@@ -1226,6 +1226,8 @@
 		}
 	},
 	"ListingBrowse": {
+		"columnsTwoAria": "2열로 보기",
+		"columnsThreeAria": "3열로 보기",
 		"tabAll": "전체",
 		"tabActive": "진행중",
 		"tabClosed": "마감",

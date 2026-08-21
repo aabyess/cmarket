@@ -1024,6 +1024,8 @@
 		}
 	},
 	"ListingBrowse": {
+		"columnsTwoAria": "Show 2 columns",
+		"columnsThreeAria": "Show 3 columns",
 		"tabAll": "All",
 		"tabActive": "Active",
 		"tabClosed": "Closed",
