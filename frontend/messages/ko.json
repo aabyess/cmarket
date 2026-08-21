@@ -1371,7 +1371,18 @@
 		"confirmLabel": "계약 확정",
 		"confirmTitle": "이 견적으로 계약을 확정할까요?",
 		"emptyDescription": "보통 2~3일 안에 첫 견적이 도착해요.",
-		"emptyTitle": "아직 견적이 없어요"
+		"emptyTitle": "아직 견적이 없어요",
+		"showAllToggle": "전체 {count}건 보기",
+		"collapseToggle": "접기"
+	},
+	"QuoteReviewRecommendedCard": {
+		"title": "최적 공급기업 추천",
+		"priceLabel": "견적가",
+		"deliveryLabel": "납품 소요",
+		"daysSuffix": "{days}일",
+		"reason": "{total}개 견적 중 가격 {priceRank}위, 납기 {deliveryRank}위로 종합 점수가 가장 높아요",
+		"awardButton": "계약 확정",
+		"chatButton": "문의하기"
 	},
 	"QuoteCompareTable": {
 		"approxPriceIdr": "약 Rp {amount}",
