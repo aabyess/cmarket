@@ -14,6 +14,7 @@ import { NotificationBell } from "@/features/notifications/components/Notificati
 import { LanguageSwitcher } from "@/components/commons/LanguageSwitcher";
 import { cn } from "@/utils/cn";
 import { createClient } from "@/libs/supabase";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 // TODO: 실제 지원센터 연락처 확인되면 교체
 const SUPPORT_PHONE = "02-0000-0000";
@@ -100,6 +101,7 @@ export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapse
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	// 기본은 펼침 상태라, 사용자가 접은 그룹의 key만 여기 담는다.
 	const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
+	const prefersReducedMotion = useReducedMotion();
 
 	const initial = name.charAt(0) || companyName.charAt(0) || "?";
 
@@ -312,8 +314,20 @@ export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapse
 									)}
 								</button>
 
-								{isOpen && !isCollapsed && (
-									<div className="mt-0.5 space-y-0.5">
+								<AnimatePresence initial={false}>
+									{isOpen && !isCollapsed && (
+										<motion.div
+											key="group-children"
+											initial={prefersReducedMotion ? false : { height: 0, opacity: 0 }}
+											animate={{ height: "auto", opacity: 1 }}
+											exit={prefersReducedMotion ? { opacity: 0 } : { height: 0, opacity: 0 }}
+											transition={
+												prefersReducedMotion
+													? { duration: 0 }
+													: { type: "spring", stiffness: 400, damping: 34 }
+											}
+											className="overflow-hidden">
+											<div className="mt-0.5 space-y-0.5">
 										{entry.children.map((child) => {
 											const isActive = pathname.startsWith(child.href);
 											return (
@@ -341,8 +355,10 @@ export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapse
 												</Link>
 											);
 										})}
-									</div>
-								)}
+										</div>
+										</motion.div>
+									)}
+								</AnimatePresence>
 							</div>
 						);
 					}
