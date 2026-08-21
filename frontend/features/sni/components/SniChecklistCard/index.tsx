@@ -6,6 +6,9 @@ import { cva } from "class-variance-authority";
 import { SNI_CHECKLIST_DATA } from "@/features/sni/data";
 import type { ListingCategory } from "@/features/buyer/types";
 
+// 인도네시아 산업부(Kemenperin)의 의무 SNI 품목 공식 목록.
+const OFFICIAL_SNI_LIST_URL = "http://pustan.kemenperin.go.id/List_SNI_Wajib";
+
 type SniChecklistCardProps = {
 	category: ListingCategory;
 };
@@ -90,18 +93,21 @@ export function SniChecklistCard({ category }: SniChecklistCardProps): React.Rea
 				<p className="mt-0.5 text-sm text-[#374151]">{tCategory("estimatedDuration")}</p>
 			</div>
 
-			<a
-				href={entry.sourceUrl}
-				target="_blank"
-				rel="noopener noreferrer"
-				className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-imsg-blue hover:underline">
-				<ExternalLink size={11} />
-				{t("sourceLabel")}
-			</a>
-
+			{/* 리서치에 쓰인 2차 출처(블로그류) 링크는 노출하지 않고, 고지문의 재확인 동선에
+			    맞춰 공식 의무 SNI 목록(Kemenperin)으로만 연결한다. */}
 			<div className="mt-4 flex items-start gap-2 rounded-xl bg-[#FFFBEB] p-3 text-xs text-[#92400E]">
 				<AlertTriangle size={14} className="mt-0.5 shrink-0" />
-				<p>{t("disclaimer")}</p>
+				<p>
+					{t("disclaimer")}{" "}
+					<a
+						href={OFFICIAL_SNI_LIST_URL}
+						target="_blank"
+						rel="noopener noreferrer"
+						className="inline-flex items-center gap-0.5 font-semibold underline hover:text-[#78350F]">
+						{t("officialListLink")}
+						<ExternalLink size={10} />
+					</a>
+				</p>
 			</div>
 		</div>
 	);
