@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Clock, MessageSquare, Package } from "lucide-react";
+import { Clock, MessageSquare, Package, Star } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { Currency, ListingStatus, ListingSummary } from "@/features/buyer/types";
 import { getCategoryLabels } from "@/features/buyer/constants";
@@ -34,9 +34,14 @@ function formatDate(iso: string): string {
 type OrderListCardProps = {
 	listing: ListingSummary;
 	onClick: () => void;
+	onOpenBookmarks: () => void;
 };
 
-export function OrderListCard({ listing, onClick }: OrderListCardProps): React.ReactNode {
+export function OrderListCard({
+	listing,
+	onClick,
+	onOpenBookmarks,
+}: OrderListCardProps): React.ReactNode {
 	const t = useTranslations("OrderListCard");
 	const categoryLabels = getCategoryLabels(useTranslations("ListingCategory"));
 	const statusLabels: Record<ListingStatus, string> = {
@@ -46,69 +51,90 @@ export function OrderListCard({ listing, onClick }: OrderListCardProps): React.R
 	};
 	const status = STATUS_STYLE[listing.status];
 	const symbol = CURRENCY_SYMBOL[listing.currency];
-	const itemNames = listing.items.map((item) => item.name).filter(Boolean).join(", ");
+	const itemNames = listing.items
+		.map((item) => item.name)
+		.filter(Boolean)
+		.join(", ");
 	const remaining = getRemainingInfo(listing.endDate);
-	const remainingText = remaining.isClosed ? t("closed") : t("deadlineDays", { days: remaining.days });
+	const remainingText = remaining.isClosed
+		? t("closed")
+		: t("deadlineDays", { days: remaining.days });
 
 	return (
-		<button
-			onClick={onClick}
-			className="w-full rounded-2xl border border-[#E5E7EB] bg-white p-5 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
-		>
-			<div className="mb-2.5 flex items-center gap-2">
-				<span
-					className={cn(
-						"flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium",
-						status.className,
-					)}
-				>
-					<span className={cn("size-1.5 rounded-full", status.dotClassName)} />
-					{statusLabels[listing.status]}
-				</span>
-				{listing.category && categoryLabels[listing.category] && (
-					<span className="rounded-full bg-[#F3F4F6] px-2.5 py-1 text-xs font-medium text-[#6B7280]">
-						{categoryLabels[listing.category]}
-					</span>
-				)}
-				<span
-					className={cn(
-						"ml-auto flex items-center gap-1 text-xs",
-						remaining.isUrgent ? "font-medium text-[#DC2626]" : "text-[#9CA3AF]",
-					)}
-				>
-					<Clock size={13} />
-					{remainingText}
-				</span>
-			</div>
-
-			<p className="text-sm font-semibold text-[#1F2937]">{listing.title}</p>
-
-			{itemNames && (
-				<p className="mt-1 flex items-center gap-1.5 truncate text-xs text-[#6B7280]">
-					<Package size={13} className="shrink-0" />
-					{itemNames}
-				</p>
+		<div className="relative">
+			{/* 카드 전체가 <button>이라 관심 기업 배지는 중첩 버튼을 피해 형제 요소로 절대 배치한다. */}
+			{listing.bookmarkCount > 0 && (
+				<button
+					type="button"
+					onClick={(e) => {
+						e.stopPropagation();
+						onOpenBookmarks();
+					}}
+					className="absolute -top-2 -right-2 z-10 flex items-center gap-1 rounded-full bg-amber-400 px-2 py-1 text-xs font-semibold text-white shadow-md transition-colors hover:bg-amber-500">
+					<Star size={11} fill="currentColor" />
+					{listing.bookmarkCount}
+				</button>
 			)}
-
-			<p className="mt-1.5 text-xs text-[#9CA3AF]">{t("registeredOn", { date: formatDate(listing.createdAt) })}</p>
-
-			<div className="mt-3.5 flex items-center gap-5 border-t border-[#F3F4F6] pt-3.5">
-				<div>
-					<p className="text-xs text-[#9CA3AF]">{t("budgetLabel")}</p>
-					<p className="text-xs font-semibold text-[#1F2937]">
-						{listing.budgetPublic
-							? `${symbol} ${listing.totalBudget.toLocaleString()}`
-							: t("budgetPrivate")}
-					</p>
+			<button
+				onClick={onClick}
+				className="w-full rounded-2xl border border-[#E5E7EB] bg-white p-5 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+				<div className="mb-2.5 flex items-center gap-2">
+					<span
+						className={cn(
+							"flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap",
+							status.className,
+						)}>
+						<span className={cn("size-1.5 rounded-full", status.dotClassName)} />
+						{statusLabels[listing.status]}
+					</span>
+					{listing.category && categoryLabels[listing.category] && (
+						<span className="rounded-full bg-[#F3F4F6] px-2.5 py-1 text-xs font-medium text-[#6B7280]">
+							{categoryLabels[listing.category]}
+						</span>
+					)}
+					<span
+						className={cn(
+							"ml-auto flex items-center gap-1 text-xs",
+							remaining.isUrgent ? "font-medium text-[#DC2626]" : "text-[#9CA3AF]",
+						)}>
+						<Clock size={13} />
+						{remainingText}
+					</span>
 				</div>
-				<div>
-					<p className="flex items-center gap-1 text-xs text-[#9CA3AF]">
-						<MessageSquare size={11} />
-						{t("receivedQuotesLabel")}
+
+				<p className="text-sm font-semibold text-[#1F2937]">{listing.title}</p>
+
+				{itemNames && (
+					<p className="mt-1 flex items-center gap-1.5 truncate text-xs text-[#6B7280]">
+						<Package size={13} className="shrink-0" />
+						{itemNames}
 					</p>
-					<p className="text-xs font-semibold text-[#1F2937]">{t("quoteCount", { count: listing.quoteCount })}</p>
+				)}
+
+				<p className="mt-1.5 text-xs text-[#9CA3AF]">
+					{t("registeredOn", { date: formatDate(listing.createdAt) })}
+				</p>
+
+				<div className="mt-3.5 flex items-center gap-5 border-t border-[#F3F4F6] pt-3.5">
+					<div>
+						<p className="text-xs text-[#9CA3AF]">{t("budgetLabel")}</p>
+						<p className="text-xs font-semibold text-[#1F2937]">
+							{listing.budgetPublic
+								? `${symbol} ${listing.totalBudget.toLocaleString()}`
+								: t("budgetPrivate")}
+						</p>
+					</div>
+					<div>
+						<p className="flex items-center gap-1 text-xs text-[#9CA3AF]">
+							<MessageSquare size={11} />
+							{t("receivedQuotesLabel")}
+						</p>
+						<p className="text-xs font-semibold text-[#1F2937]">
+							{t("quoteCount", { count: listing.quoteCount })}
+						</p>
+					</div>
 				</div>
-			</div>
-		</button>
+			</button>
+		</div>
 	);
 }

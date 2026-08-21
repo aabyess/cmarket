@@ -7,6 +7,7 @@ import { FileText } from "lucide-react";
 import { usePersistentState } from "@/hooks/usePersistentState";
 import { OrderListCard } from "@/features/buyer/components/OrderList/OrderListCard";
 import { OrderListTable } from "@/features/buyer/components/OrderList/OrderListTable";
+import { OrderListBookmarkersModal } from "@/features/buyer/components/OrderListBookmarkersModal";
 import {
 	OrderListFilterBar,
 	type SortOption,
@@ -18,6 +19,7 @@ import { Pagination } from "@/components/commons/Pagination";
 type OrderListPrefs = {
 	sort: SortOption;
 	statusFilter: ListingStatus | null;
+	bookmarkedOnly: boolean;
 	viewMode: ViewMode;
 	pageSize: number;
 };
@@ -25,6 +27,7 @@ type OrderListPrefs = {
 const DEFAULT_PREFS: OrderListPrefs = {
 	sort: "newest",
 	statusFilter: null,
+	bookmarkedOnly: false,
 	viewMode: "list",
 	pageSize: 10,
 };
@@ -37,9 +40,13 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 	const t = useTranslations("OrderList");
 	const router = useRouter();
 	const [search, setSearch] = useState("");
-	const [prefs, setPrefs] = usePersistentState<OrderListPrefs>("mitrapay:buyer-order-list", DEFAULT_PREFS);
-	const { sort, statusFilter, viewMode, pageSize } = prefs;
+	const [prefs, setPrefs] = usePersistentState<OrderListPrefs>(
+		"mitrapay:buyer-order-list",
+		DEFAULT_PREFS,
+	);
+	const { sort, statusFilter, bookmarkedOnly, viewMode, pageSize } = prefs;
 	const [page, setPage] = useState(1);
+	const [bookmarksListingId, setBookmarksListingId] = useState<string | null>(null);
 
 	function setSort(sort: SortOption): void {
 		setPrefs((prev) => ({ ...prev, sort }));
@@ -51,6 +58,10 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 
 	function clearStatus(): void {
 		setPrefs((prev) => ({ ...prev, statusFilter: null }));
+	}
+
+	function toggleBookmarkedOnly(): void {
+		setPrefs((prev) => ({ ...prev, bookmarkedOnly: !prev.bookmarkedOnly }));
 	}
 
 	function setViewMode(viewMode: ViewMode): void {
@@ -74,6 +85,7 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 
 		const filtered = listings.filter((listing) => {
 			if (statusFilter !== null && listing.status !== statusFilter) return false;
+			if (bookmarkedOnly && listing.bookmarkCount === 0) return false;
 			if (!keyword) return true;
 
 			const itemNames = listing.items
@@ -89,11 +101,11 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 			}
 			return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
 		});
-	}, [listings, search, sort, statusFilter]);
+	}, [listings, search, sort, statusFilter, bookmarkedOnly]);
 
 	useEffect(() => {
 		setPage(1);
-	}, [search, sort, statusFilter, pageSize]);
+	}, [search, sort, statusFilter, bookmarkedOnly, pageSize]);
 
 	const pageCount = Math.max(1, Math.ceil(filteredListings.length / pageSize));
 	const paginatedListings = filteredListings.slice((page - 1) * pageSize, page * pageSize);
@@ -109,13 +121,10 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 					<FileText size={26} className="text-[#9CA3AF]" />
 				</div>
 				<p className="text-base font-medium text-[#1F2937]">{t("emptyTitle")}</p>
-				<p className="mt-1 text-sm text-[#6B7280]">
-					{t("emptyDescription")}
-				</p>
+				<p className="mt-1 text-sm text-[#6B7280]">{t("emptyDescription")}</p>
 				<button
 					onClick={() => router.push("/buyer/post-listing")}
-					className="mt-5 rounded-lg bg-imsg-blue px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB]"
-				>
+					className="bg-imsg-blue mt-5 rounded-lg px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB]">
 					{t("emptyAction")}
 				</button>
 			</div>
@@ -134,6 +143,8 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 				onClearStatus={clearStatus}
 				statusCounts={statusCounts}
 				totalCount={listings.length}
+				bookmarkedOnly={bookmarkedOnly}
+				onToggleBookmarkedOnly={toggleBookmarkedOnly}
 				viewMode={viewMode}
 				onViewModeChange={setViewMode}
 			/>
@@ -148,11 +159,20 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 					{viewMode === "grid" ? (
 						<div className="grid grid-cols-1 gap-3 md:grid-cols-2">
 							{paginatedListings.map((listing) => (
-								<OrderListCard key={listing.id} listing={listing} onClick={() => handleSelect(listing.id)} />
+								<OrderListCard
+									key={listing.id}
+									listing={listing}
+									onClick={() => handleSelect(listing.id)}
+									onOpenBookmarks={() => setBookmarksListingId(listing.id)}
+								/>
 							))}
 						</div>
 					) : (
-						<OrderListTable listings={paginatedListings} onSelect={handleSelect} />
+						<OrderListTable
+							listings={paginatedListings}
+							onSelect={handleSelect}
+							onOpenBookmarks={setBookmarksListingId}
+						/>
 					)}
 
 					<Pagination
@@ -164,6 +184,11 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 					/>
 				</>
 			)}
+
+			<OrderListBookmarkersModal
+				listingId={bookmarksListingId}
+				onClose={() => setBookmarksListingId(null)}
+			/>
 		</div>
 	);
 }

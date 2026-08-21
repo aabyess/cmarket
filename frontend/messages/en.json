@@ -1296,7 +1296,8 @@
 		"statusActive": "In Progress",
 		"statusAll": "All",
 		"statusAwarded": "Contract Confirmed",
-		"statusClosed": "Closed"
+		"statusClosed": "Closed",
+		"bookmarkedOnlyFilter": "Bookmarked by sellers"
 	},
 	"OrderListCard": {
 		"budgetLabel": "Budget",
@@ -1324,7 +1325,8 @@
 		"quoteCount": "{count}",
 		"statusActive": "In Progress",
 		"statusAwarded": "Contract Confirmed",
-		"statusClosed": "Closed"
+		"statusClosed": "Closed",
+		"columnBookmark": "Bookmarked"
 	},
 	"QuoteReview": {
 		"emptyDescription": "Your first quote usually arrives within 2-3 days.",
@@ -2258,5 +2260,9 @@
 		"addAria": "Add to bookmarks",
 		"removeAria": "Remove from bookmarks",
 		"errorMessage": "Failed to update the bookmark."
+	},
+	"OrderListBookmarkersModal": {
+		"title": "Companies interested",
+		"bookmarkedOn": "Bookmarked on {date}"
 	}
 }

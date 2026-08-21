@@ -53,8 +53,7 @@ export type ListingDraft = {
 
 // 입력이 너무 모호해 초안을 지어낼 수 없으면 AI가 초안 대신 재질문을 돌려준다.
 export type ListingDraftResult =
-	| ({ needsClarification: false } & ListingDraft)
-	| { needsClarification: true; question: string };
+	({ needsClarification: false } & ListingDraft) | { needsClarification: true; question: string };
 
 export type BuyerTodoHighlight = {
 	label: string;
@@ -115,6 +114,15 @@ export type ListingSummary = {
 	createdAt: string;
 	category: ListingCategory;
 	quoteCount: number;
+	bookmarkCount: number;
+};
+
+export type ListingBookmarker = {
+	profileId: string;
+	companyName: string;
+	logoUrl: string | null;
+	verificationStatus: VerificationStatus;
+	bookmarkedAt: string;
 };
 
 export type QuoteStatus = "pending" | "awarded" | "rejected";
@@ -164,7 +172,6 @@ export type ListingWithQuotes = {
 	fastestDays: number | null;
 	createdAt: string;
 };
-
 
 export type BuyerTradeSummaryBlock = {
 	total: number;
