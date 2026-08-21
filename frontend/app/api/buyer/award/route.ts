@@ -44,7 +44,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 	});
 
 	if (error) {
-		const message = ERROR_MESSAGES[error.message] ?? "계약 확정 처리 중 오류가 발생했습니다.";
+		const knownMessage = ERROR_MESSAGES[error.message];
+		// 매핑에 없는 에러는 원인 추적이 안 되던 문제가 있어 서버 로그에 원본을 남기고,
+		// 응답에도 원본 메시지를 덧붙여 화면에서 바로 사유를 볼 수 있게 한다.
+		if (!knownMessage) {
+			console.error("award_quote unexpected error:", error);
+		}
+		const message =
+			knownMessage ?? `계약 확정 처리 중 오류가 발생했습니다. (${error.message})`;
 		const status =
 			error.message === "FORBIDDEN" ? 403 : error.message === "QUOTE_NOT_FOUND" ? 404 : 400;
 		return NextResponse.json({ error: message }, { status });
