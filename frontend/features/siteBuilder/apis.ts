@@ -11,6 +11,7 @@ import type {
 	SiteCompanyInfo,
 	SiteEditorData,
 } from "@/features/siteBuilder/types";
+import type { VerificationStatus } from "@/features/verification/types";
 
 type BankAccountRow = {
 	bank_name: string | null;
@@ -79,10 +80,11 @@ type CompanyRow = {
 	business_number: string | null;
 	address: string | null;
 	site_tenant_id: string | null;
+	verification_status: VerificationStatus | null;
 };
 
 const COMPANY_COLUMNS =
-	"company_name, representative, business_type, business_type_source_lang, business_type_translations, business_item, business_item_source_lang, business_item_translations, business_number, address, site_tenant_id";
+	"company_name, representative, business_type, business_type_source_lang, business_type_translations, business_item, business_item_source_lang, business_item_translations, business_number, address, site_tenant_id, verification_status";
 
 function toCompanyInfo(row: CompanyRow | null): SiteCompanyInfo {
 	return {
@@ -264,6 +266,7 @@ export async function getPublicSite(profileId: string): Promise<PublicSite | nul
 
 	const base: PublicSite = {
 		company: toPublicCompanyInfo(company, locale),
+		verificationStatus: company.verification_status ?? "unverified",
 		logoUrl: profile?.logo_url ?? "",
 		blocks: [],
 		isPublished: false,

@@ -1,10 +1,13 @@
 import { Building2 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { SafeImage } from "@/components/commons/SafeImage";
+import { VerificationBadge } from "@/features/verification/components/VerificationBadge";
 import type { SiteCompanyInfo } from "@/features/siteBuilder/types";
+import type { VerificationStatus } from "@/features/verification/types";
 
 type PublicSiteIdentityProps = {
 	company: SiteCompanyInfo;
+	verificationStatus: VerificationStatus;
 	logoUrl: string;
 	/** 발행된 페이지 아래에 놓일 때는 보조 정보임이 드러나야 한다. */
 	withHeading?: boolean;
@@ -12,6 +15,7 @@ type PublicSiteIdentityProps = {
 
 export async function PublicSiteIdentity({
 	company,
+	verificationStatus,
 	logoUrl,
 	withHeading = false,
 }: PublicSiteIdentityProps): Promise<React.JSX.Element> {
@@ -46,9 +50,12 @@ export async function PublicSiteIdentity({
 				)}
 
 				<div className="min-w-0">
-					<h1 className="text-xl font-bold tracking-tight text-[#0f172a]">
-						{company.companyName}
-					</h1>
+					<div className="flex flex-wrap items-center gap-2">
+						<h1 className="text-xl font-bold tracking-tight text-[#0f172a]">
+							{company.companyName}
+						</h1>
+						<VerificationBadge status={verificationStatus} />
+					</div>
 					<p className="mt-0.5 text-sm text-imsg-secondary">
 						{[company.businessType, company.businessItem].filter(Boolean).join(" · ") ||
 							t("businessTypeUnknown")}

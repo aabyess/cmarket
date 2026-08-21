@@ -1,3 +1,5 @@
+import type { VerificationStatus } from "@/features/verification/types";
+
 export type BlockType =
 	| "HERO"
 	| "TEXT"
@@ -153,6 +155,7 @@ export type SiteCompanyInfo = {
 
 export type PublicSite = {
 	company: SiteCompanyInfo;
+	verificationStatus: VerificationStatus;
 	logoUrl: string;
 	blocks: Block[];
 	isPublished: boolean;

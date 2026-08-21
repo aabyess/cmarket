@@ -1,4 +1,5 @@
 import type { Currency } from "@/features/buyer/types";
+import type { VerificationStatus } from "@/features/verification/types";
 
 export type ChatRole = "buyer" | "seller";
 
@@ -8,6 +9,7 @@ export type ChatRoom = {
 	listingTitle: string;
 	partnerId: string;
 	partnerName: string;
+	partnerVerificationStatus: VerificationStatus;
 	price: number;
 	currency: Currency;
 	deliveryDays: number;

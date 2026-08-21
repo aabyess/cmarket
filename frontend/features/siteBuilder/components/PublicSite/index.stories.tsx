@@ -13,7 +13,13 @@ type Story = StoryObj<typeof PublicSiteView>;
 
 export const Published: Story = {
 	args: {
-		site: { company: MOCK_COMPANY_INFO, logoUrl: "", blocks: MOCK_BLOCKS, isPublished: true },
+		site: {
+			company: MOCK_COMPANY_INFO,
+			verificationStatus: "verified",
+			logoUrl: "",
+			blocks: MOCK_BLOCKS,
+			isPublished: true,
+		},
 		backHref: "/buyer/quote-review",
 		backLabel: "받은 견적으로",
 	},
@@ -21,7 +27,13 @@ export const Published: Story = {
 
 export const NotPublished: Story = {
 	args: {
-		site: { company: MOCK_COMPANY_INFO, logoUrl: "", blocks: [], isPublished: false },
+		site: {
+			company: MOCK_COMPANY_INFO,
+			verificationStatus: "unverified",
+			logoUrl: "",
+			blocks: [],
+			isPublished: false,
+		},
 		backHref: "/buyer/quote-review",
 		backLabel: "받은 견적으로",
 	},
