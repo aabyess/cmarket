@@ -64,7 +64,7 @@ export function SettingsPageBankAccount({
 	}
 
 	return (
-		<div className={SECTION_CLASS}>
+		<div id="bankAccount" className={SECTION_CLASS}>
 			<h2 className={HEADING_CLASS}>
 				<CreditCard size={16} className="text-[#6B7280]" />
 				{tTradeSettings("bankTitle")}

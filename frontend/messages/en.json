@@ -500,9 +500,18 @@
 		"title": "Resources",
 		"count": "{count} total"
 	},
-	"UserBadge": { "indonesia": "Indonesia", "korea": "South Korea" },
-	"ConfirmModal": { "confirm": "Confirm", "cancel": "Cancel", "processing": "Processing..." },
-	"LogoutButton": { "logout": "Log out" },
+	"UserBadge": {
+		"indonesia": "Indonesia",
+		"korea": "South Korea"
+	},
+	"ConfirmModal": {
+		"confirm": "Confirm",
+		"cancel": "Cancel",
+		"processing": "Processing..."
+	},
+	"LogoutButton": {
+		"logout": "Log out"
+	},
 	"SecurityModal": {
 		"connectingTitle": "Establishing a secure connection",
 		"verifyingTitle": "Verifying your information",
@@ -514,8 +523,12 @@
 		"navigatingTitle": "Heading to the chat room",
 		"subtitle": "Please wait a moment..."
 	},
-	"PageLoading": { "loading": "Loading..." },
-	"Pagination": { "perPage": "{size} / page" },
+	"PageLoading": {
+		"loading": "Loading..."
+	},
+	"Pagination": {
+		"perPage": "{size} / page"
+	},
 	"NotFoundPage": {
 		"title": "Page not found",
 		"description": "The page you're looking for doesn't exist or isn't ready yet.",
@@ -1087,7 +1100,8 @@
 		"savingButton": "Saving...",
 		"saveButton": "Save changes",
 		"submittingButton": "Submitting...",
-		"submitButton": "Submit quote"
+		"submitButton": "Submit quote",
+		"updateSuccessResent": "Quote updated. The revised quote has been sent to the chat."
 	},
 	"MyQuotes": {
 		"emptyTitle": "No quotes sent yet",
@@ -1560,7 +1574,9 @@
 		"emptyDescription": "Once you exchange quotes, you can chat here.",
 		"quotePdfPreview": "📄 Quote",
 		"invoicePdfPreview": "📄 Invoice",
-		"imagePreview": "📷 Photo"
+		"imagePreview": "📷 Photo",
+		"filePreview": "📎 File",
+		"infoPreview": "ℹ️ Info"
 	},
 	"ChatImageCard": {
 		"previewAlt": "Sent image",
@@ -1587,13 +1603,21 @@
 		"hideRoomModalDescription": "The conversation history is kept, and this chat will reappear if the other party sends a new message.",
 		"hideRoomModalConfirm": "Leave",
 		"editQuoteButton": "Edit Quote",
-		"resendQuoteErrorMessage": "Failed to send the quote.",
 		"toolsToggleAria": "More tools",
 		"toolImage": "Image",
-		"toolQuote": "Quote",
 		"uploadImageErrorMessage": "Failed to send the image.",
 		"uploadingImage": "Sending image...",
-		"resendingQuote": "Sending quote..."
+		"toolFile": "File",
+		"toolBankAccount": "Bank Account",
+		"toolAddress": "Delivery Address",
+		"uploadFileErrorMessage": "Failed to send the file.",
+		"uploadingFile": "Sending file...",
+		"sendingBankAccount": "Sending bank account...",
+		"sendingAddress": "Sending address...",
+		"noBankAccountGuidance": "Please register your bank account first. Go to settings?",
+		"sendBankAccountErrorMessage": "Failed to send the bank account.",
+		"noAddressGuidance": "No delivery address is set for this listing.",
+		"sendAddressErrorMessage": "Failed to send the address."
 	},
 	"ChatMessageList": {
 		"dateLabel": "{month}/{day}/{year}",
@@ -2088,37 +2112,81 @@
 		"office": {
 			"summary": "Pure stationery items have no confirmed mandatory status (uncertain). Electronic office equipment (printers, etc.) may fall under mandatory SNI for electronics — check item by item.",
 			"representativeItems": [
-				{ "item": "General stationery (paper, writing tools)", "note": "Mandatory list not confirmed (uncertain)" },
-				{ "item": "Electronic office equipment (printers, multifunction devices, etc.)", "note": "May fall under mandatory SNI for electronics/telecom equipment (uncertain, check individually)" }
+				{
+					"item": "General stationery (paper, writing tools)",
+					"note": "Mandatory list not confirmed (uncertain)"
+				},
+				{
+					"item": "Electronic office equipment (printers, multifunction devices, etc.)",
+					"note": "May fall under mandatory SNI for electronics/telecom equipment (uncertain, check individually)"
+				}
 			],
-			"requiredDocuments": ["Business registration documents", "Product specification sheet", "Accredited test lab report (if applicable)"],
+			"requiredDocuments": [
+				"Business registration documents",
+				"Product specification sheet",
+				"Accredited test lab report (if applicable)"
+			],
 			"estimatedDuration": "Varies by item (estimated)"
 		},
 		"lab": {
 			"summary": "Measuring instruments (scales, thermometers, etc.) fall under the mandatory SNI category. Whether non-measuring lab equipment is covered is uncertain.",
 			"representativeItems": [
-				{ "item": "Measuring instruments (scales, pressure gauges, thermometers, etc.)", "note": "Likely falls under the mandatory SNI category 'measuring instruments'" },
-				{ "item": "Laboratory glassware and consumables", "note": "Uncertain, check individually" }
+				{
+					"item": "Measuring instruments (scales, pressure gauges, thermometers, etc.)",
+					"note": "Likely falls under the mandatory SNI category 'measuring instruments'"
+				},
+				{
+					"item": "Laboratory glassware and consumables",
+					"note": "Uncertain, check individually"
+				}
 			],
-			"requiredDocuments": ["Business registration documents", "Product technical drawings/specifications", "Accredited test lab report", "Factory inspection documents (if applicable)"],
+			"requiredDocuments": [
+				"Business registration documents",
+				"Product technical drawings/specifications",
+				"Accredited test lab report",
+				"Factory inspection documents (if applicable)"
+			],
 			"estimatedDuration": "8 weeks to 6 months (estimated, based on general industry practice)"
 		},
 		"machinery": {
 			"summary": "'Machinery, parts, and machine tools' are explicitly listed under the mandatory SNI category.",
 			"representativeItems": [
-				{ "item": "Machine tools", "note": "Explicitly listed under mandatory SNI" },
-				{ "item": "Large custom-built industrial equipment", "note": "Individually ordered equipment (not consumer goods) may follow different standards (uncertain)" }
+				{
+					"item": "Machine tools",
+					"note": "Explicitly listed under mandatory SNI"
+				},
+				{
+					"item": "Large custom-built industrial equipment",
+					"note": "Individually ordered equipment (not consumer goods) may follow different standards (uncertain)"
+				}
 			],
-			"requiredDocuments": ["Business registration documents", "Product technical drawings/specifications", "Accredited test lab report", "QMS certificate (if applicable)", "Factory inspection documents"],
+			"requiredDocuments": [
+				"Business registration documents",
+				"Product technical drawings/specifications",
+				"Accredited test lab report",
+				"QMS certificate (if applicable)",
+				"Factory inspection documents"
+			],
 			"estimatedDuration": "8 weeks to 6 months (estimated)"
 		},
 		"chemical": {
 			"summary": "'Chemical raw materials and chemical products' are explicitly listed under the mandatory SNI category. Some items may instead be subject to Kemendag K3L (Security, Safety, Health, Environment) product registration — first determine whether SNI or K3L applies (in principle mutually exclusive, though uncertain based on a single source). K3L is applied for via OSS by Indonesia-based businesses (importers) holding an NIB, free of charge, valid for 5 years.",
 			"representativeItems": [
-				{ "item": "Industrial chemical raw materials", "note": "First determine whether SNI or K3L applies (K3L's 42 product groups are presumed to focus on finished products containing chemicals; whether raw materials are included is unconfirmed in the source)" },
-				{ "item": "Hazardous/toxic chemicals", "note": "Likely subject to K3L registration (uncertain, check individually). K3L applicant is presumed to be the Indonesia-based importer" }
+				{
+					"item": "Industrial chemical raw materials",
+					"note": "First determine whether SNI or K3L applies (K3L's 42 product groups are presumed to focus on finished products containing chemicals; whether raw materials are included is unconfirmed in the source)"
+				},
+				{
+					"item": "Hazardous/toxic chemicals",
+					"note": "Likely subject to K3L registration (uncertain, check individually). K3L applicant is presumed to be the Indonesia-based importer"
+				}
 			],
-			"requiredDocuments": ["Business registration documents", "MSDS (Material Safety Data Sheet)", "Accredited test lab report", "K3L product registration documents (if applicable)"],
+			"requiredDocuments": [
+				"Business registration documents",
+				"MSDS (Material Safety Data Sheet)",
+				"Accredited test lab report",
+				"K3L product registration documents (if applicable)"
+			],
 			"estimatedDuration": "8 weeks to 6+ months (estimated, K3L may add additional time)"
 		},
 		"other": {
@@ -2132,5 +2200,20 @@
 		"title": "{count} reviews",
 		"showMoreButton": "Show more reviews",
 		"anonymousCompany": "Unknown company"
+	},
+	"ChatFileCard": {
+		"loadError": "Couldn't load the file",
+		"loading": "Loading...",
+		"defaultName": "Attached file"
+	},
+	"ChatInfoCard": {
+		"bankAccountTitle": "Bank Account",
+		"addressTitle": "Delivery Address",
+		"bankNameLabel": "Bank",
+		"accountNumberLabel": "Account Number",
+		"accountHolderLabel": "Account Holder",
+		"provinsiLabel": "Province",
+		"cityLabel": "City",
+		"addressLabel": "Address"
 	}
 }

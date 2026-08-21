@@ -27,7 +27,9 @@ export async function postMessage(quoteId: string, content: string): Promise<Pos
 export async function markMessagesRead(quoteId: string): Promise<void> {
 	const supabase = createClient();
 
-	const { data: { user } } = await supabase.auth.getUser();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
 	if (!user) return;
 
 	const { error } = await supabase
@@ -70,7 +72,10 @@ export function startChat(quoteId: string, summary: QuoteSummary): Promise<void>
 async function startChatInternal(quoteId: string, summary: QuoteSummary): Promise<void> {
 	const supabase = createClient();
 
-	const { data: { user }, error: userError } = await supabase.auth.getUser();
+	const {
+		data: { user },
+		error: userError,
+	} = await supabase.auth.getUser();
 	if (userError || !user) throw new Error("로그인이 필요합니다.");
 
 	const { count } = await supabase
@@ -80,7 +85,7 @@ async function startChatInternal(quoteId: string, summary: QuoteSummary): Promis
 		.eq("message_type", "text");
 
 	if ((count ?? 0) > 0) return;
-	
+
 	if (summary.previousPrice !== null && summary.previousDeliveryDays !== null) {
 		const priceDiff = summary.price - summary.previousPrice;
 		const daysDiff = summary.deliveryDays - summary.previousDeliveryDays;
@@ -137,6 +142,21 @@ async function startChatInternal(quoteId: string, summary: QuoteSummary): Promis
 	});
 
 	if (greetingError) throw greetingError;
+}
+
+// ChatRoomPanel 서랍의 견적서 재전송 도구가 제거되면서, 같은 로직을 견적 수정 성공 시
+// 자동 재전송(ListingDetailQuoteForm)에서도 써야 해서 여기 유틸로 남긴다.
+export async function resendQuotePdf(quoteId: string): Promise<void> {
+	const res = await fetch("/api/chat/generate-quote-pdf", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ quoteId, sendPair: true }),
+	});
+
+	if (!res.ok) {
+		const { error } = await res.json();
+		throw new Error(error ?? "견적서 전송에 실패했습니다.");
+	}
 }
 
 export type AwardAndCreateContractResult = {

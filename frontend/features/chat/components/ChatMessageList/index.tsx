@@ -7,6 +7,8 @@ import { cn } from "@/utils/cn";
 import { resolveTranslatedField } from "@/utils/resolveTranslatedField";
 import { QuotePdfCard } from "@/features/chat/components/QuotePdfCard";
 import { ChatImageCard } from "@/features/chat/components/ChatImageCard";
+import { ChatFileCard } from "@/features/chat/components/ChatFileCard";
+import { ChatInfoCard } from "@/features/chat/components/ChatInfoCard";
 import type { ChatMessage } from "@/features/chat/types";
 
 const DEEPL_TARGET: Record<string, string> = {
@@ -176,6 +178,15 @@ export function ChatMessageList({
 										attachmentName={message.attachmentName}
 										isMine={isMine}
 									/>
+								) : message.messageType === "file" ? (
+									<ChatFileCard
+										quoteId={quoteId}
+										attachmentUrl={message.attachmentUrl}
+										attachmentName={message.attachmentName}
+										isMine={isMine}
+									/>
+								) : message.messageType === "info" ? (
+									<ChatInfoCard content={message.content} isMine={isMine} />
 								) : (
 									<div className={cn("flex flex-col gap-1", isMine ? "items-end" : "items-start")}>
 										<div

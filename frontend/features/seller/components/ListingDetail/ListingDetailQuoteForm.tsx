@@ -3,10 +3,27 @@
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { CheckCircle2, Pencil, Clock, Upload, FileText, X, Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import {
+	CheckCircle2,
+	Pencil,
+	Clock,
+	Upload,
+	FileText,
+	X,
+	Loader2,
+	ChevronDown,
+	ChevronUp,
+} from "lucide-react";
 import { cn } from "@/utils/cn";
 import { postQuote, updateQuote } from "@/features/seller/mutations";
-import type { Currency, ListingAttachment, ListingItem, QuoteItemPrice } from "@/features/buyer/types";
+import { getMessages } from "@/features/chat/apis";
+import { resendQuotePdf } from "@/features/chat/mutations";
+import type {
+	Currency,
+	ListingAttachment,
+	ListingItem,
+	QuoteItemPrice,
+} from "@/features/buyer/types";
 import type { MyQuoteSummary, QuoteFormData } from "@/features/seller/types";
 
 const CURRENCIES: { value: Currency; label: string; symbol: string }[] = [
@@ -178,6 +195,19 @@ export function ListingDetailQuoteForm({
 		try {
 			await updateQuote(myQuote.id, { ...form, price: total });
 			setIsEditing(false);
+
+			// 이미 채팅이 시작된 견적이면 수정된 견적서를 자동으로 재전송한다.
+			// 채팅이 아직 없으면(메시지 없음) 조용히 건너뛴다.
+			try {
+				const existingMessages = await getMessages(myQuote.id, { limit: 1 });
+				if (existingMessages.length > 0) {
+					await resendQuotePdf(myQuote.id);
+					alert(t("updateSuccessResent"));
+				}
+			} catch (resendErr) {
+				console.error(resendErr);
+			}
+
 			router.refresh();
 		} catch (err) {
 			console.error(err);
@@ -219,7 +249,7 @@ export function ListingDetailQuoteForm({
 							{t("statusRejected")}
 						</span>
 					) : (
-						<span className="flex items-center gap-1 rounded-full bg-[#EFF6FF] px-2.5 py-1 text-xs font-medium text-imsg-blue">
+						<span className="text-imsg-blue flex items-center gap-1 rounded-full bg-[#EFF6FF] px-2.5 py-1 text-xs font-medium">
 							<Clock size={12} />
 							{t("statusPending")}
 						</span>
@@ -247,8 +277,7 @@ export function ListingDetailQuoteForm({
 					<div className="mt-3 border-t border-[#F3F4F6] pt-3">
 						<button
 							onClick={() => setShowItemsBreakdown((prev) => !prev)}
-							className="flex w-full items-center justify-between text-xs font-medium text-[#374151]"
-						>
+							className="flex w-full items-center justify-between text-xs font-medium text-[#374151]">
 							{t("itemsBreakdownToggle")}
 							{showItemsBreakdown ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
 						</button>
@@ -258,10 +287,13 @@ export function ListingDetailQuoteForm({
 									const item = items.find((i) => i.id === entry.itemId);
 									if (!item) return null;
 									return (
-										<li key={entry.itemId} className="flex items-center justify-between text-xs text-[#374151]">
+										<li
+											key={entry.itemId}
+											className="flex items-center justify-between text-xs text-[#374151]">
 											<span className="min-w-0 truncate">{item.name}</span>
 											<span className="shrink-0 text-[#9CA3AF]">
-												{symbol} {entry.unitPrice.toLocaleString()} × {item.quantity}{item.unit}
+												{symbol} {entry.unitPrice.toLocaleString()} × {item.quantity}
+												{item.unit}
 											</span>
 										</li>
 									);
@@ -283,18 +315,21 @@ export function ListingDetailQuoteForm({
 						{myQuote.attachments.map((attachment) => (
 							<li
 								key={attachment.id}
-								className="flex items-center gap-2 rounded-lg border border-[#E2E8F0] px-3 py-2"
-							>
+								className="flex items-center gap-2 rounded-lg border border-[#E2E8F0] px-3 py-2">
 								<FileText size={13} className="shrink-0 text-[#9CA3AF]" />
-								<span className="min-w-0 flex-1 truncate text-xs text-[#374151]">{attachment.fileName}</span>
-								<span className="shrink-0 text-xs text-[#9CA3AF]">{formatFileSize(attachment.fileSize)}</span>
+								<span className="min-w-0 flex-1 truncate text-xs text-[#374151]">
+									{attachment.fileName}
+								</span>
+								<span className="shrink-0 text-xs text-[#9CA3AF]">
+									{formatFileSize(attachment.fileSize)}
+								</span>
 							</li>
 						))}
 					</ul>
 				)}
 
 				{myQuote.note && (
-					<p className="mt-3 whitespace-pre-wrap rounded-lg bg-[#F9FAFB] px-3 py-2.5 text-xs leading-relaxed text-[#374151]">
+					<p className="mt-3 rounded-lg bg-[#F9FAFB] px-3 py-2.5 text-xs leading-relaxed whitespace-pre-wrap text-[#374151]">
 						{myQuote.note}
 					</p>
 				)}
@@ -303,20 +338,16 @@ export function ListingDetailQuoteForm({
 					<>
 						<button
 							onClick={() => setIsEditing(true)}
-							className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-lg border border-imsg-blue py-3 text-sm font-semibold text-imsg-blue transition-colors hover:bg-[#EFF6FF]"
-						>
+							className="border-imsg-blue text-imsg-blue mt-4 flex w-full items-center justify-center gap-1.5 rounded-lg border py-3 text-sm font-semibold transition-colors hover:bg-[#EFF6FF]">
 							<Pencil size={15} />
 							{t("editButton")}
 						</button>
-						<p className="mt-2 text-center text-xs text-[#9CA3AF]">
-							{t("editHint")}
-						</p>
+						<p className="mt-2 text-center text-xs text-[#9CA3AF]">{t("editHint")}</p>
 					</>
 				) : (
 					<button
 						onClick={() => router.push("/seller/quote-submit")}
-						className="mt-4 w-full rounded-lg border border-[#E5E7EB] py-3 text-sm font-medium text-[#374151] transition-colors hover:bg-gray-50"
-					>
+						className="mt-4 w-full rounded-lg border border-[#E5E7EB] py-3 text-sm font-medium text-[#374151] transition-colors hover:bg-gray-50">
 						{t("viewSentQuotesButton")}
 					</button>
 				)}
@@ -339,14 +370,12 @@ export function ListingDetailQuoteForm({
 
 	// 제출 폼 또는 수정 폼
 	return (
-		<div className="rounded-2xl border-2 border-imsg-blue bg-white p-5">
+		<div className="border-imsg-blue rounded-2xl border-2 bg-white p-5">
 			<p className="text-sm font-semibold text-[#1F2937]">
 				{isEditing ? t("editTitle") : t("newTitle")}
 			</p>
 			<p className="mt-1 text-xs text-[#6B7280]">
-				{isEditing
-					? t("editSubtitle")
-					: t("newSubtitle")}
+				{isEditing ? t("editSubtitle") : t("newSubtitle")}
 			</p>
 
 			<div className="mt-4 space-y-4">
@@ -364,8 +393,7 @@ export function ListingDetailQuoteForm({
 									form.currency === currency.value
 										? "border-imsg-blue bg-imsg-blue text-white"
 										: "border-[#E2E8F0] bg-white text-[#374151] hover:bg-[#F9FAFB]",
-								)}
-							>
+								)}>
 								{currency.label}
 							</button>
 						))}
@@ -396,7 +424,7 @@ export function ListingDetailQuoteForm({
 											value={unitPrice || ""}
 											onChange={(e) => handleItemPriceChange(item.id, Number(e.target.value))}
 											placeholder={t("pricePlaceholder")}
-											className="flex-1 rounded-lg border border-[#E2E8F0] px-3 py-2 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
+											className="focus:border-imsg-blue focus:ring-imsg-blue flex-1 rounded-lg border border-[#E2E8F0] px-3 py-2 text-sm focus:ring-1 focus:outline-none"
 										/>
 										<span className="shrink-0 text-xs text-[#9CA3AF]">
 											= {currentSymbol} {subtotal.toLocaleString()}
@@ -426,36 +454,42 @@ export function ListingDetailQuoteForm({
 							value={form.deliveryDays || ""}
 							onChange={(e) => handleChange({ deliveryDays: Number(e.target.value) })}
 							placeholder={t("deliveryDaysPlaceholder")}
-							className="w-28 rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
+							className="focus:border-imsg-blue focus:ring-imsg-blue w-28 rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:ring-1 focus:outline-none"
 						/>
 						<span className="text-sm text-[#6B7280]">{t("deliveryDaysSuffix")}</span>
 					</div>
 				</div>
 
 				<div>
-					<label className="mb-2 block text-sm font-medium text-[#374151]">{t("paymentTermsFieldLabel")}</label>
+					<label className="mb-2 block text-sm font-medium text-[#374151]">
+						{t("paymentTermsFieldLabel")}
+					</label>
 					<input
 						type="text"
 						value={form.paymentTerms}
 						onChange={(e) => handleChange({ paymentTerms: e.target.value })}
 						placeholder={t("paymentTermsPlaceholder")}
-						className="w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
+						className="focus:border-imsg-blue focus:ring-imsg-blue w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:ring-1 focus:outline-none"
 					/>
 				</div>
 
 				<div>
-					<label className="mb-2 block text-sm font-medium text-[#374151]">{t("noteFieldLabel")}</label>
+					<label className="mb-2 block text-sm font-medium text-[#374151]">
+						{t("noteFieldLabel")}
+					</label>
 					<textarea
 						value={form.note}
 						onChange={(e) => handleChange({ note: e.target.value })}
 						placeholder={t("notePlaceholder")}
 						rows={4}
-						className="w-full resize-none rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:border-imsg-blue focus:outline-none focus:ring-1 focus:ring-imsg-blue"
+						className="focus:border-imsg-blue focus:ring-imsg-blue w-full resize-none rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm focus:ring-1 focus:outline-none"
 					/>
 				</div>
 
 				<div>
-					<label className="mb-2 block text-sm font-medium text-[#374151]">{t("attachmentsFieldLabel")}</label>
+					<label className="mb-2 block text-sm font-medium text-[#374151]">
+						{t("attachmentsFieldLabel")}
+					</label>
 					<div
 						onClick={() => fileInputRef.current?.click()}
 						onDragOver={(e) => {
@@ -467,12 +501,11 @@ export function ListingDetailQuoteForm({
 						className={cn(
 							"flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border py-6 text-center transition-colors",
 							isDragging
-								? "border-dashed border-imsg-blue bg-[#EFF6FF]"
-								: "border-[#E2E8F0] bg-[#F9FAFB] hover:border-dashed hover:border-imsg-blue",
-						)}
-					>
+								? "border-imsg-blue border-dashed bg-[#EFF6FF]"
+								: "hover:border-imsg-blue border-[#E2E8F0] bg-[#F9FAFB] hover:border-dashed",
+						)}>
 						{isUploading ? (
-							<Loader2 size={18} className="animate-spin text-imsg-blue" />
+							<Loader2 size={18} className="text-imsg-blue animate-spin" />
 						) : (
 							<Upload size={18} className="text-[#9CA3AF]" />
 						)}
@@ -496,17 +529,17 @@ export function ListingDetailQuoteForm({
 							{form.attachments.map((attachment) => (
 								<li
 									key={attachment.id}
-									className="flex items-center justify-between gap-2 rounded-lg border border-[#E2E8F0] px-3 py-2"
-								>
+									className="flex items-center justify-between gap-2 rounded-lg border border-[#E2E8F0] px-3 py-2">
 									<div className="flex min-w-0 items-center gap-2">
 										<FileText size={13} className="shrink-0 text-[#9CA3AF]" />
 										<span className="truncate text-xs text-[#374151]">{attachment.fileName}</span>
-										<span className="shrink-0 text-xs text-[#9CA3AF]">{formatFileSize(attachment.fileSize)}</span>
+										<span className="shrink-0 text-xs text-[#9CA3AF]">
+											{formatFileSize(attachment.fileSize)}
+										</span>
 									</div>
 									<button
 										onClick={() => handleRemoveAttachment(attachment.id)}
-										className="shrink-0 text-[#D1D5DB] transition-colors hover:text-[#EF4444]"
-									>
+										className="shrink-0 text-[#D1D5DB] transition-colors hover:text-[#EF4444]">
 										<X size={13} />
 									</button>
 								</li>
@@ -522,15 +555,13 @@ export function ListingDetailQuoteForm({
 						<button
 							onClick={handleCancelEdit}
 							disabled={isLoading}
-							className="flex-1 rounded-lg border border-[#E5E7EB] py-3 text-sm font-medium text-[#374151] transition-colors hover:bg-gray-50 disabled:opacity-50"
-						>
+							className="flex-1 rounded-lg border border-[#E5E7EB] py-3 text-sm font-medium text-[#374151] transition-colors hover:bg-gray-50 disabled:opacity-50">
 							{t("cancelButton")}
 						</button>
 						<button
 							onClick={handleUpdate}
 							disabled={isLoading}
-							className="flex-1 rounded-lg bg-imsg-blue py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
-						>
+							className="bg-imsg-blue flex-1 rounded-lg py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60">
 							{isLoading ? t("savingButton") : t("saveButton")}
 						</button>
 					</div>
@@ -538,8 +569,7 @@ export function ListingDetailQuoteForm({
 					<button
 						onClick={handleSubmit}
 						disabled={isLoading}
-						className="w-full rounded-lg bg-imsg-blue py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60"
-					>
+						className="bg-imsg-blue w-full rounded-lg py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60">
 						{isLoading ? t("submittingButton") : t("submitButton")}
 					</button>
 				)}
