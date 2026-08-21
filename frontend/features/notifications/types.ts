@@ -1,4 +1,4 @@
-export type NotificationType = "message" | "quote" | "award" | "verification";
+export type NotificationType = "message" | "quote" | "award" | "verification" | "newListing";
 
 export type Notification = {
 	id: string;

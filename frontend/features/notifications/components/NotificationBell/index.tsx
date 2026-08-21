@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter, usePathname } from "@/i18n/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { Bell, Mail, MessageSquare, X } from "lucide-react";
+import { Bell, Mail, MessageSquare, Tag, X } from "lucide-react";
 import { useNotifications, NOTIFICATION_QUERY_KEYS } from "@/features/notifications/queries";
 import { markNotificationRead, markAllNotificationsRead, deleteNotification } from "@/features/notifications/apis";
 import { createClient } from "@/libs/supabase";
@@ -100,6 +100,12 @@ export function NotificationBell(): React.ReactNode {
 			return;
 		}
 
+		// 관심 카테고리 신규 공고는 특정 건이 아니라 공고 탐색 목록으로 보낸다.
+		if (notification.type === "newListing") {
+			router.push("/seller/listing-browse");
+			return;
+		}
+
 		// quote_id가 없는 옛 알림은 특정 방으로 못 보내므로 채팅 목록으로 보낸다.
 		if (!notification.quoteId) {
 			router.push(chatBasePath);
@@ -169,11 +175,13 @@ export function NotificationBell(): React.ReactNode {
 										<span
 											className={cn(
 												"mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full",
-												n.type === "quote" ? "bg-[#EFF6FF]" : "bg-[#F3F4F6]",
+												n.type === "quote" || n.type === "newListing" ? "bg-[#EFF6FF]" : "bg-[#F3F4F6]",
 											)}
 										>
 											{n.type === "quote" ? (
 												<Mail size={12} className="text-imsg-blue" />
+											) : n.type === "newListing" ? (
+												<Tag size={12} className="text-imsg-blue" />
 											) : (
 												<MessageSquare size={12} className="text-[#6B7280]" />
 											)}
