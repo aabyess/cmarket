@@ -318,7 +318,12 @@
 		"emptyTitle": "Belum ada percakapan",
 		"emptyDescription": "Setelah bertukar penawaran, Anda bisa mengobrol di sini.",
 		"quotePdfPreview": "📄 Surat Penawaran",
-		"invoicePdfPreview": "📄 Invoice"
+		"invoicePdfPreview": "📄 Invoice",
+		"imagePreview": "📷 Foto"
+	},
+	"ChatImageCard": {
+		"previewAlt": "Gambar terkirim",
+		"loadError": "Gambar tidak dapat dimuat"
 	},
 	"ChatRoomPanel": {
 		"awardErrorMessage": "Gagal memilih penawaran.",
@@ -341,8 +346,12 @@
 		"hideRoomModalDescription": "Riwayat percakapan akan tetap tersimpan, dan chat ini akan muncul kembali jika pihak lain mengirim pesan baru.",
 		"hideRoomModalConfirm": "Keluar",
 		"editQuoteButton": "Ubah Penawaran",
-		"resendQuoteButton": "Kirim Penawaran",
-		"resendQuoteErrorMessage": "Gagal mengirim penawaran."
+		"resendQuoteErrorMessage": "Gagal mengirim penawaran.",
+		"toolsToggleAria": "Lihat alat lainnya",
+		"toolImage": "Gambar",
+		"toolQuote": "Penawaran",
+		"uploadImageErrorMessage": "Gagal mengirim gambar.",
+		"uploadingImage": "Mengirim gambar..."
 	},
 	"ChatMessageList": {
 		"dateLabel": "{day}/{month}/{year}",

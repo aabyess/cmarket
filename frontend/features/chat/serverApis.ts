@@ -134,6 +134,7 @@ export async function getChatRooms(role: ChatRole, alwaysIncludeQuoteId?: string
 		if (!latest) return "";
 		if (latest.last_message_type === "invoice_pdf") return tRoom("invoicePdfPreview");
 		if (latest.last_message_type === "quote_pdf") return tRoom("quotePdfPreview");
+		if (latest.last_message_type === "image") return tRoom("imagePreview");
 		return latest.last_content;
 	}
 

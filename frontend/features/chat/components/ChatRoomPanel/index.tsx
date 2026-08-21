@@ -1,9 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { ArrowUp, ChevronLeft, Loader2, LogOut, PencilLine, Send, Sparkles } from "lucide-react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
+import {
+	ArrowUp,
+	ChevronLeft,
+	FileText,
+	Image as ImageIcon,
+	Loader2,
+	LogOut,
+	PencilLine,
+	Plus,
+	Sparkles,
+	type LucideIcon,
+} from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { ChatMessageList } from "@/features/chat/components/ChatMessageList";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
@@ -14,7 +26,16 @@ import { markNotificationsByQuoteRead } from "@/features/notifications/apis";
 import { NOTIFICATION_QUERY_KEYS } from "@/features/notifications/queries";
 import { createClient } from "@/libs/supabase";
 import { VerificationBadge } from "@/features/verification/components/VerificationBadge";
+import { cn } from "@/utils/cn";
 import type { ChatMessage, ChatRole, ChatRoom } from "@/features/chat/types";
+
+type ChatTool = {
+	key: string;
+	icon: LucideIcon;
+	label: string;
+	onClick: () => void;
+	disabled?: boolean;
+};
 
 type ChatRoomPanelProps = {
 	room: ChatRoom;
@@ -40,6 +61,11 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 	const [isLoadingOlder, setIsLoadingOlder] = useState(false);
 	const [reachedOldest, setReachedOldest] = useState(false);
 	const [hasOlderInitial, setHasOlderInitial] = useState<boolean | null>(null);
+	const [isToolsOpen, setIsToolsOpen] = useState(false);
+	const [isUploadingImage, setIsUploadingImage] = useState(false);
+	const fileInputRef = useRef<HTMLInputElement>(null);
+	const toolsRef = useRef<HTMLDivElement>(null);
+	const prefersReducedMotion = useReducedMotion();
 
 	// "더 오래된 페이지가 있는지"는 최초 로드 결과로 한 번만 판단한다.
 	// 캐시 배열 길이로 매번 재계산하면 실시간 INSERT로 길이가 늘어난 것만으로
@@ -159,6 +185,46 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 		};
 	}, [room.quoteId, queryClient, myId]);
 
+	useEffect(() => {
+		if (!isToolsOpen) return;
+
+		function handleOutsideClick(e: MouseEvent): void {
+			if (toolsRef.current && !toolsRef.current.contains(e.target as Node)) {
+				setIsToolsOpen(false);
+			}
+		}
+		document.addEventListener("mousedown", handleOutsideClick);
+		return () => document.removeEventListener("mousedown", handleOutsideClick);
+	}, [isToolsOpen]);
+
+	function handleImageToolClick(): void {
+		setIsToolsOpen(false);
+		fileInputRef.current?.click();
+	}
+
+	async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
+		const file = e.target.files?.[0];
+		e.target.value = "";
+		if (!file) return;
+
+		setIsUploadingImage(true);
+		try {
+			const formData = new FormData();
+			formData.append("quoteId", room.quoteId);
+			formData.append("file", file);
+			const res = await fetch("/api/chat/upload-image", { method: "POST", body: formData });
+			if (!res.ok) {
+				const { error } = await res.json();
+				throw new Error(error);
+			}
+		} catch (err) {
+			console.error(err);
+			alert(err instanceof Error && err.message ? err.message : t("uploadImageErrorMessage"));
+		} finally {
+			setIsUploadingImage(false);
+		}
+	}
+
 	function handleSend(): void {
 		const content = input.trim();
 		if (!content) return;
@@ -237,6 +303,30 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 		}
 	}
 
+	const tools: ChatTool[] = [
+		{
+			key: "image",
+			icon: ImageIcon,
+			label: t("toolImage"),
+			onClick: handleImageToolClick,
+			disabled: isUploadingImage,
+		},
+		...(myRole === "seller" && room.quoteStatus === "pending"
+			? [
+					{
+						key: "quote",
+						icon: FileText,
+						label: t("toolQuote"),
+						onClick: () => {
+							setIsToolsOpen(false);
+							handleResendQuote();
+						},
+						disabled: isResendingQuote,
+					} as ChatTool,
+				]
+			: []),
+	];
+
 	return (
 		<section className="flex min-h-0 flex-1 flex-col bg-imsg-surface">
 			{/* 헤더 */}
@@ -275,23 +365,13 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 						)
 					) : (
 						room.quoteStatus === "pending" && (
-							<>
-								<button
-									onClick={handleEditQuote}
-									className="flex items-center gap-1 rounded-full border border-[#E5E7EB] px-2.5 py-1.5 text-xs font-semibold text-[#374151] transition-colors hover:bg-imsg-surface"
-								>
-									<PencilLine size={12} />
-									{t("editQuoteButton")}
-								</button>
-								<button
-									onClick={handleResendQuote}
-									disabled={isResendingQuote}
-									className="flex items-center gap-1 rounded-full bg-imsg-blue px-2.5 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-600 disabled:opacity-60"
-								>
-									{isResendingQuote ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
-									{t("resendQuoteButton")}
-								</button>
-							</>
+							<button
+								onClick={handleEditQuote}
+								className="flex items-center gap-1 rounded-full border border-[#E5E7EB] px-2.5 py-1.5 text-xs font-semibold text-[#374151] transition-colors hover:bg-imsg-surface"
+							>
+								<PencilLine size={12} />
+								{t("editQuoteButton")}
+							</button>
 						)
 					)}
 					<button
@@ -344,10 +424,48 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 			{/* 입력창 */}
 			<div className="border-t border-[#E5E7EB]/60 bg-white/80 px-4 py-3 backdrop-blur-xl">
 				<div className="mx-auto flex max-w-2xl items-center gap-2">
+					<div ref={toolsRef} className="relative shrink-0">
+						<AnimatePresence>
+							{isToolsOpen && (
+								<div className="absolute bottom-full left-0 mb-2 flex items-end gap-3">
+									{tools.map((tool, i) => (
+										<motion.button
+											key={tool.key}
+											onClick={tool.onClick}
+											disabled={tool.disabled}
+											initial={prefersReducedMotion ? false : { opacity: 0, y: 16, scale: 0.6 }}
+											animate={{ opacity: 1, y: 0, scale: 1 }}
+											exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.6 }}
+											transition={
+												prefersReducedMotion
+													? { duration: 0 }
+													: { type: "spring", stiffness: 400, damping: 26, delay: i * 0.04 }
+											}
+											className="flex flex-col items-center gap-1 disabled:opacity-60"
+										>
+											<span className="flex size-11 items-center justify-center rounded-full bg-imsg-blue text-white shadow-md">
+												<tool.icon size={18} />
+											</span>
+											<span className="text-[10px] font-medium text-imsg-secondary">{tool.label}</span>
+										</motion.button>
+									))}
+								</div>
+							)}
+						</AnimatePresence>
+						<button
+							onClick={() => setIsToolsOpen((prev) => !prev)}
+							aria-label={t("toolsToggleAria")}
+							aria-expanded={isToolsOpen}
+							className="flex size-9 items-center justify-center rounded-full bg-imsg-surface text-imsg-secondary transition-all hover:bg-black/5"
+						>
+							<Plus className={cn("size-5 transition-transform", isToolsOpen && "rotate-45")} />
+						</button>
+					</div>
 					<div className="flex flex-1 items-center rounded-full bg-imsg-surface px-4 py-2.5">
 						<textarea
 							value={input}
 							onChange={(e) => setInput(e.target.value)}
+							onFocus={() => setIsToolsOpen(false)}
 							onKeyDown={(e) => {
 								if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing && e.keyCode !== 229) {
 									e.preventDefault();
@@ -367,6 +485,19 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 						<ArrowUp className="size-5" strokeWidth={2.5} />
 					</button>
 				</div>
+				<input
+					ref={fileInputRef}
+					type="file"
+					accept="image/jpeg,image/png,image/webp,image/gif"
+					className="hidden"
+					onChange={handleFileChange}
+				/>
+				{isUploadingImage && (
+					<div className="mx-auto mt-2 flex max-w-2xl items-center gap-1.5 text-xs text-imsg-secondary">
+						<Loader2 size={12} className="animate-spin" />
+						{t("uploadingImage")}
+					</div>
+				)}
 			</div>
 
 			<ConfirmModal

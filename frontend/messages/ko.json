@@ -318,7 +318,12 @@
 		"emptyTitle": "대화가 없어요",
 		"emptyDescription": "견적을 주고받으면 여기에서 대화할 수 있어요.",
 		"quotePdfPreview": "📄 견적서",
-		"invoicePdfPreview": "📄 인보이스"
+		"invoicePdfPreview": "📄 인보이스",
+		"imagePreview": "📷 사진"
+	},
+	"ChatImageCard": {
+		"previewAlt": "전송된 이미지",
+		"loadError": "이미지를 불러올 수 없어요"
 	},
 	"ChatRoomPanel": {
 		"awardErrorMessage": "낙찰 처리에 실패했습니다.",
@@ -341,8 +346,12 @@
 		"hideRoomModalDescription": "나가도 대화 기록은 보존되며, 상대방이 새 메시지를 보내면 다시 표시됩니다.",
 		"hideRoomModalConfirm": "나가기",
 		"editQuoteButton": "견적서 수정",
-		"resendQuoteButton": "견적서 보내기",
-		"resendQuoteErrorMessage": "견적서 전송에 실패했습니다."
+		"resendQuoteErrorMessage": "견적서 전송에 실패했습니다.",
+		"toolsToggleAria": "도구 더 보기",
+		"toolImage": "이미지",
+		"toolQuote": "견적서",
+		"uploadImageErrorMessage": "이미지 전송에 실패했습니다.",
+		"uploadingImage": "이미지 전송 중..."
 	},
 	"ChatMessageList": {
 		"dateLabel": "{year}년 {month}월 {day}일",

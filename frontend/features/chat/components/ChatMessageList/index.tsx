@@ -6,6 +6,7 @@ import { Languages, Loader2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { resolveTranslatedField } from "@/utils/resolveTranslatedField";
 import { QuotePdfCard } from "@/features/chat/components/QuotePdfCard";
+import { ChatImageCard } from "@/features/chat/components/ChatImageCard";
 import type { ChatMessage } from "@/features/chat/types";
 
 const DEEPL_TARGET: Record<string, string> = {
@@ -167,6 +168,13 @@ export function ChatMessageList({
 										attachmentUrl={message.attachmentUrl}
 										isMine={isMine}
 										isOriginal={message.id === firstQuotePdfId}
+									/>
+								) : message.messageType === "image" ? (
+									<ChatImageCard
+										quoteId={quoteId}
+										attachmentUrl={message.attachmentUrl}
+										attachmentName={message.attachmentName}
+										isMine={isMine}
 									/>
 								) : (
 									<div className={cn("flex flex-col gap-1", isMine ? "items-end" : "items-start")}>

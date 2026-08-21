@@ -20,7 +20,7 @@ export type ChatRoom = {
 	unreadCount: number;
 };
 
-export type ChatMessageType = "text" | "quote_pdf" | "invoice_pdf";
+export type ChatMessageType = "text" | "quote_pdf" | "invoice_pdf" | "image";
 
 export type ChatMessage = {
 	id: string;
