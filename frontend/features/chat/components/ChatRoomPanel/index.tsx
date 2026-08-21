@@ -311,20 +311,18 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 			onClick: handleImageToolClick,
 			disabled: isUploadingImage,
 		},
-		...(myRole === "seller" && room.quoteStatus === "pending"
-			? [
-					{
-						key: "quote",
-						icon: FileText,
-						label: t("toolQuote"),
-						onClick: () => {
-							setIsToolsOpen(false);
-							handleResendQuote();
-						},
-						disabled: isResendingQuote,
-					} as ChatTool,
-				]
-			: []),
+		// 견적서 도구는 역할·상태 무관 상시 노출 — 같은 리비전은 서버 dedup으로
+		// 중복 전송이 막혀 있어 아무 때나 눌러도 안전하다. (사용자 요청: 이미지 옆 상시 표시)
+		{
+			key: "quote",
+			icon: FileText,
+			label: t("toolQuote"),
+			onClick: () => {
+				setIsToolsOpen(false);
+				handleResendQuote();
+			},
+			disabled: isResendingQuote,
+		},
 	];
 
 	return (
