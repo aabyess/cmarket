@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { CheckCircle2, CreditCard, FileText, Loader2, Receipt, Upload } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { usePersistentState } from "@/hooks/usePersistentState";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { Pagination } from "@/components/commons/Pagination";
 import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
@@ -19,6 +20,16 @@ const STATUS_STYLE: Record<PaymentStatus, string> = {
 	awaitingReceipt: "bg-[#F3F4F6] text-[#6B7280]",
 	awaitingConfirmation: "bg-[#FFFBEB] text-[#D97706]",
 	confirmed: "bg-[#F0FDF4] text-[#16A34A]",
+};
+
+type PaymentsListPrefs = {
+	filter: PaymentFilter;
+	pageSize: number;
+};
+
+const DEFAULT_PREFS: PaymentsListPrefs = {
+	filter: "all",
+	pageSize: 10,
 };
 
 function formatContractNumber(contractId: string): string {
@@ -45,14 +56,22 @@ export function PaymentsList({ contracts: allContracts, role }: PaymentsListProp
 	const methodLabels = { wire: t("methodWire") };
 
 	const [search, setSearch] = useState("");
-	const [filter, setFilter] = useState<PaymentFilter>("all");
+	const [prefs, setPrefs] = usePersistentState<PaymentsListPrefs>(`mitrapay:payments-${role}`, DEFAULT_PREFS);
+	const { filter, pageSize } = prefs;
 	const [uploadingId, setUploadingId] = useState<string | null>(null);
 	const [confirmingId, setConfirmingId] = useState<string | null>(null);
 	const [confirmId, setConfirmId] = useState<string | null>(null);
 	const [receiptPdfLoadingId, setReceiptPdfLoadingId] = useState<string | null>(null);
 	const [page, setPage] = useState(1);
-	const [pageSize, setPageSize] = useState(10);
 	const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+	function setFilter(filter: PaymentFilter): void {
+		setPrefs((prev) => ({ ...prev, filter }));
+	}
+
+	function setPageSize(pageSize: number): void {
+		setPrefs((prev) => ({ ...prev, pageSize }));
+	}
 
 	async function handleReceiptUpload(contractId: string, file: File): Promise<void> {
 		setUploadingId(contractId);
