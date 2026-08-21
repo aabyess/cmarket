@@ -2054,6 +2054,7 @@
 		"submitting": "Submitting..."
 	},
 	"SniChecklist": {
+		"officialListLink": "Check the official list",
 		"toggleShow": "View SNI certification guide",
 		"toggleHide": "Hide SNI certification guide",
 		"badgeYes": "Mandatory",
@@ -2064,7 +2065,6 @@
 		"itemNotRequiredTag": "Unconfirmed",
 		"requiredDocumentsLabel": "Required documents",
 		"estimatedDurationLabel": "Estimated duration",
-		"sourceLabel": "View source",
 		"lastCheckedLabel": "Checked on {date}",
 		"disclaimer": "This information is a reference summary only and has no legal effect. Please verify actual certification requirements directly with Indonesia's official authorities (Kemenperin/BSN) or a professional consultant.",
 		"office": {

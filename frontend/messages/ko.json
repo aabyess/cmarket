@@ -2054,6 +2054,7 @@
 		"submitting": "제출 중..."
 	},
 	"SniChecklist": {
+		"officialListLink": "공식 목록에서 확인하기",
 		"toggleShow": "SNI 인증 안내 보기",
 		"toggleHide": "SNI 인증 안내 접기",
 		"badgeYes": "인증 의무",
@@ -2064,7 +2065,6 @@
 		"itemNotRequiredTag": "불확실",
 		"requiredDocumentsLabel": "필요 서류",
 		"estimatedDurationLabel": "예상 소요기간",
-		"sourceLabel": "출처 보기",
 		"lastCheckedLabel": "확인일 {date}",
 		"disclaimer": "본 정보는 참고용 요약이며 법적 효력이 없습니다. 실제 인증 의무 여부는 인도네시아 공식기관(Kemenperin/BSN) 또는 전문 컨설팅을 통해 반드시 재확인하세요.",
 		"office": {

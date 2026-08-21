@@ -2067,6 +2067,7 @@
 		"submitting": "Mengirim..."
 	},
 	"SniChecklist": {
+		"officialListLink": "Periksa daftar resmi",
 		"toggleShow": "Lihat panduan sertifikasi SNI",
 		"toggleHide": "Sembunyikan panduan sertifikasi SNI",
 		"badgeYes": "Wajib",
@@ -2077,7 +2078,6 @@
 		"itemNotRequiredTag": "Belum pasti",
 		"requiredDocumentsLabel": "Dokumen yang diperlukan",
 		"estimatedDurationLabel": "Perkiraan durasi",
-		"sourceLabel": "Lihat sumber",
 		"lastCheckedLabel": "Diperiksa pada {date}",
 		"disclaimer": "Informasi ini hanya ringkasan referensi dan tidak memiliki kekuatan hukum. Pastikan untuk memverifikasi kewajiban sertifikasi yang sebenarnya langsung ke lembaga resmi Indonesia (Kemenperin/BSN) atau konsultan profesional.",
 		"office": {
