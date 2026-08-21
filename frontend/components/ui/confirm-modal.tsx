@@ -1,9 +1,10 @@
 "use client";
 
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/utils/cn";
+import { getModalPanelTransition } from "@/utils/modalMotion";
 
 type ConfirmModalProps = {
 	isOpen: boolean;
@@ -29,6 +30,7 @@ export function ConfirmModal({
 	onClose,
 }: ConfirmModalProps) {
 	const t = useTranslations("ConfirmModal");
+	const prefersReducedMotion = useReducedMotion();
 	const resolvedConfirmLabel = confirmLabel ?? t("confirm");
 	const resolvedCancelLabel = cancelLabel ?? t("cancel");
 
@@ -51,7 +53,7 @@ export function ConfirmModal({
                                 initial={{ opacity: 0, scale: 0.95, y: 8 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.95, y: 8 }}
-                                transition={{ duration: 0.18, ease: "easeOut" }}
+                                transition={getModalPanelTransition(prefersReducedMotion)}
                                 className="rounded-2xl bg-white p-6 shadow-xl"
                             >
                                 <DialogTitle className="text-base font-semibold text-[#1F2937]">

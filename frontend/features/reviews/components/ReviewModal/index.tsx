@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Star } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { getModalPanelTransition } from "@/utils/modalMotion";
 
 const COMMENT_MAX_LENGTH = 500;
 
@@ -18,6 +19,7 @@ type ReviewModalProps = {
 
 export function ReviewModal({ isOpen, isLoading = false, onSubmit, onClose }: ReviewModalProps): React.ReactNode {
 	const t = useTranslations("ReviewModal");
+	const prefersReducedMotion = useReducedMotion();
 	const [rating, setRating] = useState(0);
 	const [hoverRating, setHoverRating] = useState(0);
 	const [comment, setComment] = useState("");
@@ -57,7 +59,7 @@ export function ReviewModal({ isOpen, isLoading = false, onSubmit, onClose }: Re
 								initial={{ opacity: 0, scale: 0.95, y: 8 }}
 								animate={{ opacity: 1, scale: 1, y: 0 }}
 								exit={{ opacity: 0, scale: 0.95, y: 8 }}
-								transition={{ duration: 0.18, ease: "easeOut" }}
+								transition={getModalPanelTransition(prefersReducedMotion)}
 								className="rounded-2xl bg-white p-6 shadow-xl">
 								<DialogTitle className="text-base font-semibold text-[#1F2937]">{t("title")}</DialogTitle>
 								<p className="mt-1 text-sm text-[#6B7280]">{t("description")}</p>
