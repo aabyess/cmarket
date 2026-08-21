@@ -1,6 +1,7 @@
 import { getLocale } from "next-intl/server";
 import { createServerAdminClient } from "@/libs/supabaseServer";
 import { resolveTranslatedField } from "@/utils/resolveTranslatedField";
+import { maskName } from "@/utils/maskName";
 
 export type CompanyReview = {
 	id: string;
@@ -54,7 +55,7 @@ export async function getCompanyReviews(profileId: string, limit: number): Promi
 			id: row.id,
 			rating: row.rating,
 			comment: resolveTranslatedField(row.comment ?? "", row.comment_source_lang, row.comment_translations, locale),
-			reviewerCompanyName: companyMap.get(row.reviewer_id) ?? "",
+			reviewerCompanyName: maskName(companyMap.get(row.reviewer_id) ?? ""),
 			createdAt: row.created_at,
 		})),
 		totalCount: count ?? data.length,
