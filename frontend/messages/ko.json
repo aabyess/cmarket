@@ -1678,7 +1678,7 @@
 	},
 	"SellerDashboard": {
 		"welcome": "{companyName}님, 환영합니다",
-		"exploreButton": "견적요청 탐색",
+		"welcomeSubcopy": "오늘도 새로운 기회를 찾아보세요",
 		"tradeSummaryTitle": "나의 거래 요약",
 		"summaryListingsLabel": "견적요청",
 		"summaryListingsSubLabel": "내 카테고리 추천",

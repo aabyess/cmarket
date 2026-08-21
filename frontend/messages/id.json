@@ -1691,7 +1691,7 @@
 	},
 	"SellerDashboard": {
 		"welcome": "Selamat datang, {companyName}",
-		"exploreButton": "Cari Permintaan",
+		"welcomeSubcopy": "Temukan peluang baru hari ini",
 		"tradeSummaryTitle": "Ringkasan Transaksi Saya",
 		"summaryListingsLabel": "Permintaan Penawaran",
 		"summaryListingsSubLabel": "Rekomendasi Kategori Saya",
