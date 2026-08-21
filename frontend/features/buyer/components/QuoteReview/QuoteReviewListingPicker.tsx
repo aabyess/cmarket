@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Mail, Clock, TrendingDown, Truck, CheckCircle2 } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { usePersistentState } from "@/hooks/usePersistentState";
 import {
 	QuoteReviewFilterBar,
 	type QuoteHasFilter,
@@ -14,6 +15,20 @@ import { QuoteReviewListingTable } from "@/features/buyer/components/QuoteReview
 import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import { Pagination } from "@/components/commons/Pagination";
 import type { Currency, ListingWithQuotes } from "@/features/buyer/types";
+
+type QuoteReviewListingPickerPrefs = {
+	sort: QuoteSortOption;
+	hasFilter: QuoteHasFilter;
+	viewMode: ViewMode;
+	pageSize: number;
+};
+
+const DEFAULT_PREFS: QuoteReviewListingPickerPrefs = {
+	sort: "deadline",
+	hasFilter: "all",
+	viewMode: "list",
+	pageSize: 10,
+};
 
 const CURRENCY_SYMBOL: Record<Currency, string> = {
 	USD: "$",
@@ -37,11 +52,28 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 	const t = useTranslations("QuoteReviewListingPicker");
 	const router = useRouter();
 	const [search, setSearch] = useState("");
-	const [sort, setSort] = useState<QuoteSortOption>("deadline");
-	const [hasFilter, setHasFilter] = useState<QuoteHasFilter>("all");
-	const [viewMode, setViewMode] = useState<ViewMode>("list");
+	const [prefs, setPrefs] = usePersistentState<QuoteReviewListingPickerPrefs>(
+		"mitrapay:buyer-quote-review",
+		DEFAULT_PREFS,
+	);
+	const { sort, hasFilter, viewMode, pageSize } = prefs;
 	const [page, setPage] = useState(1);
-	const [pageSize, setPageSize] = useState(10);
+
+	function setSort(sort: QuoteSortOption): void {
+		setPrefs((prev) => ({ ...prev, sort }));
+	}
+
+	function setHasFilter(hasFilter: QuoteHasFilter): void {
+		setPrefs((prev) => ({ ...prev, hasFilter }));
+	}
+
+	function setViewMode(viewMode: ViewMode): void {
+		setPrefs((prev) => ({ ...prev, viewMode }));
+	}
+
+	function setPageSize(pageSize: number): void {
+		setPrefs((prev) => ({ ...prev, pageSize }));
+	}
 
 	const hasFilterCounts = useMemo(() => {
 		const counts: Record<QuoteHasFilter, number> = { all: listings.length, has: 0, none: 0 };
