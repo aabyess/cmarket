@@ -1,6 +1,26 @@
-import { createServerSupabaseClient } from "@/libs/supabaseServer";
+import { createServerAdminClient, createServerSupabaseClient } from "@/libs/supabaseServer";
 import { getAuthHeaders } from "@/utils/authHeaders";
 import type { Notice, SupportResource } from "@/features/support/types";
+
+export type AdminDashboardStats = {
+	memberTotal: number;
+	buyerCount: number;
+	sellerCount: number;
+	listingTotal: number;
+	listingActiveCount: number;
+	listingClosedCount: number;
+	quoteTotal: number;
+	contractTotal: number;
+	contractOngoingCount: number;
+	contractCompletedCount: number;
+};
+
+export type AdminRecentCompany = {
+	id: string;
+	companyName: string;
+	role: "buyer" | "seller";
+	createdAt: string;
+};
 
 type NoticeRow = {
 	id: string;
@@ -133,4 +153,66 @@ export async function getAllResources(): Promise<SupportResource[]> {
 		.returns<ResourceRow[]>();
 
 	return (data ?? []).map(toResource);
+}
+
+/** 관리자 대시보드 지표. 전체 사용자를 대상으로 하므로 서비스롤로 count만 가볍게 조회한다. */
+export async function getAdminDashboardStats(): Promise<AdminDashboardStats> {
+	const admin = await createServerAdminClient();
+
+	const [
+		{ count: buyerCount },
+		{ count: sellerCount },
+		{ count: listingTotal },
+		{ count: listingActiveCount },
+		{ count: quoteTotal },
+		{ count: contractTotal },
+		{ count: contractOngoingCount },
+		{ count: contractCompletedCount },
+	] = await Promise.all([
+		admin.from("profiles").select("*", { count: "exact", head: true }).eq("role", "buyer"),
+		admin.from("profiles").select("*", { count: "exact", head: true }).eq("role", "seller"),
+		admin.from("listings").select("*", { count: "exact", head: true }),
+		admin.from("listings").select("*", { count: "exact", head: true }).eq("status", "active"),
+		admin.from("quotes").select("*", { count: "exact", head: true }),
+		admin.from("contracts").select("*", { count: "exact", head: true }),
+		admin.from("contracts").select("*", { count: "exact", head: true }).eq("status", "ongoing"),
+		admin.from("contracts").select("*", { count: "exact", head: true }).eq("status", "completed"),
+	]);
+
+	return {
+		memberTotal: (buyerCount ?? 0) + (sellerCount ?? 0),
+		buyerCount: buyerCount ?? 0,
+		sellerCount: sellerCount ?? 0,
+		listingTotal: listingTotal ?? 0,
+		listingActiveCount: listingActiveCount ?? 0,
+		listingClosedCount: (listingTotal ?? 0) - (listingActiveCount ?? 0),
+		quoteTotal: quoteTotal ?? 0,
+		contractTotal: contractTotal ?? 0,
+		contractOngoingCount: contractOngoingCount ?? 0,
+		contractCompletedCount: contractCompletedCount ?? 0,
+	};
+}
+
+/** 최근 가입 기업. companies에는 role이 없어 profiles를 별도 조회해 맵으로 합친다. */
+export async function getRecentCompanies(limit: number): Promise<AdminRecentCompany[]> {
+	const admin = await createServerAdminClient();
+
+	const { data: companies } = await admin
+		.from("companies")
+		.select("profile_id, company_name, created_at")
+		.order("created_at", { ascending: false })
+		.limit(limit);
+
+	if (!companies || companies.length === 0) return [];
+
+	const profileIds = companies.map((c) => c.profile_id);
+	const { data: profiles } = await admin.from("profiles").select("id, role").in("id", profileIds);
+	const roleMap = new Map((profiles ?? []).map((p) => [p.id, p.role]));
+
+	return companies.map((c) => ({
+		id: c.profile_id,
+		companyName: c.company_name,
+		role: roleMap.get(c.profile_id) === "seller" ? "seller" : "buyer",
+		createdAt: c.created_at,
+	}));
 }

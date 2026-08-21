@@ -78,16 +78,20 @@ export async function getContracts(role: "buyer" | "seller"): Promise<Contract[]
 	});
 }
 
-export async function getAllContracts(): Promise<AdminContract[]> {
+export async function getAllContracts(limit?: number): Promise<AdminContract[]> {
 	const admin = await createServerAdminClient();
 	const locale = await getLocale();
 
-	const { data, error } = await admin
+	let query = admin
 		.from("contracts")
 		.select(
 			"id, buyer_id, seller_id, status, created_at, payment_confirmed_at, listings(title, title_source_lang, title_translations), quotes(price, currency, delivery_days)",
 		)
 		.order("created_at", { ascending: false });
+
+	if (limit) query = query.limit(limit);
+
+	const { data, error } = await query;
 
 	if (error) throw new Error(error.message);
 	if (!data || data.length === 0) return [];
