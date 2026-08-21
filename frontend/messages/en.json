@@ -1575,7 +1575,12 @@
 		"awardModalDescription": "{partnerName} will be confirmed as the final supplier. Once confirmed, a contract is created and an invoice is automatically issued in the chat. Other quotes will be marked as not selected, and this cannot be undone.",
 		"awardModalConfirm": "Confirm Contract",
 		"limitExceededBanner": "You've reached this month's free translation limit. Messages will be sent without translation.",
-		"limitExceededBannerLink": "View Pro plan"
+		"limitExceededBannerLink": "View Pro plan",
+		"hideRoomAria": "Leave chat",
+		"hideRoomErrorMessage": "An error occurred while leaving the chat.",
+		"hideRoomModalTitle": "Leave this chat?",
+		"hideRoomModalDescription": "The conversation history is kept, and this chat will reappear if the other party sends a new message.",
+		"hideRoomModalConfirm": "Leave"
 	},
 	"ChatMessageList": {
 		"dateLabel": "{month}/{day}/{year}",
