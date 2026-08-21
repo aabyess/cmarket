@@ -24,7 +24,6 @@ type ChatRoomPanelProps = {
 
 export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps): React.ReactNode {
 	const t = useTranslations("ChatRoomPanel");
-	const tQuoteCompare = useTranslations("QuoteCompareTable");
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { data: messages = [], isLoading } = useMessages(room.quoteId);
@@ -176,7 +175,7 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 			router.refresh();
 		} catch (err) {
 			console.error(err);
-			alert(tQuoteCompare("awardErrorMessage"));
+			alert(t("awardErrorMessage"));
 		} finally {
 			setIsAwarding(false);
 		}

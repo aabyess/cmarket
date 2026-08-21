@@ -319,6 +319,7 @@
 		"invoicePdfPreview": "📄 인보이스"
 	},
 	"ChatRoomPanel": {
+		"awardErrorMessage": "낙찰 처리에 실패했습니다.",
 		"backToListAria": "채팅 목록으로 돌아가기",
 		"statusAwarded": "계약 확정됨",
 		"statusRejected": "마감",
@@ -1410,10 +1411,6 @@
 		"statusClosed": "마감"
 	},
 	"QuoteReview": {
-		"awardErrorMessage": "계약 확정 처리 중 오류가 발생했습니다.",
-		"confirmDescription": "확정하면 계약이 생성되고 공급기업의 인보이스(청구서)가 채팅으로 자동 발행됩니다. 다른 견적은 선택할 수 없게 되며, 공급기업에게 계약 사실이 통보됩니다.",
-		"confirmLabel": "계약 확정",
-		"confirmTitle": "이 견적으로 계약을 확정할까요?",
 		"emptyDescription": "보통 2~3일 안에 첫 견적이 도착해요.",
 		"emptyTitle": "아직 견적이 없어요",
 		"showAllToggle": "전체 {count}건 보기",
@@ -1425,16 +1422,12 @@
 		"deliveryLabel": "납품 소요",
 		"daysSuffix": "{days}일",
 		"reason": "{total}개 견적 중 가격 {priceRank}위, 납기 {deliveryRank}위로 종합 점수가 가장 높아요",
-		"awardButton": "이 기업 선택하기",
-		"chatButton": "문의하기"
+		"chatButton": "문의하기",
+		"homepageButton": "기업 홈페이지"
 	},
 	"QuoteCompareTable": {
 		"approxPriceIdr": "약 Rp {amount}",
-		"awardAction": "기업 확정",
-		"awardClosed": "계약 마감",
 		"awardedBadge": "확정",
-		"awardedStatus": "확정됨",
-		"awardErrorMessage": "계약 확정 처리 중 오류가 발생했습니다.",
 		"days": "{count}일",
 		"columnBusinessType": "업태 / 종목",
 		"columnCompany": "공급업체",
@@ -1442,14 +1435,11 @@
 		"columnPrice": "견적가",
 		"fastestDeliveryBadge": "최속납기",
 		"lowestPriceBadge": "최저가",
-		"modalConfirmLabel": "계약 확정",
-		"modalDescription": "확정하면 계약이 생성되고 인보이스(청구서)가 채팅으로 자동 발행됩니다. 이후에는 취소가 어렵습니다.",
-		"modalTitle": "계약을 확정하시겠습니까?",
 		"navigating": "이동 중...",
 		"noName": "이름 없음",
-		"processing": "처리 중...",
 		"representativePrefix": "대표 {name}",
-		"startChat": "문의하기"
+		"startChat": "문의하기",
+		"homepageAction": "홈페이지"
 	},
 	"QuoteReviewFilterBar": {
 		"filterAll": "전체",
@@ -1491,7 +1481,6 @@
 		"itemsBreakdownToggle": "품목별 가격 보기",
 		"paymentTermsLabel": "결제조건",
 		"attachmentOpenButton": "열기",
-		"awardButton": "이 기업 선택하기",
 		"chatButton": "문의하기"
 	},
 	"QuoteReviewListingTable": {

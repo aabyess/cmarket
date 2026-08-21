@@ -319,6 +319,7 @@
 		"invoicePdfPreview": "📄 Invoice"
 	},
 	"ChatRoomPanel": {
+		"awardErrorMessage": "Gagal memilih penawaran.",
 		"backToListAria": "Kembali ke daftar chat",
 		"statusAwarded": "Dikonfirmasi",
 		"statusRejected": "Ditutup",
@@ -1423,10 +1424,6 @@
 		"statusClosed": "Ditutup"
 	},
 	"QuoteReview": {
-		"awardErrorMessage": "Terjadi kesalahan saat memproses konfirmasi kontrak.",
-		"confirmDescription": "Setelah dikonfirmasi, kontrak akan dibuat dan invoice (tagihan) dari pemasok akan otomatis diterbitkan di chat. Penawaran lain tidak dapat dipilih dan perusahaan pemasok akan diberi tahu tentang kontrak ini.",
-		"confirmLabel": "Konfirmasi Kontrak",
-		"confirmTitle": "Konfirmasi kontrak dengan penawaran ini?",
 		"emptyDescription": "Penawaran pertama biasanya tiba dalam 2-3 hari.",
 		"emptyTitle": "Belum ada penawaran",
 		"showAllToggle": "Lihat semua {count} penawaran",
@@ -1438,16 +1435,12 @@
 		"deliveryLabel": "Waktu pengiriman",
 		"daysSuffix": "{days} hari",
 		"reason": "Peringkat #{priceRank} dalam harga dan #{deliveryRank} dalam pengiriman dari {total} penawaran — skor keseluruhan tertinggi",
-		"awardButton": "Pilih perusahaan ini",
-		"chatButton": "Hubungi"
+		"chatButton": "Hubungi",
+		"homepageButton": "Situs perusahaan"
 	},
 	"QuoteCompareTable": {
 		"approxPriceIdr": "Sekitar Rp {amount}",
-		"awardAction": "Pilih",
-		"awardClosed": "Kontrak Ditutup",
 		"awardedBadge": "Dikonfirmasi",
-		"awardedStatus": "Dikonfirmasi",
-		"awardErrorMessage": "Terjadi kesalahan saat memproses konfirmasi kontrak.",
 		"days": "{count} hari",
 		"columnBusinessType": "Jenis Usaha",
 		"columnCompany": "Pemasok",
@@ -1455,14 +1448,11 @@
 		"columnPrice": "Harga Penawaran",
 		"fastestDeliveryBadge": "Pengiriman Tercepat",
 		"lowestPriceBadge": "Harga Terendah",
-		"modalConfirmLabel": "Konfirmasi Kontrak",
-		"modalDescription": "Setelah dikonfirmasi, kontrak akan dibuat dan invoice (tagihan) akan otomatis diterbitkan di chat. Sulit untuk membatalkan setelah ini.",
-		"modalTitle": "Konfirmasi kontrak ini?",
 		"navigating": "Mengalihkan...",
 		"noName": "Tanpa Nama",
-		"processing": "Memproses...",
 		"representativePrefix": "Perwakilan {name}",
-		"startChat": "Hubungi"
+		"startChat": "Hubungi",
+		"homepageAction": "Situs"
 	},
 	"QuoteReviewFilterBar": {
 		"filterAll": "Semua",
@@ -1504,7 +1494,6 @@
 		"itemsBreakdownToggle": "Lihat rincian per item",
 		"paymentTermsLabel": "Syarat pembayaran",
 		"attachmentOpenButton": "Buka",
-		"awardButton": "Pilih perusahaan ini",
 		"chatButton": "Hubungi"
 	},
 	"QuoteReviewListingTable": {
