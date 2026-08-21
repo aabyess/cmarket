@@ -153,14 +153,14 @@ export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapse
 				isCollapsed ? "w-20" : "w-64",
 			)}
 		>
-			{/* 접기/펼치기 토글 — 사이드바 우측 경계에 반쯤 걸쳐 배치 */}
+			{/* 접기/펼치기 토글 — 우측 경계 세로 중앙의 길쭉한 핸들 (작은 원형은 눈에 안 띈다는 피드백) */}
 			<button
 				type="button"
 				onClick={onToggleCollapsed}
 				aria-label={isCollapsed ? t("expandAria") : t("collapseAria")}
-				className="absolute -right-3 top-6 z-50 flex size-6 items-center justify-center rounded-full border border-sidebar-border bg-white text-sidebar-foreground/60 shadow-sm transition-colors hover:bg-imsg-surface hover:text-sidebar-foreground"
+				className="absolute top-1/2 -right-3.5 z-50 flex h-16 w-6 -translate-y-1/2 items-center justify-center rounded-full border border-sidebar-border bg-white text-sidebar-foreground/60 shadow-sm transition-colors hover:bg-imsg-surface hover:text-sidebar-foreground"
 			>
-				{isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+				{isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
 			</button>
 
 			{/* 프로필 블록 */}
