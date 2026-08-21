@@ -1,9 +1,10 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { CheckCircle2, FileText, Upload, PackageCheck, Trash2 } from "lucide-react";
+import { CheckCircle2, FileText, Upload, PackageCheck, Star, Trash2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { Contract, ContractStatus } from "@/features/contract/types";
+import type { MyReview } from "@/features/reviews/types";
 
 const CURRENCY_SYMBOL: Record<string, string> = {
 	USD: "$",
@@ -22,12 +23,14 @@ type ContractListTableProps = {
 	role: "buyer" | "seller";
 	loadingId: string | null;
 	uploadingId: string | null;
+	myReviewMap: Map<string, MyReview>;
 	onUploadClick: (contractId: string) => void;
 	onViewReceipt: (contractId: string) => void;
 	onRequestConfirm: (contractId: string) => void;
 	onRequestCancel: (contractId: string) => void;
 	onRequestDeliveryConfirm: (contractId: string) => void;
 	onRequestReceiptDelete: (contractId: string) => void;
+	onRequestReview: (contractId: string) => void;
 	onOpenDetail: (listingId: string) => void;
 };
 
@@ -36,12 +39,14 @@ export function ContractListTable({
 	role,
 	loadingId,
 	uploadingId,
+	myReviewMap,
 	onUploadClick,
 	onViewReceipt,
 	onRequestConfirm,
 	onRequestCancel,
 	onRequestDeliveryConfirm,
 	onRequestReceiptDelete,
+	onRequestReview,
 	onOpenDetail,
 }: ContractListTableProps): React.ReactNode {
 	const t = useTranslations("ContractListTable");
@@ -187,6 +192,20 @@ export function ContractListTable({
 													})}
 												</span>
 											)}
+											{contract.paymentConfirmedAt &&
+												(myReviewMap.has(contract.id) ? (
+													<span className="flex items-center gap-1 rounded-lg border border-[#FDE68A] bg-[#FFFBEB] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#D97706]">
+														<Star size={14} className="fill-[#D97706]" />
+														{t("reviewedBadge", { rating: myReviewMap.get(contract.id)?.rating ?? 0 })}
+													</span>
+												) : (
+													<button
+														onClick={() => onRequestReview(contract.id)}
+														className="flex items-center gap-1 rounded-lg border border-[#E5E7EB] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#374151] transition-colors hover:bg-[#F9FAFB]">
+														<Star size={14} />
+														{t("reviewButton")}
+													</button>
+												))}
 										</div>
 									)}
 								</td>

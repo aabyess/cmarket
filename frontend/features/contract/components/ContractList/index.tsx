@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@/i18n/navigation";
 import {
 	FileCheck,
@@ -12,6 +13,7 @@ import {
 	CheckCircle2,
 	Clock,
 	FileText,
+	Star,
 	Truck,
 	PackageCheck,
 	Trash2,
@@ -23,6 +25,9 @@ import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeTogg
 import { ContractListTabs } from "@/features/contract/components/ContractList/ContractListTabs";
 import { ContractListTable } from "@/features/contract/components/ContractList/ContractListTable";
 import { ContractListCancelModal } from "@/features/contract/components/ContractList/ContractListCancelModal";
+import { ReviewModal } from "@/features/reviews/components/ReviewModal";
+import { REVIEWS_QUERY_KEYS, useMyReviews } from "@/features/reviews/queries";
+import { submitReview } from "@/features/reviews/mutations";
 import type { Contract, ContractFilter, ContractStatus } from "@/features/contract/types";
 
 const CURRENCY_SYMBOL: Record<string, string> = {
@@ -53,6 +58,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 	const t = useTranslations("ContractList");
 	const locale = useLocale();
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const statusLabels: Record<ContractStatus, string> = {
 		ongoing: t("statusOngoing"),
 		completed: t("statusCompleted"),
@@ -66,10 +72,31 @@ export function ContractList({ contracts, role }: ContractListProps) {
 	const [cancelConfirmId, setCancelConfirmId] = useState<string | null>(null);
 	const [deliveryConfirmId, setDeliveryConfirmId] = useState<string | null>(null);
 	const [receiptDeleteId, setReceiptDeleteId] = useState<string | null>(null);
+	const [reviewContractId, setReviewContractId] = useState<string | null>(null);
+	const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 	const [viewMode, setViewMode] = useState<ViewMode>("list");
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(10);
 	const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+	const contractIds = contracts.map((contract) => contract.id);
+	const { data: myReviews = [] } = useMyReviews(contractIds);
+	const myReviewMap = new Map(myReviews.map((review) => [review.contractId, review]));
+
+	async function handleSubmitReview(rating: number, comment: string): Promise<void> {
+		if (!reviewContractId) return;
+		setIsSubmittingReview(true);
+		try {
+			await submitReview({ contractId: reviewContractId, rating, comment: comment || undefined });
+			queryClient.invalidateQueries({ queryKey: REVIEWS_QUERY_KEYS.myReviews(contractIds) });
+			setReviewContractId(null);
+		} catch (err) {
+			console.error(err);
+			alert(t("reviewErrorMessage"));
+		} finally {
+			setIsSubmittingReview(false);
+		}
+	}
 
 	function handleUploadClick(contractId: string) {
 		fileInputRefs.current[contractId]?.click();
@@ -275,12 +302,14 @@ export function ContractList({ contracts, role }: ContractListProps) {
 					role={role}
 					loadingId={loadingId}
 					uploadingId={uploadingId}
+					myReviewMap={myReviewMap}
 					onUploadClick={handleUploadClick}
 					onViewReceipt={handleViewReceipt}
 					onRequestConfirm={setConfirmId}
 					onRequestCancel={setCancelConfirmId}
 					onRequestDeliveryConfirm={setDeliveryConfirmId}
 					onRequestReceiptDelete={setReceiptDeleteId}
+					onRequestReview={setReviewContractId}
 					onOpenDetail={handleOpenDetail}
 				/>
 			) : (
@@ -346,6 +375,25 @@ export function ContractList({ contracts, role }: ContractListProps) {
 									{t("deliveryConfirmed", {
 										date: new Date(contract.deliveryConfirmedAt).toLocaleDateString(locale),
 									})}
+								</div>
+							)}
+
+							{/* 평가하기 — 결제 확인된 거래에서만 가능 */}
+							{contract.paymentConfirmedAt && (
+								<div className="mb-4" onClick={(e) => e.stopPropagation()}>
+									{myReviewMap.has(contract.id) ? (
+										<span className="flex items-center justify-center gap-1 rounded-xl border border-[#FDE68A] bg-[#FFFBEB] py-2.5 text-xs font-medium text-[#D97706]">
+											<Star size={14} className="fill-[#D97706]" />
+											{t("reviewedBadge", { rating: myReviewMap.get(contract.id)?.rating ?? 0 })}
+										</span>
+									) : (
+										<button
+											onClick={() => setReviewContractId(contract.id)}
+											className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#374151] transition-colors hover:bg-imsg-surface">
+											<Star size={14} />
+											{t("reviewButton")}
+										</button>
+									)}
 								</div>
 							)}
 
@@ -531,6 +579,13 @@ export function ContractList({ contracts, role }: ContractListProps) {
 					cancelConfirmId && handleStatusChange(cancelConfirmId, "cancelled", reason)
 				}
 				onClose={() => setCancelConfirmId(null)}
+			/>
+
+			<ReviewModal
+				isOpen={reviewContractId !== null}
+				isLoading={isSubmittingReview}
+				onSubmit={handleSubmitReview}
+				onClose={() => setReviewContractId(null)}
 			/>
 		</>
 	);
