@@ -319,6 +319,7 @@
 		"invoicePdfPreview": "📄 인보이스"
 	},
 	"ChatRoomPanel": {
+		"awardErrorMessage": "낙찰 처리에 실패했습니다.",
 		"backToListAria": "채팅 목록으로 돌아가기",
 		"statusAwarded": "계약 확정됨",
 		"statusRejected": "마감",

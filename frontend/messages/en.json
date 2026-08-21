@@ -1511,6 +1511,7 @@
 		"invoicePdfPreview": "📄 Invoice"
 	},
 	"ChatRoomPanel": {
+		"awardErrorMessage": "Failed to award the quote.",
 		"backToListAria": "Back to chat list",
 		"statusAwarded": "Contract Confirmed",
 		"statusRejected": "Closed",

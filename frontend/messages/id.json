@@ -319,6 +319,7 @@
 		"invoicePdfPreview": "📄 Invoice"
 	},
 	"ChatRoomPanel": {
+		"awardErrorMessage": "Gagal memilih penawaran.",
 		"backToListAria": "Kembali ke daftar chat",
 		"statusAwarded": "Dikonfirmasi",
 		"statusRejected": "Ditutup",
