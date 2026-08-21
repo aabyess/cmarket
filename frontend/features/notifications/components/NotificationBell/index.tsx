@@ -94,6 +94,12 @@ export function NotificationBell(): React.ReactNode {
 			return;
 		}
 
+		// 기업 인증 결과는 설정 페이지의 인증 섹션으로 보낸다.
+		if (notification.type === "verification") {
+			router.push(pathname.startsWith("/seller") ? "/seller/settings" : "/buyer/settings");
+			return;
+		}
+
 		// quote_id가 없는 옛 알림은 특정 방으로 못 보내므로 채팅 목록으로 보낸다.
 		if (!notification.quoteId) {
 			router.push(chatBasePath);
