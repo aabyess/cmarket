@@ -1931,5 +1931,62 @@
 		"cancel": "취소",
 		"submit": "제출",
 		"submitting": "제출 중..."
+	},
+	"SniChecklist": {
+		"toggleShow": "SNI 인증 안내 보기",
+		"toggleHide": "SNI 인증 안내 접기",
+		"badgeYes": "인증 의무",
+		"badgeConditional": "조건부 의무",
+		"badgeUnknown": "확인 필요",
+		"representativeItemsLabel": "대표 품목별 해당 여부",
+		"itemRequiredTag": "해당",
+		"itemNotRequiredTag": "불확실",
+		"requiredDocumentsLabel": "필요 서류",
+		"estimatedDurationLabel": "예상 소요기간",
+		"sourceLabel": "출처 보기",
+		"lastCheckedLabel": "확인일 {date}",
+		"disclaimer": "본 정보는 참고용 요약이며 법적 효력이 없습니다. 실제 인증 의무 여부는 인도네시아 공식기관(Kemenperin/BSN) 또는 전문 컨설팅을 통해 반드시 재확인하세요.",
+		"office": {
+			"summary": "순수 문구류는 의무 대상 확인 안 됨(불확실). 전자식 사무기기(프린터 등)는 전자기기 의무 SNI 해당 가능성 있음 — 품목별 확인 필요.",
+			"representativeItems": [
+				{ "item": "일반 문구류(종이, 필기구)", "note": "의무 목록 미확인 (불확실)" },
+				{ "item": "전자식 사무기기(프린터, 복합기 등)", "note": "전자·통신기기 의무 SNI 해당 가능성 (불확실, 개별확인 필요)" }
+			],
+			"requiredDocuments": ["사업자등록서류", "제품 사양서", "공인시험기관 시험성적서(해당 시)"],
+			"estimatedDuration": "품목에 따라 상이 (추정)"
+		},
+		"lab": {
+			"summary": "계측기기(저울·온도계 등)는 의무 SNI 대분류에 포함. 비계측 실험기자재는 대상 여부 불확실.",
+			"representativeItems": [
+				{ "item": "계측기기(저울, 압력계, 온도계 등)", "note": "의무 SNI 대분류 '계측기기'에 해당 가능성 높음" },
+				{ "item": "실험용 유리기구·소모품", "note": "불확실, 개별확인 필요" }
+			],
+			"requiredDocuments": ["사업자등록서류", "제품 기술도면/사양서", "공인시험기관 시험성적서", "공장심사 서류(해당 시)"],
+			"estimatedDuration": "8주~6개월 (추정, 업계 일반론 기준)"
+		},
+		"machinery": {
+			"summary": "'기계제품·부품·공작기계'가 의무 SNI 대분류에 명시적으로 포함됨.",
+			"representativeItems": [
+				{ "item": "공작기계(machine tools)", "note": "의무 SNI 대분류 명시" },
+				{ "item": "산업용 대형 맞춤제작 설비", "note": "소비재 아닌 개별 발주 설비는 취급기준 다를 수 있음 (불확실)" }
+			],
+			"requiredDocuments": ["사업자등록서류", "제품 기술도면/사양서", "공인시험기관 시험성적서", "QMS 인증서(해당 시)", "공장심사 서류"],
+			"estimatedDuration": "8주~6개월 (추정)"
+		},
+		"chemical": {
+			"summary": "'화학원료·화학제품'이 의무 SNI 대분류에 명시. 일부 품목은 SNI 대신 Kemendag K3L(안전·보건·환경) 제품등록 대상일 수 있음 — SNI 대상인지 K3L 대상인지 우선 구분 필요(원칙적으로 상호 배타, 단일 출처 기준 불확실). K3L은 인니 현지 NIB 보유 사업자(수입자)가 OSS로 신청하며 비용 무료·유효기간 5년.",
+			"representativeItems": [
+				{ "item": "산업용 화학원료", "note": "SNI 대상인지 K3L 대상인지 우선 구분 필요 (K3L 42개 품목군은 화학물질 함유 완제품 위주로 추정, 원료 포함 여부 원문 미확인)" },
+				{ "item": "위험물·유해화학물질", "note": "K3L 등록 대상 가능성 높음 (불확실, 개별확인 필요). K3L 신청 주체는 인니 현지 수입자로 추정" }
+			],
+			"requiredDocuments": ["사업자등록서류", "MSDS(물질안전보건자료)", "공인시험기관 시험성적서", "K3L 제품등록 서류(해당 시)"],
+			"estimatedDuration": "8주~6개월 이상 (추정, K3L 별도 소요기간 추가 가능)"
+		},
+		"other": {
+			"summary": "카테고리 특성상 사전 일반화 불가. 등록 시 품목명 기준 Kemenperin 공식 의무 SNI 목록 개별 확인 권장.",
+			"representativeItems": [],
+			"requiredDocuments": [],
+			"estimatedDuration": "개별확인 필요"
+		}
 	}
 }

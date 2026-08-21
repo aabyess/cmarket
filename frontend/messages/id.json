@@ -1944,5 +1944,62 @@
 		"cancel": "Batal",
 		"submit": "Kirim",
 		"submitting": "Mengirim..."
+	},
+	"SniChecklist": {
+		"toggleShow": "Lihat panduan sertifikasi SNI",
+		"toggleHide": "Sembunyikan panduan sertifikasi SNI",
+		"badgeYes": "Wajib",
+		"badgeConditional": "Wajib bersyarat",
+		"badgeUnknown": "Perlu verifikasi",
+		"representativeItemsLabel": "Berlaku untuk item representatif",
+		"itemRequiredTag": "Berlaku",
+		"itemNotRequiredTag": "Belum pasti",
+		"requiredDocumentsLabel": "Dokumen yang diperlukan",
+		"estimatedDurationLabel": "Perkiraan durasi",
+		"sourceLabel": "Lihat sumber",
+		"lastCheckedLabel": "Diperiksa pada {date}",
+		"disclaimer": "Informasi ini hanya ringkasan referensi dan tidak memiliki kekuatan hukum. Pastikan untuk memverifikasi kewajiban sertifikasi yang sebenarnya langsung ke lembaga resmi Indonesia (Kemenperin/BSN) atau konsultan profesional.",
+		"office": {
+			"summary": "Alat tulis kantor murni belum terkonfirmasi wajib SNI (tidak pasti). Peralatan kantor elektronik (printer, dll.) berpotensi termasuk SNI wajib elektronik — perlu diperiksa per item.",
+			"representativeItems": [
+				{ "item": "Alat tulis kantor umum (kertas, alat tulis)", "note": "Daftar wajib belum terkonfirmasi (tidak pasti)" },
+				{ "item": "Peralatan kantor elektronik (printer, mesin multifungsi, dll.)", "note": "Berpotensi termasuk SNI wajib elektronik/telekomunikasi (tidak pasti, perlu diperiksa individual)" }
+			],
+			"requiredDocuments": ["Dokumen pendaftaran usaha", "Spesifikasi produk", "Laporan uji dari lembaga uji terakreditasi (jika berlaku)"],
+			"estimatedDuration": "Bervariasi tergantung item (perkiraan)"
+		},
+		"lab": {
+			"summary": "Alat ukur (timbangan, termometer, dll.) termasuk kategori SNI wajib. Peralatan lab non-pengukuran belum pasti termasuk atau tidak.",
+			"representativeItems": [
+				{ "item": "Alat ukur (timbangan, pengukur tekanan, termometer, dll.)", "note": "Kemungkinan besar termasuk kategori SNI wajib 'alat ukur'" },
+				{ "item": "Peralatan gelas laboratorium dan bahan habis pakai", "note": "Tidak pasti, perlu diperiksa individual" }
+			],
+			"requiredDocuments": ["Dokumen pendaftaran usaha", "Gambar teknis/spesifikasi produk", "Laporan uji dari lembaga uji terakreditasi", "Dokumen audit pabrik (jika berlaku)"],
+			"estimatedDuration": "8 minggu hingga 6 bulan (perkiraan, berdasarkan praktik umum industri)"
+		},
+		"machinery": {
+			"summary": "'Produk mesin, komponen, dan mesin perkakas' secara eksplisit termasuk dalam kategori SNI wajib.",
+			"representativeItems": [
+				{ "item": "Mesin perkakas (machine tools)", "note": "Secara eksplisit termasuk SNI wajib" },
+				{ "item": "Peralatan industri besar yang dibuat khusus (custom)", "note": "Peralatan pesanan individual (bukan barang konsumsi) mungkin mengikuti standar berbeda (tidak pasti)" }
+			],
+			"requiredDocuments": ["Dokumen pendaftaran usaha", "Gambar teknis/spesifikasi produk", "Laporan uji dari lembaga uji terakreditasi", "Sertifikat QMS (jika berlaku)", "Dokumen audit pabrik"],
+			"estimatedDuration": "8 minggu hingga 6 bulan (perkiraan)"
+		},
+		"chemical": {
+			"summary": "'Bahan baku kimia dan produk kimia' secara eksplisit termasuk dalam kategori SNI wajib. Sebagian item mungkin justru wajib pendaftaran produk K3L (Keamanan, Keselamatan, Kesehatan, Lingkungan) Kemendag — perlu ditentukan dulu apakah termasuk SNI atau K3L (pada prinsipnya saling eksklusif, meski belum pasti berdasarkan satu sumber). K3L diajukan melalui OSS oleh pelaku usaha di Indonesia (importir) yang memiliki NIB, tanpa biaya, berlaku 5 tahun.",
+			"representativeItems": [
+				{ "item": "Bahan baku kimia industri", "note": "Perlu ditentukan dulu apakah termasuk SNI atau K3L (42 kelompok produk K3L diperkirakan berfokus pada produk jadi yang mengandung bahan kimia; apakah bahan baku termasuk belum terkonfirmasi dari sumber)" },
+				{ "item": "Bahan kimia berbahaya/beracun", "note": "Kemungkinan besar wajib pendaftaran K3L (tidak pasti, perlu diperiksa individual). Pemohon K3L diperkirakan adalah importir di Indonesia" }
+			],
+			"requiredDocuments": ["Dokumen pendaftaran usaha", "MSDS (Lembar Data Keselamatan Bahan)", "Laporan uji dari lembaga uji terakreditasi", "Dokumen pendaftaran produk K3L (jika berlaku)"],
+			"estimatedDuration": "8 minggu hingga 6 bulan atau lebih (perkiraan, K3L dapat menambah waktu tambahan)"
+		},
+		"other": {
+			"summary": "Tidak dapat digeneralisasi karena sifat kategori ini. Saat mendaftar, disarankan memeriksa daftar SNI wajib resmi Kemenperin berdasarkan nama item secara individual.",
+			"representativeItems": [],
+			"requiredDocuments": [],
+			"estimatedDuration": "Perlu diperiksa individual"
+		}
 	}
 }

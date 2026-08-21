@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import SectionWrapper from "@/features/buyer/components/PostListingForm/postListing/SectionWrapper";
 import { cn } from "@/utils/cn";
+import { SniChecklistSection } from "@/features/sni/components/SniChecklistSection";
 import type { ListingFormData } from "@/features/buyer/types";
 import { getCategoryLabels, CATEGORY_OPTIONS } from "@/features/buyer/constants";
 
@@ -33,6 +34,9 @@ export default function ListingCategorySection({ form, onChange }: ListingCatego
                     </button>
                 ))}
             </div>
+			<div className="mt-3">
+				<SniChecklistSection category={form.category} />
+			</div>
 		</SectionWrapper>
 	);
 }

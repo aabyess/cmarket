@@ -1931,5 +1931,62 @@
 		"cancel": "Cancel",
 		"submit": "Submit",
 		"submitting": "Submitting..."
+	},
+	"SniChecklist": {
+		"toggleShow": "View SNI certification guide",
+		"toggleHide": "Hide SNI certification guide",
+		"badgeYes": "Mandatory",
+		"badgeConditional": "Conditionally mandatory",
+		"badgeUnknown": "Verification needed",
+		"representativeItemsLabel": "Applicability by representative item",
+		"itemRequiredTag": "Applicable",
+		"itemNotRequiredTag": "Unconfirmed",
+		"requiredDocumentsLabel": "Required documents",
+		"estimatedDurationLabel": "Estimated duration",
+		"sourceLabel": "View source",
+		"lastCheckedLabel": "Checked on {date}",
+		"disclaimer": "This information is a reference summary only and has no legal effect. Please verify actual certification requirements directly with Indonesia's official authorities (Kemenperin/BSN) or a professional consultant.",
+		"office": {
+			"summary": "Pure stationery items have no confirmed mandatory status (uncertain). Electronic office equipment (printers, etc.) may fall under mandatory SNI for electronics — check item by item.",
+			"representativeItems": [
+				{ "item": "General stationery (paper, writing tools)", "note": "Mandatory list not confirmed (uncertain)" },
+				{ "item": "Electronic office equipment (printers, multifunction devices, etc.)", "note": "May fall under mandatory SNI for electronics/telecom equipment (uncertain, check individually)" }
+			],
+			"requiredDocuments": ["Business registration documents", "Product specification sheet", "Accredited test lab report (if applicable)"],
+			"estimatedDuration": "Varies by item (estimated)"
+		},
+		"lab": {
+			"summary": "Measuring instruments (scales, thermometers, etc.) fall under the mandatory SNI category. Whether non-measuring lab equipment is covered is uncertain.",
+			"representativeItems": [
+				{ "item": "Measuring instruments (scales, pressure gauges, thermometers, etc.)", "note": "Likely falls under the mandatory SNI category 'measuring instruments'" },
+				{ "item": "Laboratory glassware and consumables", "note": "Uncertain, check individually" }
+			],
+			"requiredDocuments": ["Business registration documents", "Product technical drawings/specifications", "Accredited test lab report", "Factory inspection documents (if applicable)"],
+			"estimatedDuration": "8 weeks to 6 months (estimated, based on general industry practice)"
+		},
+		"machinery": {
+			"summary": "'Machinery, parts, and machine tools' are explicitly listed under the mandatory SNI category.",
+			"representativeItems": [
+				{ "item": "Machine tools", "note": "Explicitly listed under mandatory SNI" },
+				{ "item": "Large custom-built industrial equipment", "note": "Individually ordered equipment (not consumer goods) may follow different standards (uncertain)" }
+			],
+			"requiredDocuments": ["Business registration documents", "Product technical drawings/specifications", "Accredited test lab report", "QMS certificate (if applicable)", "Factory inspection documents"],
+			"estimatedDuration": "8 weeks to 6 months (estimated)"
+		},
+		"chemical": {
+			"summary": "'Chemical raw materials and chemical products' are explicitly listed under the mandatory SNI category. Some items may instead be subject to Kemendag K3L (Security, Safety, Health, Environment) product registration — first determine whether SNI or K3L applies (in principle mutually exclusive, though uncertain based on a single source). K3L is applied for via OSS by Indonesia-based businesses (importers) holding an NIB, free of charge, valid for 5 years.",
+			"representativeItems": [
+				{ "item": "Industrial chemical raw materials", "note": "First determine whether SNI or K3L applies (K3L's 42 product groups are presumed to focus on finished products containing chemicals; whether raw materials are included is unconfirmed in the source)" },
+				{ "item": "Hazardous/toxic chemicals", "note": "Likely subject to K3L registration (uncertain, check individually). K3L applicant is presumed to be the Indonesia-based importer" }
+			],
+			"requiredDocuments": ["Business registration documents", "MSDS (Material Safety Data Sheet)", "Accredited test lab report", "K3L product registration documents (if applicable)"],
+			"estimatedDuration": "8 weeks to 6+ months (estimated, K3L may add additional time)"
+		},
+		"other": {
+			"summary": "Cannot be generalized due to the nature of this category. When registering, we recommend checking Kemenperin's official mandatory SNI list by item name individually.",
+			"representativeItems": [],
+			"requiredDocuments": [],
+			"estimatedDuration": "Check individually"
+		}
 	}
 }
