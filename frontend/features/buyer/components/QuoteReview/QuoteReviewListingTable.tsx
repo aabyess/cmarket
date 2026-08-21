@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/utils/cn";
+import { getCategoryLabels } from "@/features/buyer/constants";
 import type { Currency, ListingWithQuotes } from "@/features/buyer/types";
 
 const CURRENCY_SYMBOL: Record<Currency, string> = {
@@ -25,6 +26,7 @@ type QuoteReviewListingTableProps = {
 
 export function QuoteReviewListingTable({ listings }: QuoteReviewListingTableProps): React.ReactNode {
 	const t = useTranslations("QuoteReviewListingTable");
+	const categoryLabels = getCategoryLabels(useTranslations("ListingCategory"));
 	const router = useRouter();
 
 	return (
@@ -34,6 +36,7 @@ export function QuoteReviewListingTable({ listings }: QuoteReviewListingTablePro
 					<tr className="border-b border-[#E5E7EB] bg-[#F9FAFB] text-left text-xs font-medium text-[#9CA3AF]">
 						<th className="px-4 py-3">{t("columnStatus")}</th>
 						<th className="px-4 py-3">{t("columnTitle")}</th>
+						<th className="px-4 py-3">{t("columnCategory")}</th>
 						<th className="px-4 py-3">{t("columnQuoteCount")}</th>
 						<th className="px-4 py-3">{t("columnLowestPrice")}</th>
 						<th className="px-4 py-3">{t("columnFastestDelivery")}</th>
@@ -77,6 +80,9 @@ export function QuoteReviewListingTable({ listings }: QuoteReviewListingTablePro
 								</td>
 								<td className="max-w-[320px] truncate px-4 py-3 font-medium text-[#1F2937]">
 									{listing.title}
+								</td>
+								<td className="px-4 py-3 text-[#6B7280]">
+									{categoryLabels[listing.category]}
 								</td>
 								<td className="px-4 py-3 text-[#1F2937]">
 									{hasQuotes ? t("quoteCount", { count: listing.quoteCount }) : t("noQuotes")}

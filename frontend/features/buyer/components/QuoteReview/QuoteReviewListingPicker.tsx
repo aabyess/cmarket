@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { Mail, Clock, TrendingDown, Truck, CheckCircle2 } from "lucide-react";
+import { Mail, Clock, CalendarDays, TrendingDown, Truck, CheckCircle2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { usePersistentState } from "@/hooks/usePersistentState";
+import { getCategoryLabels } from "@/features/buyer/constants";
 import {
 	QuoteReviewFilterBar,
 	type QuoteHasFilter,
@@ -50,6 +51,8 @@ type QuoteReviewListingPickerProps = {
 
 export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerProps): React.ReactNode {
 	const t = useTranslations("QuoteReviewListingPicker");
+	const categoryLabels = getCategoryLabels(useTranslations("ListingCategory"));
+	const locale = useLocale();
 	const router = useRouter();
 	const [search, setSearch] = useState("");
 	const [prefs, setPrefs] = usePersistentState<QuoteReviewListingPickerPrefs>(
@@ -186,29 +189,34 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 								)}
 							>
 								<div className="mb-2 flex items-start justify-between gap-2">
-									{isAwarded ? (
-										<span className="flex items-center gap-1 rounded-full bg-[#ECFDF5] px-2 py-0.5 text-xs font-medium text-[#059669]">
-											<CheckCircle2 size={11} />
-											{t("awardedBadge")}
+									<div className="flex flex-wrap items-center gap-1.5">
+										{isAwarded ? (
+											<span className="flex items-center gap-1 rounded-full bg-[#ECFDF5] px-2 py-0.5 text-xs font-medium text-[#059669]">
+												<CheckCircle2 size={11} />
+												{t("awardedBadge")}
+											</span>
+										) : (
+											<span
+												className={cn(
+													"flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium",
+													remaining.isClosed
+														? "bg-[#F3F4F6] text-[#6B7280]"
+														: remaining.isUrgent
+															? "bg-[#FEF2F2] text-[#DC2626]"
+															: "bg-[#EFF6FF] text-imsg-blue",
+												)}
+											>
+												<Clock size={11} />
+												{remaining.isClosed ? t("closed") : t("deadlineDays", { days: remaining.days })}
+											</span>
+										)}
+										<span className="whitespace-nowrap rounded-full bg-[#F3F4F6] px-2 py-0.5 text-xs font-medium text-[#6B7280]">
+											{categoryLabels[listing.category]}
 										</span>
-									) : (
-										<span
-											className={cn(
-												"flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium",
-												remaining.isClosed
-													? "bg-[#F3F4F6] text-[#6B7280]"
-													: remaining.isUrgent
-														? "bg-[#FEF2F2] text-[#DC2626]"
-														: "bg-[#EFF6FF] text-imsg-blue",
-											)}
-										>
-											<Clock size={11} />
-											{remaining.isClosed ? t("closed") : t("deadlineDays", { days: remaining.days })}
-										</span>
-									)}
+									</div>
 
 									{hasQuotes && (
-										<span className="shrink-0 text-xs font-semibold text-imsg-blue">
+										<span className="shrink-0 whitespace-nowrap rounded-full bg-imsg-blue px-2 py-0.5 text-xs font-semibold text-white">
 											{t("quoteCountLabel", { count: listing.quoteCount })}
 										</span>
 									)}
@@ -218,9 +226,23 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 									{listing.title}
 								</p>
 
+								<p className="mt-1.5 flex items-center gap-1.5 text-xs text-[#9CA3AF]">
+									<CalendarDays size={12} className="shrink-0" />
+									{t("registeredAndDeadline", {
+										registered: new Date(listing.createdAt).toLocaleDateString(locale, {
+											month: "numeric",
+											day: "numeric",
+										}),
+										deadline: new Date(listing.endDate).toLocaleDateString(locale, {
+											month: "numeric",
+											day: "numeric",
+										}),
+									})}
+								</p>
+
 								{hasQuotes ? (
 									<div className="mt-3 grid grid-cols-2 gap-2 border-t border-[#F3F4F6] pt-3">
-										<div>
+										<div className="min-w-0">
 											<p className="flex items-center gap-1 text-xs text-[#9CA3AF]">
 												<TrendingDown size={11} className="text-[#D97706]" />
 												{t("lowestPriceLabel")}
@@ -228,8 +250,13 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 											<p className="mt-0.5 truncate text-sm font-medium text-[#1F2937]">
 												{symbol} {listing.lowestPrice?.toLocaleString()}
 											</p>
+											{listing.totalBudget !== null && (
+												<p className="truncate text-xs text-[#9CA3AF]">
+													{t("budgetLabel", { amount: `${symbol} ${listing.totalBudget.toLocaleString()}` })}
+												</p>
+											)}
 										</div>
-										<div>
+										<div className="min-w-0">
 											<p className="flex items-center gap-1 text-xs text-[#9CA3AF]">
 												<Truck size={11} className="text-[#16A34A]" />
 												{t("fastestDeliveryLabel")}
@@ -241,7 +268,10 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 									</div>
 								) : (
 									<div className="mt-3 border-t border-[#F3F4F6] pt-3">
-										<p className="text-xs text-[#9CA3AF]">{t("noQuotesYet")}</p>
+										<p className="text-xs text-[#9CA3AF]">
+											{t("noQuotesYet")}
+											{!remaining.isClosed && ` · ${t("deadlineDays", { days: remaining.days })}`}
+										</p>
 									</div>
 								)}
 							</button>

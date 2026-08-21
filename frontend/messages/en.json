@@ -1333,7 +1333,9 @@
 		"noQuotesYet": "No quotes yet",
 		"noResultsDescription": "Try adjusting your search or filters.",
 		"noResultsTitle": "No listings match your filters",
-		"quoteCountLabel": "{count} quotes"
+		"quoteCountLabel": "{count} quotes",
+		"registeredAndDeadline": "Posted {registered} · Due {deadline}",
+		"budgetLabel": "Budget {amount}"
 	},
 	"QuoteReviewQuoteCard": {
 		"awardedBadge": "Confirmed",
@@ -1357,6 +1359,7 @@
 		"closed": "Closed",
 		"columnFastestDelivery": "Fastest Delivery",
 		"columnLowestPrice": "Lowest Price",
+		"columnCategory": "Category",
 		"columnQuoteCount": "Received Quotes",
 		"columnStatus": "Status",
 		"columnTitle": "Listing",

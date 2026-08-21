@@ -321,7 +321,7 @@ export async function getListingsWithQuoteCount(): Promise<ListingWithQuotes[]> 
 	const { data, error } = await supabase
 		.from("listings")
 		.select(
-			"id, title, title_source_lang, title_translations, end_date, status, currency, created_at, quotes(price, delivery_days, status)",
+			"id, title, title_source_lang, title_translations, end_date, status, currency, created_at, category, total_budget, quotes(price, delivery_days, status)",
 		)
 		.eq("user_id", user.id)
 		.order("end_date", { ascending: true });
@@ -341,6 +341,8 @@ export async function getListingsWithQuoteCount(): Promise<ListingWithQuotes[]> 
 			endDate: row.end_date,
 			status,
 			currency: row.currency,
+			category: row.category,
+			totalBudget: row.total_budget !== null ? Number(row.total_budget) : null,
 			quoteCount: quotes.length,
 			lowestPrice: quotes.length > 0 ? Math.min(...quotes.map((q) => Number(q.price))) : null,
 			fastestDays: quotes.length > 0 ? Math.min(...quotes.map((q) => q.delivery_days)) : null,

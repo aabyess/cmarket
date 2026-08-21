@@ -1507,7 +1507,9 @@
 		"noQuotesYet": "아직 견적이 없어요",
 		"noResultsDescription": "검색어나 필터를 조정해보세요.",
 		"noResultsTitle": "조건에 맞는 공고가 없어요",
-		"quoteCountLabel": "견적 {count}"
+		"quoteCountLabel": "견적 {count}",
+		"registeredAndDeadline": "등록 {registered} · 마감 {deadline}",
+		"budgetLabel": "예산 {amount}"
 	},
 	"QuoteReviewQuoteCard": {
 		"awardedBadge": "계약 확정",
@@ -1531,6 +1533,7 @@
 		"closed": "마감",
 		"columnFastestDelivery": "최속납기",
 		"columnLowestPrice": "최저가",
+		"columnCategory": "카테고리",
 		"columnQuoteCount": "받은 견적",
 		"columnStatus": "상태",
 		"columnTitle": "공고명",
