@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslations } from "next-intl";
@@ -22,12 +22,16 @@ export function ReviewModal({ isOpen, isLoading = false, onSubmit, onClose }: Re
 	const [hoverRating, setHoverRating] = useState(0);
 	const [comment, setComment] = useState("");
 
-	function handleClose(): void {
-		setRating(0);
-		setHoverRating(0);
-		setComment("");
-		onClose();
-	}
+	// 제출 성공 시 부모가 reviewContractId를 null로 바꿔 Dialog만 닫힐 뿐, 이 컴포넌트의
+	// state는 그대로 남는다 — 다음 거래를 평가하려 열 때 이전 별점·코멘트가 남아있지 않도록
+	// isOpen이 true로 바뀔 때마다 초기화한다.
+	useEffect(() => {
+		if (isOpen) {
+			setRating(0);
+			setHoverRating(0);
+			setComment("");
+		}
+	}, [isOpen]);
 
 	function handleSubmit(): void {
 		if (rating === 0) return;
@@ -37,7 +41,7 @@ export function ReviewModal({ isOpen, isLoading = false, onSubmit, onClose }: Re
 	return (
 		<AnimatePresence>
 			{isOpen && (
-				<Dialog static open={isOpen} onClose={handleClose} className="relative z-50">
+				<Dialog static open={isOpen} onClose={onClose} className="relative z-50">
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
@@ -95,7 +99,7 @@ export function ReviewModal({ isOpen, isLoading = false, onSubmit, onClose }: Re
 
 								<div className="mt-4 flex gap-2">
 									<button
-										onClick={handleClose}
+										onClick={onClose}
 										disabled={isLoading}
 										className="flex-1 rounded-lg border border-[#E5E7EB] py-3 text-sm font-medium text-[#374151] transition-colors hover:bg-gray-50 disabled:opacity-50">
 										{t("cancel")}
