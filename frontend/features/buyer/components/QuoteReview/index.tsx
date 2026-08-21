@@ -95,7 +95,8 @@ export function QuoteReview({ quotes, listingItems, backHref }: QuoteReviewProps
 			</div>
 
 			{viewMode === "grid" ? (
-				<div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+				{/* 나의 견적(MyQuotes) 카드 그리드와 동일한 배치 */}
+				<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
 					{visibleQuotes.map((quote) => (
 						<QuoteReviewQuoteCard
 							key={quote.id}
