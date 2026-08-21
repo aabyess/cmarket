@@ -446,7 +446,10 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 						</Link>
 						<VerificationBadge status={room.partnerVerificationStatus} />
 					</div>
-					<span className="text-imsg-secondary text-xs">{room.listingTitle}</span>
+					{/* 어떤 거래 건의 대화인지 한눈에 보이도록 제목을 진하게 강조한다. */}
+					<span className="mt-0.5 max-w-[320px] truncate text-sm font-medium text-[#374151]">
+						{room.listingTitle}
+					</span>
 				</div>
 				<div className="flex items-center gap-1.5">
 					{myRole === "buyer" ? (
