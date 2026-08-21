@@ -179,17 +179,15 @@ export function ChatMessageList({
 										quoteId={quoteId}
 										attachmentUrl={message.attachmentUrl}
 										attachmentName={message.attachmentName}
-										isMine={isMine}
 									/>
 								) : message.messageType === "file" ? (
 									<ChatFileCard
 										quoteId={quoteId}
 										attachmentUrl={message.attachmentUrl}
 										attachmentName={message.attachmentName}
-										isMine={isMine}
 									/>
 								) : message.messageType === "info" ? (
-									<ChatInfoCard content={message.content} isMine={isMine} />
+									<ChatInfoCard content={message.content} />
 								) : (
 									<div className={cn("flex flex-col gap-1", isMine ? "items-end" : "items-start")}>
 										<div

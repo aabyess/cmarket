@@ -4,13 +4,11 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ImageOff, Loader2 } from "lucide-react";
-import { cn } from "@/utils/cn";
 
 type ChatImageCardProps = {
 	quoteId: string;
 	attachmentUrl: string | null;
 	attachmentName: string | null;
-	isMine: boolean;
 };
 
 async function fetchSignedUrl(quoteId: string, storagePath: string): Promise<string | null> {
@@ -25,7 +23,6 @@ export function ChatImageCard({
 	quoteId,
 	attachmentUrl,
 	attachmentName,
-	isMine,
 }: ChatImageCardProps): React.ReactNode {
 	const t = useTranslations("ChatImageCard");
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -70,10 +67,7 @@ export function ChatImageCard({
 		<button
 			onClick={handleOpen}
 			disabled={isOpening || failed}
-			className={cn(
-				"flex h-40 w-56 items-center justify-center overflow-hidden rounded-[20px] bg-[#E9E9EB] disabled:opacity-70",
-				isMine ? "ml-auto" : "mr-auto",
-			)}
+			className="flex h-40 w-56 items-center justify-center overflow-hidden rounded-[20px] bg-[#E9E9EB] disabled:opacity-70"
 		>
 			{previewUrl ? (
 				// 서명 URL이라 next/image 원격 도메인 등록 대상이 아니다
