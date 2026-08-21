@@ -206,8 +206,10 @@
 	"SignupComplete": {
 		"title": "Registration Complete!",
 		"welcome": "Welcome to MitraPay.",
-		"countdown": "Redirecting to your dashboard in {seconds} seconds.",
-		"start": "Get started"
+		"roleActionBuyer": "Post your first listing",
+		"roleActionSeller": "Browse listings",
+		"verificationAction": "Verify your company for more trust",
+		"start": "Go to dashboard"
 	},
 	"SignupInfoKorea": {
 		"step": "3 / 4",
@@ -1785,7 +1787,7 @@
 		"viewAll": "View All",
 		"todoEmptyTitle": "No tasks right now",
 		"todoEmptyDescription": "{count} listings are in progress. We'll let you know when quotes arrive.",
-		"todoEmptyAction": "View active listings",
+		"todoEmptyAction": "Post a new listing",
 		"urgentBadge": "Urgent",
 		"shortcutsTitle": "Shortcuts",
 		"shortcutQuotesLabel": "Received Quotes",

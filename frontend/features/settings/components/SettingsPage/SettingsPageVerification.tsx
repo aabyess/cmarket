@@ -119,7 +119,7 @@ export function SettingsPageVerification({
 	}
 
 	return (
-		<div className={SECTION_CLASS}>
+		<div id="verification" className={SECTION_CLASS}>
 			<h2 className={HEADING_CLASS}>
 				<ShieldCheck size={16} className="text-[#6B7280]" />
 				{t("title")}

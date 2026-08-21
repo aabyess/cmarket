@@ -140,7 +140,7 @@ export function DashboardHome({ companyName, data, tradeSummary }: DashboardHome
 									{t("todoEmptyDescription", { count: data.listingCount })}
 								</p>
 								<button
-									onClick={() => handleNavigate("/buyer/order-list")}
+									onClick={() => handleNavigate("/buyer/post-listing")}
 									className="mt-4 rounded-full border border-[#E5E7EB] px-4 py-2 text-sm font-medium text-[#0f172a] transition-colors hover:bg-imsg-surface"
 								>
 									{t("todoEmptyAction")}

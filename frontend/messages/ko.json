@@ -206,8 +206,10 @@
 	"SignupComplete": {
 		"title": "회원가입 완료!",
 		"welcome": "MitraPay에 오신 것을 환영합니다.",
-		"countdown": "{seconds}초 후 대시보드로 이동합니다.",
-		"start": "바로 시작하기"
+		"roleActionBuyer": "첫 공고 등록하기",
+		"roleActionSeller": "공고 둘러보기",
+		"verificationAction": "회사 인증하고 신뢰도 높이기",
+		"start": "대시보드로 바로 가기"
 	},
 	"SignupInfoKorea": {
 		"step": "3 / 4",
@@ -1785,7 +1787,7 @@
 		"viewAll": "모두 보기",
 		"todoEmptyTitle": "지금은 할 일이 없어요",
 		"todoEmptyDescription": "공고 {count}건이 진행 중이에요. 견적이 도착하면 알려드릴게요.",
-		"todoEmptyAction": "진행 중인 공고 보기",
+		"todoEmptyAction": "새 공고 등록하기",
 		"urgentBadge": "긴급",
 		"shortcutsTitle": "바로가기",
 		"shortcutQuotesLabel": "받은 견적",
