@@ -6,11 +6,13 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import {
 	ArrowUp,
+	Banknote,
 	ChevronLeft,
-	FileText,
 	Image as ImageIcon,
 	Loader2,
 	LogOut,
+	MapPin,
+	Paperclip,
 	PencilLine,
 	Plus,
 	Sparkles,
@@ -20,8 +22,17 @@ import { useQueryClient } from "@tanstack/react-query";
 import { ChatMessageList } from "@/features/chat/components/ChatMessageList";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { useMessages, CHAT_QUERY_KEYS } from "@/features/chat/queries";
-import { getMessages, mapMessageRow, MESSAGE_PAGE_SIZE, type MessageRow } from "@/features/chat/apis";
-import { useSendMessage, markMessagesRead, awardAndCreateContract } from "@/features/chat/mutations";
+import {
+	getMessages,
+	mapMessageRow,
+	MESSAGE_PAGE_SIZE,
+	type MessageRow,
+} from "@/features/chat/apis";
+import {
+	useSendMessage,
+	markMessagesRead,
+	awardAndCreateContract,
+} from "@/features/chat/mutations";
 import { markNotificationsByQuoteRead } from "@/features/notifications/apis";
 import { NOTIFICATION_QUERY_KEYS } from "@/features/notifications/queries";
 import { createClient } from "@/libs/supabase";
@@ -56,14 +67,17 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 	const [isAwarding, setIsAwarding] = useState(false);
 	const [isHideModalOpen, setIsHideModalOpen] = useState(false);
 	const [isHiding, setIsHiding] = useState(false);
-	const [isResendingQuote, setIsResendingQuote] = useState(false);
 	const [limitExceeded, setLimitExceeded] = useState(false);
 	const [isLoadingOlder, setIsLoadingOlder] = useState(false);
 	const [reachedOldest, setReachedOldest] = useState(false);
 	const [hasOlderInitial, setHasOlderInitial] = useState<boolean | null>(null);
 	const [isToolsOpen, setIsToolsOpen] = useState(false);
 	const [isUploadingImage, setIsUploadingImage] = useState(false);
-	const fileInputRef = useRef<HTMLInputElement>(null);
+	const [isUploadingFile, setIsUploadingFile] = useState(false);
+	const [isSendingBankAccount, setIsSendingBankAccount] = useState(false);
+	const [isSendingAddress, setIsSendingAddress] = useState(false);
+	const imageInputRef = useRef<HTMLInputElement>(null);
+	const fileUploadInputRef = useRef<HTMLInputElement>(null);
 	const toolsRef = useRef<HTMLDivElement>(null);
 	const prefersReducedMotion = useReducedMotion();
 
@@ -199,10 +213,10 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 
 	function handleImageToolClick(): void {
 		setIsToolsOpen(false);
-		fileInputRef.current?.click();
+		imageInputRef.current?.click();
 	}
 
-	async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
+	async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
 		const file = e.target.files?.[0];
 		e.target.value = "";
 		if (!file) return;
@@ -225,6 +239,86 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 		}
 	}
 
+	function handleFileToolClick(): void {
+		setIsToolsOpen(false);
+		fileUploadInputRef.current?.click();
+	}
+
+	async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
+		const file = e.target.files?.[0];
+		e.target.value = "";
+		if (!file) return;
+
+		setIsUploadingFile(true);
+		try {
+			const formData = new FormData();
+			formData.append("quoteId", room.quoteId);
+			formData.append("file", file);
+			const res = await fetch("/api/chat/upload-file", { method: "POST", body: formData });
+			if (!res.ok) {
+				const { error } = await res.json();
+				throw new Error(error);
+			}
+		} catch (err) {
+			console.error(err);
+			alert(err instanceof Error && err.message ? err.message : t("uploadFileErrorMessage"));
+		} finally {
+			setIsUploadingFile(false);
+		}
+	}
+
+	async function handleBankAccountTool(): Promise<void> {
+		setIsToolsOpen(false);
+		setIsSendingBankAccount(true);
+		try {
+			const res = await fetch("/api/chat/send-info", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ quoteId: room.quoteId, kind: "bankAccount" }),
+			});
+			if (!res.ok) {
+				const { error, code } = await res.json();
+				if (code === "NO_BANK_ACCOUNT") {
+					if (confirm(t("noBankAccountGuidance"))) {
+						router.push("/seller/settings#bankAccount");
+					}
+					return;
+				}
+				throw new Error(error);
+			}
+		} catch (err) {
+			console.error(err);
+			alert(t("sendBankAccountErrorMessage"));
+		} finally {
+			setIsSendingBankAccount(false);
+		}
+	}
+
+	async function handleAddressTool(): Promise<void> {
+		setIsToolsOpen(false);
+		setIsSendingAddress(true);
+		try {
+			const res = await fetch("/api/chat/send-info", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ quoteId: room.quoteId, kind: "address" }),
+			});
+			if (!res.ok) {
+				const { error, code } = await res.json();
+				if (code === "NO_ADDRESS") {
+					alert(t("noAddressGuidance"));
+					return;
+				}
+				throw new Error(error);
+			}
+		} catch (err) {
+			console.error(err);
+			alert(t("sendAddressErrorMessage"));
+		} finally {
+			setIsSendingAddress(false);
+		}
+	}
+
 	function handleSend(): void {
 		const content = input.trim();
 		if (!content) return;
@@ -238,29 +332,6 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 
 	function handleEditQuote(): void {
 		router.push(`/seller/listing-browse/${room.listingId}`);
-	}
-
-	// 실시간 구독(위 postgres_changes 이펙트)이 새 quote_pdf 메시지를 받으면
-	// ChatMessageList가 마지막 메시지 변경을 감지해 자동으로 아래로 스크롤한다 —
-	// 여기서 따로 스크롤을 호출할 필요가 없다.
-	async function handleResendQuote(): Promise<void> {
-		setIsResendingQuote(true);
-		try {
-			const res = await fetch("/api/chat/generate-quote-pdf", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ quoteId: room.quoteId, sendPair: true }),
-			});
-			if (!res.ok) {
-				const { error } = await res.json();
-				throw new Error(error);
-			}
-		} catch (err) {
-			console.error(err);
-			alert(t("resendQuoteErrorMessage"));
-		} finally {
-			setIsResendingQuote(false);
-		}
 	}
 
 	async function handleConfirmAward(): Promise<void> {
@@ -303,52 +374,80 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 		}
 	}
 
-	const isSendingTool = isUploadingImage || isResendingQuote;
+	const isSendingTool =
+		isUploadingImage || isUploadingFile || isSendingBankAccount || isSendingAddress;
 
-	const tools: ChatTool[] = [
-		{
-			key: "image",
-			icon: ImageIcon,
-			label: t("toolImage"),
-			onClick: handleImageToolClick,
-			disabled: isUploadingImage,
-		},
-		// 견적서 도구는 역할·상태 무관 상시 노출 — 같은 리비전은 서버 dedup으로
-		// 중복 전송이 막혀 있어 아무 때나 눌러도 안전하다. (사용자 요청: 이미지 옆 상시 표시)
-		{
-			key: "quote",
-			icon: FileText,
-			label: t("toolQuote"),
-			onClick: () => {
-				setIsToolsOpen(false);
-				handleResendQuote();
-			},
-			disabled: isResendingQuote,
-		},
-	];
+	// 견적서 도구는 채팅 시작 시 자동 전송되고 수정 시에도 자동 재전송되므로 서랍에서 제거했다.
+	const tools: ChatTool[] =
+		myRole === "seller"
+			? [
+					{
+						key: "image",
+						icon: ImageIcon,
+						label: t("toolImage"),
+						onClick: handleImageToolClick,
+						disabled: isUploadingImage,
+					},
+					{
+						key: "file",
+						icon: Paperclip,
+						label: t("toolFile"),
+						onClick: handleFileToolClick,
+						disabled: isUploadingFile,
+					},
+					{
+						key: "bankAccount",
+						icon: Banknote,
+						label: t("toolBankAccount"),
+						onClick: handleBankAccountTool,
+						disabled: isSendingBankAccount,
+					},
+				]
+			: [
+					{
+						key: "image",
+						icon: ImageIcon,
+						label: t("toolImage"),
+						onClick: handleImageToolClick,
+						disabled: isUploadingImage,
+					},
+					{
+						key: "file",
+						icon: Paperclip,
+						label: t("toolFile"),
+						onClick: handleFileToolClick,
+						disabled: isUploadingFile,
+					},
+					{
+						key: "address",
+						icon: MapPin,
+						label: t("toolAddress"),
+						onClick: handleAddressTool,
+						disabled: isSendingAddress,
+					},
+				];
 
 	return (
-		<section className="flex min-h-0 flex-1 flex-col bg-imsg-surface">
+		<section className="bg-imsg-surface flex min-h-0 flex-1 flex-col">
 			{/* 헤더 */}
 			<header className="flex items-center justify-between border-b border-[#E5E7EB]/60 bg-white/80 px-4 py-2.5 backdrop-blur-xl">
 				<button
 					onClick={onBack}
 					aria-label={t("backToListAria")}
-					className="flex size-9 items-center justify-center rounded-full text-imsg-blue transition-colors hover:bg-imsg-surface"
-				>
+					className="text-imsg-blue hover:bg-imsg-surface flex size-9 items-center justify-center rounded-full transition-colors">
 					<ChevronLeft className="size-6" strokeWidth={2.5} />
 				</button>
 				<div className="flex flex-col items-center">
-					<span className="flex items-center gap-1.5 text-base font-semibold leading-tight text-foreground">
+					<span className="text-foreground flex items-center gap-1.5 text-base leading-tight font-semibold">
 						{room.partnerName}
 						<VerificationBadge status={room.partnerVerificationStatus} />
 					</span>
-					<span className="text-xs text-imsg-secondary">{room.listingTitle}</span>
+					<span className="text-imsg-secondary text-xs">{room.listingTitle}</span>
 				</div>
 				<div className="flex items-center gap-1.5">
 					{myRole === "buyer" ? (
 						room.quoteStatus === "awarded" ? (
-							<span className="rounded-full bg-imsg-blue/10 px-3 py-1.5 text-xs font-semibold text-imsg-blue">
+							<span className="bg-imsg-blue/10 text-imsg-blue rounded-full px-3 py-1.5 text-xs font-semibold">
 								{t("statusAwarded")}
 							</span>
 						) : room.quoteStatus === "rejected" ? (
@@ -358,8 +457,7 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 						) : (
 							<button
 								onClick={() => setIsAwardModalOpen(true)}
-								className="rounded-full bg-imsg-blue px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-600"
-							>
+								className="bg-imsg-blue rounded-full px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-600">
 								{t("awardButton")}
 							</button>
 						)
@@ -367,8 +465,7 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 						room.quoteStatus === "pending" && (
 							<button
 								onClick={handleEditQuote}
-								className="flex items-center gap-1 rounded-full border border-[#E5E7EB] px-2.5 py-1.5 text-xs font-semibold text-[#374151] transition-colors hover:bg-imsg-surface"
-							>
+								className="hover:bg-imsg-surface flex items-center gap-1 rounded-full border border-[#E5E7EB] px-2.5 py-1.5 text-xs font-semibold text-[#374151] transition-colors">
 								<PencilLine size={12} />
 								{t("editQuoteButton")}
 							</button>
@@ -377,8 +474,7 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 					<button
 						onClick={() => setIsHideModalOpen(true)}
 						aria-label={t("hideRoomAria")}
-						className="flex size-9 items-center justify-center rounded-full text-imsg-secondary transition-colors hover:bg-imsg-surface"
-					>
+						className="text-imsg-secondary hover:bg-imsg-surface flex size-9 items-center justify-center rounded-full transition-colors">
 						<LogOut size={18} />
 					</button>
 				</div>
@@ -386,28 +482,32 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 
 			{/* 견적 정보 */}
 			<div className="flex justify-center gap-2 border-b border-[#E5E7EB]/60 bg-white/60 px-4 py-2 backdrop-blur-xl">
-				<span className="flex items-center gap-1 rounded-full bg-imsg-surface px-3 py-1 text-xs text-imsg-secondary">
-					{t("quotePriceLabel")} <span className="font-semibold text-foreground">
+				<span className="bg-imsg-surface text-imsg-secondary flex items-center gap-1 rounded-full px-3 py-1 text-xs">
+					{t("quotePriceLabel")}{" "}
+					<span className="text-foreground font-semibold">
 						{room.currency} {room.price.toLocaleString()}
 					</span>
 				</span>
-				<span className="flex items-center gap-1 rounded-full bg-imsg-surface px-3 py-1 text-xs text-imsg-secondary">
-					{t("deliveryLabel")} <span className="font-semibold text-foreground">{t("deliveryDays", { days: room.deliveryDays })}</span>
+				<span className="bg-imsg-surface text-imsg-secondary flex items-center gap-1 rounded-full px-3 py-1 text-xs">
+					{t("deliveryLabel")}{" "}
+					<span className="text-foreground font-semibold">
+						{t("deliveryDays", { days: room.deliveryDays })}
+					</span>
 				</span>
 			</div>
 
 			{/* 메시지 */}
 			{isLoading ? (
-				<div className="flex-1 bg-imsg-surface" />
+				<div className="bg-imsg-surface flex-1" />
 			) : (
 				<ChatMessageList
-				messages={messages}
-				myId={myId}
-				quoteId={room.quoteId}
-				hasOlder={hasOlderMessages}
-				isLoadingOlder={isLoadingOlder}
-				onLoadOlder={handleLoadOlder}
-			/>
+					messages={messages}
+					myId={myId}
+					quoteId={room.quoteId}
+					hasOlder={hasOlderMessages}
+					isLoadingOlder={isLoadingOlder}
+					onLoadOlder={handleLoadOlder}
+				/>
 			)}
 
 			{/* 무료 요금제 번역 한도 안내 */}
@@ -431,12 +531,19 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 							animate={{ opacity: 1, y: 0, scale: 1 }}
 							exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.9 }}
 							transition={
-								prefersReducedMotion ? { duration: 0 } : { type: "spring", stiffness: 400, damping: 26 }
+								prefersReducedMotion
+									? { duration: 0 }
+									: { type: "spring", stiffness: 400, damping: 26 }
 							}
-							className="absolute -top-9 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-black/80 px-3 py-1.5 text-xs text-white shadow-md"
-						>
+							className="absolute -top-9 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-black/80 px-3 py-1.5 text-xs text-white shadow-md">
 							<Loader2 size={12} className="animate-spin" />
-							{isUploadingImage ? t("uploadingImage") : t("resendingQuote")}
+							{isUploadingImage
+								? t("uploadingImage")
+								: isUploadingFile
+									? t("uploadingFile")
+									: isSendingBankAccount
+										? t("sendingBankAccount")
+										: t("sendingAddress")}
 						</motion.div>
 					)}
 				</AnimatePresence>
@@ -444,26 +551,27 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 					<div ref={toolsRef} className="relative shrink-0">
 						<AnimatePresence>
 							{isToolsOpen && (
-								<div className="absolute bottom-full left-0 mb-2 flex items-end gap-3">
+								<div className="absolute bottom-full left-0 mb-2 flex items-end gap-4">
 									{tools.map((tool, i) => (
 										<motion.button
 											key={tool.key}
 											onClick={tool.onClick}
 											disabled={tool.disabled}
-											initial={prefersReducedMotion ? false : { opacity: 0, y: 16, scale: 0.6 }}
+											initial={prefersReducedMotion ? false : { opacity: 0, y: 20, scale: 0.6 }}
 											animate={{ opacity: 1, y: 0, scale: 1 }}
-											exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.6 }}
+											exit={
+												prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 20, scale: 0.6 }
+											}
 											transition={
 												prefersReducedMotion
 													? { duration: 0 }
 													: { type: "spring", stiffness: 400, damping: 26, delay: i * 0.04 }
 											}
-											className="flex flex-col items-center gap-1 disabled:opacity-60"
-										>
-											<span className="flex size-11 items-center justify-center rounded-full bg-imsg-blue text-white shadow-md">
-												<tool.icon size={18} />
+											className="flex flex-col items-center gap-1.5 disabled:opacity-60">
+											<span className="bg-imsg-blue flex size-14 items-center justify-center rounded-full text-white shadow-md">
+												<tool.icon size={22} />
 											</span>
-											<span className="text-[10px] font-medium text-imsg-secondary">{tool.label}</span>
+											<span className="text-imsg-secondary text-xs font-medium">{tool.label}</span>
 										</motion.button>
 									))}
 								</div>
@@ -474,8 +582,7 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 							disabled={isSendingTool}
 							aria-label={t("toolsToggleAria")}
 							aria-expanded={isToolsOpen}
-							className="flex size-9 items-center justify-center rounded-full bg-imsg-surface text-imsg-secondary transition-all hover:bg-black/5 disabled:opacity-60"
-						>
+							className="bg-imsg-surface text-imsg-secondary flex size-9 items-center justify-center rounded-full transition-all hover:bg-black/5 disabled:opacity-60">
 							{isSendingTool ? (
 								<Loader2 className="size-5 animate-spin" />
 							) : (
@@ -483,34 +590,45 @@ export function ChatRoomPanel({ room, myId, myRole, onBack }: ChatRoomPanelProps
 							)}
 						</button>
 					</div>
-					<div className="flex flex-1 items-center rounded-full bg-imsg-surface px-4 py-2.5">
+					<div className="bg-imsg-surface flex flex-1 items-center rounded-full px-4 py-2.5">
 						<textarea
 							value={input}
 							onChange={(e) => setInput(e.target.value)}
 							onFocus={() => setIsToolsOpen(false)}
 							onKeyDown={(e) => {
-								if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing && e.keyCode !== 229) {
+								if (
+									e.key === "Enter" &&
+									!e.shiftKey &&
+									!e.nativeEvent.isComposing &&
+									e.keyCode !== 229
+								) {
 									e.preventDefault();
 									handleSend();
 								}
 							}}
 							placeholder={t("messagePlaceholder")}
 							rows={1}
-							className="max-h-32 w-full resize-none bg-transparent text-sm outline-none placeholder:text-imsg-secondary"
+							className="placeholder:text-imsg-secondary max-h-32 w-full resize-none bg-transparent text-sm outline-none"
 						/>
 					</div>
 					<button
 						onClick={handleSend}
 						disabled={!input.trim()}
-						className="flex size-9 shrink-0 items-center justify-center rounded-full bg-imsg-blue text-white transition-all active:scale-90 disabled:bg-[#E5E7EB] disabled:text-[#9CA3AF]"
-					>
+						className="bg-imsg-blue flex size-9 shrink-0 items-center justify-center rounded-full text-white transition-all active:scale-90 disabled:bg-[#E5E7EB] disabled:text-[#9CA3AF]">
 						<ArrowUp className="size-5" strokeWidth={2.5} />
 					</button>
 				</div>
 				<input
-					ref={fileInputRef}
+					ref={imageInputRef}
 					type="file"
 					accept="image/jpeg,image/png,image/webp,image/gif"
+					className="hidden"
+					onChange={handleImageChange}
+				/>
+				<input
+					ref={fileUploadInputRef}
+					type="file"
+					accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.csv,.txt,.hwp"
 					className="hidden"
 					onChange={handleFileChange}
 				/>

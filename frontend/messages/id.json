@@ -319,7 +319,9 @@
 		"emptyDescription": "Setelah bertukar penawaran, Anda bisa mengobrol di sini.",
 		"quotePdfPreview": "📄 Surat Penawaran",
 		"invoicePdfPreview": "📄 Invoice",
-		"imagePreview": "📷 Foto"
+		"imagePreview": "📷 Foto",
+		"filePreview": "📎 File",
+		"infoPreview": "ℹ️ Info"
 	},
 	"ChatImageCard": {
 		"previewAlt": "Gambar terkirim",
@@ -346,13 +348,21 @@
 		"hideRoomModalDescription": "Riwayat percakapan akan tetap tersimpan, dan chat ini akan muncul kembali jika pihak lain mengirim pesan baru.",
 		"hideRoomModalConfirm": "Keluar",
 		"editQuoteButton": "Ubah Penawaran",
-		"resendQuoteErrorMessage": "Gagal mengirim penawaran.",
 		"toolsToggleAria": "Lihat alat lainnya",
 		"toolImage": "Gambar",
-		"toolQuote": "Penawaran",
 		"uploadImageErrorMessage": "Gagal mengirim gambar.",
 		"uploadingImage": "Mengirim gambar...",
-		"resendingQuote": "Mengirim penawaran..."
+		"toolFile": "File",
+		"toolBankAccount": "Rekening Bank",
+		"toolAddress": "Alamat Pengiriman",
+		"uploadFileErrorMessage": "Gagal mengirim file.",
+		"uploadingFile": "Mengirim file...",
+		"sendingBankAccount": "Mengirim info rekening...",
+		"sendingAddress": "Mengirim alamat...",
+		"noBankAccountGuidance": "Silakan daftarkan rekening bank Anda terlebih dahulu. Buka halaman pengaturan?",
+		"sendBankAccountErrorMessage": "Gagal mengirim info rekening.",
+		"noAddressGuidance": "Alamat pengiriman belum tersedia untuk listing ini.",
+		"sendAddressErrorMessage": "Gagal mengirim alamat."
 	},
 	"ChatMessageList": {
 		"dateLabel": "{day}/{month}/{year}",
@@ -1292,7 +1302,8 @@
 		"savingButton": "Menyimpan...",
 		"saveButton": "Simpan perubahan",
 		"submittingButton": "Mengirim...",
-		"submitButton": "Kirim penawaran"
+		"submitButton": "Kirim penawaran",
+		"updateSuccessResent": "Penawaran diubah. Penawaran yang diperbarui telah dikirim ke chat."
 	},
 	"MyQuotes": {
 		"emptyTitle": "Belum ada penawaran terkirim",
@@ -2101,37 +2112,81 @@
 		"office": {
 			"summary": "Alat tulis kantor murni belum terkonfirmasi wajib SNI (tidak pasti). Peralatan kantor elektronik (printer, dll.) berpotensi termasuk SNI wajib elektronik — perlu diperiksa per item.",
 			"representativeItems": [
-				{ "item": "Alat tulis kantor umum (kertas, alat tulis)", "note": "Daftar wajib belum terkonfirmasi (tidak pasti)" },
-				{ "item": "Peralatan kantor elektronik (printer, mesin multifungsi, dll.)", "note": "Berpotensi termasuk SNI wajib elektronik/telekomunikasi (tidak pasti, perlu diperiksa individual)" }
+				{
+					"item": "Alat tulis kantor umum (kertas, alat tulis)",
+					"note": "Daftar wajib belum terkonfirmasi (tidak pasti)"
+				},
+				{
+					"item": "Peralatan kantor elektronik (printer, mesin multifungsi, dll.)",
+					"note": "Berpotensi termasuk SNI wajib elektronik/telekomunikasi (tidak pasti, perlu diperiksa individual)"
+				}
 			],
-			"requiredDocuments": ["Dokumen pendaftaran usaha", "Spesifikasi produk", "Laporan uji dari lembaga uji terakreditasi (jika berlaku)"],
+			"requiredDocuments": [
+				"Dokumen pendaftaran usaha",
+				"Spesifikasi produk",
+				"Laporan uji dari lembaga uji terakreditasi (jika berlaku)"
+			],
 			"estimatedDuration": "Bervariasi tergantung item (perkiraan)"
 		},
 		"lab": {
 			"summary": "Alat ukur (timbangan, termometer, dll.) termasuk kategori SNI wajib. Peralatan lab non-pengukuran belum pasti termasuk atau tidak.",
 			"representativeItems": [
-				{ "item": "Alat ukur (timbangan, pengukur tekanan, termometer, dll.)", "note": "Kemungkinan besar termasuk kategori SNI wajib 'alat ukur'" },
-				{ "item": "Peralatan gelas laboratorium dan bahan habis pakai", "note": "Tidak pasti, perlu diperiksa individual" }
+				{
+					"item": "Alat ukur (timbangan, pengukur tekanan, termometer, dll.)",
+					"note": "Kemungkinan besar termasuk kategori SNI wajib 'alat ukur'"
+				},
+				{
+					"item": "Peralatan gelas laboratorium dan bahan habis pakai",
+					"note": "Tidak pasti, perlu diperiksa individual"
+				}
 			],
-			"requiredDocuments": ["Dokumen pendaftaran usaha", "Gambar teknis/spesifikasi produk", "Laporan uji dari lembaga uji terakreditasi", "Dokumen audit pabrik (jika berlaku)"],
+			"requiredDocuments": [
+				"Dokumen pendaftaran usaha",
+				"Gambar teknis/spesifikasi produk",
+				"Laporan uji dari lembaga uji terakreditasi",
+				"Dokumen audit pabrik (jika berlaku)"
+			],
 			"estimatedDuration": "8 minggu hingga 6 bulan (perkiraan, berdasarkan praktik umum industri)"
 		},
 		"machinery": {
 			"summary": "'Produk mesin, komponen, dan mesin perkakas' secara eksplisit termasuk dalam kategori SNI wajib.",
 			"representativeItems": [
-				{ "item": "Mesin perkakas (machine tools)", "note": "Secara eksplisit termasuk SNI wajib" },
-				{ "item": "Peralatan industri besar yang dibuat khusus (custom)", "note": "Peralatan pesanan individual (bukan barang konsumsi) mungkin mengikuti standar berbeda (tidak pasti)" }
+				{
+					"item": "Mesin perkakas (machine tools)",
+					"note": "Secara eksplisit termasuk SNI wajib"
+				},
+				{
+					"item": "Peralatan industri besar yang dibuat khusus (custom)",
+					"note": "Peralatan pesanan individual (bukan barang konsumsi) mungkin mengikuti standar berbeda (tidak pasti)"
+				}
 			],
-			"requiredDocuments": ["Dokumen pendaftaran usaha", "Gambar teknis/spesifikasi produk", "Laporan uji dari lembaga uji terakreditasi", "Sertifikat QMS (jika berlaku)", "Dokumen audit pabrik"],
+			"requiredDocuments": [
+				"Dokumen pendaftaran usaha",
+				"Gambar teknis/spesifikasi produk",
+				"Laporan uji dari lembaga uji terakreditasi",
+				"Sertifikat QMS (jika berlaku)",
+				"Dokumen audit pabrik"
+			],
 			"estimatedDuration": "8 minggu hingga 6 bulan (perkiraan)"
 		},
 		"chemical": {
 			"summary": "'Bahan baku kimia dan produk kimia' secara eksplisit termasuk dalam kategori SNI wajib. Sebagian item mungkin justru wajib pendaftaran produk K3L (Keamanan, Keselamatan, Kesehatan, Lingkungan) Kemendag — perlu ditentukan dulu apakah termasuk SNI atau K3L (pada prinsipnya saling eksklusif, meski belum pasti berdasarkan satu sumber). K3L diajukan melalui OSS oleh pelaku usaha di Indonesia (importir) yang memiliki NIB, tanpa biaya, berlaku 5 tahun.",
 			"representativeItems": [
-				{ "item": "Bahan baku kimia industri", "note": "Perlu ditentukan dulu apakah termasuk SNI atau K3L (42 kelompok produk K3L diperkirakan berfokus pada produk jadi yang mengandung bahan kimia; apakah bahan baku termasuk belum terkonfirmasi dari sumber)" },
-				{ "item": "Bahan kimia berbahaya/beracun", "note": "Kemungkinan besar wajib pendaftaran K3L (tidak pasti, perlu diperiksa individual). Pemohon K3L diperkirakan adalah importir di Indonesia" }
+				{
+					"item": "Bahan baku kimia industri",
+					"note": "Perlu ditentukan dulu apakah termasuk SNI atau K3L (42 kelompok produk K3L diperkirakan berfokus pada produk jadi yang mengandung bahan kimia; apakah bahan baku termasuk belum terkonfirmasi dari sumber)"
+				},
+				{
+					"item": "Bahan kimia berbahaya/beracun",
+					"note": "Kemungkinan besar wajib pendaftaran K3L (tidak pasti, perlu diperiksa individual). Pemohon K3L diperkirakan adalah importir di Indonesia"
+				}
 			],
-			"requiredDocuments": ["Dokumen pendaftaran usaha", "MSDS (Lembar Data Keselamatan Bahan)", "Laporan uji dari lembaga uji terakreditasi", "Dokumen pendaftaran produk K3L (jika berlaku)"],
+			"requiredDocuments": [
+				"Dokumen pendaftaran usaha",
+				"MSDS (Lembar Data Keselamatan Bahan)",
+				"Laporan uji dari lembaga uji terakreditasi",
+				"Dokumen pendaftaran produk K3L (jika berlaku)"
+			],
 			"estimatedDuration": "8 minggu hingga 6 bulan atau lebih (perkiraan, K3L dapat menambah waktu tambahan)"
 		},
 		"other": {
@@ -2145,5 +2200,20 @@
 		"title": "{count} ulasan",
 		"showMoreButton": "Tampilkan ulasan lainnya",
 		"anonymousCompany": "Perusahaan tidak diketahui"
+	},
+	"ChatFileCard": {
+		"loadError": "File tidak dapat dimuat",
+		"loading": "Memuat...",
+		"defaultName": "File lampiran"
+	},
+	"ChatInfoCard": {
+		"bankAccountTitle": "Rekening Bank",
+		"addressTitle": "Alamat Pengiriman",
+		"bankNameLabel": "Bank",
+		"accountNumberLabel": "Nomor Rekening",
+		"accountHolderLabel": "Nama Pemilik Rekening",
+		"provinsiLabel": "Provinsi",
+		"cityLabel": "Kota",
+		"addressLabel": "Alamat"
 	}
 }

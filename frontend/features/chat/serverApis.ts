@@ -19,7 +19,10 @@ type QuoteRow = {
 	} | null;
 };
 
-export async function getChatRooms(role: ChatRole, alwaysIncludeQuoteId?: string): Promise<ChatRoom[]> {
+export async function getChatRooms(
+	role: ChatRole,
+	alwaysIncludeQuoteId?: string,
+): Promise<ChatRoom[]> {
 	const supabase = await createServerSupabaseClient();
 	const {
 		data: { user },
@@ -60,7 +63,11 @@ export async function getChatRooms(role: ChatRole, alwaysIncludeQuoteId?: string
 			p_quote_ids: quoteIds,
 			p_user_id: user.id,
 		}),
-		supabase.from("chat_hidden_rooms").select("quote_id, hidden_at").eq("profile_id", user.id).in("quote_id", quoteIds),
+		supabase
+			.from("chat_hidden_rooms")
+			.select("quote_id, hidden_at")
+			.eq("profile_id", user.id)
+			.in("quote_id", quoteIds),
 	]);
 
 	if (rpcError) {
@@ -123,18 +130,25 @@ export async function getChatRooms(role: ChatRole, alwaysIncludeQuoteId?: string
 
 	const companyMap = new Map((companies ?? []).map((c) => [c.profile_id, c.company_name]));
 	const verificationMap = new Map(
-		(companies ?? []).map((c) => [c.profile_id, c.verification_status as ChatRoom["partnerVerificationStatus"]]),
+		(companies ?? []).map((c) => [
+			c.profile_id,
+			c.verification_status as ChatRoom["partnerVerificationStatus"],
+		]),
 	);
 	const contractSet = new Set((contracts ?? []).map((c) => c.quote_id));
 
 	// PDF 카드 메시지는 content가 메타 JSON이라 목록 미리보기에 그대로 노출되면 안 된다.
 	const tRoom = await getTranslations("ChatRoomList");
 
-	function toPreview(latest: { last_content: string; last_message_type: string | null } | undefined): string {
+	function toPreview(
+		latest: { last_content: string; last_message_type: string | null } | undefined,
+	): string {
 		if (!latest) return "";
 		if (latest.last_message_type === "invoice_pdf") return tRoom("invoicePdfPreview");
 		if (latest.last_message_type === "quote_pdf") return tRoom("quotePdfPreview");
 		if (latest.last_message_type === "image") return tRoom("imagePreview");
+		if (latest.last_message_type === "file") return tRoom("filePreview");
+		if (latest.last_message_type === "info") return tRoom("infoPreview");
 		return latest.last_content;
 	}
 
@@ -181,7 +195,10 @@ export async function getChatRooms(role: ChatRole, alwaysIncludeQuoteId?: string
 		.sort((a, b) => (b.lastMessageAt ?? "").localeCompare(a.lastMessageAt ?? ""));
 }
 
-export async function getChatContext(role: ChatRole, alwaysIncludeQuoteId?: string): Promise<ChatContext | null> {
+export async function getChatContext(
+	role: ChatRole,
+	alwaysIncludeQuoteId?: string,
+): Promise<ChatContext | null> {
 	const supabase = await createServerSupabaseClient();
 	const {
 		data: { user },
