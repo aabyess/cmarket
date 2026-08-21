@@ -1428,7 +1428,7 @@
 		"confirmReceiptTitle": "Check Receipt",
 		"days": "{count} days",
 		"deleteReceiptTitle": "Delete receipt",
-		"deliveryConfirmedTitle": "Delivery confirmed · {date}",
+		"deliveryConfirmedTitle": "Delivery confirmed",
 		"noPartnerCompanyName": "No company name",
 		"reuploadReceiptTitle": "Re-upload Receipt",
 		"statusCancelled": "Cancelled",

@@ -140,11 +140,8 @@ export function ContractListTable({
 													{contract.deliveryConfirmedAt && (
 														<span className="flex items-center gap-1 text-xs text-[#16A34A]">
 															<PackageCheck size={12} />
-															{t("deliveryConfirmedTitle", {
-																date: new Date(contract.deliveryConfirmedAt).toLocaleDateString(
-																	locale,
-																),
-															})}
+															{/* 좁은 액션 칸에서 날짜까지 넣으면 두 줄로 깨져서 테이블에선 라벨만 보여준다(카드 뷰는 날짜 유지). */}
+															{t("deliveryConfirmedTitle")}
 														</span>
 													)}
 													{contract.paymentConfirmedAt && myReviewMap.has(contract.id) && (
