@@ -1226,6 +1226,8 @@
 		}
 	},
 	"ListingBrowse": {
+		"columnsTwoAria": "Tampilkan 2 kolom",
+		"columnsThreeAria": "Tampilkan 3 kolom",
 		"tabAll": "Semua",
 		"tabActive": "Berlangsung",
 		"tabClosed": "Ditutup",
