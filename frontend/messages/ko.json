@@ -1732,6 +1732,17 @@
 		"monthsAgo": "{count}개월 전",
 		"yearsAgo": "{count}년 전"
 	},
+	"OnboardingChecklist": {
+		"title": "시작하기",
+		"progress": "{completed}/{total} 완료",
+		"closeAria": "닫기",
+		"reopenLabel": "체크리스트 다시 보기 ({completed}/{total})",
+		"itemVerification": "기업 인증 신청하기",
+		"itemFirstActionBuyer": "첫 공고 등록하기",
+		"itemFirstActionSeller": "첫 견적 제출하기",
+		"itemBankAccount": "정산 계좌 등록하기",
+		"itemLogo": "회사 로고 등록하기"
+	},
 	"BuyerDashboardData": {
 		"quoteLabel": "견적",
 		"listingLabel": "공고",

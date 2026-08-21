@@ -1745,6 +1745,17 @@
 		"monthsAgo": "{count} bulan lalu",
 		"yearsAgo": "{count} tahun lalu"
 	},
+	"OnboardingChecklist": {
+		"title": "Mulai",
+		"progress": "{completed}/{total} selesai",
+		"closeAria": "Tutup",
+		"reopenLabel": "Tampilkan checklist ({completed}/{total})",
+		"itemVerification": "Ajukan verifikasi perusahaan",
+		"itemFirstActionBuyer": "Posting permintaan pertama Anda",
+		"itemFirstActionSeller": "Kirim penawaran pertama Anda",
+		"itemBankAccount": "Daftarkan rekening bank Anda",
+		"itemLogo": "Tambahkan logo perusahaan Anda"
+	},
 	"BuyerDashboardData": {
 		"quoteLabel": "Penawaran",
 		"listingLabel": "Permintaan",
