@@ -1559,7 +1559,12 @@
 		"emptyTitle": "No conversations yet",
 		"emptyDescription": "Once you exchange quotes, you can chat here.",
 		"quotePdfPreview": "📄 Quote",
-		"invoicePdfPreview": "📄 Invoice"
+		"invoicePdfPreview": "📄 Invoice",
+		"imagePreview": "📷 Photo"
+	},
+	"ChatImageCard": {
+		"previewAlt": "Sent image",
+		"loadError": "Couldn't load the image"
 	},
 	"ChatRoomPanel": {
 		"awardErrorMessage": "Failed to award the quote.",
@@ -1582,8 +1587,12 @@
 		"hideRoomModalDescription": "The conversation history is kept, and this chat will reappear if the other party sends a new message.",
 		"hideRoomModalConfirm": "Leave",
 		"editQuoteButton": "Edit Quote",
-		"resendQuoteButton": "Send Quote",
-		"resendQuoteErrorMessage": "Failed to send the quote."
+		"resendQuoteErrorMessage": "Failed to send the quote.",
+		"toolsToggleAria": "More tools",
+		"toolImage": "Image",
+		"toolQuote": "Quote",
+		"uploadImageErrorMessage": "Failed to send the image.",
+		"uploadingImage": "Sending image..."
 	},
 	"ChatMessageList": {
 		"dateLabel": "{month}/{day}/{year}",
