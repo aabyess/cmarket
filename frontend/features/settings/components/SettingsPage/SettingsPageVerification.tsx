@@ -3,8 +3,9 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { AlertCircle, CheckCircle2, FileText, Loader2, ShieldCheck, Upload } from "lucide-react";
+import { cn } from "@/utils/cn";
 import { VerificationBadge } from "@/features/verification/components/VerificationBadge";
 import type { CompanyVerification } from "@/features/verification/types";
 import {
@@ -21,6 +22,7 @@ type SettingsPageVerificationProps = {
 	country: "korea" | "indonesia" | null;
 	businessNumber: string;
 	verification: CompanyVerification | null;
+	profileEditHref: string;
 };
 
 type Mode = "kr" | "document";
@@ -29,13 +31,13 @@ export function SettingsPageVerification({
 	country,
 	businessNumber,
 	verification,
+	profileEditHref,
 }: SettingsPageVerificationProps): React.JSX.Element {
 	const t = useTranslations("SettingsVerification");
 	const router = useRouter();
 	const status = verification?.status ?? "unverified";
 
 	const [mode, setMode] = useState<Mode>(country === "korea" ? "kr" : "document");
-	const [businessNumberInput, setBusinessNumberInput] = useState(businessNumber);
 	const [startDate, setStartDate] = useState("");
 	const [representativeName, setRepresentativeName] = useState("");
 	const [file, setFile] = useState<File | null>(null);
@@ -45,7 +47,7 @@ export function SettingsPageVerification({
 
 	async function handleVerifyKr(e: React.FormEvent): Promise<void> {
 		e.preventDefault();
-		if (!businessNumberInput || !startDate || !representativeName) {
+		if (!businessNumber || !startDate || !representativeName) {
 			setFeedback({ kind: "ERROR", message: t("requiredFields") });
 			return;
 		}
@@ -58,7 +60,7 @@ export function SettingsPageVerification({
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					businessNumber: businessNumberInput,
+					businessNumber,
 					startDate,
 					representativeName,
 				}),
@@ -160,11 +162,16 @@ export function SettingsPageVerification({
 									<label className={LABEL_CLASS}>{t("businessNumberLabel")}</label>
 									<input
 										type="text"
-										value={businessNumberInput}
+										value={businessNumber}
 										placeholder={t("businessNumberPlaceholder")}
-										onChange={(e) => setBusinessNumberInput(e.target.value)}
-										className={INPUT_CLASS}
+										readOnly
+										className={cn(INPUT_CLASS, "cursor-not-allowed bg-[#F9FAFB] text-[#6B7280]")}
 									/>
+									<Link
+										href={profileEditHref}
+										className="text-imsg-blue mt-1 inline-block text-xs font-medium hover:underline">
+										{t("editCompanyInfoLink")}
+									</Link>
 								</div>
 								<div>
 									<label className={LABEL_CLASS}>{t("startDateLabel")}</label>

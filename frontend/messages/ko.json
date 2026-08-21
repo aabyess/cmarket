@@ -1943,6 +1943,7 @@
 		"uploadError": "서류 제출 중 오류가 발생했습니다.",
 		"businessNumberLabel": "사업자등록번호",
 		"businessNumberPlaceholder": "123-45-67890",
+		"editCompanyInfoLink": "회사 정보에서 수정",
 		"startDateLabel": "개업일자",
 		"representativeNameLabel": "대표자명",
 		"representativeNamePlaceholder": "대표자 성명",

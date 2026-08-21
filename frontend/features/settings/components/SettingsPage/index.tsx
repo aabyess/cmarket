@@ -234,6 +234,7 @@ export function SettingsPage({
 				country={country}
 				businessNumber={businessNumber}
 				verification={verification}
+				profileEditHref={profileEditHref}
 			/>
 
 			{role === "seller" && bankAccount && <SettingsPageBankAccount bankAccount={bankAccount} />}

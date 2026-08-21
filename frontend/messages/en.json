@@ -1943,6 +1943,7 @@
 		"uploadError": "An error occurred while submitting the document.",
 		"businessNumberLabel": "Business Registration Number",
 		"businessNumberPlaceholder": "123-45-67890",
+		"editCompanyInfoLink": "Edit in company info",
 		"startDateLabel": "Date of Business Start",
 		"representativeNameLabel": "Representative Name",
 		"representativeNamePlaceholder": "Full name of the representative",

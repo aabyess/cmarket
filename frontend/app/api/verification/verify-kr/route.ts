@@ -45,9 +45,27 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
 	const admin = await createServerAdminClient();
 
-	const { data: profile } = await admin.from("profiles").select("country").eq("id", user.id).maybeSingle();
+	const [{ data: profile }, { data: company }] = await Promise.all([
+		admin.from("profiles").select("country").eq("id", user.id).maybeSingle(),
+		admin.from("companies").select("business_number").eq("profile_id", user.id).maybeSingle(),
+	]);
+
 	if (profile?.country !== "korea") {
 		return NextResponse.json({ error: "한국 계정만 이용할 수 있는 인증 방식입니다." }, { status: 400 });
+	}
+
+	// 국세청 진위확인은 "그 사업자번호가 실존하는지"만 확인할 뿐, 요청자 본인 소유인지는
+	// 확인해주지 않는다 — 확인 없이 그대로 승인하면 공개된 타사 정보로도 내 회사를
+	// 인증시킬 수 있어, 반드시 저장된 본인 사업자번호와 대조한 뒤에만 API를 호출한다.
+	const registeredBNo = company?.business_number?.replace(/\D/g, "") ?? "";
+	if (!registeredBNo) {
+		return NextResponse.json({ error: "회사 정보에서 사업자번호를 먼저 등록해주세요." }, { status: 400 });
+	}
+	if (registeredBNo !== bNo) {
+		return NextResponse.json(
+			{ error: "회사 정보에 등록된 사업자번호와 일치해야 합니다." },
+			{ status: 400 },
+		);
 	}
 
 	let result: NtsValidateResponse;
