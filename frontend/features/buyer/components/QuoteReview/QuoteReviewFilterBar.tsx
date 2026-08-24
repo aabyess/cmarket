@@ -48,7 +48,7 @@ export function QuoteReviewFilterBar({
 	};
 
 	return (
-		<div className="flex flex-wrap items-center gap-1 rounded-xl border border-[#E5E7EB] bg-white p-1">
+		<div className="border-hairline flex flex-wrap items-center gap-1 rounded-xl border bg-white p-1">
 			{HAS_FILTER_VALUES.map((value) => {
 				const isActive = hasFilter === value;
 				return (
@@ -61,26 +61,26 @@ export function QuoteReviewFilterBar({
 						)}
 					>
 						{hasFilterLabels[value]}
-						<span className={cn("text-xs", isActive ? "text-white/70" : "text-[#9CA3AF]")}>
+						<span className={cn("text-xs", isActive ? "text-white/70" : "text-subtle")}>
 							{hasFilterCounts[value]}
 						</span>
 					</button>
 				);
 			})}
 
-			<div className="mx-1 h-6 w-px bg-[#E5E7EB]" />
+			<div className="bg-hairline mx-1 h-6 w-px" />
 
 			<div className="flex items-center gap-2 px-2 py-1">
-				<Search size={16} className="shrink-0 text-[#9CA3AF]" />
+				<Search size={16} className="text-subtle shrink-0" />
 				<input
 					value={search}
 					onChange={(e) => onSearchChange(e.target.value)}
 					placeholder={t("searchPlaceholder")}
-					className="w-32 bg-transparent text-sm leading-none outline-none placeholder:text-[#9CA3AF]"
+					className="placeholder:text-subtle w-32 bg-transparent text-sm leading-none outline-none"
 				/>
 			</div>
 
-			<div className="mx-1 h-6 w-px bg-[#E5E7EB]" />
+			<div className="bg-hairline mx-1 h-6 w-px" />
 
 			<Popover className="relative">
 				{({ open }) => (
@@ -92,7 +92,7 @@ export function QuoteReviewFilterBar({
 
 						<AnimatedPopoverPanel
 							open={open}
-							className="absolute right-0 z-20 mt-2 w-44 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
+							className="border-hairline absolute right-0 z-20 mt-2 w-44 rounded-2xl border bg-white p-1.5 shadow-lg">
 							{SORT_VALUES.map((option) => (
 								<button
 									key={option}

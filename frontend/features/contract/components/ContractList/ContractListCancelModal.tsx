@@ -50,11 +50,11 @@ export function ContractListCancelModal({
 								exit={{ opacity: 0, scale: 0.95, y: 8 }}
 								transition={getModalPanelTransition(prefersReducedMotion)}
 								className="rounded-2xl bg-white p-6 shadow-xl">
-								<DialogTitle className="text-base font-semibold text-[#1F2937]">
+								<DialogTitle className="text-ink text-base font-semibold">
 									{t("cancelModalTitle")}
 								</DialogTitle>
 
-								<p className="mt-2 text-sm leading-relaxed text-[#6B7280]">
+								<p className="text-muted mt-2 text-sm leading-relaxed">
 									{t("cancelModalDescription")}
 								</p>
 
@@ -66,7 +66,7 @@ export function ContractListCancelModal({
 										rows={3}
 										maxLength={500}
 										placeholder={t("cancelReasonPlaceholder")}
-										className="focus:border-imsg-blue mt-1.5 w-full resize-none rounded-lg border border-[#E5E7EB] px-3 py-2.5 text-sm font-normal outline-none placeholder:text-[#9CA3AF]"
+										className="focus:border-imsg-blue border-hairline placeholder:text-subtle mt-1.5 w-full resize-none rounded-lg border px-3 py-2.5 text-sm font-normal outline-none"
 									/>
 								</label>
 
@@ -74,7 +74,7 @@ export function ContractListCancelModal({
 									<button
 										onClick={onClose}
 										disabled={isLoading}
-										className="flex-1 rounded-lg border border-[#E5E7EB] py-3 text-sm font-medium text-[#374151] transition-colors hover:bg-gray-50 disabled:opacity-50">
+										className="border-hairline flex-1 rounded-lg border py-3 text-sm font-medium text-[#374151] transition-colors hover:bg-gray-50 disabled:opacity-50">
 										{tModal("cancel")}
 									</button>
 									<button

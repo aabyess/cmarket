@@ -17,8 +17,8 @@ const CURRENCY_SYMBOL: Record<Currency, string> = {
 const STATUS_CLASS_NAME: Record<DisplayQuoteStatus, string> = {
 	pending: "bg-[#EFF6FF] text-imsg-blue",
 	awarded: "bg-[#F0FDF4] text-[#16A34A]",
-	rejected: "bg-[#F3F4F6] text-[#6B7280]",
-	failed: "bg-[#F3F4F6] text-[#6B7280]",
+	rejected: "bg-[#F3F4F6] text-muted",
+	failed: "bg-[#F3F4F6] text-muted",
 };
 
 function formatDate(iso: string): string {
@@ -49,7 +49,7 @@ export function MyQuotesCard({ quote, onViewListing, onGoToChat }: MyQuotesCardP
 		<div
 			className={cn(
 				"flex flex-col rounded-2xl border bg-white p-4",
-				isAwarded ? "border-2 border-[#16A34A]" : "border-[#E5E7EB]",
+				isAwarded ? "border-2 border-[#16A34A]" : "border-hairline",
 			)}>
 			<div className="mb-2 flex items-start justify-between gap-2">
 				<motion.span
@@ -61,34 +61,34 @@ export function MyQuotesCard({ quote, onViewListing, onGoToChat }: MyQuotesCardP
 					)}>
 					{statusLabels[displayStatus]}
 				</motion.span>
-				<span className="flex shrink-0 items-center gap-1 text-xs text-[#9CA3AF]">
+				<span className="text-subtle flex shrink-0 items-center gap-1 text-xs">
 					<Clock size={11} />
 					{formatDate(quote.createdAt)}
 				</span>
 			</div>
 
-			<p className="line-clamp-2 min-h-[42px] text-sm leading-snug font-medium text-[#1F2937]">
+			<p className="text-ink line-clamp-2 min-h-[42px] text-sm leading-snug font-medium">
 				{quote.listingTitle}
 			</p>
 
-			<p className="mt-1.5 flex items-center gap-1.5 truncate text-xs text-[#6B7280]">
+			<p className="text-muted mt-1.5 flex items-center gap-1.5 truncate text-xs">
 				<Building2 size={12} className="shrink-0" />
 				<span className="truncate">{quote.buyerCompanyName}</span>
 			</p>
 
 			<div className="mt-3 grid grid-cols-2 gap-2 border-t border-[#F3F4F6] pt-3">
 				<div className="min-w-0">
-					<p className="text-xs text-[#9CA3AF]">{t("priceLabel")}</p>
-					<p className="mt-0.5 truncate text-sm font-medium text-[#1F2937]">
+					<p className="text-subtle text-xs">{t("priceLabel")}</p>
+					<p className="text-ink mt-0.5 truncate text-sm font-medium">
 						{symbol} {quote.price.toLocaleString()}
 					</p>
 				</div>
 				<div className="min-w-0">
-					<p className="flex items-center gap-1 text-xs text-[#9CA3AF]">
+					<p className="text-subtle flex items-center gap-1 text-xs">
 						<Truck size={11} />
 						{t("deliveryLabel")}
 					</p>
-					<p className="mt-0.5 text-sm font-medium text-[#1F2937]">
+					<p className="text-ink mt-0.5 text-sm font-medium">
 						{t("daysSuffix", { days: quote.deliveryDays })}
 					</p>
 				</div>
@@ -97,7 +97,7 @@ export function MyQuotesCard({ quote, onViewListing, onGoToChat }: MyQuotesCardP
 			<div className="mt-3 flex gap-2">
 				<button
 					onClick={onViewListing}
-					className="flex-1 rounded-lg border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#374151] transition-colors hover:bg-gray-50">
+					className="border-hairline flex-1 rounded-lg border py-2.5 text-xs font-medium text-[#374151] transition-colors hover:bg-gray-50">
 					{t("viewListingButton")}
 				</button>
 				{isAwarded && (

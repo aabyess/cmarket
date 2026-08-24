@@ -12,12 +12,12 @@ const actionButtonVariants = cva(
 			tone: {
 				primary: "bg-[#16A34A] text-white hover:bg-[#15803D]",
 				primaryBlue: "bg-imsg-blue text-white hover:bg-[#2563EB]",
-				primaryDisabled: "border border-[#E5E7EB] text-[#9CA3AF]",
+				primaryDisabled: "border border-hairline text-subtle",
 				secondary: "text-imsg-blue border border-[#BFDBFE] bg-[#EFF6FF] hover:bg-[#DBEAFE]",
 				secondarySuccess: "border border-[#BBF7D0] bg-[#F0FDF4] text-[#16A34A] hover:bg-[#DCFCE7]",
-				secondaryNeutral: "border border-[#E5E7EB] text-[#374151] hover:bg-[#F9FAFB]",
+				secondaryNeutral: "border border-hairline text-[#374151] hover:bg-[#F9FAFB]",
 				danger: "border border-[#FECACA] bg-[#FEF2F2] text-[#DC2626] hover:bg-[#FEE2E2]",
-				dangerGhost: "text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#DC2626]",
+				dangerGhost: "text-subtle hover:bg-[#F3F4F6] hover:text-[#DC2626]",
 			},
 			size: {
 				sm: "px-2.5 py-1.5 text-xs",

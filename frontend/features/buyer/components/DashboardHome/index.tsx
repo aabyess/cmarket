@@ -126,7 +126,7 @@ export function DashboardHome({
 		<div className="mx-auto max-w-[1200px] px-2 py-6 xl:px-0.5">
 			{/* 배너 */}
 			<DashboardWidgetPop show={!isHidden("banner")}>
-				<div className="relative mb-6 overflow-hidden rounded-2xl border border-[#E5E7EB] bg-gradient-to-r from-[#EEF4FF] via-[#F5F9FF] to-white px-8 py-7">
+				<div className="border-hairline relative mb-6 overflow-hidden rounded-2xl border bg-gradient-to-r from-[#EEF4FF] via-[#F5F9FF] to-white px-8 py-7">
 					{isEditing && (
 						<DashboardWidgetRemoveButton
 							label={tCustomize("removeWidgetAria", { widget: widgetLabels.banner })}
@@ -271,7 +271,7 @@ export function DashboardHome({
 									</p>
 									<button
 										onClick={() => handleNavigate("/buyer/post-listing")}
-										className="hover:bg-imsg-surface mt-4 rounded-full border border-[#E5E7EB] px-4 py-2 text-sm font-medium text-[#0f172a] transition-colors">
+										className="hover:bg-imsg-surface border-hairline mt-4 rounded-full border px-4 py-2 text-sm font-medium text-[#0f172a] transition-colors">
 										{t("todoEmptyAction")}
 									</button>
 								</div>
@@ -374,7 +374,7 @@ export function DashboardHome({
 												<button
 													key={link.label}
 													onClick={() => handleNavigate(link.href)}
-													className="bg-imsg-surface flex flex-col gap-2.5 rounded-xl p-3 text-left transition-colors hover:bg-[#E5E7EB]">
+													className="bg-imsg-surface hover:bg-hairline flex flex-col gap-2.5 rounded-xl p-3 text-left transition-colors">
 													<span
 														className={cn(
 															"flex size-8 items-center justify-center rounded-lg",

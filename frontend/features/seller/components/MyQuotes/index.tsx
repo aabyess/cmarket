@@ -89,12 +89,12 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 
 	if (quotes.length === 0) {
 		return (
-			<div className="rounded-2xl border border-[#E5E7EB] bg-white p-12 text-center">
+			<div className="border-hairline rounded-2xl border bg-white p-12 text-center">
 				<div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F3F4F6]">
-					<Send size={26} className="text-[#9CA3AF]" />
+					<Send size={26} className="text-subtle" />
 				</div>
-				<p className="text-base font-medium text-[#1F2937]">{t("emptyTitle")}</p>
-				<p className="mt-1 text-sm text-[#6B7280]">
+				<p className="text-base font-medium text-ink">{t("emptyTitle")}</p>
+				<p className="mt-1 text-sm text-muted">
 					{t("emptyDescription")}
 				</p>
 				<button
@@ -119,8 +119,8 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 			/>
 
 			{sortedQuotes.length === 0 ? (
-				<div className="rounded-2xl border border-[#E5E7EB] bg-white p-10 text-center">
-					<p className="text-sm text-[#6B7280]">{t("filteredEmpty")}</p>
+				<div className="border-hairline rounded-2xl border bg-white p-10 text-center">
+					<p className="text-muted text-sm">{t("filteredEmpty")}</p>
 				</div>
 			) : (
 				// 그리드↔테이블 전환 시 상태 칩이 이전 위치에서 새 위치로 이동하는 느낌을 주기

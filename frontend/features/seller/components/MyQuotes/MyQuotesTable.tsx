@@ -19,8 +19,8 @@ const statusChip = cva("whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-
 		status: {
 			pending: "bg-[#EFF6FF] text-imsg-blue",
 			awarded: "bg-[#F0FDF4] text-[#16A34A]",
-			rejected: "bg-[#F3F4F6] text-[#6B7280]",
-			failed: "bg-[#F3F4F6] text-[#6B7280]",
+			rejected: "bg-[#F3F4F6] text-muted",
+			failed: "bg-[#F3F4F6] text-muted",
 		},
 	},
 	defaultVariants: { status: "pending" },

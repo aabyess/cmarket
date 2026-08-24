@@ -66,6 +66,13 @@
 	--color-imsg-surface: var(--imsg-surface);
 	--color-imsg-secondary: var(--imsg-secondary);
 
+	/* ─── Gray scale (여러 화면에 hex 리터럴로 흩어져 있던 값을 토큰화 — 값 자체는
+	   그대로, 참조만 이름 붙임) ─── */
+	--color-ink: #1f2937;
+	--color-muted: #6b7280;
+	--color-subtle: #9ca3af;
+	--color-hairline: #e5e7eb;
+
 	/* ─── Landing (무역 서류 컨셉 × 바틱 인디고 — 랜딩 전용) ─── */
 	--color-landing-ink: #1e2a5e;
 	--color-landing-paper: #f6f7fa;

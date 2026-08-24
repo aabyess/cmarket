@@ -130,12 +130,12 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 
 	if (listings.length === 0) {
 		return (
-			<div className="rounded-2xl border border-[#E5E7EB] bg-white p-12 text-center">
+			<div className="border-hairline rounded-2xl border bg-white p-12 text-center">
 				<div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F3F4F6]">
-					<Mail size={26} className="text-[#9CA3AF]" />
+					<Mail size={26} className="text-subtle" />
 				</div>
-				<p className="text-base font-medium text-[#1F2937]">{t("emptyTitle")}</p>
-				<p className="mt-1 text-sm text-[#6B7280]">
+				<p className="text-base font-medium text-ink">{t("emptyTitle")}</p>
+				<p className="mt-1 text-sm text-muted">
 					{t("emptyDescription")}
 				</p>
 				<button
@@ -164,9 +164,9 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 			</div>
 
 			{filteredListings.length === 0 ? (
-				<div className="rounded-2xl border border-[#E5E7EB] bg-white p-12 text-center">
-					<p className="text-sm font-medium text-[#1F2937]">{t("noResultsTitle")}</p>
-					<p className="mt-1 text-sm text-[#6B7280]">{t("noResultsDescription")}</p>
+				<div className="border-hairline rounded-2xl border bg-white p-12 text-center">
+					<p className="text-ink text-sm font-medium">{t("noResultsTitle")}</p>
+					<p className="text-muted mt-1 text-sm">{t("noResultsDescription")}</p>
 				</div>
 			) : (
 				// 그리드↔테이블 전환 시 상태 배지(낙찰/마감 칩)가 이전 위치에서 새 위치로
@@ -205,7 +205,7 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 								className={cn(
 									"flex flex-col rounded-2xl border bg-white p-4 text-left transition-all",
 									hasQuotes
-										? "border-[#E5E7EB] hover:border-[#BFDBFE] hover:shadow-sm"
+										? "border-hairline hover:border-[#BFDBFE] hover:shadow-sm"
 										: "border-[#F3F4F6] opacity-60 hover:opacity-100",
 								)}
 							>
@@ -227,7 +227,7 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 												className={cn(
 													"flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium",
 													remaining.isClosed
-														? "bg-[#F3F4F6] text-[#6B7280]"
+														? "bg-[#F3F4F6] text-muted"
 														: remaining.isUrgent
 															? "bg-[#FEF2F2] text-[#DC2626]"
 															: "bg-[#EFF6FF] text-imsg-blue",
@@ -237,7 +237,7 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 												{remaining.isClosed ? t("closed") : t("deadlineDays", { days: remaining.days })}
 											</motion.span>
 										)}
-										<span className="whitespace-nowrap rounded-full bg-[#F3F4F6] px-2 py-0.5 text-xs font-medium text-[#6B7280]">
+										<span className="whitespace-nowrap rounded-full bg-[#F3F4F6] px-2 py-0.5 text-xs font-medium text-muted">
 											{categoryLabels[listing.category]}
 										</span>
 									</div>
@@ -249,11 +249,11 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 									)}
 								</div>
 
-								<p className="line-clamp-2 min-h-[42px] text-sm font-medium leading-snug text-[#1F2937]">
+								<p className="line-clamp-2 min-h-[42px] text-sm font-medium leading-snug text-ink">
 									{listing.title}
 								</p>
 
-								<p className="mt-1.5 flex items-center gap-1.5 text-xs text-[#9CA3AF]">
+								<p className="mt-1.5 flex items-center gap-1.5 text-xs text-subtle">
 									<CalendarDays size={12} className="shrink-0" />
 									{t("registeredAndDeadline", {
 										registered: new Date(listing.createdAt).toLocaleDateString(locale, {
@@ -270,32 +270,32 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 								{hasQuotes ? (
 									<div className="mt-3 grid grid-cols-2 gap-2 border-t border-[#F3F4F6] pt-3">
 										<div className="min-w-0">
-											<p className="flex items-center gap-1 text-xs text-[#9CA3AF]">
+											<p className="flex items-center gap-1 text-xs text-subtle">
 												<TrendingDown size={11} className="text-[#D97706]" />
 												{t("lowestPriceLabel")}
 											</p>
-											<p className="mt-0.5 truncate text-sm font-medium text-[#1F2937]">
+											<p className="mt-0.5 truncate text-sm font-medium text-ink">
 												{symbol} {listing.lowestPrice?.toLocaleString()}
 											</p>
 											{listing.totalBudget !== null && (
-												<p className="truncate text-xs text-[#9CA3AF]">
+												<p className="truncate text-xs text-subtle">
 													{t("budgetLabel", { amount: `${symbol} ${listing.totalBudget.toLocaleString()}` })}
 												</p>
 											)}
 										</div>
 										<div className="min-w-0">
-											<p className="flex items-center gap-1 text-xs text-[#9CA3AF]">
+											<p className="flex items-center gap-1 text-xs text-subtle">
 												<Truck size={11} className="text-[#16A34A]" />
 												{t("fastestDeliveryLabel")}
 											</p>
-											<p className="mt-0.5 text-sm font-medium text-[#1F2937]">
+											<p className="mt-0.5 text-sm font-medium text-ink">
 												{t("days", { count: listing.fastestDays ?? 0 })}
 											</p>
 										</div>
 									</div>
 								) : (
 									<div className="mt-3 border-t border-[#F3F4F6] pt-3">
-										<p className="text-xs text-[#9CA3AF]">
+										<p className="text-xs text-subtle">
 											{t("noQuotesYet")}
 											{!remaining.isClosed && ` · ${t("deadlineDays", { days: remaining.days })}`}
 										</p>

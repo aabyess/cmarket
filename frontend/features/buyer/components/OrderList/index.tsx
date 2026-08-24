@@ -159,12 +159,12 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 
 	if (listings.length === 0) {
 		return (
-			<div className="rounded-2xl border border-[#E5E7EB] bg-white p-12 text-center">
+			<div className="border-hairline rounded-2xl border bg-white p-12 text-center">
 				<div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F3F4F6]">
-					<FileText size={26} className="text-[#9CA3AF]" />
+					<FileText size={26} className="text-subtle" />
 				</div>
-				<p className="text-base font-medium text-[#1F2937]">{t("emptyTitle")}</p>
-				<p className="mt-1 text-sm text-[#6B7280]">{t("emptyDescription")}</p>
+				<p className="text-ink text-base font-medium">{t("emptyTitle")}</p>
+				<p className="text-muted mt-1 text-sm">{t("emptyDescription")}</p>
 				<button
 					onClick={() => router.push("/buyer/post-listing")}
 					className="bg-imsg-blue mt-5 rounded-lg px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB]">
@@ -197,9 +197,9 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 			/>
 
 			{filteredListings.length === 0 ? (
-				<div className="rounded-2xl border border-[#E5E7EB] bg-white p-12 text-center">
-					<p className="text-sm font-medium text-[#1F2937]">{t("noResultsTitle")}</p>
-					<p className="mt-1 text-sm text-[#6B7280]">{t("noResultsDescription")}</p>
+				<div className="border-hairline rounded-2xl border bg-white p-12 text-center">
+					<p className="text-ink text-sm font-medium">{t("noResultsTitle")}</p>
+					<p className="text-muted mt-1 text-sm">{t("noResultsDescription")}</p>
 				</div>
 			) : (
 				<>

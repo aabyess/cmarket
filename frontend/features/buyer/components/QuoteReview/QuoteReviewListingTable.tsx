@@ -31,10 +31,10 @@ export function QuoteReviewListingTable({ listings }: QuoteReviewListingTablePro
 	const router = useRouter();
 
 	return (
-		<div className="overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white">
+		<div className="border-hairline overflow-hidden rounded-2xl border bg-white">
 			<table className="w-full border-collapse text-sm">
 				<thead>
-					<tr className="border-b border-[#E5E7EB] bg-[#F9FAFB] text-left text-xs font-medium text-[#9CA3AF]">
+					<tr className="border-hairline text-subtle border-b bg-[#F9FAFB] text-left text-xs font-medium">
 						<th className="px-4 py-3">{t("columnStatus")}</th>
 						<th className="px-4 py-3">{t("columnTitle")}</th>
 						<th className="px-4 py-3">{t("columnCategory")}</th>
@@ -75,7 +75,7 @@ export function QuoteReviewListingTable({ listings }: QuoteReviewListingTablePro
 											className={cn(
 												"whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium",
 												remaining.isClosed
-													? "bg-[#F3F4F6] text-[#6B7280]"
+													? "text-muted bg-[#F3F4F6]"
 													: remaining.isUrgent
 														? "bg-[#FEF2F2] text-[#DC2626]"
 														: "bg-[#EFF6FF] text-imsg-blue",
@@ -85,19 +85,19 @@ export function QuoteReviewListingTable({ listings }: QuoteReviewListingTablePro
 										</motion.span>
 									)}
 								</td>
-								<td className="max-w-[320px] truncate px-4 py-3 font-medium text-[#1F2937]">
+								<td className="text-ink max-w-[320px] truncate px-4 py-3 font-medium">
 									{listing.title}
 								</td>
-								<td className="px-4 py-3 text-[#6B7280]">
+								<td className="px-4 py-3 text-muted">
 									{categoryLabels[listing.category]}
 								</td>
-								<td className="px-4 py-3 text-[#1F2937]">
+								<td className="px-4 py-3 text-ink">
 									{hasQuotes ? t("quoteCount", { count: listing.quoteCount }) : t("noQuotes")}
 								</td>
-								<td className="px-4 py-3 text-[#1F2937]">
+								<td className="text-ink px-4 py-3">
 									{hasQuotes ? `${symbol} ${listing.lowestPrice?.toLocaleString()}` : "-"}
 								</td>
-								<td className="px-4 py-3 text-[#1F2937]">
+								<td className="text-ink px-4 py-3">
 									{hasQuotes ? t("days", { count: listing.fastestDays ?? 0 }) : "-"}
 								</td>
 							</tr>

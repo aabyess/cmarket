@@ -52,7 +52,7 @@ export function QuoteReviewRecommendedCard({
 				)}
 				<span className="flex min-w-0 flex-1 items-center gap-1.5 text-base font-semibold text-[#0f172a]">
 					<span className="truncate">{quote.seller.companyName}</span>
-					<ExternalLink size={11} className="shrink-0 text-[#9CA3AF]" />
+					<ExternalLink size={11} className="text-subtle shrink-0" />
 					<VerificationBadge status={quote.seller.verificationStatus} />
 					{quote.seller.ratingCount > 0 && (
 						<RatingSummary

@@ -12,7 +12,7 @@ import type { PaymentStatus } from "@/features/payments/types";
 import type { MyReview } from "@/features/reviews/types";
 
 const STATUS_STYLE: Record<PaymentStatus, string> = {
-	awaitingReceipt: "bg-[#F3F4F6] text-[#6B7280]",
+	awaitingReceipt: "bg-[#F3F4F6] text-muted",
 	awaitingConfirmation: "bg-[#FFFBEB] text-[#D97706]",
 	confirmed: "bg-[#F0FDF4] text-[#16A34A]",
 };
@@ -59,11 +59,11 @@ export function PaymentsListTable({
 	const methodLabels = { wire: t("methodWire") };
 
 	return (
-		<div className="hidden overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white lg:block">
+		<div className="border-hairline hidden overflow-hidden rounded-2xl border bg-white lg:block">
 			<div className="overflow-x-auto">
 				<table className="w-full border-collapse text-sm">
 					<thead>
-						<tr className="border-b border-[#E5E7EB] bg-[#F9FAFB] text-left text-xs font-medium text-[#9CA3AF]">
+						<tr className="border-hairline text-subtle border-b bg-[#F9FAFB] text-left text-xs font-medium">
 							<th className="px-4 py-3">{t("columnContractNumber")}</th>
 							<th className="px-4 py-3">{t("columnListingTitle")}</th>
 							<th className="px-4 py-3">{t("columnTransactionDate")}</th>
@@ -78,21 +78,21 @@ export function PaymentsListTable({
 							const status = getPaymentStatus(contract);
 							return (
 								<tr key={contract.id} className="transition-colors hover:bg-[#F9FAFB]">
-									<td className="px-4 py-3 font-mono text-xs text-[#6B7280]">
+									<td className="text-muted px-4 py-3 font-mono text-xs">
 										{formatContractNumber(contract.id)}
 									</td>
-									<td className="max-w-[220px] truncate px-4 py-3 font-medium text-[#1F2937]">
+									<td className="text-ink max-w-[220px] truncate px-4 py-3 font-medium">
 										{contract.listing.title}
 									</td>
-									<td className="px-4 py-3 whitespace-nowrap text-[#9CA3AF]">
+									<td className="text-subtle px-4 py-3 whitespace-nowrap">
 										{new Date(contract.createdAt).toLocaleDateString(locale)}
 									</td>
-									<td className="px-4 py-3 whitespace-nowrap text-[#1F2937]">
+									<td className="text-ink px-4 py-3 whitespace-nowrap">
 										{CURRENCY_SYMBOL[contract.quote.currency as Currency]}{" "}
 										{contract.quote.price.toLocaleString()}
 									</td>
 									<td className="px-4 py-3 whitespace-nowrap">
-										<span className="rounded-full bg-[#F3F4F6] px-2.5 py-1 text-xs font-medium text-[#6B7280]">
+										<span className="text-muted rounded-full bg-[#F3F4F6] px-2.5 py-1 text-xs font-medium">
 											{methodLabels[PAYMENT_METHOD]}
 										</span>
 									</td>
@@ -117,7 +117,7 @@ export function PaymentsListTable({
 													{uploadingId === contract.id ? t("uploading") : t("uploadReceiptButton")}
 												</ActionButton>
 											) : (
-												<span className="block text-right text-xs text-[#9CA3AF]">-</span>
+												<span className="text-subtle block text-right text-xs">-</span>
 											)
 										) : (
 											<div className="flex flex-col items-stretch gap-1.5">

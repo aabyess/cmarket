@@ -69,7 +69,7 @@ function OrderListFilterPresetSaveForm({
 					if (e.key === "Escape") setIsNaming(false);
 				}}
 				placeholder={t("presetsNamePlaceholder")}
-				className="focus:border-imsg-blue min-w-0 flex-1 rounded-lg border border-[#E5E7EB] px-2.5 py-1.5 text-xs outline-none"
+				className="focus:border-imsg-blue border-hairline min-w-0 flex-1 rounded-lg border px-2.5 py-1.5 text-xs outline-none"
 			/>
 			<button
 				onClick={handleSave}
@@ -103,16 +103,16 @@ export function OrderListFilterPresets({
 			<Popover className="relative">
 				{({ open, close }) => (
 					<>
-						<PopoverButton className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
+						<PopoverButton className="border-hairline flex items-center gap-1.5 rounded-xl border bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
 							<Bookmark size={14} />
 							{t("presetsLabel")}
 						</PopoverButton>
 
 						<AnimatedPopoverPanel
 							open={open}
-							className="absolute left-0 z-20 mt-2 w-56 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
+							className="border-hairline absolute left-0 z-20 mt-2 w-56 rounded-2xl border bg-white p-1.5 shadow-lg">
 							{presets.length === 0 ? (
-								<p className="px-3 py-2 text-xs text-[#9CA3AF]">{t("presetsEmpty")}</p>
+								<p className="text-subtle px-3 py-2 text-xs">{t("presetsEmpty")}</p>
 							) : (
 								presets.map((preset) => (
 									<div key={preset.id} className="flex items-center gap-1">
@@ -127,14 +127,14 @@ export function OrderListFilterPresets({
 										<button
 											onClick={() => setDeletingPreset(preset)}
 											aria-label={t("presetsDeleteAria", { name: preset.name })}
-											className="flex size-7 shrink-0 items-center justify-center rounded-lg text-[#9CA3AF] transition-colors hover:bg-[#FEF2F2] hover:text-[#DC2626]">
+											className="text-subtle flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-[#FEF2F2] hover:text-[#DC2626]">
 											<X size={13} />
 										</button>
 									</div>
 								))
 							)}
 
-							<div className="mx-1 my-1.5 h-px bg-[#E5E7EB]" />
+							<div className="bg-hairline mx-1 my-1.5 h-px" />
 
 							<OrderListFilterPresetSaveForm onSave={onSave} />
 						</AnimatedPopoverPanel>

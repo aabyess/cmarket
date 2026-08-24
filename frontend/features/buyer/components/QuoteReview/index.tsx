@@ -141,7 +141,7 @@ export function QuoteReview({ quotes, listingItems, backHref }: QuoteReviewProps
 				<button
 					type="button"
 					onClick={() => setShowAllQuotes((prev) => !prev)}
-					className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white py-2.5 text-sm font-medium text-[#374151] transition-colors hover:bg-imsg-surface">
+					className="border-hairline hover:bg-imsg-surface mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl border bg-white py-2.5 text-sm font-medium text-[#374151] transition-colors">
 					{showAllQuotes ? (
 						<>
 							<ChevronUp size={14} />
