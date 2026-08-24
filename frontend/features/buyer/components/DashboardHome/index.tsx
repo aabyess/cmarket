@@ -13,6 +13,7 @@ import { DashboardTodoRow } from "@/features/shared/components/DashboardTodoRow"
 import { DashboardCustomizeBar } from "@/features/shared/components/DashboardCustomizeBar";
 import { DashboardWidgetRemoveButton } from "@/features/shared/components/DashboardWidgetRemoveButton";
 import { DashboardReorderableWidget } from "@/features/shared/components/DashboardReorderableWidget";
+import { DashboardWidgetPop } from "@/features/shared/components/DashboardWidgetPop";
 import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import type {
 	BuyerActivity,
@@ -124,7 +125,7 @@ export function DashboardHome({
 	return (
 		<div className="mx-auto max-w-[1200px] px-2 py-6 xl:px-0.5">
 			{/* 배너 */}
-			{!isHidden("banner") && (
+			<DashboardWidgetPop show={!isHidden("banner")}>
 				<div className="relative mb-6 overflow-hidden rounded-2xl border border-[#E5E7EB] bg-gradient-to-r from-[#EEF4FF] via-[#F5F9FF] to-white px-8 py-7">
 					{isEditing && (
 						<DashboardWidgetRemoveButton
@@ -154,7 +155,7 @@ export function DashboardHome({
 						<p className="text-imsg-secondary mt-1.5 text-sm">{t("welcomeSubcopy")}</p>
 					</div>
 				</div>
-			)}
+			</DashboardWidgetPop>
 
 			<DashboardCustomizeBar
 				isEditing={isEditing}
@@ -164,7 +165,7 @@ export function DashboardHome({
 				onResetHidden={resetHidden}
 			/>
 
-			{!isHidden("onboardingChecklist") && (
+			<DashboardWidgetPop show={!isHidden("onboardingChecklist")}>
 				<div className="relative">
 					{isEditing && (
 						<DashboardWidgetRemoveButton
@@ -174,10 +175,10 @@ export function DashboardHome({
 					)}
 					<OnboardingChecklist checklist={onboardingChecklist} />
 				</div>
-			)}
+			</DashboardWidgetPop>
 
 			{/* 나의 거래 요약 */}
-			{!isHidden("tradeSummary") && (
+			<DashboardWidgetPop show={!isHidden("tradeSummary")}>
 				<div className="relative mb-6">
 					{isEditing && (
 						<DashboardWidgetRemoveButton
@@ -217,13 +218,13 @@ export function DashboardHome({
 						</div>
 					</div>
 				</div>
-			)}
+			</DashboardWidgetPop>
 
 			{/* Two Column */}
 			<div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
 				{/* Todo */}
-				{!isHidden("todo") && (
-					<div className="relative lg:col-span-2">
+				<DashboardWidgetPop show={!isHidden("todo")} className="lg:col-span-2">
+					<div className="relative">
 						{isEditing && (
 							<DashboardWidgetRemoveButton
 								label={tCustomize("removeWidgetAria", { widget: widgetLabels.todo })}
@@ -324,7 +325,7 @@ export function DashboardHome({
 							)}
 						</div>
 					</div>
-				)}
+				</DashboardWidgetPop>
 
 				{/* Side */}
 				<Reorder.Group
@@ -333,108 +334,110 @@ export function DashboardHome({
 					values={visibleSideOrder}
 					onReorder={handleReorderSide}
 					className="space-y-4">
-					{visibleSideOrder.map((key) => (
-						<DashboardReorderableWidget
-							key={key}
-							value={key}
-							isEditing={isEditing}
-							dragHandleLabel={tCustomize("dragWidgetAria", { widget: widgetLabels[key] })}>
-							{key === "shortcuts" ? (
-								<div className="relative rounded-2xl bg-white p-4 shadow-sm">
-									{isEditing && (
-										<DashboardWidgetRemoveButton
-											label={tCustomize("removeWidgetAria", { widget: widgetLabels.shortcuts })}
-											onRemove={() => hideWidget("shortcuts")}
-										/>
-									)}
-									<h2 className="text-imsg-secondary mb-3 text-sm font-semibold tracking-wider uppercase">
-										{t("shortcutsTitle")}
-									</h2>
-									<div className="grid grid-cols-2 gap-2">
-										{[
-											{
-												label: t("shortcutQuotesLabel"),
-												sub: t("shortcutQuotesSub", { count: data.badges.quotes }),
-												icon: Mail,
-												iconBg: "bg-amber-50",
-												color: "text-amber-500",
-												href: "/buyer/quote-review",
-											},
-											{
-												label: t("shortcutChatLabel"),
-												sub: t("shortcutChatSub", { count: data.badges.chats }),
-												icon: MessageSquare,
-												iconBg: "bg-blue-50",
-												color: "text-imsg-blue",
-												href: "/buyer/chat",
-											},
-										].map((link) => (
-											<button
-												key={link.label}
-												onClick={() => handleNavigate(link.href)}
-												className="bg-imsg-surface flex flex-col gap-2.5 rounded-xl p-3 text-left transition-colors hover:bg-[#E5E7EB]">
-												<span
-													className={cn(
-														"flex size-8 items-center justify-center rounded-lg",
-														link.iconBg,
-													)}>
-													<link.icon size={16} className={link.color} />
-												</span>
-												<span>
-													<span className="block text-sm font-semibold text-[#0f172a]">
-														{link.label}
-													</span>
-													<span className="text-imsg-secondary block text-sm">{link.sub}</span>
-												</span>
-											</button>
-										))}
-									</div>
-								</div>
-							) : (
-								<div className="relative rounded-2xl bg-white shadow-sm">
-									{isEditing && (
-										<DashboardWidgetRemoveButton
-											label={tCustomize("removeWidgetAria", {
-												widget: widgetLabels.recentActivity,
-											})}
-											onRemove={() => hideWidget("recentActivity")}
-										/>
-									)}
-									<div className="flex items-center gap-2 px-4 py-3">
-										<h2 className="text-imsg-secondary text-sm font-semibold tracking-wider uppercase">
-											{t("recentActivityTitle")}
-										</h2>
-									</div>
-									<div className="h-px bg-[#F2F2F7]" />
-									<ul className="p-2">
-										{data.activities.length === 0 ? (
-											<li className="text-imsg-secondary py-8 text-center text-sm">
-												{t("recentActivityEmpty")}
-											</li>
-										) : (
-											data.activities.map((activity, i) => (
-												<li key={i}>
-													<button
-														onClick={() => handleActivityClick(activity)}
-														className="hover:bg-imsg-surface flex w-full items-start gap-3 rounded-xl px-2 py-2.5 text-left transition-colors">
-														<span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-blue-50">
-															<Bell size={12} className="text-imsg-blue" />
-														</span>
-														<div className="min-w-0 flex-1">
-															<p className="text-sm text-[#0f172a]">{activity.title}</p>
-															<p className="text-imsg-secondary mt-0.5 text-sm">
-																{activity.timeText}
-															</p>
-														</div>
-													</button>
-												</li>
-											))
+					<AnimatePresence initial={false}>
+						{visibleSideOrder.map((key) => (
+							<DashboardReorderableWidget
+								key={key}
+								value={key}
+								isEditing={isEditing}
+								dragHandleLabel={tCustomize("dragWidgetAria", { widget: widgetLabels[key] })}>
+								{key === "shortcuts" ? (
+									<div className="relative rounded-2xl bg-white p-4 shadow-sm">
+										{isEditing && (
+											<DashboardWidgetRemoveButton
+												label={tCustomize("removeWidgetAria", { widget: widgetLabels.shortcuts })}
+												onRemove={() => hideWidget("shortcuts")}
+											/>
 										)}
-									</ul>
-								</div>
-							)}
-						</DashboardReorderableWidget>
-					))}
+										<h2 className="text-imsg-secondary mb-3 text-sm font-semibold tracking-wider uppercase">
+											{t("shortcutsTitle")}
+										</h2>
+										<div className="grid grid-cols-2 gap-2">
+											{[
+												{
+													label: t("shortcutQuotesLabel"),
+													sub: t("shortcutQuotesSub", { count: data.badges.quotes }),
+													icon: Mail,
+													iconBg: "bg-amber-50",
+													color: "text-amber-500",
+													href: "/buyer/quote-review",
+												},
+												{
+													label: t("shortcutChatLabel"),
+													sub: t("shortcutChatSub", { count: data.badges.chats }),
+													icon: MessageSquare,
+													iconBg: "bg-blue-50",
+													color: "text-imsg-blue",
+													href: "/buyer/chat",
+												},
+											].map((link) => (
+												<button
+													key={link.label}
+													onClick={() => handleNavigate(link.href)}
+													className="bg-imsg-surface flex flex-col gap-2.5 rounded-xl p-3 text-left transition-colors hover:bg-[#E5E7EB]">
+													<span
+														className={cn(
+															"flex size-8 items-center justify-center rounded-lg",
+															link.iconBg,
+														)}>
+														<link.icon size={16} className={link.color} />
+													</span>
+													<span>
+														<span className="block text-sm font-semibold text-[#0f172a]">
+															{link.label}
+														</span>
+														<span className="text-imsg-secondary block text-sm">{link.sub}</span>
+													</span>
+												</button>
+											))}
+										</div>
+									</div>
+								) : (
+									<div className="relative rounded-2xl bg-white shadow-sm">
+										{isEditing && (
+											<DashboardWidgetRemoveButton
+												label={tCustomize("removeWidgetAria", {
+													widget: widgetLabels.recentActivity,
+												})}
+												onRemove={() => hideWidget("recentActivity")}
+											/>
+										)}
+										<div className="flex items-center gap-2 px-4 py-3">
+											<h2 className="text-imsg-secondary text-sm font-semibold tracking-wider uppercase">
+												{t("recentActivityTitle")}
+											</h2>
+										</div>
+										<div className="h-px bg-[#F2F2F7]" />
+										<ul className="p-2">
+											{data.activities.length === 0 ? (
+												<li className="text-imsg-secondary py-8 text-center text-sm">
+													{t("recentActivityEmpty")}
+												</li>
+											) : (
+												data.activities.map((activity, i) => (
+													<li key={i}>
+														<button
+															onClick={() => handleActivityClick(activity)}
+															className="hover:bg-imsg-surface flex w-full items-start gap-3 rounded-xl px-2 py-2.5 text-left transition-colors">
+															<span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-blue-50">
+																<Bell size={12} className="text-imsg-blue" />
+															</span>
+															<div className="min-w-0 flex-1">
+																<p className="text-sm text-[#0f172a]">{activity.title}</p>
+																<p className="text-imsg-secondary mt-0.5 text-sm">
+																	{activity.timeText}
+																</p>
+															</div>
+														</button>
+													</li>
+												))
+											)}
+										</ul>
+									</div>
+								)}
+							</DashboardReorderableWidget>
+						))}
+					</AnimatePresence>
 				</Reorder.Group>
 			</div>
 		</div>
