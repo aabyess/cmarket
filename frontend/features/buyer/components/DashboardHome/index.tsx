@@ -34,8 +34,8 @@ const KIND_LABEL_KEY: Record<BuyerTodoKind, string> = {
 	paymentPending: "kindPaymentPending",
 };
 
-// 배너·온보딩 체크리스트·할 일 위젯은 핵심 액션 정보라 커스터마이징 대상에서 뺐다.
-type BuyerWidgetKey = "tradeSummary" | "shortcuts" | "recentActivity";
+// 배너·온보딩 체크리스트는 핵심 액션 정보라 커스터마이징 대상에서 뺐다.
+type BuyerWidgetKey = "todo" | "tradeSummary" | "shortcuts" | "recentActivity";
 
 export function DashboardHome({
 	companyName,
@@ -57,6 +57,7 @@ export function DashboardHome({
 		useDashboardWidgets<BuyerWidgetKey>("mitrapay:buyer-dashboard-hidden-widgets");
 
 	const widgetLabels: Record<BuyerWidgetKey, string> = {
+		todo: t("todoTitle"),
 		tradeSummary: t("tradeSummaryTitle"),
 		shortcuts: t("shortcutsTitle"),
 		recentActivity: t("recentActivityTitle"),
@@ -176,101 +177,109 @@ export function DashboardHome({
 			{/* Two Column */}
 			<div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
 				{/* Todo */}
-				<div className="lg:col-span-2">
-					<div className="rounded-2xl bg-white shadow-sm">
-						<div className="flex items-center justify-between px-5 py-4">
-							<div className="flex items-center gap-2">
-								<h2 className="text-base font-semibold text-[#0f172a]">{t("todoTitle")}</h2>
-								{data.todos.length > 0 && (
-									<span className="text-imsg-secondary text-sm font-normal">
-										{t("todoCount", { count: data.todos.length })}
-									</span>
-								)}
-								{urgentTodos.length > 0 && (
-									<span className="rounded-full bg-red-50 px-2 py-0.5 text-sm font-semibold text-red-500">
-										{t("urgentCount", { count: urgentTodos.length })}
-									</span>
-								)}
-							</div>
-							<div className="flex items-center gap-3">
-								{data.todos.length > 0 && (
-									<ViewModeToggle value={viewMode} onChange={setViewMode} />
-								)}
-								<button
-									onClick={() => handleNavigate("/buyer/order-list")}
-									className="text-imsg-blue text-sm font-medium hover:underline">
-									{t("viewAll")}
-								</button>
-							</div>
-						</div>
-
-						<div className="h-px bg-[#F2F2F7]" />
-
-						{data.todos.length === 0 ? (
-							<div className="flex flex-col items-center justify-center py-16 text-center">
-								<div className="bg-imsg-surface mb-3 flex size-12 items-center justify-center rounded-full">
-									<Clock size={20} className="text-imsg-secondary" />
-								</div>
-								<p className="text-base font-medium text-[#0f172a]">{t("todoEmptyTitle")}</p>
-								<p className="text-imsg-secondary mt-1 text-sm">
-									{t("todoEmptyDescription", { count: data.listingCount })}
-								</p>
-								<button
-									onClick={() => handleNavigate("/buyer/post-listing")}
-									className="hover:bg-imsg-surface mt-4 rounded-full border border-[#E5E7EB] px-4 py-2 text-sm font-medium text-[#0f172a] transition-colors">
-									{t("todoEmptyAction")}
-								</button>
-							</div>
-						) : (
-							<>
-								<AnimatePresence initial={false}>
-									{isExpanded && (
-										<motion.div
-											key="todo-list"
-											initial={prefersReducedMotion ? false : { height: 0, opacity: 0 }}
-											animate={{ height: "auto", opacity: 1 }}
-											exit={prefersReducedMotion ? { opacity: 0 } : { height: 0, opacity: 0 }}
-											transition={
-												prefersReducedMotion
-													? { duration: 0 }
-													: { type: "spring", stiffness: 400, damping: 34 }
-											}
-											className="overflow-hidden">
-											<ul
-												className={cn(
-													viewMode === "list"
-														? "divide-y divide-[#F2F2F7]"
-														: "grid grid-cols-2 gap-2 p-3",
-												)}>
-												{data.todos.map((todo) => (
-													<DashboardTodoRow
-														key={todo.id}
-														id={todo.id}
-														variant={viewMode === "list" ? "row" : "card"}
-														kind={todo.kind}
-														kindLabel={t(KIND_LABEL_KEY[todo.kind])}
-														title={todo.title}
-														deadlineText={todo.deadlineText}
-														isUrgent={todo.highlights.length > 0}
-														urgentLabel={t("urgentBadge")}
-														onClick={() => handleTodoAction(todo)}
-													/>
-												))}
-											</ul>
-										</motion.div>
-									)}
-								</AnimatePresence>
-								<button
-									type="button"
-									onClick={() => setIsExpanded((prev) => !prev)}
-									aria-label={isExpanded ? t("collapseListAria") : t("expandListAria")}
-									className="text-imsg-secondary hover:bg-imsg-surface flex w-full items-center justify-center border-t border-[#F2F2F7] py-2 transition-colors hover:text-[#374151]">
-									{isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-								</button>
-							</>
+				{!isHidden("todo") && (
+					<div className="relative lg:col-span-2">
+						{isEditing && (
+							<DashboardWidgetRemoveButton
+								label={tCustomize("removeWidgetAria", { widget: widgetLabels.todo })}
+								onRemove={() => hideWidget("todo")}
+							/>
 						)}
+						<div className="rounded-2xl bg-white shadow-sm">
+							<div className="flex items-center justify-between px-5 py-4">
+								<div className="flex items-center gap-2">
+									<h2 className="text-base font-semibold text-[#0f172a]">{t("todoTitle")}</h2>
+									{data.todos.length > 0 && (
+										<span className="text-imsg-secondary text-sm font-normal">
+											{t("todoCount", { count: data.todos.length })}
+										</span>
+									)}
+									{urgentTodos.length > 0 && (
+										<span className="rounded-full bg-red-50 px-2 py-0.5 text-sm font-semibold text-red-500">
+											{t("urgentCount", { count: urgentTodos.length })}
+										</span>
+									)}
+								</div>
+								<div className="flex items-center gap-3">
+									{data.todos.length > 0 && (
+										<ViewModeToggle value={viewMode} onChange={setViewMode} />
+									)}
+									<button
+										onClick={() => handleNavigate("/buyer/order-list")}
+										className="text-imsg-blue text-sm font-medium hover:underline">
+										{t("viewAll")}
+									</button>
+								</div>
+							</div>
+
+							<div className="h-px bg-[#F2F2F7]" />
+
+							{data.todos.length === 0 ? (
+								<div className="flex flex-col items-center justify-center py-16 text-center">
+									<div className="bg-imsg-surface mb-3 flex size-12 items-center justify-center rounded-full">
+										<Clock size={20} className="text-imsg-secondary" />
+									</div>
+									<p className="text-base font-medium text-[#0f172a]">{t("todoEmptyTitle")}</p>
+									<p className="text-imsg-secondary mt-1 text-sm">
+										{t("todoEmptyDescription", { count: data.listingCount })}
+									</p>
+									<button
+										onClick={() => handleNavigate("/buyer/post-listing")}
+										className="hover:bg-imsg-surface mt-4 rounded-full border border-[#E5E7EB] px-4 py-2 text-sm font-medium text-[#0f172a] transition-colors">
+										{t("todoEmptyAction")}
+									</button>
+								</div>
+							) : (
+								<>
+									<AnimatePresence initial={false}>
+										{isExpanded && (
+											<motion.div
+												key="todo-list"
+												initial={prefersReducedMotion ? false : { height: 0, opacity: 0 }}
+												animate={{ height: "auto", opacity: 1 }}
+												exit={prefersReducedMotion ? { opacity: 0 } : { height: 0, opacity: 0 }}
+												transition={
+													prefersReducedMotion
+														? { duration: 0 }
+														: { type: "spring", stiffness: 400, damping: 34 }
+												}
+												className="overflow-hidden">
+												<ul
+													className={cn(
+														viewMode === "list"
+															? "divide-y divide-[#F2F2F7]"
+															: "grid grid-cols-2 gap-2 p-3",
+													)}>
+													{data.todos.map((todo) => (
+														<DashboardTodoRow
+															key={todo.id}
+															id={todo.id}
+															variant={viewMode === "list" ? "row" : "card"}
+															kind={todo.kind}
+															kindLabel={t(KIND_LABEL_KEY[todo.kind])}
+															title={todo.title}
+															deadlineText={todo.deadlineText}
+															isUrgent={todo.highlights.length > 0}
+															urgentLabel={t("urgentBadge")}
+															onClick={() => handleTodoAction(todo)}
+														/>
+													))}
+												</ul>
+											</motion.div>
+										)}
+									</AnimatePresence>
+									<button
+										type="button"
+										onClick={() => setIsExpanded((prev) => !prev)}
+										aria-label={isExpanded ? t("collapseListAria") : t("expandListAria")}
+										className="text-imsg-secondary hover:bg-imsg-surface flex w-full items-center justify-center border-t border-[#F2F2F7] py-2 transition-colors hover:text-[#374151]">
+										{isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+									</button>
+								</>
+							)}
+						</div>
 					</div>
-				</div>
+				)}
 
 				{/* Side */}
 				<div className="space-y-4">
