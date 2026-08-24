@@ -61,11 +61,17 @@ type Story = StoryObj<typeof SellerDashboardTodo>;
 export const Default: Story = {
 	args: {
 		todos: MOCK_TODOS,
+		isEditing: false,
+		onRemove: () => {},
+		removeAriaLabel: "할 일 위젯 숨기기",
 	},
 };
 
 export const Empty: Story = {
 	args: {
 		todos: [],
+		isEditing: false,
+		onRemove: () => {},
+		removeAriaLabel: "할 일 위젯 숨기기",
 	},
 };

@@ -20,9 +20,9 @@ type DashboardHomeProps = {
 	onboardingChecklist: OnboardingChecklistData;
 };
 
-// 배너·온보딩 체크리스트·할 일 위젯은 핵심 액션 정보라 커스터마이징 대상에서 뺐다.
+// 배너·온보딩 체크리스트는 핵심 액션 정보라 커스터마이징 대상에서 뺐다.
 type SellerWidgetKey =
-	"tradeSummary" | "recommendedListings" | "shortcuts" | "companyPage" | "recentActivity";
+	"todo" | "tradeSummary" | "recommendedListings" | "shortcuts" | "companyPage" | "recentActivity";
 
 export function DashboardHome({
 	companyName,
@@ -39,6 +39,7 @@ export function DashboardHome({
 		useDashboardWidgets<SellerWidgetKey>("mitrapay:seller-dashboard-hidden-widgets");
 
 	const widgetLabels: Record<SellerWidgetKey, string> = {
+		todo: t("todoTitle"),
 		tradeSummary: t("tradeSummaryTitle"),
 		recommendedListings: t("recommendedTitle"),
 		shortcuts: t("shortcutsTitle"),
@@ -144,7 +145,14 @@ export function DashboardHome({
 			<OnboardingChecklist checklist={onboardingChecklist} />
 
 			{/* 할 일 */}
-			<SellerDashboardTodo todos={todos} />
+			{!isHidden("todo") && (
+				<SellerDashboardTodo
+					todos={todos}
+					isEditing={isEditing}
+					onRemove={() => hideWidget("todo")}
+					removeAriaLabel={tCustomize("removeWidgetAria", { widget: widgetLabels.todo })}
+				/>
+			)}
 
 			{/* 나의 거래 요약 */}
 			{!isHidden("tradeSummary") && (

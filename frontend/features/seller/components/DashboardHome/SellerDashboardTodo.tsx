@@ -8,12 +8,16 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ChevronDown, ChevronUp, Clock } from "lucide-react";
 import { usePersistentState } from "@/hooks/usePersistentState";
 import { DashboardTodoRow } from "@/features/shared/components/DashboardTodoRow";
+import { DashboardWidgetRemoveButton } from "@/features/shared/components/DashboardWidgetRemoveButton";
 import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import { cn } from "@/utils/cn";
 import type { SellerTodo, SellerTodoKind } from "@/features/seller/types";
 
 type SellerDashboardTodoProps = {
 	todos: SellerTodo[];
+	isEditing: boolean;
+	onRemove: () => void;
+	removeAriaLabel: string;
 };
 
 const KIND_LABEL_KEY: Record<SellerTodoKind, string> = {
@@ -23,7 +27,12 @@ const KIND_LABEL_KEY: Record<SellerTodoKind, string> = {
 	paymentConfirm: "kindPaymentConfirm",
 };
 
-export function SellerDashboardTodo({ todos }: SellerDashboardTodoProps): React.JSX.Element {
+export function SellerDashboardTodo({
+	todos,
+	isEditing,
+	onRemove,
+	removeAriaLabel,
+}: SellerDashboardTodoProps): React.JSX.Element {
 	const t = useTranslations("SellerDashboard");
 	const router = useRouter();
 	const prefersReducedMotion = useReducedMotion();
@@ -49,7 +58,8 @@ export function SellerDashboardTodo({ todos }: SellerDashboardTodoProps): React.
 	const urgentCount = todos.filter((todo) => todo.highlights.length > 0).length;
 
 	return (
-		<div className="mb-6 rounded-2xl bg-white shadow-sm">
+		<div className="relative mb-6 rounded-2xl bg-white shadow-sm">
+			{isEditing && <DashboardWidgetRemoveButton label={removeAriaLabel} onRemove={onRemove} />}
 			<div className="flex items-center justify-between px-5 py-4">
 				<div className="flex items-center gap-2">
 					<h2 className="text-base font-semibold text-[#0f172a]">{t("todoTitle")}</h2>
