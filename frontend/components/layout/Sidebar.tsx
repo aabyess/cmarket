@@ -378,7 +378,8 @@ export function Sidebar({
 					<AnimatePresence initial={false}>
 						{!isCollapsed && (
 							<motion.div key="profile-actions" {...labelFade} className="flex items-center gap-2">
-								<LanguageSwitcher />
+								{/* 사이드바는 화면 왼쪽 끝이라 드롭다운을 오른쪽으로 펼쳐야 안 잘린다. */}
+								<LanguageSwitcher align="left" />
 								<NotificationBell />
 							</motion.div>
 						)}
