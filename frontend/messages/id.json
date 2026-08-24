@@ -2120,7 +2120,6 @@
 	},
 	"PaymentsList": {
 		"searchPlaceholder": "Cari nomor kontrak atau judul permintaan",
-		"filterSectionLabel": "Status",
 		"filterAll": "Semua",
 		"filterAwaitingReceipt": "Menunggu bukti transfer",
 		"filterAwaitingConfirmation": "Menunggu konfirmasi",

@@ -2120,7 +2120,6 @@
 	},
 	"PaymentsList": {
 		"searchPlaceholder": "계약번호 또는 공고명 검색",
-		"filterSectionLabel": "상태",
 		"filterAll": "전체",
 		"filterAwaitingReceipt": "영수증 업로드 대기",
 		"filterAwaitingConfirmation": "입금 확인 대기",

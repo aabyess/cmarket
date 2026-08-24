@@ -1,9 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Popover, PopoverButton } from "@headlessui/react";
-import { Filter, Search } from "lucide-react";
-import { AnimatedPopoverPanel } from "@/components/commons/AnimatedPopoverPanel";
+import { Search } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { PAYMENT_FILTER_VALUES } from "@/features/payments/constants";
 import type { PaymentFilter } from "@/features/payments/types";
@@ -30,51 +28,31 @@ export function PaymentsListFilterBar({
 	};
 
 	return (
-		<div className="mb-4 space-y-3">
-			<div className="relative">
-				<Search size={18} className="absolute top-1/2 left-4 -translate-y-1/2 text-[#9CA3AF]" />
-				<input
-					type="text"
-					value={search}
-					onChange={(e) => onSearchChange(e.target.value)}
-					placeholder={t("searchPlaceholder")}
-					className="focus:border-imsg-blue focus:ring-imsg-blue w-full rounded-xl border border-[#E2E8F0] bg-white py-3.5 pr-4 pl-11 text-sm text-[#1F2937] placeholder:text-[#9CA3AF] focus:ring-1 focus:outline-none"
-				/>
-			</div>
+		<div className="mb-4 flex flex-wrap items-center gap-2">
+			<div className="flex flex-wrap items-center gap-1 rounded-xl border border-[#E5E7EB] bg-white p-1">
+				{PAYMENT_FILTER_VALUES.map((value) => (
+					<button
+						key={value}
+						onClick={() => onFilterChange(value)}
+						className={cn(
+							"flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors",
+							filter === value ? "bg-imsg-blue text-white" : "text-[#374151] hover:bg-[#F9FAFB]",
+						)}>
+						{filterLabels[value]}
+					</button>
+				))}
 
-			<div className="flex items-center justify-end">
-				<Popover className="relative">
-					{({ open }) => (
-						<>
-							<PopoverButton className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
-								<Filter size={14} />
-								{filterLabels[filter]}
-							</PopoverButton>
+				<div className="mx-1 h-6 w-px bg-[#E5E7EB]" />
 
-							<AnimatedPopoverPanel
-								open={open}
-								className="absolute right-0 z-20 mt-2 w-48 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
-								<p className="px-3 pt-1.5 pb-1 text-[11px] font-semibold text-[#9CA3AF]">
-									{t("filterSectionLabel")}
-								</p>
-								{PAYMENT_FILTER_VALUES.map((value) => (
-									<button
-										key={value}
-										type="button"
-										onClick={() => onFilterChange(value)}
-										className={cn(
-											"w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
-											filter === value
-												? "text-imsg-blue bg-[#EFF6FF]"
-												: "text-[#374151] hover:bg-[#F9FAFB]",
-										)}>
-										{filterLabels[value]}
-									</button>
-								))}
-							</AnimatedPopoverPanel>
-						</>
-					)}
-				</Popover>
+				<div className="flex items-center gap-2 px-2 py-1">
+					<Search size={16} className="shrink-0 text-[#9CA3AF]" />
+					<input
+						value={search}
+						onChange={(e) => onSearchChange(e.target.value)}
+						placeholder={t("searchPlaceholder")}
+						className="w-32 bg-transparent text-sm leading-none outline-none placeholder:text-[#9CA3AF]"
+					/>
+				</div>
 			</div>
 		</div>
 	);
