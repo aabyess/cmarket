@@ -374,7 +374,8 @@
 	},
 	"ChatView": {
 		"emptyTitle": "대화를 선택하세요",
-		"emptyDescription": "왼쪽 목록에서 선택하면 대화를 시작할 수 있어요."
+		"emptyDescription": "왼쪽 목록에서 선택하면 대화를 시작할 수 있어요.",
+		"resizeAria": "채팅방 목록 너비 조절"
 	},
 	"QuotePdfCard": {
 		"previewAlt": "견적서 미리보기",
