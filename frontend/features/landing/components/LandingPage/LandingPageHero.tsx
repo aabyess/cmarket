@@ -69,23 +69,31 @@ export async function LandingPageHero(): Promise<React.JSX.Element> {
 						</div>
 						<div className="flex flex-col gap-3 p-5">
 							<div className="max-w-[85%] self-start">
-								<div className="bg-imsg-gray rounded-[18px] px-4 py-2.5 text-sm text-black">
+								<LandingPageReveal
+									delay={0.25}
+									className="bg-imsg-gray rounded-[18px] px-4 py-2.5 text-sm text-black">
 									{t("heroDemoIncoming")}
-								</div>
-								<div className="font-landing-doc text-landing-dim mt-1.5 flex items-center gap-1 text-[11px]">
-									<Languages size={11} />
-									{t("heroDemoTranslatedLabel")}
-								</div>
-								<div className="text-landing-dim border-landing-line mt-1 w-fit rounded-[14px] border border-dashed px-3 py-1.5 text-xs">
-									{t("heroDemoTranslated")}
-								</div>
+								</LandingPageReveal>
+								<LandingPageReveal delay={0.35}>
+									<div className="font-landing-doc text-landing-dim mt-1.5 flex items-center gap-1 text-[11px]">
+										<Languages size={11} />
+										{t("heroDemoTranslatedLabel")}
+									</div>
+									<div className="text-landing-dim border-landing-line mt-1 w-fit rounded-[14px] border border-dashed px-3 py-1.5 text-xs">
+										{t("heroDemoTranslated")}
+									</div>
+								</LandingPageReveal>
 							</div>
 
-							<div className="bg-imsg-blue max-w-[85%] self-end rounded-[18px] px-4 py-2.5 text-sm text-white">
+							<LandingPageReveal
+								delay={0.45}
+								className="bg-imsg-blue max-w-[85%] self-end rounded-[18px] px-4 py-2.5 text-sm text-white">
 								{t("heroDemoReply")}
-							</div>
+							</LandingPageReveal>
 
-							<div className="border-landing-line flex max-w-[85%] items-center gap-2.5 self-end rounded-[14px] border px-4 py-3">
+							<LandingPageReveal
+								delay={0.55}
+								className="border-landing-line flex max-w-[85%] items-center gap-2.5 self-end rounded-[14px] border px-4 py-3">
 								<span className="border-landing-ink/20 text-landing-ink flex size-8 shrink-0 items-center justify-center rounded-sm border">
 									<FileText size={14} />
 								</span>
@@ -95,7 +103,7 @@ export async function LandingPageHero(): Promise<React.JSX.Element> {
 									</p>
 									<p className="text-landing-dim text-xs">{t("heroDemoQuoteHint")}</p>
 								</div>
-							</div>
+							</LandingPageReveal>
 						</div>
 					</div>
 				</LandingPageReveal>

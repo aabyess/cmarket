@@ -24,30 +24,50 @@ export async function LandingPageSteps(): Promise<React.JSX.Element> {
 					<p className="text-landing-dim mt-3 text-sm">{t("stepsSubtitle")}</p>
 				</LandingPageReveal>
 
-				<ol className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-					{steps.map((step, i) => (
-						<li key={step.title}>
-							<LandingPageReveal delay={i * 0.08} className="h-full">
-								<div className="border-landing-line flex h-full flex-col rounded-lg border bg-white">
-									<div className="border-landing-line flex items-center justify-between border-b border-dashed px-4 py-2.5">
-										<span className="font-landing-doc text-[11px] font-semibold tracking-[0.1em]">
-											{step.code}
-										</span>
-										<span className="font-landing-doc text-landing-dim text-[11px]">
-											{`0${i + 1} / 05`}
-										</span>
+				<div className="relative mt-12">
+					{/* 5단계 카드 중심을 잇는 점선 — lg:grid-cols-5로 한 줄 나열될 때만 보임 */}
+					<svg
+						aria-hidden="true"
+						className="landing-steps-connector pointer-events-none absolute inset-x-0 top-1/2 hidden h-px w-full -translate-y-1/2 lg:block"
+						viewBox="0 0 100 1"
+						preserveAspectRatio="none">
+						<line
+							className="stroke-landing-line"
+							x1="10"
+							y1="0.5"
+							x2="90"
+							y2="0.5"
+							strokeWidth="1"
+							strokeDasharray="1.5 1.5"
+							vectorEffect="non-scaling-stroke"
+						/>
+					</svg>
+
+					<ol className="relative grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+						{steps.map((step, i) => (
+							<li key={step.title}>
+								<LandingPageReveal delay={i * 0.08} className="h-full">
+									<div className="border-landing-line flex h-full flex-col rounded-lg border bg-white">
+										<div className="border-landing-line flex items-center justify-between border-b border-dashed px-4 py-2.5">
+											<span className="font-landing-doc text-[11px] font-semibold tracking-[0.1em]">
+												{step.code}
+											</span>
+											<span className="font-landing-doc text-landing-dim text-[11px]">
+												{`0${i + 1} / 05`}
+											</span>
+										</div>
+										<div className="px-4 pt-3.5 pb-4">
+											<p className="text-sm font-semibold">{step.title}</p>
+											<p className="text-landing-dim mt-1.5 text-xs leading-relaxed">
+												{step.description}
+											</p>
+										</div>
 									</div>
-									<div className="px-4 pt-3.5 pb-4">
-										<p className="text-sm font-semibold">{step.title}</p>
-										<p className="text-landing-dim mt-1.5 text-xs leading-relaxed">
-											{step.description}
-										</p>
-									</div>
-								</div>
-							</LandingPageReveal>
-						</li>
-					))}
-				</ol>
+								</LandingPageReveal>
+							</li>
+						))}
+					</ol>
+				</div>
 			</div>
 		</section>
 	);
