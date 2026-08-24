@@ -1900,7 +1900,9 @@
 		"recentActivityEmpty": "No activity yet",
 		"todoCount": "{count} items",
 		"kindQuotePending": "New quote received",
-		"kindPaymentPending": "Payment pending"
+		"kindPaymentPending": "Payment pending",
+		"collapseListAria": "Collapse list",
+		"expandListAria": "Expand list"
 	},
 	"SellerDashboard": {
 		"welcome": "Welcome, {companyName}",
@@ -1942,7 +1944,9 @@
 		"kindQuotePending": "Awaiting response",
 		"kindAwarded": "Contract confirmed",
 		"kindDeliveryDue": "Delivery due",
-		"kindPaymentConfirm": "Payment confirmation needed"
+		"kindPaymentConfirm": "Payment confirmation needed",
+		"collapseListAria": "Collapse list",
+		"expandListAria": "Expand list"
 	},
 	"SignupInfoIndonesia": {
 		"step": "3 / 4",

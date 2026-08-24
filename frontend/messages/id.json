@@ -1900,7 +1900,9 @@
 		"recentActivityEmpty": "Belum ada aktivitas",
 		"todoCount": "{count} tugas",
 		"kindQuotePending": "Penawaran baru masuk",
-		"kindPaymentPending": "Menunggu pembayaran"
+		"kindPaymentPending": "Menunggu pembayaran",
+		"collapseListAria": "Tutup daftar",
+		"expandListAria": "Buka daftar"
 	},
 	"SellerDashboard": {
 		"welcome": "Selamat datang, {companyName}",
@@ -1942,7 +1944,9 @@
 		"kindQuotePending": "Menunggu tanggapan",
 		"kindAwarded": "Kontrak dikonfirmasi",
 		"kindDeliveryDue": "Jadwal pengiriman",
-		"kindPaymentConfirm": "Perlu konfirmasi pembayaran"
+		"kindPaymentConfirm": "Perlu konfirmasi pembayaran",
+		"collapseListAria": "Tutup daftar",
+		"expandListAria": "Buka daftar"
 	},
 	"SignupInfoIndonesia": {
 		"step": "3 / 4",
