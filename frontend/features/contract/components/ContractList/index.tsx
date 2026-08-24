@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@/i18n/navigation";
+import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import {
 	FileCheck,
 	Building2,
@@ -296,25 +297,43 @@ export function ContractList({ contracts, role }: ContractListProps) {
 								: t("noResultsCompleted")}
 					</p>
 				</div>
-			) : viewMode === "list" ? (
-				<ContractListTable
-					contracts={paginatedContracts}
-					role={role}
-					loadingId={loadingId}
-					uploadingId={uploadingId}
-					myReviewMap={myReviewMap}
-					onUploadClick={handleUploadClick}
-					onViewReceipt={handleViewReceipt}
-					onRequestConfirm={setConfirmId}
-					onRequestCancel={setCancelConfirmId}
-					onRequestDeliveryConfirm={setDeliveryConfirmId}
-					onRequestReceiptDelete={setReceiptDeleteId}
-					onRequestReview={setReviewContractId}
-					onOpenDetail={handleOpenDetail}
-				/>
 			) : (
-				<div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-					{paginatedContracts.map((contract) => (
+				// 그리드↔테이블 전환 시 상태 배지가 이전 위치에서 새 위치로 이동하는 느낌을
+				// 주기 위해 같은 layoutId를 공유한다(#161과 동일 패턴).
+				<LayoutGroup id="contract-list">
+					<AnimatePresence mode="popLayout" initial={false}>
+						{viewMode === "list" ? (
+							<motion.div
+								key="table"
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								exit={{ opacity: 0 }}
+								transition={{ duration: 0.15 }}>
+								<ContractListTable
+									contracts={paginatedContracts}
+									role={role}
+									loadingId={loadingId}
+									uploadingId={uploadingId}
+									myReviewMap={myReviewMap}
+									onUploadClick={handleUploadClick}
+									onViewReceipt={handleViewReceipt}
+									onRequestConfirm={setConfirmId}
+									onRequestCancel={setCancelConfirmId}
+									onRequestDeliveryConfirm={setDeliveryConfirmId}
+									onRequestReceiptDelete={setReceiptDeleteId}
+									onRequestReview={setReviewContractId}
+									onOpenDetail={handleOpenDetail}
+								/>
+							</motion.div>
+						) : (
+							<motion.div
+								key="grid"
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								exit={{ opacity: 0 }}
+								transition={{ duration: 0.15 }}
+								className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+								{paginatedContracts.map((contract) => (
 						<div
 							key={contract.id}
 							onClick={() => handleOpenDetail(contract.listingId)}
@@ -331,13 +350,15 @@ export function ContractList({ contracts, role }: ContractListProps) {
 										{contract.partnerCompanyName || t("noPartnerCompanyName")}
 									</p>
 								</div>
-								<span
+								<motion.span
+									layoutId={`contract-status-${contract.id}`}
+									transition={{ type: "spring", stiffness: 300, damping: 30 }}
 									className={cn(
 										"shrink-0 rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap",
 										STATUS_STYLE[contract.status],
 									)}>
 									{statusLabels[contract.status]}
-								</span>
+								</motion.span>
 							</div>
 
 							{/* 메타 정보 */}
@@ -526,7 +547,10 @@ export function ContractList({ contracts, role }: ContractListProps) {
 								)}
 						</div>
 					))}
-				</div>
+							</motion.div>
+						)}
+					</AnimatePresence>
+				</LayoutGroup>
 			)}
 
 			{visibleContracts.length > 0 && (

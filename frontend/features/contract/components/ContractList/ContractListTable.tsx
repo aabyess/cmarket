@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import { motion } from "motion/react";
 import { CheckCircle2, FileText, Upload, PackageCheck, Star, Trash2 } from "lucide-react";
 import { cva } from "class-variance-authority";
 import { cn } from "@/utils/cn";
@@ -102,13 +103,15 @@ export function ContractListTable({
 									contract.status !== "ongoing" && "opacity-75",
 								)}>
 								<td className="px-4 py-3 whitespace-nowrap">
-									<span
+									<motion.span
+										layoutId={`contract-status-${contract.id}`}
+										transition={{ type: "spring", stiffness: 300, damping: 30 }}
 										className={cn(
 											"rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap",
 											STATUS_STYLE[contract.status],
 										)}>
 										{statusLabels[contract.status]}
-									</span>
+									</motion.span>
 								</td>
 								<td className="max-w-[200px] truncate px-4 py-3 font-medium text-[#1F2937]">
 									{contract.listing.title}
