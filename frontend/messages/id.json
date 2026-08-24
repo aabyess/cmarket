@@ -1507,7 +1507,10 @@
 		"presetsEmpty": "Belum ada preset tersimpan",
 		"presetsSaveCurrent": "Simpan filter saat ini",
 		"presetsNamePlaceholder": "Nama preset",
-		"presetsDeleteAria": "Hapus preset {name}"
+		"presetsDeleteAria": "Hapus preset {name}",
+		"presetsDeleteConfirmTitle": "Hapus preset '{name}'?",
+		"presetsDeleteConfirmDescription": "Tindakan ini tidak dapat dibatalkan.",
+		"presetsSaveConfirmAria": "Simpan preset"
 	},
 	"OrderListCard": {
 		"budgetLabel": "Anggaran",

@@ -1507,7 +1507,10 @@
 		"presetsEmpty": "저장된 프리셋이 없어요",
 		"presetsSaveCurrent": "현재 조건 저장",
 		"presetsNamePlaceholder": "프리셋 이름",
-		"presetsDeleteAria": "{name} 프리셋 삭제"
+		"presetsDeleteAria": "{name} 프리셋 삭제",
+		"presetsDeleteConfirmTitle": "'{name}' 프리셋을 삭제할까요?",
+		"presetsDeleteConfirmDescription": "삭제하면 되돌릴 수 없어요.",
+		"presetsSaveConfirmAria": "프리셋 저장"
 	},
 	"OrderListCard": {
 		"budgetLabel": "예산",

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Popover, PopoverButton } from "@headlessui/react";
 import { Bookmark, Check, Plus, X } from "lucide-react";
 import { AnimatedPopoverPanel } from "@/components/commons/AnimatedPopoverPanel";
+import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { cn } from "@/utils/cn";
 import type { FilterPreset } from "@/hooks/useFilterPresets";
 import type { SortOption } from "@/features/buyer/components/OrderList/OrderListFilterBar";
@@ -25,14 +26,15 @@ type OrderListFilterPresetsProps = {
 	onDelete: (id: string) => void;
 };
 
-// "현재 조건 저장"을 누르면 같은 패널 안에서 이름 입력 폼으로 전환되는 방식 — 별도
-// 모달 없이 정렬 드롭다운과 같은 Popover+AnimatedPopoverPanel 톤을 유지한다.
-export function OrderListFilterPresets({
-	presets,
-	onApply,
+// "현재 조건 저장" 폼을 별도 컴포넌트로 분리해서, AnimatedPopoverPanel이 닫힐 때
+// (exit 애니메이션 끝나고) 언마운트되면 이름 입력 중이던 상태도 함께 초기화되게
+// 한다 — 부모(OrderListFilterPresets)는 팝오버가 닫혀도 계속 살아있어서 여기
+// 상태를 두면 다시 열었을 때 반쯤 쓰던 입력이 남는다.
+function OrderListFilterPresetSaveForm({
 	onSave,
-	onDelete,
-}: OrderListFilterPresetsProps): React.ReactNode {
+}: {
+	onSave: (name: string) => void;
+}): React.ReactNode {
 	const t = useTranslations("OrderList");
 	const [newName, setNewName] = useState("");
 	const [isNaming, setIsNaming] = useState(false);
@@ -45,79 +47,112 @@ export function OrderListFilterPresets({
 		setIsNaming(false);
 	}
 
+	if (!isNaming) {
+		return (
+			<button
+				onClick={() => setIsNaming(true)}
+				className="text-imsg-blue flex w-full items-center gap-1.5 rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors hover:bg-[#EFF6FF]">
+				<Plus size={13} />
+				{t("presetsSaveCurrent")}
+			</button>
+		);
+	}
+
 	return (
-		<Popover className="relative">
-			{({ open, close }) => (
-				<>
-					<PopoverButton className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
-						<Bookmark size={14} />
-						{t("presetsLabel")}
-					</PopoverButton>
+		<div className="flex items-center gap-1 px-1 py-1">
+			<input
+				autoFocus
+				value={newName}
+				onChange={(e) => setNewName(e.target.value)}
+				onKeyDown={(e) => {
+					if (e.key === "Enter") handleSave();
+					if (e.key === "Escape") setIsNaming(false);
+				}}
+				placeholder={t("presetsNamePlaceholder")}
+				className="focus:border-imsg-blue min-w-0 flex-1 rounded-lg border border-[#E5E7EB] px-2.5 py-1.5 text-xs outline-none"
+			/>
+			<button
+				onClick={handleSave}
+				disabled={!newName.trim()}
+				aria-label={t("presetsSaveConfirmAria")}
+				className={cn(
+					"flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors",
+					newName.trim()
+						? "text-imsg-blue hover:bg-[#EFF6FF]"
+						: "cursor-not-allowed text-[#D1D5DB]",
+				)}>
+				<Check size={14} />
+			</button>
+		</div>
+	);
+}
 
-					<AnimatedPopoverPanel
-						open={open}
-						className="absolute left-0 z-20 mt-2 w-56 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
-						{presets.length === 0 ? (
-							<p className="px-3 py-2 text-xs text-[#9CA3AF]">{t("presetsEmpty")}</p>
-						) : (
-							presets.map((preset) => (
-								<div key={preset.id} className="flex items-center gap-1">
-									<button
-										onClick={() => {
-											onApply(preset.value);
-											close();
-										}}
-										className="min-w-0 flex-1 truncate rounded-lg px-3 py-2 text-left text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
-										{preset.name}
-									</button>
-									<button
-										onClick={() => onDelete(preset.id)}
-										aria-label={t("presetsDeleteAria", { name: preset.name })}
-										className="flex size-7 shrink-0 items-center justify-center rounded-lg text-[#9CA3AF] transition-colors hover:bg-red-50 hover:text-red-500">
-										<X size={13} />
-									</button>
-								</div>
-							))
-						)}
+// 정렬 드롭다운과 같은 Popover+AnimatedPopoverPanel 톤을 유지한다.
+export function OrderListFilterPresets({
+	presets,
+	onApply,
+	onSave,
+	onDelete,
+}: OrderListFilterPresetsProps): React.ReactNode {
+	const t = useTranslations("OrderList");
+	const [deletingPreset, setDeletingPreset] =
+		useState<FilterPreset<OrderListFilterPresetValue> | null>(null);
 
-						<div className="mx-1 my-1.5 h-px bg-[#E5E7EB]" />
+	return (
+		<>
+			<Popover className="relative">
+				{({ open, close }) => (
+					<>
+						<PopoverButton className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
+							<Bookmark size={14} />
+							{t("presetsLabel")}
+						</PopoverButton>
 
-						{isNaming ? (
-							<div className="flex items-center gap-1 px-1 py-1">
-								<input
-									autoFocus
-									value={newName}
-									onChange={(e) => setNewName(e.target.value)}
-									onKeyDown={(e) => {
-										if (e.key === "Enter") handleSave();
-										if (e.key === "Escape") setIsNaming(false);
-									}}
-									placeholder={t("presetsNamePlaceholder")}
-									className="focus:border-imsg-blue min-w-0 flex-1 rounded-lg border border-[#E5E7EB] px-2.5 py-1.5 text-xs outline-none"
-								/>
-								<button
-									onClick={handleSave}
-									disabled={!newName.trim()}
-									className={cn(
-										"flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors",
-										newName.trim()
-											? "text-imsg-blue hover:bg-[#EFF6FF]"
-											: "cursor-not-allowed text-[#D1D5DB]",
-									)}>
-									<Check size={14} />
-								</button>
-							</div>
-						) : (
-							<button
-								onClick={() => setIsNaming(true)}
-								className="text-imsg-blue flex w-full items-center gap-1.5 rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors hover:bg-[#EFF6FF]">
-								<Plus size={13} />
-								{t("presetsSaveCurrent")}
-							</button>
-						)}
-					</AnimatedPopoverPanel>
-				</>
-			)}
-		</Popover>
+						<AnimatedPopoverPanel
+							open={open}
+							className="absolute left-0 z-20 mt-2 w-56 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
+							{presets.length === 0 ? (
+								<p className="px-3 py-2 text-xs text-[#9CA3AF]">{t("presetsEmpty")}</p>
+							) : (
+								presets.map((preset) => (
+									<div key={preset.id} className="flex items-center gap-1">
+										<button
+											onClick={() => {
+												onApply(preset.value);
+												close();
+											}}
+											className="min-w-0 flex-1 truncate rounded-lg px-3 py-2 text-left text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
+											{preset.name}
+										</button>
+										<button
+											onClick={() => setDeletingPreset(preset)}
+											aria-label={t("presetsDeleteAria", { name: preset.name })}
+											className="flex size-7 shrink-0 items-center justify-center rounded-lg text-[#9CA3AF] transition-colors hover:bg-red-50 hover:text-red-500">
+											<X size={13} />
+										</button>
+									</div>
+								))
+							)}
+
+							<div className="mx-1 my-1.5 h-px bg-[#E5E7EB]" />
+
+							<OrderListFilterPresetSaveForm onSave={onSave} />
+						</AnimatedPopoverPanel>
+					</>
+				)}
+			</Popover>
+
+			<ConfirmModal
+				isOpen={deletingPreset !== null}
+				title={t("presetsDeleteConfirmTitle", { name: deletingPreset?.name ?? "" })}
+				description={t("presetsDeleteConfirmDescription")}
+				variant="danger"
+				onConfirm={() => {
+					if (deletingPreset) onDelete(deletingPreset.id);
+					setDeletingPreset(null);
+				}}
+				onClose={() => setDeletingPreset(null)}
+			/>
+		</>
 	);
 }
