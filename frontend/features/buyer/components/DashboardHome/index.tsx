@@ -4,8 +4,10 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Mail, Clock, Bell, MessageSquare, Handshake } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { usePersistentState } from "@/hooks/usePersistentState";
 import { OnboardingChecklist } from "@/features/onboarding/components/OnboardingChecklist";
 import { DashboardTodoRow } from "@/features/shared/components/DashboardTodoRow";
+import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import type {
 	BuyerActivity,
 	BuyerDashboardData,
@@ -29,6 +31,10 @@ export function DashboardHome({
 }: DashboardHomeProps) {
 	const t = useTranslations("BuyerDashboard");
 	const router = useRouter();
+	const [viewMode, setViewMode] = usePersistentState<ViewMode>(
+		"mitrapay:buyer-dashboard-todo-view",
+		"list",
+	);
 
 	function handleNavigate(href: string) {
 		router.push(href);
@@ -144,11 +150,16 @@ export function DashboardHome({
 									</span>
 								)}
 							</div>
-							<button
-								onClick={() => handleNavigate("/buyer/order-list")}
-								className="text-imsg-blue text-sm font-medium hover:underline">
-								{t("viewAll")}
-							</button>
+							<div className="flex items-center gap-3">
+								{data.todos.length > 0 && (
+									<ViewModeToggle value={viewMode} onChange={setViewMode} />
+								)}
+								<button
+									onClick={() => handleNavigate("/buyer/order-list")}
+									className="text-imsg-blue text-sm font-medium hover:underline">
+									{t("viewAll")}
+								</button>
+							</div>
 						</div>
 
 						<div className="h-px bg-[#F2F2F7]" />
@@ -169,10 +180,15 @@ export function DashboardHome({
 								</button>
 							</div>
 						) : (
-							<ul className="divide-y divide-[#F2F2F7]">
+							<ul
+								className={cn(
+									viewMode === "list" ? "divide-y divide-[#F2F2F7]" : "grid grid-cols-2 gap-2 p-3",
+								)}>
 								{data.todos.map((todo) => (
 									<DashboardTodoRow
 										key={todo.id}
+										id={todo.id}
+										variant={viewMode === "list" ? "row" : "card"}
 										title={todo.title}
 										deadlineText={todo.deadlineText}
 										isUrgent={todo.highlights.length > 0}
