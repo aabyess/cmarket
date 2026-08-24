@@ -1886,7 +1886,8 @@
 		"shortcutChatLabel": "Chat",
 		"shortcutChatSub": "{count} unread",
 		"recentActivityTitle": "Recent Activity",
-		"recentActivityEmpty": "No activity yet"
+		"recentActivityEmpty": "No activity yet",
+		"todoCount": "{count} items"
 	},
 	"SellerDashboard": {
 		"welcome": "Welcome, {companyName}",
@@ -1923,7 +1924,8 @@
 		"companyPageDescription": "The first step to earning buyer trust",
 		"companyPageAction": "Edit company page",
 		"recentActivityTitle": "Recent Activity",
-		"recentActivityEmpty": "No activity yet"
+		"recentActivityEmpty": "No activity yet",
+		"todoCount": "{count} items"
 	},
 	"SignupInfoIndonesia": {
 		"step": "3 / 4",

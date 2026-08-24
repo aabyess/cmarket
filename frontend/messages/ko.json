@@ -1886,7 +1886,8 @@
 		"shortcutChatLabel": "채팅",
 		"shortcutChatSub": "{count}건 읽지 않음",
 		"recentActivityTitle": "최근 활동",
-		"recentActivityEmpty": "아직 활동이 없어요"
+		"recentActivityEmpty": "아직 활동이 없어요",
+		"todoCount": "{count}건"
 	},
 	"SellerDashboard": {
 		"welcome": "{companyName}님, 환영합니다",
@@ -1923,7 +1924,8 @@
 		"companyPageDescription": "바이어에게 신뢰를 주는 첫걸음이에요",
 		"companyPageAction": "홈페이지 편집하기",
 		"recentActivityTitle": "최근 활동",
-		"recentActivityEmpty": "아직 활동이 없어요"
+		"recentActivityEmpty": "아직 활동이 없어요",
+		"todoCount": "{count}건"
 	},
 	"SignupInfoIndonesia": {
 		"step": "3 / 4",

@@ -1886,7 +1886,8 @@
 		"shortcutChatLabel": "Obrolan",
 		"shortcutChatSub": "{count} belum dibaca",
 		"recentActivityTitle": "Aktivitas Terbaru",
-		"recentActivityEmpty": "Belum ada aktivitas"
+		"recentActivityEmpty": "Belum ada aktivitas",
+		"todoCount": "{count} tugas"
 	},
 	"SellerDashboard": {
 		"welcome": "Selamat datang, {companyName}",
@@ -1923,7 +1924,8 @@
 		"companyPageDescription": "Langkah pertama untuk membangun kepercayaan pembeli",
 		"companyPageAction": "Edit halaman perusahaan",
 		"recentActivityTitle": "Aktivitas Terbaru",
-		"recentActivityEmpty": "Belum ada aktivitas"
+		"recentActivityEmpty": "Belum ada aktivitas",
+		"todoCount": "{count} tugas"
 	},
 	"SignupInfoIndonesia": {
 		"step": "3 / 4",
