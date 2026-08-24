@@ -203,6 +203,7 @@ export function PostListingForm({ listingId, initialData, contactInfo }: PostLis
 
 	return (
 		<div className="space-y-4 p-6 pb-24 lg:p-10">
+			<div className="post-listing-progress-bar" aria-hidden />
 			<div className="flex items-start justify-between gap-3">
 				<div>
 					<h1 className="text-2xl font-bold text-[#1F2937]">{isEdit ? t("editTitle") : t("createTitle")}</h1>

@@ -234,9 +234,46 @@
 	}
 }
 
+/* ─── 공고 등록 폼 스크롤 진행률 바 (scroll() 타임라인 지원 브라우저에서만 노출, 나머지는 폴백으로 숨김) ─── */
+@keyframes post-listing-progress {
+	from {
+		transform: scaleX(0);
+	}
+	to {
+		transform: scaleX(1);
+	}
+}
+
+.post-listing-progress-bar {
+	display: none;
+}
+
+@supports (animation-timeline: scroll()) {
+	.post-listing-progress-bar {
+		display: block;
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 30; /* 사이드바(z-40)보다 낮게 둬서 상단 겹치는 구간에서 사이드바가 위에 온다 */
+		width: 100%;
+		height: 3px;
+		background-color: var(--imsg-blue);
+		transform-origin: left;
+		transform: scaleX(0);
+		pointer-events: none;
+		/* Firefox는 animation-timeline이 있어도 duration을 명시하지 않으면 애니메이션 자체를 실행하지 않는다 —
+		   scroll()로 시간축이 스크롤 진행률로 재매핑되므로 duration 값 자체는 임의값이어도 된다. */
+		animation: post-listing-progress 1s linear forwards;
+		animation-timeline: scroll(root block);
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.landing-steps-connector {
 		clip-path: inset(0 0% 0 0);
 		animation: none;
+	}
+	.post-listing-progress-bar {
+		display: none;
 	}
 }
