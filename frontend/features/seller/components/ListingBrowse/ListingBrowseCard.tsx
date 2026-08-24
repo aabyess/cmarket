@@ -77,7 +77,7 @@ export function ListingBrowseCard({ listing, onClick, onBookmarkChange }: Listin
 
 				<div className="flex shrink-0 items-center gap-1">
 					{listing.hasMyQuote && (
-						<span className="flex items-center gap-1 rounded-full bg-[#ECFDF5] px-2 py-0.5 text-xs font-medium text-[#059669]">
+						<span className="flex items-center gap-1 rounded-full bg-[#F0FDF4] px-2 py-0.5 text-xs font-medium text-[#16A34A]">
 							<CheckCircle2 size={11} />
 							{t("quoteSent")}
 						</span>

@@ -16,7 +16,7 @@ const CURRENCY_SYMBOL: Record<Currency, string> = {
 
 const STATUS_CLASS_NAME: Record<DisplayQuoteStatus, string> = {
 	pending: "bg-[#EFF6FF] text-imsg-blue",
-	awarded: "bg-[#ECFDF5] text-[#059669]",
+	awarded: "bg-[#F0FDF4] text-[#16A34A]",
 	rejected: "bg-[#F3F4F6] text-[#6B7280]",
 	failed: "bg-[#F3F4F6] text-[#6B7280]",
 };
@@ -49,7 +49,7 @@ export function MyQuotesCard({ quote, onViewListing, onGoToChat }: MyQuotesCardP
 		<div
 			className={cn(
 				"flex flex-col rounded-2xl border bg-white p-4",
-				isAwarded ? "border-2 border-[#059669]" : "border-[#E5E7EB]",
+				isAwarded ? "border-2 border-[#16A34A]" : "border-[#E5E7EB]",
 			)}>
 			<div className="mb-2 flex items-start justify-between gap-2">
 				<motion.span

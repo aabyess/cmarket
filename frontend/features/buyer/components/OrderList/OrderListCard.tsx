@@ -20,7 +20,7 @@ const CURRENCY_SYMBOL: Record<Currency, string> = {
 const STATUS_STYLE: Record<DisplayListingStatus, { className: string; dotClassName: string }> = {
 	active: { className: "bg-[#EFF6FF] text-imsg-blue", dotClassName: "bg-imsg-blue" },
 	closed: { className: "bg-[#F3F4F6] text-[#6B7280]", dotClassName: "bg-[#9CA3AF]" },
-	awarded: { className: "bg-[#ECFDF5] text-[#059669]", dotClassName: "bg-[#059669]" },
+	awarded: { className: "bg-[#F0FDF4] text-[#16A34A]", dotClassName: "bg-[#16A34A]" },
 	failed: { className: "bg-[#F3F4F6] text-[#6B7280]", dotClassName: "bg-[#9CA3AF]" },
 };
 

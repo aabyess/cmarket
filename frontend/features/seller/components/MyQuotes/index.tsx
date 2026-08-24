@@ -99,7 +99,7 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 				</p>
 				<button
 					onClick={() => router.push("/seller/listing-browse")}
-					className="mt-5 rounded-lg bg-imsg-blue px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB]"
+					className="text-imsg-blue hover:bg-imsg-blue mt-5 rounded-lg bg-[#EFF6FF] px-6 py-3 text-sm font-semibold transition-colors hover:text-white"
 				>
 					{t("emptyCta")}
 				</button>

@@ -64,7 +64,7 @@ export function QuoteReviewListingTable({ listings }: QuoteReviewListingTablePro
 										<motion.span
 											layoutId={`quote-review-listing-status-${listing.id}`}
 											transition={{ type: "spring", stiffness: 300, damping: 30 }}
-											className="rounded-full bg-[#ECFDF5] px-2.5 py-1 text-xs font-medium text-[#059669]"
+											className="rounded-full bg-[#F0FDF4] px-2.5 py-1 text-xs font-medium text-[#16A34A]"
 										>
 											{t("awardedBadge")}
 										</motion.span>

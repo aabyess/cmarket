@@ -109,7 +109,7 @@ export function ListingBrowseTable({
 								<td className="px-4 py-3 text-[#1F2937]">{location || "-"}</td>
 								<td className="px-4 py-3">
 									{listing.hasMyQuote ? (
-										<span className="flex w-fit items-center gap-1 rounded-full bg-[#ECFDF5] px-2.5 py-1 text-xs font-medium text-[#059669]">
+										<span className="flex w-fit items-center gap-1 rounded-full bg-[#F0FDF4] px-2.5 py-1 text-xs font-medium text-[#16A34A]">
 											<CheckCircle2 size={11} />
 											{t("quoteSent")}
 										</span>
