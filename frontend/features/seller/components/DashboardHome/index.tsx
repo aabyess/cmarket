@@ -2,6 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
+import { Reorder } from "motion/react";
 import { ArrowRight, Bell, Building2, Clock, MessageSquare, Search } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { useDashboardWidgets } from "@/hooks/useDashboardWidgets";
@@ -9,6 +10,7 @@ import { SellerDashboardTodo } from "@/features/seller/components/DashboardHome/
 import { OnboardingChecklist } from "@/features/onboarding/components/OnboardingChecklist";
 import { DashboardCustomizeBar } from "@/features/shared/components/DashboardCustomizeBar";
 import { DashboardWidgetRemoveButton } from "@/features/shared/components/DashboardWidgetRemoveButton";
+import { DashboardReorderableWidget } from "@/features/shared/components/DashboardReorderableWidget";
 import type { OpenListing, SellerDashboardData, SellerTodo } from "@/features/seller/types";
 import type { OnboardingChecklist as OnboardingChecklistData } from "@/features/onboarding/types";
 
@@ -23,6 +25,14 @@ type DashboardHomeProps = {
 // 배너·온보딩 체크리스트는 핵심 액션 정보라 커스터마이징 대상에서 뺐다.
 type SellerWidgetKey =
 	"todo" | "tradeSummary" | "recommendedListings" | "shortcuts" | "companyPage" | "recentActivity";
+// 사이드 컬럼 위젯만 같은 영역 안에서 드래그로 순서를 바꿀 수 있다(메인 영역인
+// todo/tradeSummary/recommendedListings는 순서 변경 대상이 아니다).
+type SellerSideWidgetKey = "shortcuts" | "companyPage" | "recentActivity";
+const SELLER_SIDE_WIDGET_ORDER: SellerSideWidgetKey[] = [
+	"shortcuts",
+	"companyPage",
+	"recentActivity",
+];
 
 export function DashboardHome({
 	companyName,
@@ -35,8 +45,20 @@ export function DashboardHome({
 	const tCustomize = useTranslations("DashboardCustomizeBar");
 	const locale = useLocale();
 	const router = useRouter();
-	const { isEditing, toggleEditing, hiddenKeys, hideWidget, showWidget, isHidden, resetHidden } =
-		useDashboardWidgets<SellerWidgetKey>("mitrapay:seller-dashboard-hidden-widgets");
+	const {
+		isEditing,
+		toggleEditing,
+		hiddenKeys,
+		hideWidget,
+		showWidget,
+		isHidden,
+		resetHidden,
+		order: sideOrder,
+		reorder: reorderSide,
+	} = useDashboardWidgets<SellerWidgetKey, SellerSideWidgetKey>(
+		"mitrapay:seller-dashboard-hidden-widgets",
+		SELLER_SIDE_WIDGET_ORDER,
+	);
 
 	const widgetLabels: Record<SellerWidgetKey, string> = {
 		todo: t("todoTitle"),
@@ -46,6 +68,13 @@ export function DashboardHome({
 		companyPage: t("companyPageTitle"),
 		recentActivity: t("recentActivityTitle"),
 	};
+
+	const visibleSideOrder = sideOrder.filter((key) => !isHidden(key));
+
+	function handleReorderSide(newVisibleOrder: SellerSideWidgetKey[]): void {
+		let i = 0;
+		reorderSide(sideOrder.map((key) => (isHidden(key) ? key : newVisibleOrder[i++])));
+	}
 
 	function handleNavigate(href: string): void {
 		router.push(href);
@@ -292,112 +321,126 @@ export function DashboardHome({
 				)}
 
 				{/* Side */}
-				<div className="space-y-4">
-					{/* 바로가기 */}
-					{!isHidden("shortcuts") && (
-						<div className="relative rounded-2xl bg-white p-4 shadow-sm">
-							{isEditing && (
-								<DashboardWidgetRemoveButton
-									label={tCustomize("removeWidgetAria", { widget: widgetLabels.shortcuts })}
-									onRemove={() => hideWidget("shortcuts")}
-								/>
-							)}
-							<h2 className="text-imsg-secondary mb-3 text-sm font-semibold tracking-wider uppercase">
-								{t("shortcutsTitle")}
-							</h2>
-							<div className="grid grid-cols-2 gap-2">
-								{quickLinks.map((link) => (
-									<button
-										key={link.label}
-										onClick={() => handleNavigate(link.href)}
-										className="bg-imsg-surface flex flex-col gap-2.5 rounded-xl p-3 text-left transition-colors duration-200 hover:bg-[#E5E7EB]">
-										<span
-											className={cn(
-												"flex size-8 items-center justify-center rounded-lg",
-												link.iconBg,
-											)}>
-											<link.icon size={16} className={link.color} />
-										</span>
-										<span>
-											<span className="block text-sm font-semibold text-[#0f172a]">
-												{link.label}
-											</span>
-											<span className="text-imsg-secondary block text-sm">{link.sub}</span>
-										</span>
-									</button>
-								))}
-							</div>
-						</div>
-					)}
-
-					{/* 기업 홈페이지 유도 */}
-					{!isHidden("companyPage") && (
-						<div className="relative rounded-2xl bg-white p-4 shadow-sm">
-							{isEditing && (
-								<DashboardWidgetRemoveButton
-									label={tCustomize("removeWidgetAria", { widget: widgetLabels.companyPage })}
-									onRemove={() => hideWidget("companyPage")}
-								/>
-							)}
-							<div className="flex items-start gap-3">
-								<span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-blue-50">
-									<Building2 size={16} className="text-imsg-blue" />
-								</span>
-								<div className="min-w-0 flex-1">
-									<p className="text-sm font-semibold text-[#0f172a]">{t("companyPageTitle")}</p>
-									<p className="text-imsg-secondary mt-0.5 text-sm">
-										{t("companyPageDescription")}
-									</p>
-									<button
-										onClick={() => handleNavigate("/seller/profile/edit")}
-										className="text-imsg-blue mt-2 flex items-center gap-1 text-sm font-semibold hover:underline">
-										{t("companyPageAction")}
-										<ArrowRight size={11} />
-									</button>
+				<Reorder.Group
+					as="div"
+					axis="y"
+					values={visibleSideOrder}
+					onReorder={handleReorderSide}
+					className="space-y-4">
+					{visibleSideOrder.map((key) => (
+						<DashboardReorderableWidget
+							key={key}
+							value={key}
+							isEditing={isEditing}
+							dragHandleLabel={tCustomize("dragWidgetAria", { widget: widgetLabels[key] })}>
+							{key === "shortcuts" && (
+								<div className="relative rounded-2xl bg-white p-4 shadow-sm">
+									{isEditing && (
+										<DashboardWidgetRemoveButton
+											label={tCustomize("removeWidgetAria", { widget: widgetLabels.shortcuts })}
+											onRemove={() => hideWidget("shortcuts")}
+										/>
+									)}
+									<h2 className="text-imsg-secondary mb-3 text-sm font-semibold tracking-wider uppercase">
+										{t("shortcutsTitle")}
+									</h2>
+									<div className="grid grid-cols-2 gap-2">
+										{quickLinks.map((link) => (
+											<button
+												key={link.label}
+												onClick={() => handleNavigate(link.href)}
+												className="bg-imsg-surface flex flex-col gap-2.5 rounded-xl p-3 text-left transition-colors duration-200 hover:bg-[#E5E7EB]">
+												<span
+													className={cn(
+														"flex size-8 items-center justify-center rounded-lg",
+														link.iconBg,
+													)}>
+													<link.icon size={16} className={link.color} />
+												</span>
+												<span>
+													<span className="block text-sm font-semibold text-[#0f172a]">
+														{link.label}
+													</span>
+													<span className="text-imsg-secondary block text-sm">{link.sub}</span>
+												</span>
+											</button>
+										))}
+									</div>
 								</div>
-							</div>
-						</div>
-					)}
-
-					{/* 최근 활동 */}
-					{!isHidden("recentActivity") && (
-						<div className="relative rounded-2xl bg-white shadow-sm">
-							{isEditing && (
-								<DashboardWidgetRemoveButton
-									label={tCustomize("removeWidgetAria", { widget: widgetLabels.recentActivity })}
-									onRemove={() => hideWidget("recentActivity")}
-								/>
 							)}
-							<div className="flex items-center gap-2 px-4 py-3">
-								<h2 className="text-imsg-secondary text-sm font-semibold tracking-wider uppercase">
-									{t("recentActivityTitle")}
-								</h2>
-							</div>
-							<div className="h-px bg-[#F2F2F7]" />
-							<ul className="p-2">
-								{data.activities.length === 0 ? (
-									<li className="text-imsg-secondary py-8 text-center text-sm">
-										{t("recentActivityEmpty")}
-									</li>
-								) : (
-									data.activities.map((activity, i) => (
-										<li
-											key={i}
-											className="hover:bg-imsg-surface flex items-start gap-3 rounded-xl px-2 py-2.5 transition-colors duration-200">
-											<span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-blue-50">
-												<Bell size={12} className="text-imsg-blue" />
-											</span>
-											<div className="min-w-0 flex-1">
-												<p className="text-sm text-[#0f172a]">{activity.title}</p>
-												<p className="text-imsg-secondary mt-0.5 text-sm">{activity.timeText}</p>
-											</div>
-										</li>
-									))
-								)}
-							</ul>
-						</div>
-					)}
-				</div>
+							{key === "companyPage" && (
+								<div className="relative rounded-2xl bg-white p-4 shadow-sm">
+									{isEditing && (
+										<DashboardWidgetRemoveButton
+											label={tCustomize("removeWidgetAria", { widget: widgetLabels.companyPage })}
+											onRemove={() => hideWidget("companyPage")}
+										/>
+									)}
+									<div className="flex items-start gap-3">
+										<span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-blue-50">
+											<Building2 size={16} className="text-imsg-blue" />
+										</span>
+										<div className="min-w-0 flex-1">
+											<p className="text-sm font-semibold text-[#0f172a]">
+												{t("companyPageTitle")}
+											</p>
+											<p className="text-imsg-secondary mt-0.5 text-sm">
+												{t("companyPageDescription")}
+											</p>
+											<button
+												onClick={() => handleNavigate("/seller/profile/edit")}
+												className="text-imsg-blue mt-2 flex items-center gap-1 text-sm font-semibold hover:underline">
+												{t("companyPageAction")}
+												<ArrowRight size={11} />
+											</button>
+										</div>
+									</div>
+								</div>
+							)}
+							{key === "recentActivity" && (
+								<div className="relative rounded-2xl bg-white shadow-sm">
+									{isEditing && (
+										<DashboardWidgetRemoveButton
+											label={tCustomize("removeWidgetAria", {
+												widget: widgetLabels.recentActivity,
+											})}
+											onRemove={() => hideWidget("recentActivity")}
+										/>
+									)}
+									<div className="flex items-center gap-2 px-4 py-3">
+										<h2 className="text-imsg-secondary text-sm font-semibold tracking-wider uppercase">
+											{t("recentActivityTitle")}
+										</h2>
+									</div>
+									<div className="h-px bg-[#F2F2F7]" />
+									<ul className="p-2">
+										{data.activities.length === 0 ? (
+											<li className="text-imsg-secondary py-8 text-center text-sm">
+												{t("recentActivityEmpty")}
+											</li>
+										) : (
+											data.activities.map((activity, i) => (
+												<li
+													key={i}
+													className="hover:bg-imsg-surface flex items-start gap-3 rounded-xl px-2 py-2.5 transition-colors duration-200">
+													<span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-blue-50">
+														<Bell size={12} className="text-imsg-blue" />
+													</span>
+													<div className="min-w-0 flex-1">
+														<p className="text-sm text-[#0f172a]">{activity.title}</p>
+														<p className="text-imsg-secondary mt-0.5 text-sm">
+															{activity.timeText}
+														</p>
+													</div>
+												</li>
+											))
+										)}
+									</ul>
+								</div>
+							)}
+						</DashboardReorderableWidget>
+					))}
+				</Reorder.Group>
 			</div>
 		</div>
 	);
