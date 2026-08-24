@@ -148,7 +148,7 @@ export function ListingBrowseCard({ listing, onClick, onBookmarkChange }: Listin
 					onClick();
 				}}
 				disabled={remaining.isClosed}
-				className="bg-imsg-blue mt-3 flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#2563EB] disabled:cursor-not-allowed disabled:bg-[#F3F4F6] disabled:text-[#9CA3AF]">
+				className="text-imsg-blue hover:bg-imsg-blue mt-3 flex items-center justify-center gap-1.5 rounded-xl bg-[#EFF6FF] py-2.5 text-sm font-semibold transition-colors hover:text-white disabled:cursor-not-allowed disabled:bg-[#F3F4F6] disabled:text-[#9CA3AF]">
 				{remaining.isClosed
 					? t("closed")
 					: listing.hasMyQuote
