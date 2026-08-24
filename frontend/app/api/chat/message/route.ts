@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient, createServerAdminClient } from "@/libs/supabaseServer";
 import { translateFieldServer } from "@/libs/translateFieldServer";
+import { countryToLocale } from "@/utils/countryToLocale";
 import { FREE_PLAN_MONTHLY_CHAT_LIMIT } from "@/constants/plan";
 import { parseJsonBody } from "@/utils/parseJsonBody";
 
@@ -63,14 +64,35 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 		limitExceeded = (count ?? 0) >= FREE_PLAN_MONTHLY_CHAT_LIMIT;
 	}
 
-	const translation = limitExceeded ? null : await translateFieldServer(content);
+	let sourceLang: string | null = null;
+	let translations: Record<string, string> | null = null;
+
+	if (!limitExceeded) {
+		// 양쪽 당사자가 같은 언어면 번역이 필요 없다 — generate-quote-pdf의 sendPair와
+		// 동일한 패턴(국가→locale 비교)으로 DeepL 호출 자체를 생략한다.
+		const { data: partyProfiles } = await admin
+			.from("profiles")
+			.select("id, country")
+			.in("id", [quote.seller_id, buyerId]);
+		const countryMap = new Map((partyProfiles ?? []).map((p) => [p.id, p.country]));
+		const sellerLocale = countryToLocale(countryMap.get(quote.seller_id));
+		const buyerLocale = countryToLocale(countryMap.get(buyerId));
+
+		if (sellerLocale === buyerLocale) {
+			sourceLang = sellerLocale;
+		} else {
+			const translation = await translateFieldServer(content);
+			sourceLang = translation?.sourceLang ?? null;
+			translations = translation?.translations ?? null;
+		}
+	}
 
 	const { error } = await supabase.from("messages").insert({
 		quote_id: quoteId,
 		sender_id: user.id,
 		content,
-		source_lang: translation?.sourceLang ?? null,
-		translations: translation?.translations ?? null,
+		source_lang: sourceLang,
+		translations,
 	});
 
 	if (error) {
