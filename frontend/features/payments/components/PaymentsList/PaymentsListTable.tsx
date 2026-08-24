@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { CheckCircle2, FileText, Loader2, Receipt, Star, Upload } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { ActionButton } from "@/components/ui/ActionButton";
 import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
 import { getPaymentStatus, PAYMENT_METHOD } from "@/features/payments/constants";
 import type { Currency } from "@/features/buyer/types";
@@ -108,49 +109,43 @@ export function PaymentsListTable({
 									<td className="w-44 px-4 py-3 align-top">
 										{status === "awaitingReceipt" ? (
 											role === "buyer" ? (
-												<button
-													type="button"
+												<ActionButton
 													onClick={() => onUploadClick(contract.id)}
 													disabled={uploadingId === contract.id}
-													className="bg-imsg-blue flex w-full items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60">
+													tone="primaryBlue">
 													<Upload size={14} />
 													{uploadingId === contract.id ? t("uploading") : t("uploadReceiptButton")}
-												</button>
+												</ActionButton>
 											) : (
 												<span className="block text-right text-xs text-[#9CA3AF]">-</span>
 											)
 										) : (
 											<div className="flex flex-col items-stretch gap-1.5">
 												{role === "seller" && status === "awaitingConfirmation" && (
-													<button
-														type="button"
+													<ActionButton
 														onClick={() => onConfirmPayment(contract.id)}
 														disabled={confirmingId === contract.id}
-														className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#16A34A] px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-white transition-colors hover:bg-[#15803D] disabled:opacity-60">
+														tone="primary">
 														<CheckCircle2 size={14} />
 														{confirmingId === contract.id
 															? t("processing")
 															: t("confirmPaymentButton")}
-													</button>
+													</ActionButton>
 												)}
 												{/* 예전 데이터 중 영수증 없이 완료된 계약이 있어, 실제 파일이 있을 때만 노출한다 */}
 												{contract.paymentReceiptUrl && (
-													<button
-														type="button"
-														onClick={() => onViewReceipt(contract.id)}
-														className="text-imsg-blue flex w-full items-center justify-center gap-1.5 rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap transition-colors hover:bg-[#DBEAFE]">
+													<ActionButton onClick={() => onViewReceipt(contract.id)} tone="secondary">
 														<FileText size={14} />
 														{role === "seller"
 															? t("viewReceiptButtonSeller")
 															: t("viewReceiptButton")}
-													</button>
+													</ActionButton>
 												)}
 												{status === "confirmed" && (
-													<button
-														type="button"
+													<ActionButton
 														onClick={() => onViewTransactionReceipt(contract.id)}
 														disabled={receiptPdfLoadingId === contract.id}
-														className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-[#BBF7D0] bg-[#F0FDF4] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#16A34A] transition-colors hover:bg-[#DCFCE7] disabled:opacity-60">
+														tone="secondarySuccess">
 														{receiptPdfLoadingId === contract.id ? (
 															<Loader2 size={14} className="animate-spin" />
 														) : (
@@ -159,22 +154,23 @@ export function PaymentsListTable({
 														{receiptPdfLoadingId === contract.id
 															? t("transactionReceiptGenerating")
 															: t("transactionReceiptButton")}
-													</button>
+													</ActionButton>
 												)}
 												{status === "confirmed" &&
 													(myReviewMap.has(contract.id) ? (
 														<span className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#FFFBEB] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#D97706]">
 															<Star size={14} className="fill-[#D97706]" />
-															{t("reviewedBadge", { rating: myReviewMap.get(contract.id)?.rating ?? 0 })}
+															{t("reviewedBadge", {
+																rating: myReviewMap.get(contract.id)?.rating ?? 0,
+															})}
 														</span>
 													) : (
-														<button
-															type="button"
+														<ActionButton
 															onClick={() => onReview(contract.id)}
-															className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-[#E5E7EB] bg-white px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#374151] transition-colors hover:bg-imsg-surface">
+															tone="secondaryNeutral">
 															<Star size={14} />
 															{t("reviewButton")}
-														</button>
+														</ActionButton>
 													))}
 											</div>
 										)}
