@@ -1226,6 +1226,8 @@
 		}
 	},
 	"ListingBrowse": {
+		"cardViewAria": "Tampilan kartu",
+		"listViewAria": "Tampilan daftar",
 		"columnsTwoAria": "Tampilkan 2 kolom",
 		"columnsThreeAria": "Tampilkan 3 kolom",
 		"tabAll": "Semua",

@@ -1024,6 +1024,8 @@
 		}
 	},
 	"ListingBrowse": {
+		"cardViewAria": "Card view",
+		"listViewAria": "List view",
 		"columnsTwoAria": "Show 2 columns",
 		"columnsThreeAria": "Show 3 columns",
 		"tabAll": "All",
