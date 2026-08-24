@@ -12,6 +12,7 @@ import type {
 	BuyerActivity,
 	BuyerDashboardData,
 	BuyerTodo,
+	BuyerTodoKind,
 	BuyerTradeSummary,
 } from "@/features/buyer/types";
 import type { OnboardingChecklist as OnboardingChecklistData } from "@/features/onboarding/types";
@@ -21,6 +22,11 @@ type DashboardHomeProps = {
 	data: BuyerDashboardData;
 	tradeSummary: BuyerTradeSummary;
 	onboardingChecklist: OnboardingChecklistData;
+};
+
+const KIND_LABEL_KEY: Record<BuyerTodoKind, string> = {
+	quotePending: "kindQuotePending",
+	paymentPending: "kindPaymentPending",
 };
 
 export function DashboardHome({
@@ -189,6 +195,8 @@ export function DashboardHome({
 										key={todo.id}
 										id={todo.id}
 										variant={viewMode === "list" ? "row" : "card"}
+										kind={todo.kind}
+										kindLabel={t(KIND_LABEL_KEY[todo.kind])}
 										title={todo.title}
 										deadlineText={todo.deadlineText}
 										isUrgent={todo.highlights.length > 0}

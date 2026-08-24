@@ -8,10 +8,17 @@ import { usePersistentState } from "@/hooks/usePersistentState";
 import { DashboardTodoRow } from "@/features/shared/components/DashboardTodoRow";
 import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import { cn } from "@/utils/cn";
-import type { SellerTodo } from "@/features/seller/types";
+import type { SellerTodo, SellerTodoKind } from "@/features/seller/types";
 
 type SellerDashboardTodoProps = {
 	todos: SellerTodo[];
+};
+
+const KIND_LABEL_KEY: Record<SellerTodoKind, string> = {
+	quotePending: "kindQuotePending",
+	awarded: "kindAwarded",
+	deliveryDue: "kindDeliveryDue",
+	paymentConfirm: "kindPaymentConfirm",
 };
 
 export function SellerDashboardTodo({ todos }: SellerDashboardTodoProps): React.JSX.Element {
@@ -75,6 +82,8 @@ export function SellerDashboardTodo({ todos }: SellerDashboardTodoProps): React.
 							key={todo.id}
 							id={todo.id}
 							variant={viewMode === "list" ? "row" : "card"}
+							kind={todo.kind}
+							kindLabel={t(KIND_LABEL_KEY[todo.kind])}
 							title={todo.title}
 							deadlineText={todo.deadlineText}
 							isUrgent={todo.highlights.length > 0}
