@@ -1874,7 +1874,8 @@
 		"editButton": "Ubah",
 		"doneButton": "Selesai",
 		"hiddenWidgetsLabel": "Widget tersembunyi",
-		"removeWidgetAria": "Sembunyikan widget {widget}"
+		"removeWidgetAria": "Sembunyikan widget {widget}",
+		"resetAllButton": "Atur ulang semua"
 	},
 	"BuyerDashboard": {
 		"welcome": "Selamat datang, {companyName}",

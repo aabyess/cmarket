@@ -16,16 +16,21 @@ type DashboardCustomizeBarProps = {
 	onToggleEditing: () => void;
 	hiddenWidgets: HiddenWidget[];
 	onShowWidget: (key: string) => void;
+	onResetHidden: () => void;
 };
 
 // 대시보드 편집 모드 진입 버튼 + 숨긴 위젯을 다시 보이게 하는 칩 목록. 위젯 이름은
 // 이미 각 대시보드에 있는 섹션 제목 번역을 그대로 넘겨받아 쓰므로 여기서 새로
 // 번역하지 않는다.
+// 숨긴 위젯 칩 목록은 편집 모드로 다시 들어가야만 보이면 발견하기 어려워서
+// 편집 모드 여부와 무관하게 항상 노출한다 — 위젯 삭제용 X 버튼(각 위젯 쪽에서
+// isEditing으로 분기)만 편집 모드에 종속된다.
 export function DashboardCustomizeBar({
 	isEditing,
 	onToggleEditing,
 	hiddenWidgets,
 	onShowWidget,
+	onResetHidden,
 }: DashboardCustomizeBarProps): React.ReactNode {
 	const t = useTranslations("DashboardCustomizeBar");
 
@@ -47,7 +52,7 @@ export function DashboardCustomizeBar({
 			</div>
 
 			<AnimatePresence initial={false}>
-				{isEditing && hiddenWidgets.length > 0 && (
+				{hiddenWidgets.length > 0 && (
 					<motion.div
 						initial={{ opacity: 0, scale: 0.98 }}
 						animate={{ opacity: 1, scale: 1 }}
@@ -67,6 +72,12 @@ export function DashboardCustomizeBar({
 								{widget.label}
 							</button>
 						))}
+						<button
+							type="button"
+							onClick={onResetHidden}
+							className="text-imsg-secondary ml-auto text-xs font-medium underline-offset-2 hover:text-[#374151] hover:underline">
+							{t("resetAllButton")}
+						</button>
 					</motion.div>
 				)}
 			</AnimatePresence>

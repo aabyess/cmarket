@@ -1874,7 +1874,8 @@
 		"editButton": "편집",
 		"doneButton": "완료",
 		"hiddenWidgetsLabel": "숨긴 위젯",
-		"removeWidgetAria": "{widget} 위젯 숨기기"
+		"removeWidgetAria": "{widget} 위젯 숨기기",
+		"resetAllButton": "전체 초기화"
 	},
 	"BuyerDashboard": {
 		"welcome": "{companyName}님, 환영합니다",
