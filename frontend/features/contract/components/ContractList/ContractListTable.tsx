@@ -3,29 +3,10 @@
 import { useLocale, useTranslations } from "next-intl";
 import { motion } from "motion/react";
 import { CheckCircle2, FileText, Upload, PackageCheck, Star, Trash2 } from "lucide-react";
-import { cva } from "class-variance-authority";
 import { cn } from "@/utils/cn";
+import { ActionButton } from "@/components/ui/ActionButton";
 import type { Contract, ContractStatus } from "@/features/contract/types";
 import type { MyReview } from "@/features/reviews/types";
-
-// 행동 버튼의 3단계 위계 — 주요(굵은 색상) → 보조(옅은 테두리) → 위험(계약 취소,
-// 텍스트만 남겨 시각적으로 가장 약하게). 모든 행에서 버튼이 같은 스타일 규칙을
-// 따르게 해 조합이 달라도 시작 위치·크기가 흔들리지 않도록 한다.
-const actionButton = cva(
-	"flex w-full items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-60",
-	{
-		variants: {
-			tone: {
-				primary: "bg-[#16A34A] text-white hover:bg-[#15803D]",
-				primaryDisabled: "border border-[#E5E7EB] text-[#9CA3AF]",
-				secondary: "text-imsg-blue border border-[#BFDBFE] bg-[#EFF6FF] hover:bg-[#DBEAFE]",
-				secondaryNeutral: "border border-[#E5E7EB] text-[#374151] hover:bg-[#F9FAFB]",
-				danger: "border border-[#FECACA] bg-[#FEF2F2] text-[#DC2626] hover:bg-[#FEE2E2]",
-				dangerGhost: "text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#DC2626]",
-			},
-		},
-	},
-);
 
 const CURRENCY_SYMBOL: Record<string, string> = {
 	USD: "$",
@@ -162,72 +143,70 @@ export function ContractListTable({
 											<div className="flex flex-col gap-1.5">
 												{/* 주요 행동 */}
 												{role === "buyer" && !contract.deliveryConfirmedAt && (
-													<button
+													<ActionButton
 														onClick={() => onRequestDeliveryConfirm(contract.id)}
 														disabled={loadingId === contract.id}
-														className={actionButton({ tone: "primary" })}>
+														tone="primary">
 														<PackageCheck size={14} />
 														{t("confirmDeliveryTitle")}
-													</button>
+													</ActionButton>
 												)}
 												{contract.status === "ongoing" && role === "buyer" && (
-													<button
+													<ActionButton
 														onClick={() => onUploadClick(contract.id)}
 														disabled={uploadingId === contract.id}
-														className={actionButton({ tone: "primary" })}>
+														tone="primary">
 														<Upload size={14} />
 														{contract.paymentReceiptUrl
 															? t("reuploadReceiptTitle")
 															: t("uploadReceiptTitle")}
-													</button>
+													</ActionButton>
 												)}
 												{contract.status === "ongoing" && role === "seller" && (
-													<button
+													<ActionButton
 														onClick={() => onRequestConfirm(contract.id)}
 														disabled={loadingId === contract.id || !contract.paymentReceiptUrl}
-														className={actionButton({
-															tone: contract.paymentReceiptUrl ? "primary" : "primaryDisabled",
-														})}>
+														tone={contract.paymentReceiptUrl ? "primary" : "primaryDisabled"}>
 														<CheckCircle2 size={14} />
 														{t("confirmPaymentTitle")}
-													</button>
+													</ActionButton>
 												)}
 
 												{/* 보조 행동 */}
 												{contract.status === "ongoing" && contract.paymentReceiptUrl && (
-													<button
-														onClick={() => onViewReceipt(contract.id)}
-														className={actionButton({ tone: "secondary" })}>
+													<ActionButton onClick={() => onViewReceipt(contract.id)} tone="secondary">
 														<FileText size={14} />
 														{role === "seller" ? t("confirmReceiptTitle") : t("viewReceiptTitle")}
-													</button>
+													</ActionButton>
 												)}
-												{contract.status === "ongoing" && role === "buyer" && contract.paymentReceiptUrl && (
-													<button
-														onClick={() => onRequestReceiptDelete(contract.id)}
-														disabled={loadingId === contract.id}
-														className={actionButton({ tone: "danger" })}>
-														<Trash2 size={14} />
-														{t("deleteReceiptTitle")}
-													</button>
-												)}
+												{contract.status === "ongoing" &&
+													role === "buyer" &&
+													contract.paymentReceiptUrl && (
+														<ActionButton
+															onClick={() => onRequestReceiptDelete(contract.id)}
+															disabled={loadingId === contract.id}
+															tone="danger">
+															<Trash2 size={14} />
+															{t("deleteReceiptTitle")}
+														</ActionButton>
+													)}
 												{contract.paymentConfirmedAt && !myReviewMap.has(contract.id) && (
-													<button
+													<ActionButton
 														onClick={() => onRequestReview(contract.id)}
-														className={actionButton({ tone: "secondaryNeutral" })}>
+														tone="secondaryNeutral">
 														<Star size={14} />
 														{t("reviewButton")}
-													</button>
+													</ActionButton>
 												)}
 
 												{/* 위험 행동 — 계약 자체를 끝내는 조작이라 가장 눈에 덜 띄게 둔다 */}
 												{contract.status === "ongoing" && !contract.paymentReceiptUrl && (
-													<button
+													<ActionButton
 														onClick={() => onRequestCancel(contract.id)}
 														disabled={loadingId === contract.id}
-														className={actionButton({ tone: "dangerGhost" })}>
+														tone="dangerGhost">
 														{t("cancelContract")}
-													</button>
+													</ActionButton>
 												)}
 											</div>
 										</div>
