@@ -9,7 +9,12 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { cn } from "@/utils/cn";
 
-export function LanguageSwitcher(): React.JSX.Element {
+type LanguageSwitcherProps = {
+	/** 드롭다운이 버튼 기준 어느 쪽으로 펼쳐질지. 화면 왼쪽에 붙은 사이드바에서는 "left"(오른쪽으로 펼침)를 쓴다. */
+	align?: "left" | "right";
+};
+
+export function LanguageSwitcher({ align = "right" }: LanguageSwitcherProps): React.JSX.Element {
 	const locale = useLocale();
 	const t = useTranslations("Locales");
 	const pathname = usePathname();
@@ -43,7 +48,11 @@ export function LanguageSwitcher(): React.JSX.Element {
 			</button>
 
 			{isOpen && (
-				<div className="absolute right-0 top-full z-50 mt-2 w-44 rounded-xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
+				<div
+					className={cn(
+						"absolute top-full z-50 mt-2 w-44 rounded-xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg",
+						align === "left" ? "left-0" : "right-0",
+					)}>
 					{routing.locales.map((loc) => (
 						<button
 							key={loc}
