@@ -215,7 +215,7 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 											<motion.span
 												layoutId={`quote-review-listing-status-${listing.id}`}
 												transition={{ type: "spring", stiffness: 300, damping: 30 }}
-												className="flex items-center gap-1 rounded-full bg-[#ECFDF5] px-2 py-0.5 text-xs font-medium text-[#059669]"
+												className="flex items-center gap-1 rounded-full bg-[#F0FDF4] px-2 py-0.5 text-xs font-medium text-[#16A34A]"
 											>
 												<CheckCircle2 size={11} />
 												{t("awardedBadge")}

@@ -240,7 +240,7 @@ export function ListingDetailQuoteForm({
 			<div className="rounded-2xl border border-[#E5E7EB] bg-white p-5">
 				<div className="mb-4 flex items-center gap-2">
 					{myQuote.status === "awarded" ? (
-						<span className="flex items-center gap-1 rounded-full bg-[#ECFDF5] px-2.5 py-1 text-xs font-medium text-[#059669]">
+						<span className="flex items-center gap-1 rounded-full bg-[#F0FDF4] px-2.5 py-1 text-xs font-medium text-[#16A34A]">
 							<CheckCircle2 size={12} />
 							{t("statusAwarded")}
 						</span>

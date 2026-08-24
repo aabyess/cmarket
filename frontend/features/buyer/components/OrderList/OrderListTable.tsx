@@ -20,7 +20,7 @@ const CURRENCY_SYMBOL: Record<Currency, string> = {
 const STATUS_STYLE: Record<DisplayListingStatus, string> = {
 	active: "bg-[#EFF6FF] text-imsg-blue",
 	closed: "bg-[#F3F4F6] text-[#6B7280]",
-	awarded: "bg-[#ECFDF5] text-[#059669]",
+	awarded: "bg-[#F0FDF4] text-[#16A34A]",
 	failed: "bg-[#F3F4F6] text-[#6B7280]",
 };
 
