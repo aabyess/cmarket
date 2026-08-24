@@ -241,7 +241,7 @@ export function DashboardHome({
 										</span>
 									)}
 									{urgentTodos.length > 0 && (
-										<span className="rounded-full bg-red-50 px-2 py-0.5 text-sm font-semibold text-red-500">
+										<span className="rounded-full bg-[#FEF2F2] px-2 py-0.5 text-sm font-semibold text-[#DC2626]">
 											{t("urgentCount", { count: urgentTodos.length })}
 										</span>
 									)}

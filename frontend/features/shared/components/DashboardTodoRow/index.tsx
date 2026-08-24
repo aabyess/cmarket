@@ -32,7 +32,7 @@ const KIND_TONE: Record<
 function getKindTone(kind: DashboardTodoKind, isUrgent: boolean): { tint: string; icon: string } {
 	if (kind === "deliveryDue") {
 		return isUrgent
-			? { tint: "bg-red-50", icon: "text-red-500" }
+			? { tint: "bg-[#FEF2F2]", icon: "text-[#DC2626]" }
 			: { tint: "bg-emerald-50", icon: "text-emerald-500" };
 	}
 	return KIND_TONE[kind];
@@ -98,7 +98,7 @@ export function DashboardTodoRow({
 						<KindIcon size={14} className={tone.icon} />
 					</span>
 					{isUrgent ? (
-						<span className="shrink-0 rounded-full bg-red-50 px-1.5 py-0.5 text-[10px] font-semibold text-red-500">
+						<span className="shrink-0 rounded-full bg-[#FEF2F2] px-1.5 py-0.5 text-[10px] font-semibold text-[#DC2626]">
 							{urgentLabel}
 						</span>
 					) : (
@@ -115,7 +115,7 @@ export function DashboardTodoRow({
 					<p
 						className={cn(
 							"flex items-center gap-1 text-xs",
-							isUrgent ? "text-red-500" : "text-imsg-secondary",
+							isUrgent ? "text-[#DC2626]" : "text-imsg-secondary",
 						)}>
 						<Clock size={11} />
 						{deadlineText}
@@ -144,7 +144,7 @@ export function DashboardTodoRow({
 			)}>
 			<span className="min-w-0 flex-1 truncate text-sm font-medium text-[#0f172a]">{title}</span>
 			{isUrgent && (
-				<span className="shrink-0 rounded-full bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-500">
+				<span className="shrink-0 rounded-full bg-[#FEF2F2] px-2 py-0.5 text-xs font-semibold text-[#DC2626]">
 					{urgentLabel}
 				</span>
 			)}
@@ -154,7 +154,8 @@ export function DashboardTodoRow({
 				</span>
 			)}
 			{deadlineText && (
-				<span className={cn("shrink-0 text-xs", isUrgent ? "text-red-500" : "text-imsg-secondary")}>
+				<span
+					className={cn("shrink-0 text-xs", isUrgent ? "text-[#DC2626]" : "text-imsg-secondary")}>
 					{deadlineText}
 				</span>
 			)}

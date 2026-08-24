@@ -127,7 +127,7 @@ export function OrderListFilterPresets({
 										<button
 											onClick={() => setDeletingPreset(preset)}
 											aria-label={t("presetsDeleteAria", { name: preset.name })}
-											className="flex size-7 shrink-0 items-center justify-center rounded-lg text-[#9CA3AF] transition-colors hover:bg-red-50 hover:text-red-500">
+											className="flex size-7 shrink-0 items-center justify-center rounded-lg text-[#9CA3AF] transition-colors hover:bg-[#FEF2F2] hover:text-[#DC2626]">
 											<X size={13} />
 										</button>
 									</div>
