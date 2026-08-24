@@ -2266,5 +2266,9 @@
 	"OrderListBookmarkersModal": {
 		"title": "Companies interested",
 		"bookmarkedOn": "Bookmarked on {date}"
+	},
+	"ViewModeToggle": {
+		"gridLabel": "Card view",
+		"listLabel": "List view"
 	}
 }

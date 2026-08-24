@@ -2266,5 +2266,9 @@
 	"OrderListBookmarkersModal": {
 		"title": "관심을 보인 기업",
 		"bookmarkedOn": "{date}에 관심 등록"
+	},
+	"ViewModeToggle": {
+		"gridLabel": "카드형 보기",
+		"listLabel": "리스트형 보기"
 	}
 }

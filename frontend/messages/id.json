@@ -2266,5 +2266,9 @@
 	"OrderListBookmarkersModal": {
 		"title": "Perusahaan yang tertarik",
 		"bookmarkedOn": "Ditandai favorit pada {date}"
+	},
+	"ViewModeToggle": {
+		"gridLabel": "Tampilan kartu",
+		"listLabel": "Tampilan daftar"
 	}
 }

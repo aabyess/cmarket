@@ -4,7 +4,10 @@
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Clock } from "lucide-react";
+import { usePersistentState } from "@/hooks/usePersistentState";
 import { DashboardTodoRow } from "@/features/shared/components/DashboardTodoRow";
+import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
+import { cn } from "@/utils/cn";
 import type { SellerTodo } from "@/features/seller/types";
 
 type SellerDashboardTodoProps = {
@@ -14,6 +17,10 @@ type SellerDashboardTodoProps = {
 export function SellerDashboardTodo({ todos }: SellerDashboardTodoProps): React.JSX.Element {
 	const t = useTranslations("SellerDashboard");
 	const router = useRouter();
+	const [viewMode, setViewMode] = usePersistentState<ViewMode>(
+		"mitrapay:seller-dashboard-todo-view",
+		"list",
+	);
 
 	function handleAction(todo: SellerTodo): void {
 		if (todo.kind === "quotePending") {
@@ -45,6 +52,7 @@ export function SellerDashboardTodo({ todos }: SellerDashboardTodoProps): React.
 						</span>
 					)}
 				</div>
+				{todos.length > 0 && <ViewModeToggle value={viewMode} onChange={setViewMode} />}
 			</div>
 
 			<div className="h-px bg-[#F2F2F7]" />
@@ -58,10 +66,15 @@ export function SellerDashboardTodo({ todos }: SellerDashboardTodoProps): React.
 					<p className="text-imsg-secondary mt-1 text-sm">{t("todoEmptyDescription")}</p>
 				</div>
 			) : (
-				<ul className="divide-y divide-[#F2F2F7]">
+				<ul
+					className={cn(
+						viewMode === "list" ? "divide-y divide-[#F2F2F7]" : "grid grid-cols-2 gap-2 p-3",
+					)}>
 					{todos.map((todo) => (
 						<DashboardTodoRow
 							key={todo.id}
+							id={todo.id}
+							variant={viewMode === "list" ? "row" : "card"}
 							title={todo.title}
 							deadlineText={todo.deadlineText}
 							isUrgent={todo.highlights.length > 0}
