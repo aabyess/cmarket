@@ -84,7 +84,7 @@ export function DashboardTodoRow({
 				className={cn(
 					"group flex cursor-pointer flex-col gap-1.5 rounded-xl border p-3.5 transition-all hover:-translate-y-0.5 hover:shadow-md",
 					isUrgent
-						? "border-red-200 bg-red-50/40"
+						? "border-red-200 bg-white"
 						: isNew
 							? "border-blue-100 bg-blue-50/30"
 							: "border-[#F2F2F7]",
