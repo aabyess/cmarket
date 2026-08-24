@@ -259,15 +259,13 @@ export function DashboardHome({
 										</motion.div>
 									)}
 								</AnimatePresence>
-								<div className="flex justify-center border-t border-[#F2F2F7] py-1">
-									<button
-										type="button"
-										onClick={() => setIsExpanded((prev) => !prev)}
-										aria-label={isExpanded ? t("collapseListAria") : t("expandListAria")}
-										className="text-imsg-secondary hover:bg-imsg-surface flex size-6 items-center justify-center rounded-full transition-colors hover:text-[#374151]">
-										{isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-									</button>
-								</div>
+								<button
+									type="button"
+									onClick={() => setIsExpanded((prev) => !prev)}
+									aria-label={isExpanded ? t("collapseListAria") : t("expandListAria")}
+									className="text-imsg-secondary hover:bg-imsg-surface flex w-full items-center justify-center border-t border-[#F2F2F7] py-2 transition-colors hover:text-[#374151]">
+									{isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+								</button>
 							</>
 						)}
 					</div>
