@@ -60,11 +60,11 @@ export function ContractListTable({
 	};
 
 	return (
-		<div className="overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white">
+		<div className="border-hairline overflow-hidden rounded-2xl border bg-white">
 			<div className="overflow-x-auto">
 				<table className="w-full border-collapse text-sm">
 					<thead>
-						<tr className="border-b border-[#E5E7EB] bg-[#F9FAFB] text-left text-xs font-medium text-[#9CA3AF]">
+						<tr className="border-hairline text-subtle border-b bg-[#F9FAFB] text-left text-xs font-medium">
 							<th className="px-4 py-3">{t("columnStatus")}</th>
 							<th className="px-4 py-3">{t("columnTitle")}</th>
 							<th className="px-4 py-3">{t("columnPartner")}</th>
@@ -94,19 +94,19 @@ export function ContractListTable({
 										{statusLabels[contract.status]}
 									</motion.span>
 								</td>
-								<td className="max-w-[200px] truncate px-4 py-3 font-medium text-[#1F2937]">
+								<td className="text-ink max-w-[200px] truncate px-4 py-3 font-medium">
 									{contract.listing.title}
 								</td>
-								<td className="max-w-[160px] truncate px-4 py-3 text-[#6B7280]">
+								<td className="text-muted max-w-[160px] truncate px-4 py-3">
 									{contract.partnerCompanyName || t("noPartnerCompanyName")}
 								</td>
-								<td className="px-4 py-3 text-[#1F2937]">
+								<td className="text-ink px-4 py-3">
 									{CURRENCY_SYMBOL[contract.quote.currency]} {contract.quote.price.toLocaleString()}
 								</td>
-								<td className="px-4 py-3 text-[#6B7280]">
+								<td className="text-muted px-4 py-3">
 									{t("days", { count: contract.quote.deliveryDays })}
 								</td>
-								<td className="px-4 py-3 text-[#9CA3AF]">
+								<td className="text-subtle px-4 py-3">
 									{new Date(contract.createdAt).toLocaleDateString(locale)}
 								</td>
 								{/* 액션 칸 — 버튼 클릭이 행 이동으로 번지지 않게 막는다.
@@ -115,7 +115,7 @@ export function ContractListTable({
 								    버튼과 분리해 조용한 텍스트로만 보여준다. */}
 								<td className="w-44 px-4 py-3 align-top" onClick={(e) => e.stopPropagation()}>
 									{contract.status === "cancelled" ? (
-										<span className="block text-right text-xs text-[#9CA3AF]">-</span>
+										<span className="text-subtle block text-right text-xs">-</span>
 									) : (
 										<div className="flex flex-col items-stretch gap-2">
 											{(contract.deliveryConfirmedAt ||

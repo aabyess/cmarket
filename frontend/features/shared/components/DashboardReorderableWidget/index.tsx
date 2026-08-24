@@ -39,7 +39,7 @@ export function DashboardReorderableWidget<K extends string>({
 					type="button"
 					aria-label={dragHandleLabel}
 					onPointerDown={(event) => dragControls.start(event)}
-					className="text-imsg-secondary hover:bg-imsg-surface absolute -top-2 -left-2 z-10 flex size-6 cursor-grab touch-none items-center justify-center rounded-full border border-[#E5E7EB] bg-white shadow-sm transition-colors active:cursor-grabbing">
+					className="text-imsg-secondary hover:bg-imsg-surface border-hairline absolute -top-2 -left-2 z-10 flex size-6 cursor-grab touch-none items-center justify-center rounded-full border bg-white shadow-sm transition-colors active:cursor-grabbing">
 					<GripVertical size={13} />
 				</button>
 			)}

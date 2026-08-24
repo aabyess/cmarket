@@ -67,13 +67,13 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 	}
 
 	return (
-		<div className="overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white">
+		<div className="border-hairline overflow-hidden rounded-2xl border bg-white">
 			{chatStartStep && <ChatStartLoadingModal step={chatStartStep} />}
 
 			<div className="overflow-x-auto">
 				<table className="w-full border-collapse text-left text-sm">
 					<thead className="bg-[#F9FAFB]">
-						<tr className="border-b border-[#E5E7EB] text-xs font-medium text-[#9CA3AF]">
+						<tr className="border-hairline text-subtle border-b text-xs font-medium">
 							<th className="px-4 py-3">{t("columnCompany")}</th>
 							<th className="whitespace-nowrap px-4 py-3 text-right">{t("columnPrice")}</th>
 							<th className="whitespace-nowrap px-4 py-3 text-right">{t("columnDelivery")}</th>
@@ -114,19 +114,19 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 												/>
 											) : (
 												<div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-[#F3F4F6]">
-													<Building2 size={13} className="text-[#9CA3AF]" />
+													<Building2 size={13} className="text-subtle" />
 												</div>
 											)}
 											<div className="min-w-0">
 												<button
 													onClick={() => router.push(`/companies/${quote.seller.profileId}`)}
-													className="flex min-w-0 items-center gap-1 truncate font-semibold text-[#1F2937] hover:text-imsg-blue hover:underline"
+													className="flex min-w-0 items-center gap-1 truncate font-semibold text-ink hover:text-imsg-blue hover:underline"
 												>
 													<span className="truncate">{quote.seller.companyName || t("noName")}</span>
-													<ExternalLink size={11} className="shrink-0 text-[#9CA3AF]" />
+													<ExternalLink size={11} className="shrink-0 text-subtle" />
 												</button>
 												{quote.seller.representative && (
-													<p className="truncate text-xs text-[#9CA3AF]">
+													<p className="text-subtle truncate text-xs">
 														{t("representativePrefix", { name: quote.seller.representative })}
 													</p>
 												)}
@@ -171,13 +171,13 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 													? "bg-[#F0FDF4] text-[#16A34A]"
 													: isHighestPrice
 														? "bg-[#FEF2F2] text-[#DC2626]"
-														: "text-[#1F2937]",
+														: "text-ink",
 											)}
 										>
 											{symbol} {quote.price.toLocaleString()}
 										</motion.span>
 										{quote.currency !== "IDR" && quote.priceInIdr !== null && (
-											<p className="mt-0.5 text-xs text-[#9CA3AF]">
+											<p className="mt-0.5 text-xs text-subtle">
 												{t("approxPriceIdr", { amount: Math.round(quote.priceInIdr).toLocaleString() })}
 											</p>
 										)}
@@ -190,7 +190,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 													? "bg-[#F0FDF4] text-[#16A34A]"
 													: isSlowestDelivery
 														? "bg-[#FEF2F2] text-[#DC2626]"
-														: "text-[#1F2937]",
+														: "text-ink",
 											)}
 										>
 											{t("days", { count: quote.deliveryDays })}
@@ -204,7 +204,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 											{/* 낙찰(기업 확정)은 채팅방에서만 — 여기서는 기업 홈페이지 진입만 제공한다. */}
 											<button
 												onClick={() => router.push(`/companies/${quote.seller.profileId}`)}
-												className="flex items-center justify-center gap-1 whitespace-nowrap rounded-lg border border-[#E5E7EB] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#374151] transition-colors hover:border-imsg-blue hover:text-imsg-blue"
+												className="flex items-center justify-center gap-1 whitespace-nowrap rounded-lg border border-hairline bg-white px-2.5 py-1.5 text-xs font-semibold text-[#374151] transition-colors hover:border-imsg-blue hover:text-imsg-blue"
 											>
 												<ExternalLink size={12} />
 												{t("homepageAction")}

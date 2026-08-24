@@ -246,12 +246,12 @@ export function ContractList({ contracts, role }: ContractListProps) {
 
 	if (contracts.length === 0) {
 		return (
-			<div className="rounded-2xl border border-[#E5E7EB] bg-white p-12 text-center">
+			<div className="border-hairline rounded-2xl border bg-white p-12 text-center">
 				<div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F3F4F6]">
-					<FileCheck size={26} className="text-[#9CA3AF]" />
+					<FileCheck size={26} className="text-subtle" />
 				</div>
-				<p className="text-base font-medium text-[#1F2937]">{t("emptyTitle")}</p>
-				<p className="mt-1 text-sm text-[#6B7280]">{t("emptyDescription")}</p>
+				<p className="text-ink text-base font-medium">{t("emptyTitle")}</p>
+				<p className="text-muted mt-1 text-sm">{t("emptyDescription")}</p>
 			</div>
 		);
 	}
@@ -288,8 +288,8 @@ export function ContractList({ contracts, role }: ContractListProps) {
 				))}
 
 			{visibleContracts.length === 0 ? (
-				<div className="rounded-2xl border border-[#E5E7EB] bg-white p-12 text-center">
-					<p className="text-sm text-[#6B7280]">
+				<div className="border-hairline rounded-2xl border bg-white p-12 text-center">
+					<p className="text-muted text-sm">
 						{filter === "ongoing"
 							? t("noResultsOngoing")
 							: filter === "cancelled"
@@ -338,14 +338,14 @@ export function ContractList({ contracts, role }: ContractListProps) {
 							key={contract.id}
 							onClick={() => handleOpenDetail(contract.listingId)}
 							className={cn(
-								"cursor-pointer rounded-2xl border border-[#E5E7EB] bg-white p-6 transition-all hover:border-[#BFDBFE] hover:shadow-sm",
+								"cursor-pointer rounded-2xl border border-hairline bg-white p-6 transition-all hover:border-[#BFDBFE] hover:shadow-sm",
 								contract.status !== "ongoing" && "opacity-75",
 							)}>
 							{/* 헤더 */}
 							<div className="mb-4 flex items-start justify-between gap-4">
 								<div>
-									<p className="text-base font-semibold text-[#1F2937]">{contract.listing.title}</p>
-									<p className="mt-1 flex items-center gap-1.5 text-sm text-[#6B7280]">
+									<p className="text-base font-semibold text-ink">{contract.listing.title}</p>
+									<p className="mt-1 flex items-center gap-1.5 text-sm text-muted">
 										<Building2 size={13} />
 										{contract.partnerCompanyName || t("noPartnerCompanyName")}
 									</p>
@@ -362,7 +362,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 							</div>
 
 							{/* 메타 정보 */}
-							<div className="mb-4 flex flex-wrap gap-4 text-xs text-[#6B7280]">
+							<div className="mb-4 flex flex-wrap gap-4 text-xs text-muted">
 								<span className="flex items-center gap-1.5">
 									<DollarSign size={13} />
 									{CURRENCY_SYMBOL[contract.quote.currency]} {contract.quote.price.toLocaleString()}
@@ -410,7 +410,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 									) : (
 										<button
 											onClick={() => setReviewContractId(contract.id)}
-											className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#374151] transition-colors hover:bg-imsg-surface">
+											className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-hairline py-2.5 text-xs font-medium text-[#374151] transition-colors hover:bg-imsg-surface">
 											<Star size={14} />
 											{t("reviewButton")}
 										</button>
@@ -439,7 +439,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 								!contract.paymentReceiptUrl &&
 								contract.status === "ongoing" &&
 								!contract.paymentConfirmedAt && (
-									<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#F9FAFB] px-3.5 py-2.5 text-xs text-[#9CA3AF]">
+									<div className="mb-4 flex items-center gap-2 rounded-xl bg-[#F9FAFB] px-3.5 py-2.5 text-xs text-subtle">
 										<Clock size={14} />
 										{t("waitingForReceipt")}
 									</div>
@@ -462,7 +462,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 													<button
 														onClick={() => fileInputRefs.current[contract.id]?.click()}
 														disabled={uploadingId === contract.id}
-														className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB] disabled:opacity-60">
+														className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-hairline py-2.5 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB] disabled:opacity-60">
 														<Upload size={14} />
 														{uploadingId === contract.id ? t("uploading") : t("reupload")}
 													</button>
@@ -487,7 +487,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 												<button
 													onClick={() => setCancelConfirmId(contract.id)}
 													disabled={loadingId === contract.id}
-													className="flex-1 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60">
+													className="flex-1 rounded-xl border border-hairline py-2.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60">
 													{t("cancelContract")}
 												</button>
 											)}
@@ -512,7 +512,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 													"flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-semibold transition-colors disabled:opacity-60",
 													contract.paymentReceiptUrl
 														? "bg-[#16A34A] text-white hover:bg-[#15803D]"
-														: "border border-[#E5E7EB] bg-white text-[#9CA3AF]",
+														: "border border-hairline bg-white text-subtle",
 												)}>
 												<CheckCircle2 size={14} />
 												{loadingId === contract.id ? t("processing") : t("confirmPayment")}
@@ -521,7 +521,7 @@ export function ContractList({ contracts, role }: ContractListProps) {
 												<button
 													onClick={() => setCancelConfirmId(contract.id)}
 													disabled={loadingId === contract.id}
-													className="flex-1 rounded-xl border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60">
+													className="flex-1 rounded-xl border border-hairline py-2.5 text-xs font-medium text-[#DC2626] transition-colors hover:bg-[#FEF2F2] disabled:opacity-60">
 													{t("cancelContract")}
 												</button>
 											)}

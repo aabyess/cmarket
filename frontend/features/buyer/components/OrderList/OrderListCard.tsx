@@ -19,9 +19,9 @@ const CURRENCY_SYMBOL: Record<Currency, string> = {
 
 const STATUS_STYLE: Record<DisplayListingStatus, { className: string; dotClassName: string }> = {
 	active: { className: "bg-[#EFF6FF] text-imsg-blue", dotClassName: "bg-imsg-blue" },
-	closed: { className: "bg-[#F3F4F6] text-[#6B7280]", dotClassName: "bg-[#9CA3AF]" },
+	closed: { className: "bg-[#F3F4F6] text-muted", dotClassName: "bg-subtle" },
 	awarded: { className: "bg-[#F0FDF4] text-[#16A34A]", dotClassName: "bg-[#16A34A]" },
-	failed: { className: "bg-[#F3F4F6] text-[#6B7280]", dotClassName: "bg-[#9CA3AF]" },
+	failed: { className: "bg-[#F3F4F6] text-muted", dotClassName: "bg-subtle" },
 };
 
 function getRemainingInfo(endDate: string): { isClosed: boolean; days: number; isUrgent: boolean } {
@@ -89,7 +89,7 @@ export function OrderListCard({
 			)}
 			<button
 				onClick={onClick}
-				className="w-full rounded-2xl border border-[#E5E7EB] bg-white p-5 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+				className="border-hairline w-full rounded-2xl border bg-white p-5 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
 				<div className="mb-2.5 flex items-center gap-2">
 					<motion.span
 						layoutId={`listing-status-${listing.id}`}
@@ -102,48 +102,48 @@ export function OrderListCard({
 						{statusLabels[displayStatus]}
 					</motion.span>
 					{listing.category && categoryLabels[listing.category] && (
-						<span className="rounded-full bg-[#F3F4F6] px-2.5 py-1 text-xs font-medium text-[#6B7280]">
+						<span className="text-muted rounded-full bg-[#F3F4F6] px-2.5 py-1 text-xs font-medium">
 							{categoryLabels[listing.category]}
 						</span>
 					)}
 					<span
 						className={cn(
 							"ml-auto flex items-center gap-1 text-xs",
-							remaining.isUrgent ? "font-medium text-[#DC2626]" : "text-[#9CA3AF]",
+							remaining.isUrgent ? "font-medium text-[#DC2626]" : "text-subtle",
 						)}>
 						<Clock size={13} />
 						{remainingText}
 					</span>
 				</div>
 
-				<p className="text-sm font-semibold text-[#1F2937]">{listing.title}</p>
+				<p className="text-ink text-sm font-semibold">{listing.title}</p>
 
 				{itemNames && (
-					<p className="mt-1 flex items-center gap-1.5 truncate text-xs text-[#6B7280]">
+					<p className="text-muted mt-1 flex items-center gap-1.5 truncate text-xs">
 						<Package size={13} className="shrink-0" />
 						{itemNames}
 					</p>
 				)}
 
-				<p className="mt-1.5 text-xs text-[#9CA3AF]">
+				<p className="text-subtle mt-1.5 text-xs">
 					{t("registeredOn", { date: formatDate(listing.createdAt) })}
 				</p>
 
 				<div className="mt-3.5 flex items-center gap-5 border-t border-[#F3F4F6] pt-3.5">
 					<div>
-						<p className="text-xs text-[#9CA3AF]">{t("budgetLabel")}</p>
-						<p className="text-xs font-semibold text-[#1F2937]">
+						<p className="text-subtle text-xs">{t("budgetLabel")}</p>
+						<p className="text-ink text-xs font-semibold">
 							{listing.budgetPublic
 								? `${symbol} ${listing.totalBudget.toLocaleString()}`
 								: t("budgetPrivate")}
 						</p>
 					</div>
 					<div>
-						<p className="flex items-center gap-1 text-xs text-[#9CA3AF]">
+						<p className="text-subtle flex items-center gap-1 text-xs">
 							<MessageSquare size={11} />
 							{t("receivedQuotesLabel")}
 						</p>
-						<p className="text-xs font-semibold text-[#1F2937]">
+						<p className="text-ink text-xs font-semibold">
 							{t("quoteCount", { count: listing.quoteCount })}
 						</p>
 					</div>

@@ -19,9 +19,9 @@ const CURRENCY_SYMBOL: Record<Currency, string> = {
 
 const STATUS_STYLE: Record<DisplayListingStatus, string> = {
 	active: "bg-[#EFF6FF] text-imsg-blue",
-	closed: "bg-[#F3F4F6] text-[#6B7280]",
+	closed: "bg-[#F3F4F6] text-muted",
 	awarded: "bg-[#F0FDF4] text-[#16A34A]",
-	failed: "bg-[#F3F4F6] text-[#6B7280]",
+	failed: "bg-[#F3F4F6] text-muted",
 };
 
 function formatDate(iso: string): string {
@@ -58,11 +58,11 @@ export function OrderListTable({
 	};
 
 	return (
-		<div className="overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white">
+		<div className="border-hairline overflow-hidden rounded-2xl border bg-white">
 			<div className="overflow-x-auto">
 				<table className="w-full border-collapse text-sm">
 					<thead>
-						<tr className="border-b border-[#E5E7EB] bg-[#F9FAFB] text-left text-xs font-medium text-[#9CA3AF]">
+						<tr className="border-hairline text-subtle border-b bg-[#F9FAFB] text-left text-xs font-medium">
 							<th className="px-4 py-3">{t("columnStatus")}</th>
 							<th className="px-4 py-3">{t("columnTitle")}</th>
 							<th className="px-4 py-3">{t("columnCategory")}</th>
@@ -106,26 +106,26 @@ export function OrderListTable({
 											{statusLabels[displayStatus]}
 										</motion.span>
 									</td>
-									<td className="max-w-[240px] truncate px-4 py-3 font-medium text-[#1F2937]">
+									<td className="text-ink max-w-[240px] truncate px-4 py-3 font-medium">
 										{listing.title}
 									</td>
-									<td className="px-4 py-3 text-[#6B7280]">{categoryLabel ?? "-"}</td>
-									<td className="px-4 py-3 text-[#1F2937]">
+									<td className="text-muted px-4 py-3">{categoryLabel ?? "-"}</td>
+									<td className="text-ink px-4 py-3">
 										{listing.budgetPublic
 											? `${symbol} ${listing.totalBudget.toLocaleString()}`
 											: t("budgetPrivate")}
 									</td>
-									<td className="px-4 py-3 text-[#1F2937]">
+									<td className="text-ink px-4 py-3">
 										{t("quoteCount", { count: listing.quoteCount })}
 									</td>
 									<td
 										className={cn(
 											"px-4 py-3",
-											remaining.isUrgent ? "font-medium text-[#DC2626]" : "text-[#6B7280]",
+											remaining.isUrgent ? "font-medium text-[#DC2626]" : "text-muted",
 										)}>
 										{remainingText}
 									</td>
-									<td className="px-4 py-3 text-[#9CA3AF]">{formatDate(listing.createdAt)}</td>
+									<td className="text-subtle px-4 py-3">{formatDate(listing.createdAt)}</td>
 									<td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
 										{listing.bookmarkCount > 0 && (
 											<button

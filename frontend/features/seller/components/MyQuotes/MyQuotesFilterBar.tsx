@@ -30,7 +30,7 @@ const viewButton = cva(
 		variants: {
 			active: {
 				true: "bg-imsg-blue text-white",
-				false: "text-[#9CA3AF] hover:bg-[#F9FAFB]",
+				false: "text-subtle hover:bg-[#F9FAFB]",
 			},
 		},
 		defaultVariants: { active: false },
@@ -66,15 +66,15 @@ export function MyQuotesFilterBar({
 			<Popover className="relative">
 				{({ open }) => (
 					<>
-						<PopoverButton className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
+						<PopoverButton className="border-hairline flex items-center gap-1.5 rounded-xl border bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
 							<ArrowUpDown size={14} />
 							{sortTriggerLabel}
 						</PopoverButton>
 
 						<AnimatedPopoverPanel
 							open={open}
-							className="absolute right-0 z-20 mt-2 w-44 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
-							<p className="px-3 pb-1 pt-1.5 text-[11px] font-semibold text-[#9CA3AF]">
+							className="border-hairline absolute right-0 z-20 mt-2 w-44 rounded-2xl border bg-white p-1.5 shadow-lg">
+							<p className="text-subtle px-3 pt-1.5 pb-1 text-[11px] font-semibold">
 								{t("sortSectionLabel")}
 							</p>
 							{SORT_VALUES.map((option) => (
@@ -92,9 +92,9 @@ export function MyQuotesFilterBar({
 								</button>
 							))}
 
-							<div className="my-1.5 border-t border-[#E5E7EB]" />
+							<div className="border-hairline my-1.5 border-t" />
 
-							<p className="px-3 pb-1 pt-1.5 text-[11px] font-semibold text-[#9CA3AF]">
+							<p className="text-subtle px-3 pt-1.5 pb-1 text-[11px] font-semibold">
 								{t("statusSectionLabel")}
 							</p>
 							{FILTER_VALUES.map((option) => (
@@ -116,7 +116,7 @@ export function MyQuotesFilterBar({
 				)}
 			</Popover>
 
-			<div className="flex items-center gap-1 rounded-xl border border-[#E5E7EB] bg-white p-1">
+			<div className="border-hairline flex items-center gap-1 rounded-xl border bg-white p-1">
 				<button
 					type="button"
 					onClick={() => onViewModeChange("grid")}

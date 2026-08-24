@@ -150,7 +150,7 @@ export function DashboardHome({
 		<div className="mx-auto max-w-[1200px] px-6 py-6 lg:px-8 xl:px-10">
 			{/* 배너 */}
 			<DashboardWidgetPop show={!isHidden("banner")}>
-				<div className="relative mb-6 overflow-hidden rounded-2xl border border-[#E5E7EB] bg-gradient-to-r from-[#EEF4FF] via-[#F5F9FF] to-white px-8 py-7">
+				<div className="border-hairline relative mb-6 overflow-hidden rounded-2xl border bg-gradient-to-r from-[#EEF4FF] via-[#F5F9FF] to-white px-8 py-7">
 					{isEditing && (
 						<DashboardWidgetRemoveButton
 							label={tCustomize("removeWidgetAria", { widget: widgetLabels.banner })}
@@ -295,7 +295,7 @@ export function DashboardHome({
 									</p>
 									<button
 										onClick={() => handleNavigate("/seller/profile/edit?tab=settings")}
-										className="hover:bg-imsg-surface mt-4 rounded-full border border-[#E5E7EB] px-4 py-2 text-sm font-medium text-[#0f172a] transition-colors duration-200">
+										className="hover:bg-imsg-surface border-hairline mt-4 rounded-full border px-4 py-2 text-sm font-medium text-[#0f172a] transition-colors duration-200">
 										{t("recommendedEmptyAction")}
 									</button>
 								</div>
@@ -331,7 +331,7 @@ export function DashboardHome({
 
 												<button
 													onClick={() => handleNavigate(`/seller/listing-browse/${listing.id}`)}
-													className="bg-imsg-surface flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-sm font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-[#E5E7EB]">
+													className="bg-imsg-surface hover:bg-hairline flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-sm font-semibold text-[#0f172a] transition-colors duration-200">
 													{t("sendQuoteAction")}
 													<ArrowRight size={12} />
 												</button>
@@ -378,7 +378,7 @@ export function DashboardHome({
 												<button
 													key={link.label}
 													onClick={() => handleNavigate(link.href)}
-													className="bg-imsg-surface flex flex-col gap-2.5 rounded-xl p-3 text-left transition-colors duration-200 hover:bg-[#E5E7EB]">
+													className="bg-imsg-surface hover:bg-hairline flex flex-col gap-2.5 rounded-xl p-3 text-left transition-colors duration-200">
 													<span
 														className={cn(
 															"flex size-8 items-center justify-center rounded-lg",

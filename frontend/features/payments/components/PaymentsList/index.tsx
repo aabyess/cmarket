@@ -21,7 +21,7 @@ import type { Contract } from "@/features/contract/types";
 import type { PaymentFilter, PaymentStatus } from "@/features/payments/types";
 
 const STATUS_STYLE: Record<PaymentStatus, string> = {
-	awaitingReceipt: "bg-[#F3F4F6] text-[#6B7280]",
+	awaitingReceipt: "bg-[#F3F4F6] text-muted",
 	awaitingConfirmation: "bg-[#FFFBEB] text-[#D97706]",
 	confirmed: "bg-[#F0FDF4] text-[#16A34A]",
 };
@@ -199,12 +199,12 @@ export function PaymentsList({ contracts: allContracts, role }: PaymentsListProp
 
 	if (contracts.length === 0) {
 		return (
-			<div className="rounded-2xl border border-[#E5E7EB] bg-white p-12 text-center">
+			<div className="border-hairline rounded-2xl border bg-white p-12 text-center">
 				<div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#F3F4F6]">
-					<CreditCard size={26} className="text-[#9CA3AF]" />
+					<CreditCard size={26} className="text-subtle" />
 				</div>
-				<p className="text-base font-medium text-[#1F2937]">{t("emptyTitle")}</p>
-				<p className="mt-1 text-sm text-[#6B7280]">{t("emptyDescription")}</p>
+				<p className="text-ink text-base font-medium">{t("emptyTitle")}</p>
+				<p className="text-muted mt-1 text-sm">{t("emptyDescription")}</p>
 			</div>
 		);
 	}
@@ -237,8 +237,8 @@ export function PaymentsList({ contracts: allContracts, role }: PaymentsListProp
 				))}
 
 			{visibleContracts.length === 0 ? (
-				<div className="rounded-2xl border border-[#E5E7EB] bg-white p-12 text-center">
-					<p className="text-sm text-[#6B7280]">{t("noResults")}</p>
+				<div className="border-hairline rounded-2xl border bg-white p-12 text-center">
+					<p className="text-muted text-sm">{t("noResults")}</p>
 				</div>
 			) : (
 				<>
@@ -261,13 +261,13 @@ export function PaymentsList({ contracts: allContracts, role }: PaymentsListProp
 						{paginatedContracts.map((contract) => {
 							const status = getPaymentStatus(contract);
 							return (
-								<div key={contract.id} className="rounded-2xl border border-[#E5E7EB] bg-white p-5">
+								<div key={contract.id} className="border-hairline rounded-2xl border bg-white p-5">
 									<div className="flex items-start justify-between gap-3">
 										<div className="min-w-0">
-											<p className="font-mono text-xs text-[#9CA3AF]">
+											<p className="text-subtle font-mono text-xs">
 												{formatContractNumber(contract.id)}
 											</p>
-											<p className="mt-0.5 truncate text-sm font-semibold text-[#1F2937]">
+											<p className="text-ink mt-0.5 truncate text-sm font-semibold">
 												{contract.listing.title}
 											</p>
 										</div>
@@ -280,13 +280,13 @@ export function PaymentsList({ contracts: allContracts, role }: PaymentsListProp
 										</span>
 									</div>
 
-									<div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-[#6B7280]">
+									<div className="text-muted mt-3 flex flex-wrap items-center gap-3 text-xs">
 										<span>{new Date(contract.createdAt).toLocaleDateString(locale)}</span>
-										<span className="font-medium text-[#1F2937]">
+										<span className="text-ink font-medium">
 											{CURRENCY_SYMBOL[contract.quote.currency as Currency]}{" "}
 											{contract.quote.price.toLocaleString()}
 										</span>
-										<span className="rounded-full bg-[#F3F4F6] px-2 py-0.5 text-xs text-[#6B7280]">
+										<span className="text-muted rounded-full bg-[#F3F4F6] px-2 py-0.5 text-xs">
 											{methodLabels[PAYMENT_METHOD]}
 										</span>
 									</div>
@@ -340,7 +340,7 @@ export function PaymentsList({ contracts: allContracts, role }: PaymentsListProp
 													<button
 														type="button"
 														onClick={() => setReviewContractId(contract.id)}
-														className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white py-2.5 text-xs font-medium text-[#374151] transition-colors hover:bg-imsg-surface">
+														className="border-hairline hover:bg-imsg-surface flex flex-1 items-center justify-center gap-1.5 rounded-xl border bg-white py-2.5 text-xs font-medium text-[#374151] transition-colors">
 														<Star size={14} />
 														{t("reviewButton")}
 													</button>

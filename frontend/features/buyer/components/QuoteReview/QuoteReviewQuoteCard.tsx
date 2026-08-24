@@ -290,7 +290,7 @@ export function QuoteReviewQuoteCard({
 				{/* 낙찰(기업 확정)은 채팅방에서만 — 여기서는 기업을 더 알아보는 동선을 제공한다. */}
 				<Link
 					href={`/companies/${quote.seller.profileId}?from=${encodeURIComponent(backHref)}`}
-					className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] py-2.5 text-sm font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-imsg-surface">
+					className="border-hairline hover:bg-imsg-surface flex flex-1 items-center justify-center gap-1.5 rounded-xl border py-2.5 text-sm font-semibold text-[#0f172a] transition-colors duration-200">
 					<ExternalLink size={14} />
 					{t("companyHomepage")}
 				</Link>

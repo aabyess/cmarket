@@ -77,7 +77,7 @@ export function OrderListFilterBar({
 	return (
 		<div className="mb-4 flex flex-wrap items-center justify-between gap-2">
 			<div className="flex flex-wrap items-center gap-2">
-				<div className="flex flex-wrap items-center gap-1 rounded-xl border border-[#E5E7EB] bg-white p-1">
+				<div className="border-hairline flex flex-wrap items-center gap-1 rounded-xl border bg-white p-1">
 					<button
 						onClick={onClearStatus}
 						className={cn(
@@ -85,7 +85,7 @@ export function OrderListFilterBar({
 							isAllActive ? "bg-imsg-blue text-white" : "text-[#374151] hover:bg-[#F9FAFB]",
 						)}>
 						{t("statusAll")}
-						<span className={cn("text-xs", isAllActive ? "text-white/70" : "text-[#9CA3AF]")}>
+						<span className={cn("text-xs", isAllActive ? "text-white/70" : "text-subtle")}>
 							{totalCount}
 						</span>
 					</button>
@@ -100,26 +100,26 @@ export function OrderListFilterBar({
 									isActive ? "bg-imsg-blue text-white" : "text-[#374151] hover:bg-[#F9FAFB]",
 								)}>
 								{statusLabels[value]}
-								<span className={cn("text-xs", isActive ? "text-white/70" : "text-[#9CA3AF]")}>
+								<span className={cn("text-xs", isActive ? "text-white/70" : "text-subtle")}>
 									{statusCounts[value]}
 								</span>
 							</button>
 						);
 					})}
 
-					<div className="mx-1 h-6 w-px bg-[#E5E7EB]" />
+					<div className="bg-hairline mx-1 h-6 w-px" />
 
 					<div className="flex items-center gap-2 px-2 py-1">
-						<Search size={16} className="shrink-0 text-[#9CA3AF]" />
+						<Search size={16} className="text-subtle shrink-0" />
 						<input
 							value={search}
 							onChange={(e) => onSearchChange(e.target.value)}
 							placeholder={t("searchPlaceholder")}
-							className="w-32 bg-transparent text-sm leading-none outline-none placeholder:text-[#9CA3AF]"
+							className="placeholder:text-subtle w-32 bg-transparent text-sm leading-none outline-none"
 						/>
 					</div>
 
-					<div className="mx-1 h-6 w-px bg-[#E5E7EB]" />
+					<div className="bg-hairline mx-1 h-6 w-px" />
 
 					<Popover className="relative">
 						{({ open }) => (
@@ -131,7 +131,7 @@ export function OrderListFilterBar({
 
 								<AnimatedPopoverPanel
 									open={open}
-									className="absolute right-0 z-20 mt-2 w-40 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-lg">
+									className="border-hairline absolute right-0 z-20 mt-2 w-40 rounded-2xl border bg-white p-1.5 shadow-lg">
 									{SORT_VALUES.map((option) => (
 										<button
 											key={option}
@@ -157,7 +157,7 @@ export function OrderListFilterBar({
 						"flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-medium transition-colors",
 						bookmarkedOnly
 							? "border-amber-300 bg-amber-50 text-amber-600"
-							: "border-[#E5E7EB] bg-white text-[#374151] hover:bg-[#F9FAFB]",
+							: "border-hairline bg-white text-[#374151] hover:bg-[#F9FAFB]",
 					)}>
 					<Star size={14} fill={bookmarkedOnly ? "currentColor" : "none"} />
 					{t("bookmarkedOnlyFilter")}
