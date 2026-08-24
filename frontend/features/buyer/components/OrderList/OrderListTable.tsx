@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { Star } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { Currency, ListingStatus, ListingSummary } from "@/features/buyer/types";
 import { getCategoryLabels } from "@/features/buyer/constants";
@@ -33,9 +34,14 @@ function getRemainingInfo(endDate: string): { isClosed: boolean; days: number; i
 type OrderListTableProps = {
 	listings: ListingSummary[];
 	onSelect: (id: string) => void;
+	onOpenBookmarks: (id: string) => void;
 };
 
-export function OrderListTable({ listings, onSelect }: OrderListTableProps): React.ReactNode {
+export function OrderListTable({
+	listings,
+	onSelect,
+	onOpenBookmarks,
+}: OrderListTableProps): React.ReactNode {
 	const t = useTranslations("OrderListTable");
 	const categoryLabels = getCategoryLabels(useTranslations("ListingCategory"));
 	const statusLabels: Record<ListingStatus, string> = {
@@ -57,6 +63,9 @@ export function OrderListTable({ listings, onSelect }: OrderListTableProps): Rea
 							<th className="px-4 py-3">{t("columnQuoteCount")}</th>
 							<th className="px-4 py-3">{t("columnDeadline")}</th>
 							<th className="px-4 py-3">{t("columnCreatedAt")}</th>
+							<th className="px-4 py-3">
+								<span className="sr-only">{t("columnBookmark")}</span>
+							</th>
 						</tr>
 					</thead>
 					<tbody className="divide-y divide-[#F3F4F6]">
@@ -64,17 +73,22 @@ export function OrderListTable({ listings, onSelect }: OrderListTableProps): Rea
 							const statusClassName = STATUS_STYLE[listing.status];
 							const symbol = CURRENCY_SYMBOL[listing.currency];
 							const remaining = getRemainingInfo(listing.endDate);
-							const remainingText = remaining.isClosed ? t("closed") : t("deadlineDays", { days: remaining.days });
+							const remainingText = remaining.isClosed
+								? t("closed")
+								: t("deadlineDays", { days: remaining.days });
 							const categoryLabel = listing.category ? categoryLabels[listing.category] : null;
 
 							return (
 								<tr
 									key={listing.id}
 									onClick={() => onSelect(listing.id)}
-									className="cursor-pointer transition-colors hover:bg-[#F9FAFB]"
-								>
+									className="cursor-pointer transition-colors hover:bg-[#F9FAFB]">
 									<td className="px-4 py-3">
-										<span className={cn("whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium", statusClassName)}>
+										<span
+											className={cn(
+												"rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap",
+												statusClassName,
+											)}>
 											{statusLabels[listing.status]}
 										</span>
 									</td>
@@ -83,18 +97,32 @@ export function OrderListTable({ listings, onSelect }: OrderListTableProps): Rea
 									</td>
 									<td className="px-4 py-3 text-[#6B7280]">{categoryLabel ?? "-"}</td>
 									<td className="px-4 py-3 text-[#1F2937]">
-										{listing.budgetPublic ? `${symbol} ${listing.totalBudget.toLocaleString()}` : t("budgetPrivate")}
+										{listing.budgetPublic
+											? `${symbol} ${listing.totalBudget.toLocaleString()}`
+											: t("budgetPrivate")}
 									</td>
-									<td className="px-4 py-3 text-[#1F2937]">{t("quoteCount", { count: listing.quoteCount })}</td>
+									<td className="px-4 py-3 text-[#1F2937]">
+										{t("quoteCount", { count: listing.quoteCount })}
+									</td>
 									<td
 										className={cn(
 											"px-4 py-3",
 											remaining.isUrgent ? "font-medium text-[#DC2626]" : "text-[#6B7280]",
-										)}
-									>
+										)}>
 										{remainingText}
 									</td>
 									<td className="px-4 py-3 text-[#9CA3AF]">{formatDate(listing.createdAt)}</td>
+									<td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+										{listing.bookmarkCount > 0 && (
+											<button
+												type="button"
+												onClick={() => onOpenBookmarks(listing.id)}
+												className="flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-600 transition-colors hover:bg-amber-100">
+												<Star size={11} fill="currentColor" />
+												{listing.bookmarkCount}
+											</button>
+										)}
+									</td>
 								</tr>
 							);
 						})}

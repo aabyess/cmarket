@@ -1498,7 +1498,8 @@
 		"statusActive": "Berjalan",
 		"statusAll": "Semua",
 		"statusAwarded": "Dikonfirmasi",
-		"statusClosed": "Ditutup"
+		"statusClosed": "Ditutup",
+		"bookmarkedOnlyFilter": "Diminati penjual"
 	},
 	"OrderListCard": {
 		"budgetLabel": "Anggaran",
@@ -1526,7 +1527,8 @@
 		"quoteCount": "{count}",
 		"statusActive": "Berjalan",
 		"statusAwarded": "Dikonfirmasi",
-		"statusClosed": "Ditutup"
+		"statusClosed": "Ditutup",
+		"columnBookmark": "Favorit"
 	},
 	"QuoteReview": {
 		"emptyDescription": "Penawaran pertama biasanya tiba dalam 2-3 hari.",
@@ -2258,5 +2260,9 @@
 		"addAria": "Tambahkan ke favorit",
 		"removeAria": "Hapus dari favorit",
 		"errorMessage": "Gagal memperbarui favorit."
+	},
+	"OrderListBookmarkersModal": {
+		"title": "Perusahaan yang tertarik",
+		"bookmarkedOn": "Ditandai favorit pada {date}"
 	}
 }

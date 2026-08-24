@@ -1,7 +1,18 @@
 import { cache } from "react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { createServerSupabaseClient } from "@/libs/supabaseServer";
-import type { ListingWithQuotes, ReceivedQuote, ListingSummary, BuyerDashboardData, BuyerTradeSummary, BuyerTodo, BuyerActivity, ListingFormData, ListingStatus, Currency } from "@/features/buyer/types";
+import type {
+	ListingWithQuotes,
+	ReceivedQuote,
+	ListingSummary,
+	BuyerDashboardData,
+	BuyerTradeSummary,
+	BuyerTodo,
+	BuyerActivity,
+	ListingFormData,
+	ListingStatus,
+	Currency,
+} from "@/features/buyer/types";
 import { getExchangeRates, convertCurrency } from "@/libs/exchangeRate";
 import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
 import { formatRelativeTime } from "@/utils/formatRelativeTime";
@@ -11,7 +22,9 @@ import { resolveTranslatedField } from "@/utils/resolveTranslatedField";
 // getUser()는 매 호출이 인증 서버 왕복이라, 같은 요청 안에서는 cache()로 한 번만 조회한다.
 async function fetchSessionUser() {
 	const supabase = await createServerSupabaseClient();
-	const { data: { user } } = await supabase.auth.getUser();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
 	return { supabase, user };
 }
 
@@ -52,7 +65,9 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 		await Promise.all([
 			supabase
 				.from("listings")
-				.select("id, title, title_source_lang, title_translations, status, currency, end_date, quotes(id, price)")
+				.select(
+					"id, title, title_source_lang, title_translations, status, currency, end_date, quotes(id, price)",
+				)
 				.eq("user_id", user.id),
 			supabase
 				.from("notifications")
@@ -64,7 +79,9 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 				.limit(5),
 			supabase
 				.from("contracts")
-				.select("id, listing_id, created_at, listings(title, title_source_lang, title_translations)")
+				.select(
+					"id, listing_id, created_at, listings(title, title_source_lang, title_translations)",
+				)
 				.eq("buyer_id", user.id)
 				.eq("status", "ongoing")
 				.is("payment_receipt_url", null),
@@ -73,8 +90,8 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 	const listingRows = listings ?? [];
 
 	// 견적 id는 위 listings 조회에 이미 임베드돼 있으므로 별도 쿼리를 만들지 않는다.
-	const quoteIds = listingRows.flatMap(
-		(row) => ((row.quotes as unknown as { id: string }[]) ?? []).map((q) => q.id),
+	const quoteIds = listingRows.flatMap((row) =>
+		((row.quotes as unknown as { id: string }[]) ?? []).map((q) => q.id),
 	);
 
 	// "받은 견적" 배지는 안읽은 알림 수가 아니라, 진행중 공고에 실제로 달린 견적 수를 보여준다.
@@ -86,7 +103,7 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 			(row) =>
 				row.status === "active" && row.end_date !== null && new Date(row.end_date).getTime() > now,
 		)
-		.reduce((sum, row) => sum + (((row.quotes as unknown as { id: string }[]) ?? []).length), 0);
+		.reduce((sum, row) => sum + ((row.quotes as unknown as { id: string }[]) ?? []).length, 0);
 
 	const { count: unreadChatCount } =
 		quoteIds.length > 0
@@ -110,7 +127,9 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 		.map(({ row, quotes }) => {
 			const lowestPrice = Math.min(...quotes.map((q) => Number(q.price)));
 			const symbol = CURRENCY_SYMBOL[row.currency as Currency];
-			const daysLeft = Math.ceil((new Date(row.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+			const daysLeft = Math.ceil(
+				(new Date(row.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+			);
 			// 이미 마감된 공고에 "D-0"/"D--2" 뱃지가 붙지 않도록 남은 일수가 있을 때만 긴급 처리
 			const isUrgent = daysLeft > 0 && daysLeft <= 3;
 
@@ -122,8 +141,16 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 					kind: "quotePending",
 					listingId: row.id,
 					contractId: null,
-					title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
-					description: t("quotesSummary", { count: quotes.length, price: `${symbol}${lowestPrice.toLocaleString()}` }),
+					title: resolveTranslatedField(
+						row.title,
+						row.title_source_lang,
+						row.title_translations,
+						locale,
+					),
+					description: t("quotesSummary", {
+						count: quotes.length,
+						price: `${symbol}${lowestPrice.toLocaleString()}`,
+					}),
 					deadlineText: daysLeft > 0 ? t("deadlineDays", { days: daysLeft }) : t("deadlineClosed"),
 					actionLabel: t("compareAction"),
 					highlights: isUrgent ? [{ label: t("urgentLabel"), value: `D-${daysLeft}` }] : [],
@@ -152,12 +179,27 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 				listingId: row.listing_id,
 				contractId: row.id,
 				title: listing
-					? resolveTranslatedField(listing.title, listing.title_source_lang, listing.title_translations, locale)
+					? resolveTranslatedField(
+							listing.title,
+							listing.title_source_lang,
+							listing.title_translations,
+							locale,
+						)
 					: "",
 				description: t("paymentPendingDescription"),
-				deadlineText: elapsedDays === 0 ? t("paymentJustConfirmed") : t("paymentElapsedDays", { days: elapsedDays }),
+				deadlineText:
+					elapsedDays === 0
+						? t("paymentJustConfirmed")
+						: t("paymentElapsedDays", { days: elapsedDays }),
 				actionLabel: t("uploadReceiptAction"),
-				highlights: isUrgent ? [{ label: t("paymentUrgentLabel"), value: t("paymentElapsedDays", { days: elapsedDays }) }] : [],
+				highlights: isUrgent
+					? [
+							{
+								label: t("paymentUrgentLabel"),
+								value: t("paymentElapsedDays", { days: elapsedDays }),
+							},
+						]
+					: [],
 			} satisfies BuyerTodo,
 		};
 	});
@@ -177,7 +219,12 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 		type: row.type === "quote" ? "quote" : row.type === "award" ? "award" : "document",
 		quoteId: row.quote_id,
 		title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
-		description: resolveTranslatedField(row.content, row.content_source_lang, row.content_translations, locale),
+		description: resolveTranslatedField(
+			row.content,
+			row.content_source_lang,
+			row.content_translations,
+			locale,
+		),
 		timeText: formatRelativeTime(row.created_at, tRelative),
 	}));
 
@@ -196,9 +243,27 @@ export async function getBuyerTradeSummary(): Promise<BuyerTradeSummary> {
 	const t = await getTranslations("BuyerDashboardData");
 
 	const empty: BuyerTradeSummary = {
-		inProgress: { total: 0, subItems: [{ label: t("quoteLabel"), value: 0 }, { label: t("listingLabel"), value: 0 }] },
-		closed: { total: 0, subItems: [{ label: t("quoteLabel"), value: 0 }, { label: t("listingLabel"), value: 0 }] },
-		contracts: { total: 0, subItems: [{ label: t("pendingPaymentLabel"), value: 0 }, { label: t("confirmedPaymentLabel"), value: 0 }] },
+		inProgress: {
+			total: 0,
+			subItems: [
+				{ label: t("quoteLabel"), value: 0 },
+				{ label: t("listingLabel"), value: 0 },
+			],
+		},
+		closed: {
+			total: 0,
+			subItems: [
+				{ label: t("quoteLabel"), value: 0 },
+				{ label: t("listingLabel"), value: 0 },
+			],
+		},
+		contracts: {
+			total: 0,
+			subItems: [
+				{ label: t("pendingPaymentLabel"), value: 0 },
+				{ label: t("confirmedPaymentLabel"), value: 0 },
+			],
+		},
 	};
 
 	if (!user) return empty;
@@ -227,8 +292,12 @@ export async function getBuyerTradeSummary(): Promise<BuyerTradeSummary> {
 
 	const activeIdSet = new Set(activeListingIds);
 	const closedIdSet = new Set(closedListingIds);
-	const activeQuoteCount = (quotesResult.data ?? []).filter((q) => activeIdSet.has(q.listing_id)).length;
-	const closedQuoteCount = (quotesResult.data ?? []).filter((q) => closedIdSet.has(q.listing_id)).length;
+	const activeQuoteCount = (quotesResult.data ?? []).filter((q) =>
+		activeIdSet.has(q.listing_id),
+	).length;
+	const closedQuoteCount = (quotesResult.data ?? []).filter((q) =>
+		closedIdSet.has(q.listing_id),
+	).length;
 
 	const contracts = contractsResult.data;
 
@@ -277,12 +346,14 @@ export async function getBuyerListings(): Promise<ListingSummary[]> {
 
 	const listingIds = (data ?? []).map((row) => row.id);
 
-	const { data: quoteRows, error: quoteError } = await supabase
-		.from("quotes")
-		.select("listing_id, status")
-		.in("listing_id", listingIds);
+	const [{ data: quoteRows, error: quoteError }, { data: bookmarkRows, error: bookmarkError }] =
+		await Promise.all([
+			supabase.from("quotes").select("listing_id, status").in("listing_id", listingIds),
+			supabase.from("listing_bookmarks").select("listing_id").in("listing_id", listingIds),
+		]);
 
 	if (quoteError) throw new Error(quoteError.message);
+	if (bookmarkError) throw new Error(bookmarkError.message);
 
 	const quoteCountMap = new Map<string, number>();
 	const awardedListingIds = new Set<string>();
@@ -293,13 +364,23 @@ export async function getBuyerListings(): Promise<ListingSummary[]> {
 		}
 	}
 
+	const bookmarkCountMap = new Map<string, number>();
+	for (const row of bookmarkRows ?? []) {
+		bookmarkCountMap.set(row.listing_id, (bookmarkCountMap.get(row.listing_id) ?? 0) + 1);
+	}
+
 	return (data ?? []).map((row) => {
 		const rawStatus = row.status ?? "active";
 		const status = rawStatus === "closed" && awardedListingIds.has(row.id) ? "awarded" : rawStatus;
 
 		return {
 			id: row.id,
-			title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
+			title: resolveTranslatedField(
+				row.title,
+				row.title_source_lang,
+				row.title_translations,
+				locale,
+			),
 			items: row.items,
 			currency: row.currency,
 			totalBudget: Number(row.total_budget ?? 0),
@@ -309,6 +390,7 @@ export async function getBuyerListings(): Promise<ListingSummary[]> {
 			createdAt: row.created_at,
 			category: row.category,
 			quoteCount: quoteCountMap.get(row.id) ?? 0,
+			bookmarkCount: bookmarkCountMap.get(row.id) ?? 0,
 		};
 	});
 }
@@ -337,7 +419,12 @@ export async function getListingsWithQuoteCount(): Promise<ListingWithQuotes[]> 
 
 		return {
 			id: row.id,
-			title: resolveTranslatedField(row.title, row.title_source_lang, row.title_translations, locale),
+			title: resolveTranslatedField(
+				row.title,
+				row.title_source_lang,
+				row.title_translations,
+				locale,
+			),
 			endDate: row.end_date,
 			status,
 			currency: row.currency,
@@ -366,7 +453,12 @@ export async function getListingTitle(listingId: string): Promise<string | null>
 
 	if (!data || data.user_id !== user.id) return null;
 
-	return resolveTranslatedField(data.title, data.title_source_lang, data.title_translations, locale);
+	return resolveTranslatedField(
+		data.title,
+		data.title_source_lang,
+		data.title_translations,
+		locale,
+	);
 }
 
 export async function getQuotesByListing(listingId: string): Promise<ReceivedQuote[]> {
@@ -437,7 +529,12 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 			currency: row.currency,
 			priceInIdr: convertCurrency(price, row.currency, "IDR", rates),
 			deliveryDays: row.delivery_days,
-			note: resolveTranslatedField(row.note ?? "", row.note_source_lang, row.note_translations, locale),
+			note: resolveTranslatedField(
+				row.note ?? "",
+				row.note_source_lang,
+				row.note_translations,
+				locale,
+			),
 			status: row.status,
 			createdAt: row.created_at,
 			previousPrice: row.previous_price !== null ? Number(row.previous_price) : null,
@@ -469,7 +566,9 @@ export async function getQuotesByListing(listingId: string): Promise<ReceivedQuo
 					: "",
 				verificationStatus: company?.verification_status ?? "unverified",
 				logoUrl: profile?.logo_url ?? null,
-				ratingAverage: ratingStats ? Math.round((ratingStats.sum / ratingStats.count) * 10) / 10 : null,
+				ratingAverage: ratingStats
+					? Math.round((ratingStats.sum / ratingStats.count) * 10) / 10
+					: null,
 				ratingCount: ratingStats?.count ?? 0,
 			},
 		};
