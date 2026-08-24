@@ -2120,7 +2120,6 @@
 	},
 	"PaymentsList": {
 		"searchPlaceholder": "Search by contract number or listing title",
-		"filterSectionLabel": "Status",
 		"filterAll": "All",
 		"filterAwaitingReceipt": "Awaiting receipt",
 		"filterAwaitingConfirmation": "Awaiting confirmation",
