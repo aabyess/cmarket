@@ -16,6 +16,11 @@ import { cn } from "@/utils/cn";
 import { createClient } from "@/libs/supabase";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { SIDEBAR_TRANSITION_CLASS, getSidebarLayoutTransition } from "@/components/layout/sidebarTransition";
+import {
+	SIDEBAR_COLLAPSE_THRESHOLD,
+	SIDEBAR_RAIL_WIDTH,
+	clampSidebarWidth,
+} from "@/components/layout/sidebarState";
 import { getDropdownMotionProps } from "@/utils/dropdownMotion";
 
 // TODO: 실제 지원센터 연락처 확인되면 교체
@@ -29,7 +34,14 @@ type SidebarProps = {
 	companyName: string;
 	name: string;
 	isCollapsed: boolean;
+	/** 펼침 상태의 실제 렌더 폭(px). 접힘 상태에선 AppShell이 레일 고정폭을 내려준다. */
+	width: number;
+	isResizing: boolean;
 	onToggleCollapsed: () => void;
+	onResizeStart: () => void;
+	/** 드래그 도중 실시간 미리보기 폭. */
+	onResizePreview: (width: number) => void;
+	onResizeEnd: (result: { collapsed: true } | { collapsed: false; width: number }) => void;
 };
 
 type MenuLeaf = {
@@ -94,7 +106,18 @@ const SELLER_MENU_ITEMS: MenuEntry[] = [
 	{ labelKey: "support", key: "support", icon: HelpCircle, href: "/support", badge: null },
 ];
 
-export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapsed }: SidebarProps) {
+export function Sidebar({
+	role,
+	companyName,
+	name,
+	isCollapsed,
+	width,
+	isResizing,
+	onToggleCollapsed,
+	onResizeStart,
+	onResizePreview,
+	onResizeEnd,
+}: SidebarProps) {
 	const t = useTranslations("Sidebar");
 	const pathname = usePathname();
 	const router = useRouter();
@@ -159,20 +182,94 @@ export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapse
 		router.push("/login");
 	}
 
+	const dragStateRef = useRef<{ startX: number; startY: number; startWidth: number; moved: boolean } | null>(
+		null,
+	);
+	// 드래그 종료 직후 브라우저가 이어서 발생시키는 click을 눌러야, 드래그를
+	// 접기/펼치기 클릭으로 다시 처리하는 걸 막을 수 있다(setPointerCapture 쓸 때
+	// 흔한 함정).
+	const suppressNextClickRef = useRef(false);
+
+	function handleHandlePointerDown(e: React.PointerEvent<HTMLButtonElement>): void {
+		e.currentTarget.setPointerCapture(e.pointerId);
+		dragStateRef.current = {
+			startX: e.clientX,
+			startY: e.clientY,
+			// width prop은 접힘 상태에서도 이미 레일 고정폭으로 내려온다.
+			startWidth: width,
+			moved: false,
+		};
+
+		function handlePointerMove(moveEvent: PointerEvent): void {
+			const drag = dragStateRef.current;
+			if (!drag) return;
+			const dx = moveEvent.clientX - drag.startX;
+
+			if (!drag.moved) {
+				if (Math.hypot(dx, moveEvent.clientY - drag.startY) < 4) return;
+				drag.moved = true;
+				onResizeStart();
+				document.body.style.cursor = "col-resize";
+				document.body.style.userSelect = "none";
+			}
+
+			const rawWidth = drag.startWidth + dx;
+			onResizePreview(rawWidth <= SIDEBAR_COLLAPSE_THRESHOLD ? SIDEBAR_RAIL_WIDTH : clampSidebarWidth(rawWidth));
+		}
+
+		function handlePointerUp(upEvent: PointerEvent): void {
+			window.removeEventListener("pointermove", handlePointerMove);
+			window.removeEventListener("pointerup", handlePointerUp);
+			const drag = dragStateRef.current;
+			dragStateRef.current = null;
+			// 이동량이 임계값 미만이면 드래그로 취급하지 않는다 — 곧 브라우저가 발생시킬
+			// click 이벤트가 기존 접기/펼치기 토글을 그대로 처리한다.
+			if (!drag || !drag.moved) return;
+
+			document.body.style.cursor = "";
+			document.body.style.userSelect = "";
+			suppressNextClickRef.current = true;
+
+			const dx = upEvent.clientX - drag.startX;
+			const rawWidth = drag.startWidth + dx;
+			if (rawWidth <= SIDEBAR_COLLAPSE_THRESHOLD) {
+				onResizeEnd({ collapsed: true });
+			} else {
+				onResizeEnd({ collapsed: false, width: clampSidebarWidth(rawWidth) });
+			}
+		}
+
+		window.addEventListener("pointermove", handlePointerMove);
+		window.addEventListener("pointerup", handlePointerUp);
+	}
+
+	function handleHandleClick(): void {
+		if (suppressNextClickRef.current) {
+			suppressNextClickRef.current = false;
+			return;
+		}
+		onToggleCollapsed();
+	}
+
 	return (
 		<aside
+			// width prop은 AppShell이 이미 접힘 상태(레일 고정폭)까지 반영해서 내려준다.
+			style={{ width: `${width}px` }}
 			className={cn(
-				"fixed left-0 top-0 hidden h-screen flex-col overflow-visible border-r border-sidebar-border bg-sidebar transition-[width] lg:flex z-40",
-				SIDEBAR_TRANSITION_CLASS,
-				isCollapsed ? "w-20" : "w-64",
+				"fixed left-0 top-0 hidden h-screen flex-col overflow-visible border-r border-sidebar-border bg-sidebar lg:flex z-40",
+				!isResizing && "transition-[width]",
+				!isResizing && SIDEBAR_TRANSITION_CLASS,
 			)}
 		>
-			{/* 접기/펼치기 토글 — 우측 경계 세로 중앙의 길쭉한 핸들 (작은 원형은 눈에 안 띈다는 피드백) */}
+			{/* 접기/펼치기 토글 겸 리사이즈 핸들 — 우측 경계 세로 중앙의 길쭉한 핸들
+			    (작은 원형은 눈에 안 띈다는 피드백). pointerdown 후 이동량이 거의 없으면
+			    click으로 접기/펼치기, 그 이상 드래그하면 리사이즈로 처리한다. */}
 			<button
 				type="button"
-				onClick={onToggleCollapsed}
+				onPointerDown={handleHandlePointerDown}
+				onClick={handleHandleClick}
 				aria-label={isCollapsed ? t("expandAria") : t("collapseAria")}
-				className="absolute top-1/2 -right-3.5 z-50 flex h-16 w-6 -translate-y-1/2 items-center justify-center rounded-full border border-sidebar-border bg-white text-sidebar-foreground/60 shadow-sm transition-colors hover:bg-imsg-surface hover:text-sidebar-foreground"
+				className="absolute top-1/2 -right-3.5 z-50 flex h-16 w-6 -translate-y-1/2 cursor-col-resize items-center justify-center rounded-full border border-sidebar-border bg-white text-sidebar-foreground/60 shadow-sm transition-colors hover:bg-imsg-surface hover:text-sidebar-foreground"
 			>
 				{isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
 			</button>
@@ -336,8 +433,8 @@ export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapse
 											<motion.span
 												key="group-label"
 												{...labelFade}
-												className="flex flex-1 items-center justify-between gap-2">
-												<span className="text-left">{t(`menu.${entry.labelKey}`)}</span>
+												className="flex min-w-0 flex-1 items-center justify-between gap-2">
+												<span className="truncate text-left">{t(`menu.${entry.labelKey}`)}</span>
 												{isOpen ? (
 													<ChevronUp size={15} className="shrink-0 text-[#9CA3AF]" />
 												) : (
@@ -380,7 +477,7 @@ export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapse
 														strokeWidth={2}
 														className={cn("shrink-0", isActive ? "text-[#111827]" : "text-[#9CA3AF]")}
 													/>
-													<span className="flex-1">{t(`menu.${child.labelKey}`)}</span>
+													<span className="min-w-0 flex-1 truncate">{t(`menu.${child.labelKey}`)}</span>
 													{child.badge && (
 														<span className="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-semibold bg-white/20 text-white">
 															{child.badge}
@@ -423,8 +520,8 @@ export function Sidebar({ role, companyName, name, isCollapsed, onToggleCollapse
 									<motion.span
 										key="leaf-label"
 										{...labelFade}
-										className="flex flex-1 items-center justify-between gap-2">
-										<span>{t(`menu.${entry.labelKey}`)}</span>
+										className="flex min-w-0 flex-1 items-center justify-between gap-2">
+										<span className="truncate">{t(`menu.${entry.labelKey}`)}</span>
 										{entry.badge && (
 											<span className="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-semibold bg-white/20 text-white">
 												{entry.badge}
