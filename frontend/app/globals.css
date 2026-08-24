@@ -206,3 +206,37 @@
 		animation: none;
 	}
 }
+
+/* ─── Landing Steps 연결선 (5단계 카드 중심을 잇는 점선, 스크롤에 따라 그려짐) ───
+   view-timeline 미지원 브라우저는 선 자체를 숨긴다(그려지지 않는 반쪽짜리 선이
+   더 어색해서 reveal과 달리 기본 노출이 아니라 기본 숨김이 폴백). 점선 패턴은
+   stroke-dasharray로 고정하고, "그려지는" 효과는 stroke-dashoffset 대신
+   clip-path(inset)로 svg 자체를 좌→우로 드러내는 방식을 썼다 — 점선 위에
+   stroke-dashoffset을 쓰면 점 간격이 밀리기만 할 뿐 실제로 채워지는 것처럼
+   보이지 않기 때문. */
+.landing-steps-connector {
+	opacity: 0;
+}
+
+@keyframes landing-steps-draw {
+	to {
+		clip-path: inset(0 0% 0 0);
+	}
+}
+
+@supports (animation-timeline: view()) {
+	.landing-steps-connector {
+		opacity: 1;
+		clip-path: inset(0 100% 0 0);
+		animation: landing-steps-draw linear both;
+		animation-timeline: view();
+		animation-range: entry 0% cover 60%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.landing-steps-connector {
+		clip-path: inset(0 0% 0 0);
+		animation: none;
+	}
+}
