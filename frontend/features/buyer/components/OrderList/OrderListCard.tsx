@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { motion } from "motion/react";
 import { Clock, MessageSquare, Package, Star } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { Currency, ListingStatus, ListingSummary } from "@/features/buyer/types";
@@ -79,14 +80,16 @@ export function OrderListCard({
 				onClick={onClick}
 				className="w-full rounded-2xl border border-[#E5E7EB] bg-white p-5 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
 				<div className="mb-2.5 flex items-center gap-2">
-					<span
+					<motion.span
+						layoutId={`listing-status-${listing.id}`}
+						transition={{ type: "spring", stiffness: 300, damping: 30 }}
 						className={cn(
 							"flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap",
 							status.className,
 						)}>
 						<span className={cn("size-1.5 rounded-full", status.dotClassName)} />
 						{statusLabels[listing.status]}
-					</span>
+					</motion.span>
 					{listing.category && categoryLabels[listing.category] && (
 						<span className="rounded-full bg-[#F3F4F6] px-2.5 py-1 text-xs font-medium text-[#6B7280]">
 							{categoryLabels[listing.category]}

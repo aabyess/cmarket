@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { motion } from "motion/react";
 import { Star } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { Currency, ListingStatus, ListingSummary } from "@/features/buyer/types";
@@ -84,13 +85,15 @@ export function OrderListTable({
 									onClick={() => onSelect(listing.id)}
 									className="cursor-pointer transition-colors hover:bg-[#F9FAFB]">
 									<td className="px-4 py-3">
-										<span
+										<motion.span
+											layoutId={`listing-status-${listing.id}`}
+											transition={{ type: "spring", stiffness: 300, damping: 30 }}
 											className={cn(
 												"rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap",
 												statusClassName,
 											)}>
 											{statusLabels[listing.status]}
-										</span>
+										</motion.span>
 									</td>
 									<td className="max-w-[240px] truncate px-4 py-3 font-medium text-[#1F2937]">
 										{listing.title}

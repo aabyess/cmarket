@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
+import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { FileText } from "lucide-react";
 import { usePersistentState } from "@/hooks/usePersistentState";
 import { OrderListCard } from "@/features/buyer/components/OrderList/OrderListCard";
@@ -156,24 +157,43 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 				</div>
 			) : (
 				<>
-					{viewMode === "grid" ? (
-						<div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-							{paginatedListings.map((listing) => (
-								<OrderListCard
-									key={listing.id}
-									listing={listing}
-									onClick={() => handleSelect(listing.id)}
-									onOpenBookmarks={() => setBookmarksListingId(listing.id)}
-								/>
-							))}
-						</div>
-					) : (
-						<OrderListTable
-							listings={paginatedListings}
-							onSelect={handleSelect}
-							onOpenBookmarks={setBookmarksListingId}
-						/>
-					)}
+					{/* 그리드↔테이블 전환 시 상태 배지가 이전 위치에서 새 위치로 이동하는 느낌을
+					    주기 위해 같은 layoutId를 공유한다(#161과 동일 패턴). */}
+					<LayoutGroup id="order-list">
+						<AnimatePresence mode="popLayout" initial={false}>
+							{viewMode === "grid" ? (
+								<motion.div
+									key="grid"
+									initial={{ opacity: 0 }}
+									animate={{ opacity: 1 }}
+									exit={{ opacity: 0 }}
+									transition={{ duration: 0.15 }}
+									className="grid grid-cols-1 gap-3 md:grid-cols-2">
+									{paginatedListings.map((listing) => (
+										<OrderListCard
+											key={listing.id}
+											listing={listing}
+											onClick={() => handleSelect(listing.id)}
+											onOpenBookmarks={() => setBookmarksListingId(listing.id)}
+										/>
+									))}
+								</motion.div>
+							) : (
+								<motion.div
+									key="table"
+									initial={{ opacity: 0 }}
+									animate={{ opacity: 1 }}
+									exit={{ opacity: 0 }}
+									transition={{ duration: 0.15 }}>
+									<OrderListTable
+										listings={paginatedListings}
+										onSelect={handleSelect}
+										onOpenBookmarks={setBookmarksListingId}
+									/>
+								</motion.div>
+							)}
+						</AnimatePresence>
+					</LayoutGroup>
 
 					<Pagination
 						page={page}
