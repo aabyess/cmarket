@@ -104,28 +104,41 @@ export function PaymentsListTable({
 											{statusLabels[status]}
 										</span>
 									</td>
-									<td className="px-4 py-3 text-right">
+									{/* 계약 관리 테이블과 같은 규칙: 고정 폭 + 세로 스택(w-full)으로 버튼 규격을 통일한다. */}
+									<td className="w-44 px-4 py-3 align-top">
 										{status === "awaitingReceipt" ? (
 											role === "buyer" ? (
 												<button
 													type="button"
 													onClick={() => onUploadClick(contract.id)}
 													disabled={uploadingId === contract.id}
-													className="bg-imsg-blue ml-auto flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60">
+													className="bg-imsg-blue flex w-full items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-white transition-colors hover:bg-[#2563EB] disabled:opacity-60">
 													<Upload size={14} />
 													{uploadingId === contract.id ? t("uploading") : t("uploadReceiptButton")}
 												</button>
 											) : (
-												<span className="block text-xs text-[#9CA3AF]">-</span>
+												<span className="block text-right text-xs text-[#9CA3AF]">-</span>
 											)
 										) : (
-											<div className="flex flex-wrap items-center justify-end gap-1.5">
+											<div className="flex flex-col items-stretch gap-1.5">
+												{role === "seller" && status === "awaitingConfirmation" && (
+													<button
+														type="button"
+														onClick={() => onConfirmPayment(contract.id)}
+														disabled={confirmingId === contract.id}
+														className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#16A34A] px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-white transition-colors hover:bg-[#15803D] disabled:opacity-60">
+														<CheckCircle2 size={14} />
+														{confirmingId === contract.id
+															? t("processing")
+															: t("confirmPaymentButton")}
+													</button>
+												)}
 												{/* 예전 데이터 중 영수증 없이 완료된 계약이 있어, 실제 파일이 있을 때만 노출한다 */}
 												{contract.paymentReceiptUrl && (
 													<button
 														type="button"
 														onClick={() => onViewReceipt(contract.id)}
-														className="text-imsg-blue flex items-center gap-1 rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap transition-colors hover:bg-[#DBEAFE]">
+														className="text-imsg-blue flex w-full items-center justify-center gap-1.5 rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap transition-colors hover:bg-[#DBEAFE]">
 														<FileText size={14} />
 														{role === "seller"
 															? t("viewReceiptButtonSeller")
@@ -137,7 +150,7 @@ export function PaymentsListTable({
 														type="button"
 														onClick={() => onViewTransactionReceipt(contract.id)}
 														disabled={receiptPdfLoadingId === contract.id}
-														className="flex items-center gap-1 rounded-lg border border-[#BBF7D0] bg-[#F0FDF4] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#16A34A] transition-colors hover:bg-[#DCFCE7] disabled:opacity-60">
+														className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-[#BBF7D0] bg-[#F0FDF4] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#16A34A] transition-colors hover:bg-[#DCFCE7] disabled:opacity-60">
 														{receiptPdfLoadingId === contract.id ? (
 															<Loader2 size={14} className="animate-spin" />
 														) : (
@@ -150,7 +163,7 @@ export function PaymentsListTable({
 												)}
 												{status === "confirmed" &&
 													(myReviewMap.has(contract.id) ? (
-														<span className="flex items-center gap-1 rounded-lg border border-[#FDE68A] bg-[#FFFBEB] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#D97706]">
+														<span className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#FFFBEB] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#D97706]">
 															<Star size={14} className="fill-[#D97706]" />
 															{t("reviewedBadge", { rating: myReviewMap.get(contract.id)?.rating ?? 0 })}
 														</span>
@@ -158,23 +171,11 @@ export function PaymentsListTable({
 														<button
 															type="button"
 															onClick={() => onReview(contract.id)}
-															className="flex items-center gap-1 rounded-lg border border-[#E5E7EB] bg-white px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#374151] transition-colors hover:bg-imsg-surface">
+															className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-[#E5E7EB] bg-white px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[#374151] transition-colors hover:bg-imsg-surface">
 															<Star size={14} />
 															{t("reviewButton")}
 														</button>
 													))}
-												{role === "seller" && status === "awaitingConfirmation" && (
-													<button
-														type="button"
-														onClick={() => onConfirmPayment(contract.id)}
-														disabled={confirmingId === contract.id}
-														className="flex items-center gap-1 rounded-lg bg-[#16A34A] px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-white transition-colors hover:bg-[#15803D] disabled:opacity-60">
-														<CheckCircle2 size={14} />
-														{confirmingId === contract.id
-															? t("processing")
-															: t("confirmPaymentButton")}
-													</button>
-												)}
 											</div>
 										)}
 									</td>
