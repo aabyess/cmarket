@@ -4,13 +4,13 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Popover, PopoverButton } from "@headlessui/react";
-import { Search, FileSearch, ArrowUpDown, Star, Columns2, Columns3 } from "lucide-react";
+import { Search, FileSearch, ArrowUpDown, Star, Columns2, Columns3, LayoutGrid, List } from "lucide-react";
 import { AnimatedPopoverPanel } from "@/components/commons/AnimatedPopoverPanel";
 import { cn } from "@/utils/cn";
 import { usePersistentState } from "@/hooks/usePersistentState";
 import { ListingBrowseCard } from "@/features/seller/components/ListingBrowse/ListingBrowseCard";
 import { ListingBrowseTable } from "@/features/seller/components/ListingBrowse/ListingBrowseTable";
-import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
+import { type ViewMode } from "@/components/commons/ViewModeToggle";
 import { Pagination } from "@/components/commons/Pagination";
 import type { OpenListing } from "@/features/seller/types";
 
@@ -260,35 +260,68 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 						)}
 					</Popover>
 
-					{/* 카드 뷰에서만 열 수(2/3) 선택 — ViewModeToggle과 같은 톤의 세그먼트 */}
-					{viewMode === "grid" && (
-						<div className="flex items-center gap-0.5 rounded-lg bg-[#F3F4F6] p-0.5">
-							<button
-								type="button"
-								onClick={() => setPrefs((prev) => ({ ...prev, gridColumns: 2 }))}
-								aria-label={t("columnsTwoAria")}
-								title={t("columnsTwoAria")}
-								className={cn(
-									"flex size-7 items-center justify-center rounded-md transition-colors",
-									gridColumns === 2 ? "bg-imsg-blue text-white" : "text-[#6B7280] hover:bg-white",
-								)}>
-								<Columns2 size={15} />
-							</button>
-							<button
-								type="button"
-								onClick={() => setPrefs((prev) => ({ ...prev, gridColumns: 3 }))}
-								aria-label={t("columnsThreeAria")}
-								title={t("columnsThreeAria")}
-								className={cn(
-									"flex size-7 items-center justify-center rounded-md transition-colors",
-									gridColumns === 3 ? "bg-imsg-blue text-white" : "text-[#6B7280] hover:bg-white",
-								)}>
-								<Columns3 size={15} />
-							</button>
-						</div>
-					)}
-
-					<ViewModeToggle value={viewMode} onChange={setViewMode} />
+					{/* 카드/게시판 토글 — 카드 버튼은 클릭 시 열 수(2/3) 드롭다운이 튀어나온다. */}
+					<div className="flex shrink-0 items-center gap-0.5 rounded-xl border border-[#E5E7EB] bg-white p-0.5">
+						<Popover className="relative">
+							{({ open, close }) => (
+								<>
+									<PopoverButton
+										aria-label={t("cardViewAria")}
+										title={t("cardViewAria")}
+										className={cn(
+											"flex size-7 items-center justify-center rounded-lg transition-colors",
+											viewMode === "grid"
+												? "bg-imsg-blue text-white"
+												: "text-[#9CA3AF] hover:bg-[#F9FAFB]",
+										)}>
+										<LayoutGrid size={15} />
+									</PopoverButton>
+									<AnimatedPopoverPanel
+										open={open}
+										className="absolute right-0 z-50 mt-2 w-36 origin-top-right rounded-xl border border-[#E5E7EB] bg-white p-1 shadow-lg">
+										{(
+											[
+												{ columns: 2 as GridColumns, icon: Columns2, label: t("columnsTwoAria") },
+												{ columns: 3 as GridColumns, icon: Columns3, label: t("columnsThreeAria") },
+											]
+										).map((option) => (
+											<button
+												key={option.columns}
+												type="button"
+												onClick={() => {
+													setPrefs((prev) => ({
+														...prev,
+														viewMode: "grid",
+														gridColumns: option.columns,
+													}));
+													close();
+												}}
+												className={cn(
+													"flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
+													viewMode === "grid" && gridColumns === option.columns
+														? "text-imsg-blue bg-[#EFF6FF]"
+														: "text-[#374151] hover:bg-[#F9FAFB]",
+												)}>
+												<option.icon size={14} className="shrink-0" />
+												{option.label}
+											</button>
+										))}
+									</AnimatedPopoverPanel>
+								</>
+							)}
+						</Popover>
+						<button
+							type="button"
+							onClick={() => setViewMode("list")}
+							aria-label={t("listViewAria")}
+							title={t("listViewAria")}
+							className={cn(
+								"flex size-7 items-center justify-center rounded-lg transition-colors",
+								viewMode === "list" ? "bg-imsg-blue text-white" : "text-[#9CA3AF] hover:bg-[#F9FAFB]",
+							)}>
+							<List size={15} />
+						</button>
+					</div>
 				</div>
 			</div>
 

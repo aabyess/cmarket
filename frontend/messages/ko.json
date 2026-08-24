@@ -1226,6 +1226,8 @@
 		}
 	},
 	"ListingBrowse": {
+		"cardViewAria": "카드 형태 보기",
+		"listViewAria": "게시판 형태 보기",
 		"columnsTwoAria": "2열로 보기",
 		"columnsThreeAria": "3열로 보기",
 		"tabAll": "전체",
