@@ -53,7 +53,7 @@ export function DashboardHome({
 	);
 	// 새로고침하면 기본값(펼침)으로 돌아가야 해서 영속화하지 않는다.
 	const [isExpanded, setIsExpanded] = useState(true);
-	const { isEditing, toggleEditing, hiddenKeys, hideWidget, showWidget, isHidden } =
+	const { isEditing, toggleEditing, hiddenKeys, hideWidget, showWidget, isHidden, resetHidden } =
 		useDashboardWidgets<BuyerWidgetKey>("mitrapay:buyer-dashboard-hidden-widgets");
 
 	const widgetLabels: Record<BuyerWidgetKey, string> = {
@@ -125,6 +125,7 @@ export function DashboardHome({
 				onToggleEditing={toggleEditing}
 				hiddenWidgets={hiddenKeys.map((key) => ({ key, label: widgetLabels[key] }))}
 				onShowWidget={(key) => showWidget(key as BuyerWidgetKey)}
+				onResetHidden={resetHidden}
 			/>
 
 			<OnboardingChecklist checklist={onboardingChecklist} />

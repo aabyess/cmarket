@@ -1874,7 +1874,8 @@
 		"editButton": "Edit",
 		"doneButton": "Done",
 		"hiddenWidgetsLabel": "Hidden widgets",
-		"removeWidgetAria": "Hide {widget} widget"
+		"removeWidgetAria": "Hide {widget} widget",
+		"resetAllButton": "Reset all"
 	},
 	"BuyerDashboard": {
 		"welcome": "Welcome, {companyName}",

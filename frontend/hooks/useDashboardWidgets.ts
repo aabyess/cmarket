@@ -23,6 +23,10 @@ export function useDashboardWidgets<K extends string>(storageKey: string) {
 		return hiddenKeys.includes(key);
 	}
 
+	function resetHidden(): void {
+		setHiddenKeys([]);
+	}
+
 	return {
 		isEditing,
 		toggleEditing: () => setIsEditing((prev) => !prev),
@@ -30,5 +34,6 @@ export function useDashboardWidgets<K extends string>(storageKey: string) {
 		hideWidget,
 		showWidget,
 		isHidden,
+		resetHidden,
 	};
 }
