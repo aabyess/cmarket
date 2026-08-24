@@ -1300,7 +1300,12 @@
 		"statusAwarded": "Contract Confirmed",
 		"statusClosed": "Closed",
 		"bookmarkedOnlyFilter": "Bookmarked by sellers",
-		"statusFailed": "Unsuccessful"
+		"statusFailed": "Unsuccessful",
+		"presetsLabel": "Presets",
+		"presetsEmpty": "No saved presets yet",
+		"presetsSaveCurrent": "Save current filters",
+		"presetsNamePlaceholder": "Preset name",
+		"presetsDeleteAria": "Delete preset {name}"
 	},
 	"OrderListCard": {
 		"budgetLabel": "Budget",

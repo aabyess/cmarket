@@ -4,8 +4,13 @@ import { useTranslations } from "next-intl";
 import { Popover, PopoverButton } from "@headlessui/react";
 import { ArrowUpDown, Search, Star } from "lucide-react";
 import { AnimatedPopoverPanel } from "@/components/commons/AnimatedPopoverPanel";
+import {
+	OrderListFilterPresets,
+	type OrderListFilterPresetValue,
+} from "@/features/buyer/components/OrderList/OrderListFilterPresets";
 import { cn } from "@/utils/cn";
 import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
+import type { FilterPreset } from "@/hooks/useFilterPresets";
 import type { DisplayListingStatus } from "@/utils/getDisplayListingStatus";
 
 export type SortOption = "newest" | "deadline";
@@ -29,6 +34,10 @@ type OrderListFilterBarProps = {
 	onToggleBookmarkedOnly: () => void;
 	viewMode: ViewMode;
 	onViewModeChange: (mode: ViewMode) => void;
+	filterPresets: FilterPreset<OrderListFilterPresetValue>[];
+	onApplyFilterPreset: (value: OrderListFilterPresetValue) => void;
+	onSaveFilterPreset: (name: string) => void;
+	onDeleteFilterPreset: (id: string) => void;
 };
 
 export function OrderListFilterBar({
@@ -45,6 +54,10 @@ export function OrderListFilterBar({
 	onToggleBookmarkedOnly,
 	viewMode,
 	onViewModeChange,
+	filterPresets,
+	onApplyFilterPreset,
+	onSaveFilterPreset,
+	onDeleteFilterPreset,
 }: OrderListFilterBarProps): React.ReactNode {
 	const t = useTranslations("OrderList");
 	const isAllActive = statusFilter === null;
@@ -149,6 +162,13 @@ export function OrderListFilterBar({
 					<Star size={14} fill={bookmarkedOnly ? "currentColor" : "none"} />
 					{t("bookmarkedOnlyFilter")}
 				</button>
+
+				<OrderListFilterPresets
+					presets={filterPresets}
+					onApply={onApplyFilterPreset}
+					onSave={onSaveFilterPreset}
+					onDelete={onDeleteFilterPreset}
+				/>
 			</div>
 
 			<ViewModeToggle value={viewMode} onChange={onViewModeChange} />

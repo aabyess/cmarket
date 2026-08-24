@@ -1502,7 +1502,12 @@
 		"statusAwarded": "Dikonfirmasi",
 		"statusClosed": "Ditutup",
 		"bookmarkedOnlyFilter": "Diminati penjual",
-		"statusFailed": "Gagal Lelang"
+		"statusFailed": "Gagal Lelang",
+		"presetsLabel": "Preset",
+		"presetsEmpty": "Belum ada preset tersimpan",
+		"presetsSaveCurrent": "Simpan filter saat ini",
+		"presetsNamePlaceholder": "Nama preset",
+		"presetsDeleteAria": "Hapus preset {name}"
 	},
 	"OrderListCard": {
 		"budgetLabel": "Anggaran",
