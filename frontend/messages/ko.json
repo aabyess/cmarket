@@ -1876,7 +1876,8 @@
 		"hiddenWidgetsLabel": "숨긴 위젯",
 		"removeWidgetAria": "{widget} 위젯 숨기기",
 		"resetAllButton": "전체 초기화",
-		"dragWidgetAria": "{widget} 위젯 순서 변경"
+		"dragWidgetAria": "{widget} 위젯 순서 변경",
+		"bannerLabel": "환영 배너"
 	},
 	"BuyerDashboard": {
 		"welcome": "{companyName}님, 환영합니다",
