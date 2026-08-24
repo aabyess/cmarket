@@ -35,10 +35,10 @@ const KIND_LABEL_KEY: Record<BuyerTodoKind, string> = {
 	paymentPending: "kindPaymentPending",
 };
 
-// 배너·온보딩 체크리스트는 핵심 액션 정보라 커스터마이징 대상에서 뺐다.
-type BuyerWidgetKey = "todo" | "tradeSummary" | "shortcuts" | "recentActivity";
+type BuyerWidgetKey =
+	"banner" | "onboardingChecklist" | "todo" | "tradeSummary" | "shortcuts" | "recentActivity";
 // 사이드 컬럼 위젯만 같은 영역 안에서 드래그로 순서를 바꿀 수 있다(메인 영역인
-// todo/tradeSummary는 순서 변경 대상이 아니다).
+// banner/onboardingChecklist/todo/tradeSummary는 순서 변경 대상이 아니다).
 type BuyerSideWidgetKey = "shortcuts" | "recentActivity";
 const BUYER_SIDE_WIDGET_ORDER: BuyerSideWidgetKey[] = ["shortcuts", "recentActivity"];
 
@@ -50,6 +50,7 @@ export function DashboardHome({
 }: DashboardHomeProps) {
 	const t = useTranslations("BuyerDashboard");
 	const tCustomize = useTranslations("DashboardCustomizeBar");
+	const tOnboarding = useTranslations("OnboardingChecklist");
 	const router = useRouter();
 	const prefersReducedMotion = useReducedMotion();
 	const [viewMode, setViewMode] = usePersistentState<ViewMode>(
@@ -74,6 +75,8 @@ export function DashboardHome({
 	);
 
 	const widgetLabels: Record<BuyerWidgetKey, string> = {
+		banner: tCustomize("bannerLabel"),
+		onboardingChecklist: tOnboarding("title"),
 		todo: t("todoTitle"),
 		tradeSummary: t("tradeSummaryTitle"),
 		shortcuts: t("shortcutsTitle"),
@@ -121,29 +124,37 @@ export function DashboardHome({
 	return (
 		<div className="mx-auto max-w-[1200px] px-2 py-6 xl:px-0.5">
 			{/* 배너 */}
-			<div className="relative mb-6 overflow-hidden rounded-2xl border border-[#E5E7EB] bg-gradient-to-r from-[#EEF4FF] via-[#F5F9FF] to-white px-8 py-7">
-				<div
-					aria-hidden
-					className="bg-imsg-blue/10 pointer-events-none absolute -top-10 -right-8 size-40 rounded-full blur-2xl"
-				/>
-				<div
-					aria-hidden
-					className="bg-imsg-blue/10 pointer-events-none absolute -right-4 bottom-[-2.5rem] size-28 rounded-full blur-xl"
-				/>
-				<div
-					aria-hidden
-					className="pointer-events-none absolute top-1/2 right-10 hidden size-16 -translate-y-1/2 items-center justify-center rounded-2xl bg-white/70 shadow-sm ring-1 ring-white sm:flex">
-					<Handshake size={28} className="text-imsg-blue" />
-				</div>
+			{!isHidden("banner") && (
+				<div className="relative mb-6 overflow-hidden rounded-2xl border border-[#E5E7EB] bg-gradient-to-r from-[#EEF4FF] via-[#F5F9FF] to-white px-8 py-7">
+					{isEditing && (
+						<DashboardWidgetRemoveButton
+							label={tCustomize("removeWidgetAria", { widget: widgetLabels.banner })}
+							onRemove={() => hideWidget("banner")}
+						/>
+					)}
+					<div
+						aria-hidden
+						className="bg-imsg-blue/10 pointer-events-none absolute -top-10 -right-8 size-40 rounded-full blur-2xl"
+					/>
+					<div
+						aria-hidden
+						className="bg-imsg-blue/10 pointer-events-none absolute -right-4 bottom-[-2.5rem] size-28 rounded-full blur-xl"
+					/>
+					<div
+						aria-hidden
+						className="pointer-events-none absolute top-1/2 right-10 hidden size-16 -translate-y-1/2 items-center justify-center rounded-2xl bg-white/70 shadow-sm ring-1 ring-white sm:flex">
+						<Handshake size={28} className="text-imsg-blue" />
+					</div>
 
-				<div className="relative max-w-[75%] sm:max-w-[60%]">
-					<p className="text-imsg-blue text-sm font-semibold">MitraPay</p>
-					<h1 className="mt-1 text-2xl font-bold tracking-tight text-[#0f172a]">
-						{t("welcome", { companyName })}
-					</h1>
-					<p className="text-imsg-secondary mt-1.5 text-sm">{t("welcomeSubcopy")}</p>
+					<div className="relative max-w-[75%] sm:max-w-[60%]">
+						<p className="text-imsg-blue text-sm font-semibold">MitraPay</p>
+						<h1 className="mt-1 text-2xl font-bold tracking-tight text-[#0f172a]">
+							{t("welcome", { companyName })}
+						</h1>
+						<p className="text-imsg-secondary mt-1.5 text-sm">{t("welcomeSubcopy")}</p>
+					</div>
 				</div>
-			</div>
+			)}
 
 			<DashboardCustomizeBar
 				isEditing={isEditing}
@@ -153,7 +164,17 @@ export function DashboardHome({
 				onResetHidden={resetHidden}
 			/>
 
-			<OnboardingChecklist checklist={onboardingChecklist} />
+			{!isHidden("onboardingChecklist") && (
+				<div className="relative">
+					{isEditing && (
+						<DashboardWidgetRemoveButton
+							label={tCustomize("removeWidgetAria", { widget: widgetLabels.onboardingChecklist })}
+							onRemove={() => hideWidget("onboardingChecklist")}
+						/>
+					)}
+					<OnboardingChecklist checklist={onboardingChecklist} />
+				</div>
+			)}
 
 			{/* 나의 거래 요약 */}
 			{!isHidden("tradeSummary") && (

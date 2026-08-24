@@ -1876,7 +1876,8 @@
 		"hiddenWidgetsLabel": "Widget tersembunyi",
 		"removeWidgetAria": "Sembunyikan widget {widget}",
 		"resetAllButton": "Atur ulang semua",
-		"dragWidgetAria": "Ubah urutan widget {widget}"
+		"dragWidgetAria": "Ubah urutan widget {widget}",
+		"bannerLabel": "Spanduk selamat datang"
 	},
 	"BuyerDashboard": {
 		"welcome": "Selamat datang, {companyName}",

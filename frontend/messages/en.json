@@ -1876,7 +1876,8 @@
 		"hiddenWidgetsLabel": "Hidden widgets",
 		"removeWidgetAria": "Hide {widget} widget",
 		"resetAllButton": "Reset all",
-		"dragWidgetAria": "Reorder {widget} widget"
+		"dragWidgetAria": "Reorder {widget} widget",
+		"bannerLabel": "Welcome banner"
 	},
 	"BuyerDashboard": {
 		"welcome": "Welcome, {companyName}",
