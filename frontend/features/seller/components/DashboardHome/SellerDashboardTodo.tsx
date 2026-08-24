@@ -26,7 +26,7 @@ export function SellerDashboardTodo({ todos }: SellerDashboardTodoProps): React.
 	const router = useRouter();
 	const [viewMode, setViewMode] = usePersistentState<ViewMode>(
 		"mitrapay:seller-dashboard-todo-view",
-		"list",
+		"grid",
 	);
 
 	function handleAction(todo: SellerTodo): void {
