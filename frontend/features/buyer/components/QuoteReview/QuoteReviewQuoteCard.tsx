@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { motion } from "motion/react";
 import { cva } from "class-variance-authority";
 import { SafeImage } from "@/components/commons/SafeImage";
 import {
@@ -168,7 +169,9 @@ export function QuoteReviewQuoteCard({
 			<div className="mb-4 flex flex-wrap items-end gap-x-8 gap-y-3 rounded-xl bg-[#FAFAFC] px-4 py-3.5">
 				<div>
 					<p className="text-xs text-imsg-secondary">{t("priceLabel")}</p>
-					<p
+					<motion.p
+						layoutId={`quote-price-${quote.id}`}
+						transition={{ type: "spring", stiffness: 300, damping: 30 }}
 						className={cn(
 							"text-2xl font-bold tracking-tight",
 							isLowestPrice
@@ -178,7 +181,7 @@ export function QuoteReviewQuoteCard({
 									: "text-[#0f172a]",
 						)}>
 						{symbol} {quote.price.toLocaleString()}
-					</p>
+					</motion.p>
 					{quote.currency !== "IDR" && quote.priceInIdr !== null && (
 						<p className="text-xs text-imsg-secondary">
 							{t("approxPriceIdr", { amount: Math.round(quote.priceInIdr).toLocaleString() })}

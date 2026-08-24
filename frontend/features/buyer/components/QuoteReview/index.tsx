@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
+import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { ChevronDown, ChevronUp, Mail } from "lucide-react";
 import { QuoteReviewQuoteCard } from "@/features/buyer/components/QuoteReview/QuoteReviewQuoteCard";
 import { QuoteReviewRecommendedCard } from "@/features/buyer/components/QuoteReview/QuoteReviewRecommendedCard";
@@ -94,26 +95,47 @@ export function QuoteReview({ quotes, listingItems, backHref }: QuoteReviewProps
 				<ViewModeToggle value={viewMode} onChange={setViewMode} />
 			</div>
 
-			{viewMode === "grid" ? (
-				<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-					{visibleQuotes.map((quote) => (
-						<QuoteReviewQuoteCard
-							key={quote.id}
-							quote={quote}
-							listingItems={listingItems}
-							backHref={backHref}
-							isLowestPrice={lowestPriceInIdr !== null && quote.priceInIdr === lowestPriceInIdr}
-							isFastest={quote.deliveryDays === fastestDays}
-							isHighestPrice={hasPriceHighlight && quote.priceInIdr === highestPriceInIdr}
-							isSlowestDelivery={hasDeliveryHighlight && quote.deliveryDays === slowestDays}
-							isStartingChat={startingId === quote.id}
-							onStartChat={handleStartChat}
-						/>
-					))}
-				</div>
-			) : (
-				<QuoteCompareTable quotes={visibleQuotes} />
-			)}
+			{/* 그리드↔테이블 전환 시 가격이 이전 위치에서 새 위치로 이동하는 느낌을 주기 위해
+			    QuoteReviewQuoteCard/QuoteCompareTable의 가격 요소가 같은 layoutId를 공유한다.
+			    LayoutGroup으로 이 영역의 layout 계산을 스코프하고, AnimatePresence로 그리드/
+			    테이블 컨테이너 자체는 짧은 크로스페이드를 줘 전환 중 레이아웃 점프를 줄인다. */}
+			<LayoutGroup id="quote-review">
+				<AnimatePresence mode="popLayout" initial={false}>
+					{viewMode === "grid" ? (
+						<motion.div
+							key="grid"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							transition={{ duration: 0.15 }}
+							className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+							{visibleQuotes.map((quote) => (
+								<QuoteReviewQuoteCard
+									key={quote.id}
+									quote={quote}
+									listingItems={listingItems}
+									backHref={backHref}
+									isLowestPrice={lowestPriceInIdr !== null && quote.priceInIdr === lowestPriceInIdr}
+									isFastest={quote.deliveryDays === fastestDays}
+									isHighestPrice={hasPriceHighlight && quote.priceInIdr === highestPriceInIdr}
+									isSlowestDelivery={hasDeliveryHighlight && quote.deliveryDays === slowestDays}
+									isStartingChat={startingId === quote.id}
+									onStartChat={handleStartChat}
+								/>
+							))}
+						</motion.div>
+					) : (
+						<motion.div
+							key="table"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							transition={{ duration: 0.15 }}>
+							<QuoteCompareTable quotes={visibleQuotes} />
+						</motion.div>
+					)}
+				</AnimatePresence>
+			</LayoutGroup>
 
 			{hasMoreQuotes && (
 				<button

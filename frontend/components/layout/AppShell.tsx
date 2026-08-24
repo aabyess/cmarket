@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { MotionConfig } from "motion/react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { usePersistentState } from "@/hooks/usePersistentState";
 import { SIDEBAR_TRANSITION_CLASS } from "@/components/layout/sidebarTransition";
@@ -41,39 +42,44 @@ export function AppShell({ role, companyName, name, children }: AppShellProps): 
 	const renderedWidth = liveWidth ?? (sidebarState.collapsed ? SIDEBAR_RAIL_WIDTH : sidebarState.width);
 
 	return (
-		<div className="flex min-h-screen bg-[#F7F8F8]">
-			<Sidebar
-				role={role}
-				companyName={companyName}
-				name={name}
-				isCollapsed={sidebarState.collapsed}
-				width={renderedWidth}
-				isResizing={isResizing}
-				onToggleCollapsed={() =>
-					updateSidebarState((prev) => ({ ...prev, collapsed: !prev.collapsed }))
-				}
-				onResizeStart={() => setIsResizing(true)}
-				onResizePreview={setLiveWidth}
-				onResizeEnd={(result) => {
-					setIsResizing(false);
-					setLiveWidth(null);
-					if (result.collapsed) {
-						updateSidebarState((prev) => ({ ...prev, collapsed: true }));
-					} else {
-						updateSidebarState(() => ({ collapsed: false, width: result.width }));
+		// 앱 전역에서 OS의 prefers-reduced-motion 설정을 motion이 자동으로 따르게 한다.
+		// Sidebar 등 기존 useReducedMotion() 수동 분기와 값이 같아 충돌하지 않고,
+		// 수동 분기가 없는(예: 받은 견적 그리드↔테이블 layoutId) 애니메이션까지 덤으로 커버한다.
+		<MotionConfig reducedMotion="user">
+			<div className="flex min-h-screen bg-[#F7F8F8]">
+				<Sidebar
+					role={role}
+					companyName={companyName}
+					name={name}
+					isCollapsed={sidebarState.collapsed}
+					width={renderedWidth}
+					isResizing={isResizing}
+					onToggleCollapsed={() =>
+						updateSidebarState((prev) => ({ ...prev, collapsed: !prev.collapsed }))
 					}
-				}}
-			/>
-			<div
-				style={{ "--sidebar-w": `${renderedWidth}px` } as React.CSSProperties}
-				className={cn(
-					"flex-1 lg:ml-[var(--sidebar-w)]",
-					!isResizing && "transition-[margin]",
-					!isResizing && SIDEBAR_TRANSITION_CLASS,
-				)}
-			>
-				<main>{children}</main>
+					onResizeStart={() => setIsResizing(true)}
+					onResizePreview={setLiveWidth}
+					onResizeEnd={(result) => {
+						setIsResizing(false);
+						setLiveWidth(null);
+						if (result.collapsed) {
+							updateSidebarState((prev) => ({ ...prev, collapsed: true }));
+						} else {
+							updateSidebarState(() => ({ collapsed: false, width: result.width }));
+						}
+					}}
+				/>
+				<div
+					style={{ "--sidebar-w": `${renderedWidth}px` } as React.CSSProperties}
+					className={cn(
+						"flex-1 lg:ml-[var(--sidebar-w)]",
+						!isResizing && "transition-[margin]",
+						!isResizing && SIDEBAR_TRANSITION_CLASS,
+					)}
+				>
+					<main>{children}</main>
+				</div>
 			</div>
-		</div>
+		</MotionConfig>
 	);
 }
