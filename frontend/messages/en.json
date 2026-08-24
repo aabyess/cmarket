@@ -1305,7 +1305,10 @@
 		"presetsEmpty": "No saved presets yet",
 		"presetsSaveCurrent": "Save current filters",
 		"presetsNamePlaceholder": "Preset name",
-		"presetsDeleteAria": "Delete preset {name}"
+		"presetsDeleteAria": "Delete preset {name}",
+		"presetsDeleteConfirmTitle": "Delete preset '{name}'?",
+		"presetsDeleteConfirmDescription": "This can't be undone.",
+		"presetsSaveConfirmAria": "Save preset"
 	},
 	"OrderListCard": {
 		"budgetLabel": "Budget",
