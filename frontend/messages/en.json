@@ -1675,7 +1675,8 @@
 	},
 	"ChatView": {
 		"emptyTitle": "Select a conversation",
-		"emptyDescription": "Choose one from the list on the left to start chatting."
+		"emptyDescription": "Choose one from the list on the left to start chatting.",
+		"resizeAria": "Resize room list"
 	},
 	"QuotePdfCard": {
 		"previewAlt": "Quote preview",

@@ -374,7 +374,8 @@
 	},
 	"ChatView": {
 		"emptyTitle": "Pilih percakapan",
-		"emptyDescription": "Pilih dari daftar di sebelah kiri untuk mulai mengobrol."
+		"emptyDescription": "Pilih dari daftar di sebelah kiri untuk mulai mengobrol.",
+		"resizeAria": "Ubah lebar daftar ruang"
 	},
 	"QuotePdfCard": {
 		"previewAlt": "Pratinjau penawaran",

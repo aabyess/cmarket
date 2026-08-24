@@ -1,11 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { MessageSquare } from "lucide-react";
 import { ChatRoomList } from "@/features/chat/components/ChatRoomList";
 import { ChatRoomPanel } from "@/features/chat/components/ChatRoomPanel";
+import { usePersistentState } from "@/hooks/usePersistentState";
 import type { ChatContext, ChatRoom } from "@/features/chat/types";
+
+const ROOM_LIST_MIN_WIDTH = 240;
+const ROOM_LIST_MAX_WIDTH = 480;
+const ROOM_LIST_DEFAULT_WIDTH = 300; // 기존 고정폭(w-[300px])
+
+function clampRoomListWidth(width: number): number {
+	return Math.min(ROOM_LIST_MAX_WIDTH, Math.max(ROOM_LIST_MIN_WIDTH, width));
+}
 
 type ChatViewProps = {
 	context: ChatContext;
@@ -19,6 +28,15 @@ export function ChatView({ context, initialQuoteId }: ChatViewProps): React.Reac
 	// props에서 파생하고, 이 세션에서 읽음 처리한 방만 별도로 기억한다.
 	const [readQuoteIds, setReadQuoteIds] = useState<Set<string>>(new Set());
 
+	const [roomListWidth, setRoomListWidth] = usePersistentState<number>(
+		"mitrapay:chat-room-list-width",
+		ROOM_LIST_DEFAULT_WIDTH,
+	);
+	// 드래그 중엔 로컬 state로만 미리보기하고, 뗄 때 한 번만 localStorage에 커밋한다
+	// (Sidebar 리사이즈와 같은 이유 — pointermove마다 저장하면 쓰기가 과도하다).
+	const [previewWidth, setPreviewWidth] = useState<number | null>(null);
+	const dragStateRef = useRef<{ startX: number; startWidth: number } | null>(null);
+
 	const rooms: ChatRoom[] = context.rooms.map((room) =>
 		readQuoteIds.has(room.quoteId) ? { ...room, unreadCount: 0 } : room,
 	);
@@ -30,13 +48,55 @@ export function ChatView({ context, initialQuoteId }: ChatViewProps): React.Reac
 		setReadQuoteIds((prev) => new Set(prev).add(quoteId));
 	}
 
+	function handleResizeHandlePointerDown(e: React.PointerEvent<HTMLButtonElement>): void {
+		e.currentTarget.setPointerCapture(e.pointerId);
+		dragStateRef.current = { startX: e.clientX, startWidth: roomListWidth };
+		document.body.style.cursor = "col-resize";
+		document.body.style.userSelect = "none";
+
+		function handlePointerMove(moveEvent: PointerEvent): void {
+			const drag = dragStateRef.current;
+			if (!drag) return;
+			const dx = moveEvent.clientX - drag.startX;
+			setPreviewWidth(clampRoomListWidth(drag.startWidth + dx));
+		}
+
+		function handlePointerUp(upEvent: PointerEvent): void {
+			window.removeEventListener("pointermove", handlePointerMove);
+			window.removeEventListener("pointerup", handlePointerUp);
+			document.body.style.cursor = "";
+			document.body.style.userSelect = "";
+
+			const drag = dragStateRef.current;
+			dragStateRef.current = null;
+			if (!drag) return;
+
+			const dx = upEvent.clientX - drag.startX;
+			setRoomListWidth(clampRoomListWidth(drag.startWidth + dx));
+			setPreviewWidth(null);
+		}
+
+		window.addEventListener("pointermove", handlePointerMove);
+		window.addEventListener("pointerup", handlePointerUp);
+	}
+
 	return (
 		<div className="flex h-screen overflow-hidden bg-white">
-			<div className="flex h-full w-[300px] shrink-0 flex-col overflow-hidden border-r border-[#E5E7EB]/60">
+			<div
+				style={{ width: `${previewWidth ?? roomListWidth}px` }}
+				className="relative flex h-full shrink-0 flex-col overflow-hidden border-r border-[#E5E7EB]/60">
 				<ChatRoomList
 					rooms={rooms}
 					activeQuoteId={activeQuoteId ?? undefined}
 					onSelect={handleSelect}
+				/>
+				{/* 리사이즈 핸들 — 메인 사이드바 핸들과 같은 톤(sidebar-border/hover 배경)의
+				    세로 막대. 접기 기능은 없어 클릭 처리 없이 순수 드래그로만 동작한다. */}
+				<button
+					type="button"
+					onPointerDown={handleResizeHandlePointerDown}
+					aria-label={t("resizeAria")}
+					className="hover:bg-sidebar-border active:bg-sidebar-border absolute top-0 -right-1 z-10 h-full w-2 cursor-col-resize touch-none bg-transparent transition-colors"
 				/>
 			</div>
 
