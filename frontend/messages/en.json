@@ -1150,7 +1150,8 @@
 		"deliveryLabel": "Delivery",
 		"daysSuffix": "{days} days",
 		"viewListingButton": "View listing",
-		"chatButton": "Chat"
+		"chatButton": "Chat",
+		"statusFailed": "Unsuccessful"
 	},
 	"MyQuotesFilterBar": {
 		"filterAll": "All",
@@ -1176,7 +1177,8 @@
 		"columnDelivery": "Delivery",
 		"columnSubmittedAt": "Submitted",
 		"daysSuffix": "{days} days",
-		"chatButton": "Chat"
+		"chatButton": "Chat",
+		"statusFailed": "Unsuccessful"
 	},
 	"SellerListingBrowsePage": {
 		"title": "Browse Listings",
@@ -1297,7 +1299,8 @@
 		"statusAll": "All",
 		"statusAwarded": "Contract Confirmed",
 		"statusClosed": "Closed",
-		"bookmarkedOnlyFilter": "Bookmarked by sellers"
+		"bookmarkedOnlyFilter": "Bookmarked by sellers",
+		"statusFailed": "Unsuccessful"
 	},
 	"OrderListCard": {
 		"budgetLabel": "Budget",
@@ -1309,7 +1312,8 @@
 		"registeredOn": "Registered {date}",
 		"statusActive": "In Progress",
 		"statusAwarded": "Contract Confirmed",
-		"statusClosed": "Closed"
+		"statusClosed": "Closed",
+		"statusFailed": "Unsuccessful"
 	},
 	"OrderListTable": {
 		"budgetPrivate": "Private",
@@ -1326,7 +1330,8 @@
 		"statusActive": "In Progress",
 		"statusAwarded": "Contract Confirmed",
 		"statusClosed": "Closed",
-		"columnBookmark": "Bookmarked"
+		"columnBookmark": "Bookmarked",
+		"statusFailed": "Unsuccessful"
 	},
 	"QuoteReview": {
 		"emptyDescription": "Your first quote usually arrives within 2-3 days.",

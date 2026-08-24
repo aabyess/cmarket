@@ -14,12 +14,16 @@ import {
 	type SortOption,
 	type ViewMode,
 } from "@/features/buyer/components/OrderList/OrderListFilterBar";
-import type { ListingStatus, ListingSummary } from "@/features/buyer/types";
+import {
+	getDisplayListingStatus,
+	type DisplayListingStatus,
+} from "@/utils/getDisplayListingStatus";
+import type { ListingSummary } from "@/features/buyer/types";
 import { Pagination } from "@/components/commons/Pagination";
 
 type OrderListPrefs = {
 	sort: SortOption;
-	statusFilter: ListingStatus | null;
+	statusFilter: DisplayListingStatus | null;
 	bookmarkedOnly: boolean;
 	viewMode: ViewMode;
 	pageSize: number;
@@ -53,7 +57,7 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 		setPrefs((prev) => ({ ...prev, sort }));
 	}
 
-	function selectStatus(status: ListingStatus): void {
+	function selectStatus(status: DisplayListingStatus): void {
 		setPrefs((prev) => ({ ...prev, statusFilter: prev.statusFilter === status ? null : status }));
 	}
 
@@ -74,9 +78,19 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 	}
 
 	const statusCounts = useMemo(() => {
-		const counts: Record<ListingStatus, number> = { active: 0, closed: 0, awarded: 0 };
+		const counts: Record<DisplayListingStatus, number> = {
+			active: 0,
+			closed: 0,
+			awarded: 0,
+			failed: 0,
+		};
 		for (const listing of listings) {
-			counts[listing.status] += 1;
+			const displayStatus = getDisplayListingStatus(
+				listing.status,
+				listing.endDate,
+				listing.status === "awarded",
+			);
+			counts[displayStatus] += 1;
 		}
 		return counts;
 	}, [listings]);
@@ -85,7 +99,14 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 		const keyword = search.trim().toLowerCase();
 
 		const filtered = listings.filter((listing) => {
-			if (statusFilter !== null && listing.status !== statusFilter) return false;
+			if (statusFilter !== null) {
+				const displayStatus = getDisplayListingStatus(
+					listing.status,
+					listing.endDate,
+					listing.status === "awarded",
+				);
+				if (displayStatus !== statusFilter) return false;
+			}
 			if (bookmarkedOnly && listing.bookmarkCount === 0) return false;
 			if (!keyword) return true;
 

@@ -4,8 +4,12 @@ import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
 import { Star } from "lucide-react";
 import { cn } from "@/utils/cn";
-import type { Currency, ListingStatus, ListingSummary } from "@/features/buyer/types";
+import type { Currency, ListingSummary } from "@/features/buyer/types";
 import { getCategoryLabels } from "@/features/buyer/constants";
+import {
+	getDisplayListingStatus,
+	type DisplayListingStatus,
+} from "@/utils/getDisplayListingStatus";
 
 const CURRENCY_SYMBOL: Record<Currency, string> = {
 	USD: "$",
@@ -13,10 +17,11 @@ const CURRENCY_SYMBOL: Record<Currency, string> = {
 	KRW: "₩",
 };
 
-const STATUS_STYLE: Record<ListingStatus, string> = {
+const STATUS_STYLE: Record<DisplayListingStatus, string> = {
 	active: "bg-[#EFF6FF] text-imsg-blue",
 	closed: "bg-[#F3F4F6] text-[#6B7280]",
 	awarded: "bg-[#ECFDF5] text-[#059669]",
+	failed: "bg-[#F3F4F6] text-[#6B7280]",
 };
 
 function formatDate(iso: string): string {
@@ -45,10 +50,11 @@ export function OrderListTable({
 }: OrderListTableProps): React.ReactNode {
 	const t = useTranslations("OrderListTable");
 	const categoryLabels = getCategoryLabels(useTranslations("ListingCategory"));
-	const statusLabels: Record<ListingStatus, string> = {
+	const statusLabels: Record<DisplayListingStatus, string> = {
 		active: t("statusActive"),
 		closed: t("statusClosed"),
 		awarded: t("statusAwarded"),
+		failed: t("statusFailed"),
 	};
 
 	return (
@@ -71,7 +77,12 @@ export function OrderListTable({
 					</thead>
 					<tbody className="divide-y divide-[#F3F4F6]">
 						{listings.map((listing) => {
-							const statusClassName = STATUS_STYLE[listing.status];
+							const displayStatus = getDisplayListingStatus(
+								listing.status,
+								listing.endDate,
+								listing.status === "awarded",
+							);
+							const statusClassName = STATUS_STYLE[displayStatus];
 							const symbol = CURRENCY_SYMBOL[listing.currency];
 							const remaining = getRemainingInfo(listing.endDate);
 							const remainingText = remaining.isClosed
@@ -92,7 +103,7 @@ export function OrderListTable({
 												"rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap",
 												statusClassName,
 											)}>
-											{statusLabels[listing.status]}
+											{statusLabels[displayStatus]}
 										</motion.span>
 									</td>
 									<td className="max-w-[240px] truncate px-4 py-3 font-medium text-[#1F2937]">
