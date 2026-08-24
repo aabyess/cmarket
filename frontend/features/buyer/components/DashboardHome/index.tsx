@@ -5,8 +5,11 @@ import { useRouter } from "@/i18n/navigation";
 import { Mail, Clock, Bell, MessageSquare, Handshake } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { usePersistentState } from "@/hooks/usePersistentState";
+import { useDashboardWidgets } from "@/hooks/useDashboardWidgets";
 import { OnboardingChecklist } from "@/features/onboarding/components/OnboardingChecklist";
 import { DashboardTodoRow } from "@/features/shared/components/DashboardTodoRow";
+import { DashboardCustomizeBar } from "@/features/shared/components/DashboardCustomizeBar";
+import { DashboardWidgetRemoveButton } from "@/features/shared/components/DashboardWidgetRemoveButton";
 import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import type {
 	BuyerActivity,
@@ -29,6 +32,9 @@ const KIND_LABEL_KEY: Record<BuyerTodoKind, string> = {
 	paymentPending: "kindPaymentPending",
 };
 
+// 배너·온보딩 체크리스트·할 일 위젯은 핵심 액션 정보라 커스터마이징 대상에서 뺐다.
+type BuyerWidgetKey = "tradeSummary" | "shortcuts" | "recentActivity";
+
 export function DashboardHome({
 	companyName,
 	data,
@@ -36,11 +42,20 @@ export function DashboardHome({
 	onboardingChecklist,
 }: DashboardHomeProps) {
 	const t = useTranslations("BuyerDashboard");
+	const tCustomize = useTranslations("DashboardCustomizeBar");
 	const router = useRouter();
 	const [viewMode, setViewMode] = usePersistentState<ViewMode>(
 		"mitrapay:buyer-dashboard-todo-view",
 		"list",
 	);
+	const { isEditing, toggleEditing, hiddenKeys, hideWidget, showWidget, isHidden } =
+		useDashboardWidgets<BuyerWidgetKey>("mitrapay:buyer-dashboard-hidden-widgets");
+
+	const widgetLabels: Record<BuyerWidgetKey, string> = {
+		tradeSummary: t("tradeSummaryTitle"),
+		shortcuts: t("shortcutsTitle"),
+		recentActivity: t("recentActivityTitle"),
+	};
 
 	function handleNavigate(href: string) {
 		router.push(href);
@@ -100,10 +115,24 @@ export function DashboardHome({
 				</div>
 			</div>
 
+			<DashboardCustomizeBar
+				isEditing={isEditing}
+				onToggleEditing={toggleEditing}
+				hiddenWidgets={hiddenKeys.map((key) => ({ key, label: widgetLabels[key] }))}
+				onShowWidget={(key) => showWidget(key as BuyerWidgetKey)}
+			/>
+
 			<OnboardingChecklist checklist={onboardingChecklist} />
 
 			{/* 나의 거래 요약 */}
-			<div className="mb-6">
+			{!isHidden("tradeSummary") && (
+			<div className="relative mb-6">
+				{isEditing && (
+					<DashboardWidgetRemoveButton
+						label={tCustomize("removeWidgetAria", { widget: widgetLabels.tradeSummary })}
+						onRemove={() => hideWidget("tradeSummary")}
+					/>
+				)}
 				<div className="mb-3 flex items-center justify-between">
 					<h2 className="text-base font-semibold text-[#0f172a]">{t("tradeSummaryTitle")}</h2>
 				</div>
@@ -136,6 +165,7 @@ export function DashboardHome({
 					</div>
 				</div>
 			</div>
+			)}
 
 			{/* Two Column */}
 			<div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -212,7 +242,14 @@ export function DashboardHome({
 				{/* Side */}
 				<div className="space-y-4">
 					{/* 바로가기 */}
-					<div className="rounded-2xl bg-white p-4 shadow-sm">
+					{!isHidden("shortcuts") && (
+					<div className="relative rounded-2xl bg-white p-4 shadow-sm">
+						{isEditing && (
+							<DashboardWidgetRemoveButton
+								label={tCustomize("removeWidgetAria", { widget: widgetLabels.shortcuts })}
+								onRemove={() => hideWidget("shortcuts")}
+							/>
+						)}
 						<h2 className="text-imsg-secondary mb-3 text-sm font-semibold tracking-wider uppercase">
 							{t("shortcutsTitle")}
 						</h2>
@@ -254,9 +291,17 @@ export function DashboardHome({
 							))}
 						</div>
 					</div>
+					)}
 
 					{/* 최근 활동 */}
-					<div className="rounded-2xl bg-white shadow-sm">
+					{!isHidden("recentActivity") && (
+					<div className="relative rounded-2xl bg-white shadow-sm">
+						{isEditing && (
+							<DashboardWidgetRemoveButton
+								label={tCustomize("removeWidgetAria", { widget: widgetLabels.recentActivity })}
+								onRemove={() => hideWidget("recentActivity")}
+							/>
+						)}
 						<div className="flex items-center gap-2 px-4 py-3">
 							<h2 className="text-imsg-secondary text-sm font-semibold tracking-wider uppercase">
 								{t("recentActivityTitle")}
@@ -287,6 +332,7 @@ export function DashboardHome({
 							)}
 						</ul>
 					</div>
+					)}
 				</div>
 			</div>
 		</div>
