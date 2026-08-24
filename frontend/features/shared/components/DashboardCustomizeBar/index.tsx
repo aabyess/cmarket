@@ -39,7 +39,7 @@ export function DashboardCustomizeBar({
 						"flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-medium transition-colors",
 						isEditing
 							? "border-imsg-blue bg-imsg-blue text-white"
-							: "border-[#E5E7EB] bg-white text-[#374151] hover:bg-imsg-surface",
+							: "hover:bg-imsg-surface border-[#E5E7EB] bg-white text-[#374151]",
 					)}>
 					{isEditing ? <Check size={13} /> : <Pencil size={13} />}
 					{isEditing ? t("doneButton") : t("editButton")}
@@ -54,13 +54,15 @@ export function DashboardCustomizeBar({
 						exit={{ opacity: 0, scale: 0.98 }}
 						transition={{ duration: 0.15 }}
 						className="mt-3 flex flex-wrap items-center gap-2 rounded-2xl border border-dashed border-[#E5E7EB] bg-white p-3">
-						<span className="text-xs font-medium text-imsg-secondary">{t("hiddenWidgetsLabel")}</span>
+						<span className="text-imsg-secondary text-xs font-medium">
+							{t("hiddenWidgetsLabel")}
+						</span>
 						{hiddenWidgets.map((widget) => (
 							<button
 								key={widget.key}
 								type="button"
 								onClick={() => onShowWidget(widget.key)}
-								className="flex items-center gap-1 rounded-full bg-imsg-surface px-2.5 py-1 text-xs font-medium text-[#374151] transition-colors hover:bg-[#E5E7EB]">
+								className="bg-imsg-surface flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium text-[#374151] transition-colors hover:bg-[#E5E7EB]">
 								<Plus size={11} />
 								{widget.label}
 							</button>

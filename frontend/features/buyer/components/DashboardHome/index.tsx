@@ -126,45 +126,45 @@ export function DashboardHome({
 
 			{/* 나의 거래 요약 */}
 			{!isHidden("tradeSummary") && (
-			<div className="relative mb-6">
-				{isEditing && (
-					<DashboardWidgetRemoveButton
-						label={tCustomize("removeWidgetAria", { widget: widgetLabels.tradeSummary })}
-						onRemove={() => hideWidget("tradeSummary")}
-					/>
-				)}
-				<div className="mb-3 flex items-center justify-between">
-					<h2 className="text-base font-semibold text-[#0f172a]">{t("tradeSummaryTitle")}</h2>
-				</div>
-				<div className="rounded-2xl bg-white p-6 shadow-sm">
-					<div className="grid grid-cols-1 divide-y divide-[#F2F2F7] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-						{[
-							{ label: t("summaryInProgress"), ...tradeSummary.inProgress },
-							{ label: t("summaryClosed"), ...tradeSummary.closed },
-							{ label: t("summaryContracts"), ...tradeSummary.contracts },
-						].map((block) => (
-							<div
-								key={block.label}
-								className="px-0 py-4 first:pt-0 last:pb-0 sm:px-6 sm:py-0 sm:first:pl-0 sm:last:pr-0">
-								<div className="flex items-baseline justify-between">
-									<p className="text-imsg-secondary text-sm font-medium">{block.label}</p>
-									<p className="text-3xl font-bold text-[#0f172a]">
-										{t("totalCount", { count: block.total })}
-									</p>
+				<div className="relative mb-6">
+					{isEditing && (
+						<DashboardWidgetRemoveButton
+							label={tCustomize("removeWidgetAria", { widget: widgetLabels.tradeSummary })}
+							onRemove={() => hideWidget("tradeSummary")}
+						/>
+					)}
+					<div className="mb-3 flex items-center justify-between">
+						<h2 className="text-base font-semibold text-[#0f172a]">{t("tradeSummaryTitle")}</h2>
+					</div>
+					<div className="rounded-2xl bg-white p-6 shadow-sm">
+						<div className="grid grid-cols-1 divide-y divide-[#F2F2F7] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+							{[
+								{ label: t("summaryInProgress"), ...tradeSummary.inProgress },
+								{ label: t("summaryClosed"), ...tradeSummary.closed },
+								{ label: t("summaryContracts"), ...tradeSummary.contracts },
+							].map((block) => (
+								<div
+									key={block.label}
+									className="px-0 py-4 first:pt-0 last:pb-0 sm:px-6 sm:py-0 sm:first:pl-0 sm:last:pr-0">
+									<div className="flex items-baseline justify-between">
+										<p className="text-imsg-secondary text-sm font-medium">{block.label}</p>
+										<p className="text-3xl font-bold text-[#0f172a]">
+											{t("totalCount", { count: block.total })}
+										</p>
+									</div>
+									<div className="mt-3 space-y-2">
+										{block.subItems.map((sub) => (
+											<div key={sub.label} className="flex items-center justify-between text-sm">
+												<span className="text-imsg-secondary">{sub.label}</span>
+												<span className="font-medium text-[#0f172a]">{sub.value}</span>
+											</div>
+										))}
+									</div>
 								</div>
-								<div className="mt-3 space-y-2">
-									{block.subItems.map((sub) => (
-										<div key={sub.label} className="flex items-center justify-between text-sm">
-											<span className="text-imsg-secondary">{sub.label}</span>
-											<span className="font-medium text-[#0f172a]">{sub.value}</span>
-										</div>
-									))}
-								</div>
-							</div>
-						))}
+							))}
+						</div>
 					</div>
 				</div>
-			</div>
 			)}
 
 			{/* Two Column */}
@@ -243,95 +243,97 @@ export function DashboardHome({
 				<div className="space-y-4">
 					{/* 바로가기 */}
 					{!isHidden("shortcuts") && (
-					<div className="relative rounded-2xl bg-white p-4 shadow-sm">
-						{isEditing && (
-							<DashboardWidgetRemoveButton
-								label={tCustomize("removeWidgetAria", { widget: widgetLabels.shortcuts })}
-								onRemove={() => hideWidget("shortcuts")}
-							/>
-						)}
-						<h2 className="text-imsg-secondary mb-3 text-sm font-semibold tracking-wider uppercase">
-							{t("shortcutsTitle")}
-						</h2>
-						<div className="grid grid-cols-2 gap-2">
-							{[
-								{
-									label: t("shortcutQuotesLabel"),
-									sub: t("shortcutQuotesSub", { count: data.badges.quotes }),
-									icon: Mail,
-									iconBg: "bg-amber-50",
-									color: "text-amber-500",
-									href: "/buyer/quote-review",
-								},
-								{
-									label: t("shortcutChatLabel"),
-									sub: t("shortcutChatSub", { count: data.badges.chats }),
-									icon: MessageSquare,
-									iconBg: "bg-blue-50",
-									color: "text-imsg-blue",
-									href: "/buyer/chat",
-								},
-							].map((link) => (
-								<button
-									key={link.label}
-									onClick={() => handleNavigate(link.href)}
-									className="bg-imsg-surface flex flex-col gap-2.5 rounded-xl p-3 text-left transition-colors hover:bg-[#E5E7EB]">
-									<span
-										className={cn(
-											"flex size-8 items-center justify-center rounded-lg",
-											link.iconBg,
-										)}>
-										<link.icon size={16} className={link.color} />
-									</span>
-									<span>
-										<span className="block text-sm font-semibold text-[#0f172a]">{link.label}</span>
-										<span className="text-imsg-secondary block text-sm">{link.sub}</span>
-									</span>
-								</button>
-							))}
+						<div className="relative rounded-2xl bg-white p-4 shadow-sm">
+							{isEditing && (
+								<DashboardWidgetRemoveButton
+									label={tCustomize("removeWidgetAria", { widget: widgetLabels.shortcuts })}
+									onRemove={() => hideWidget("shortcuts")}
+								/>
+							)}
+							<h2 className="text-imsg-secondary mb-3 text-sm font-semibold tracking-wider uppercase">
+								{t("shortcutsTitle")}
+							</h2>
+							<div className="grid grid-cols-2 gap-2">
+								{[
+									{
+										label: t("shortcutQuotesLabel"),
+										sub: t("shortcutQuotesSub", { count: data.badges.quotes }),
+										icon: Mail,
+										iconBg: "bg-amber-50",
+										color: "text-amber-500",
+										href: "/buyer/quote-review",
+									},
+									{
+										label: t("shortcutChatLabel"),
+										sub: t("shortcutChatSub", { count: data.badges.chats }),
+										icon: MessageSquare,
+										iconBg: "bg-blue-50",
+										color: "text-imsg-blue",
+										href: "/buyer/chat",
+									},
+								].map((link) => (
+									<button
+										key={link.label}
+										onClick={() => handleNavigate(link.href)}
+										className="bg-imsg-surface flex flex-col gap-2.5 rounded-xl p-3 text-left transition-colors hover:bg-[#E5E7EB]">
+										<span
+											className={cn(
+												"flex size-8 items-center justify-center rounded-lg",
+												link.iconBg,
+											)}>
+											<link.icon size={16} className={link.color} />
+										</span>
+										<span>
+											<span className="block text-sm font-semibold text-[#0f172a]">
+												{link.label}
+											</span>
+											<span className="text-imsg-secondary block text-sm">{link.sub}</span>
+										</span>
+									</button>
+								))}
+							</div>
 						</div>
-					</div>
 					)}
 
 					{/* 최근 활동 */}
 					{!isHidden("recentActivity") && (
-					<div className="relative rounded-2xl bg-white shadow-sm">
-						{isEditing && (
-							<DashboardWidgetRemoveButton
-								label={tCustomize("removeWidgetAria", { widget: widgetLabels.recentActivity })}
-								onRemove={() => hideWidget("recentActivity")}
-							/>
-						)}
-						<div className="flex items-center gap-2 px-4 py-3">
-							<h2 className="text-imsg-secondary text-sm font-semibold tracking-wider uppercase">
-								{t("recentActivityTitle")}
-							</h2>
-						</div>
-						<div className="h-px bg-[#F2F2F7]" />
-						<ul className="p-2">
-							{data.activities.length === 0 ? (
-								<li className="text-imsg-secondary py-8 text-center text-sm">
-									{t("recentActivityEmpty")}
-								</li>
-							) : (
-								data.activities.map((activity, i) => (
-									<li key={i}>
-										<button
-											onClick={() => handleActivityClick(activity)}
-											className="hover:bg-imsg-surface flex w-full items-start gap-3 rounded-xl px-2 py-2.5 text-left transition-colors">
-											<span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-blue-50">
-												<Bell size={12} className="text-imsg-blue" />
-											</span>
-											<div className="min-w-0 flex-1">
-												<p className="text-sm text-[#0f172a]">{activity.title}</p>
-												<p className="text-imsg-secondary mt-0.5 text-sm">{activity.timeText}</p>
-											</div>
-										</button>
-									</li>
-								))
+						<div className="relative rounded-2xl bg-white shadow-sm">
+							{isEditing && (
+								<DashboardWidgetRemoveButton
+									label={tCustomize("removeWidgetAria", { widget: widgetLabels.recentActivity })}
+									onRemove={() => hideWidget("recentActivity")}
+								/>
 							)}
-						</ul>
-					</div>
+							<div className="flex items-center gap-2 px-4 py-3">
+								<h2 className="text-imsg-secondary text-sm font-semibold tracking-wider uppercase">
+									{t("recentActivityTitle")}
+								</h2>
+							</div>
+							<div className="h-px bg-[#F2F2F7]" />
+							<ul className="p-2">
+								{data.activities.length === 0 ? (
+									<li className="text-imsg-secondary py-8 text-center text-sm">
+										{t("recentActivityEmpty")}
+									</li>
+								) : (
+									data.activities.map((activity, i) => (
+										<li key={i}>
+											<button
+												onClick={() => handleActivityClick(activity)}
+												className="hover:bg-imsg-surface flex w-full items-start gap-3 rounded-xl px-2 py-2.5 text-left transition-colors">
+												<span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-blue-50">
+													<Bell size={12} className="text-imsg-blue" />
+												</span>
+												<div className="min-w-0 flex-1">
+													<p className="text-sm text-[#0f172a]">{activity.title}</p>
+													<p className="text-imsg-secondary mt-0.5 text-sm">{activity.timeText}</p>
+												</div>
+											</button>
+										</li>
+									))
+								)}
+							</ul>
+						</div>
 					)}
 				</div>
 			</div>

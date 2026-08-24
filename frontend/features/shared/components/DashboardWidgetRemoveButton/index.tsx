@@ -20,7 +20,7 @@ export function DashboardWidgetRemoveButton({
 			type="button"
 			onClick={onRemove}
 			aria-label={label}
-			className="absolute -top-2 -right-2 z-10 flex size-6 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-imsg-secondary shadow-sm transition-colors hover:bg-red-50 hover:text-red-500">
+			className="text-imsg-secondary absolute -top-2 -right-2 z-10 flex size-6 items-center justify-center rounded-full border border-[#E5E7EB] bg-white shadow-sm transition-colors hover:bg-red-50 hover:text-red-500">
 			<X size={13} />
 		</button>
 	);
