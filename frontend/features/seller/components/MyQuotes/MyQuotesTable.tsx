@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import { motion } from "motion/react";
 import { cva } from "class-variance-authority";
 import { Building2, MessageSquare } from "lucide-react";
 import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
@@ -55,9 +56,13 @@ export function MyQuotesTable({
 						{quotes.map((quote) => (
 							<tr key={quote.id} className="border-t border-[#F2F2F7] hover:bg-imsg-surface">
 								<td className="whitespace-nowrap px-4 py-3">
-									<span className={statusChip({ status: quote.status })}>
+									<motion.span
+										layoutId={`quote-status-${quote.id}`}
+										transition={{ type: "spring", stiffness: 300, damping: 30 }}
+										className={statusChip({ status: quote.status })}
+									>
 										{statusLabels[quote.status]}
-									</span>
+									</motion.span>
 								</td>
 								<td className="px-4 py-3">
 									<button

@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
+import { motion } from "motion/react";
 import { cn } from "@/utils/cn";
 import { getCategoryLabels } from "@/features/buyer/constants";
 import type { Currency, ListingWithQuotes } from "@/features/buyer/types";
@@ -60,11 +61,17 @@ export function QuoteReviewListingTable({ listings }: QuoteReviewListingTablePro
 							>
 								<td className="px-4 py-3">
 									{isAwarded ? (
-										<span className="rounded-full bg-[#ECFDF5] px-2.5 py-1 text-xs font-medium text-[#059669]">
+										<motion.span
+											layoutId={`quote-review-listing-status-${listing.id}`}
+											transition={{ type: "spring", stiffness: 300, damping: 30 }}
+											className="rounded-full bg-[#ECFDF5] px-2.5 py-1 text-xs font-medium text-[#059669]"
+										>
 											{t("awardedBadge")}
-										</span>
+										</motion.span>
 									) : (
-										<span
+										<motion.span
+											layoutId={`quote-review-listing-status-${listing.id}`}
+											transition={{ type: "spring", stiffness: 300, damping: 30 }}
 											className={cn(
 												"whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium",
 												remaining.isClosed
@@ -75,7 +82,7 @@ export function QuoteReviewListingTable({ listings }: QuoteReviewListingTablePro
 											)}
 										>
 											{remaining.isClosed ? t("closed") : t("deadlineDays", { days: remaining.days })}
-										</span>
+										</motion.span>
 									)}
 								</td>
 								<td className="max-w-[320px] truncate px-4 py-3 font-medium text-[#1F2937]">

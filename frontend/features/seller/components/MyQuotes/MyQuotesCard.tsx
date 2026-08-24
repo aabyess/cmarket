@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { motion } from "motion/react";
 import { Building2, Truck, Clock } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { Currency } from "@/features/buyer/types";
@@ -48,9 +49,13 @@ export function MyQuotesCard({ quote, onViewListing, onGoToChat }: MyQuotesCardP
 			)}
 		>
 			<div className="mb-2 flex items-start justify-between gap-2">
-				<span className={cn("whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium", statusClassName)}>
+				<motion.span
+					layoutId={`quote-status-${quote.id}`}
+					transition={{ type: "spring", stiffness: 300, damping: 30 }}
+					className={cn("whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium", statusClassName)}
+				>
 					{statusLabels[quote.status]}
-				</span>
+				</motion.span>
 				<span className="flex shrink-0 items-center gap-1 text-xs text-[#9CA3AF]">
 					<Clock size={11} />
 					{formatDate(quote.createdAt)}
