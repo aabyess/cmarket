@@ -1352,7 +1352,8 @@
 		"deliveryLabel": "Pengiriman",
 		"daysSuffix": "{days} hari",
 		"viewListingButton": "Lihat permintaan",
-		"chatButton": "Chat"
+		"chatButton": "Chat",
+		"statusFailed": "Gagal Lelang"
 	},
 	"MyQuotesFilterBar": {
 		"filterAll": "Semua",
@@ -1378,7 +1379,8 @@
 		"columnDelivery": "Pengiriman",
 		"columnSubmittedAt": "Tanggal kirim",
 		"daysSuffix": "{days} hari",
-		"chatButton": "Chat"
+		"chatButton": "Chat",
+		"statusFailed": "Gagal Lelang"
 	},
 	"SellerListingBrowsePage": {
 		"title": "Jelajahi Permintaan",
@@ -1499,7 +1501,8 @@
 		"statusAll": "Semua",
 		"statusAwarded": "Dikonfirmasi",
 		"statusClosed": "Ditutup",
-		"bookmarkedOnlyFilter": "Diminati penjual"
+		"bookmarkedOnlyFilter": "Diminati penjual",
+		"statusFailed": "Gagal Lelang"
 	},
 	"OrderListCard": {
 		"budgetLabel": "Anggaran",
@@ -1511,7 +1514,8 @@
 		"registeredOn": "Terdaftar {date}",
 		"statusActive": "Berjalan",
 		"statusAwarded": "Dikonfirmasi",
-		"statusClosed": "Ditutup"
+		"statusClosed": "Ditutup",
+		"statusFailed": "Gagal Lelang"
 	},
 	"OrderListTable": {
 		"budgetPrivate": "Tidak Dipublikasikan",
@@ -1528,7 +1532,8 @@
 		"statusActive": "Berjalan",
 		"statusAwarded": "Dikonfirmasi",
 		"statusClosed": "Ditutup",
-		"columnBookmark": "Favorit"
+		"columnBookmark": "Favorit",
+		"statusFailed": "Gagal Lelang"
 	},
 	"QuoteReview": {
 		"emptyDescription": "Penawaran pertama biasanya tiba dalam 2-3 hari.",

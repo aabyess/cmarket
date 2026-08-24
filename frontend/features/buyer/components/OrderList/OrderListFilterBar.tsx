@@ -6,12 +6,12 @@ import { ArrowUpDown, Search, Star } from "lucide-react";
 import { AnimatedPopoverPanel } from "@/components/commons/AnimatedPopoverPanel";
 import { cn } from "@/utils/cn";
 import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
-import type { ListingStatus } from "@/features/buyer/types";
+import type { DisplayListingStatus } from "@/utils/getDisplayListingStatus";
 
 export type SortOption = "newest" | "deadline";
 export type { ViewMode };
 
-const STATUS_VALUES: ListingStatus[] = ["active", "closed", "awarded"];
+const STATUS_VALUES: DisplayListingStatus[] = ["active", "closed", "awarded", "failed"];
 
 const SORT_VALUES: SortOption[] = ["newest", "deadline"];
 
@@ -20,10 +20,10 @@ type OrderListFilterBarProps = {
 	onSearchChange: (value: string) => void;
 	sort: SortOption;
 	onSortChange: (value: SortOption) => void;
-	statusFilter: ListingStatus | null;
-	onSelectStatus: (status: ListingStatus) => void;
+	statusFilter: DisplayListingStatus | null;
+	onSelectStatus: (status: DisplayListingStatus) => void;
 	onClearStatus: () => void;
-	statusCounts: Record<ListingStatus, number>;
+	statusCounts: Record<DisplayListingStatus, number>;
 	totalCount: number;
 	bookmarkedOnly: boolean;
 	onToggleBookmarkedOnly: () => void;
@@ -49,10 +49,11 @@ export function OrderListFilterBar({
 	const t = useTranslations("OrderList");
 	const isAllActive = statusFilter === null;
 
-	const statusLabels: Record<ListingStatus, string> = {
+	const statusLabels: Record<DisplayListingStatus, string> = {
 		active: t("statusActive"),
 		closed: t("statusClosed"),
 		awarded: t("statusAwarded"),
+		failed: t("statusFailed"),
 	};
 
 	const sortLabels: Record<SortOption, string> = {

@@ -4,8 +4,12 @@ import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
 import { Clock, MessageSquare, Package, Star } from "lucide-react";
 import { cn } from "@/utils/cn";
-import type { Currency, ListingStatus, ListingSummary } from "@/features/buyer/types";
+import type { Currency, ListingSummary } from "@/features/buyer/types";
 import { getCategoryLabels } from "@/features/buyer/constants";
+import {
+	getDisplayListingStatus,
+	type DisplayListingStatus,
+} from "@/utils/getDisplayListingStatus";
 
 const CURRENCY_SYMBOL: Record<Currency, string> = {
 	USD: "$",
@@ -13,10 +17,11 @@ const CURRENCY_SYMBOL: Record<Currency, string> = {
 	KRW: "₩",
 };
 
-const STATUS_STYLE: Record<ListingStatus, { className: string; dotClassName: string }> = {
+const STATUS_STYLE: Record<DisplayListingStatus, { className: string; dotClassName: string }> = {
 	active: { className: "bg-[#EFF6FF] text-imsg-blue", dotClassName: "bg-imsg-blue" },
 	closed: { className: "bg-[#F3F4F6] text-[#6B7280]", dotClassName: "bg-[#9CA3AF]" },
 	awarded: { className: "bg-[#ECFDF5] text-[#059669]", dotClassName: "bg-[#059669]" },
+	failed: { className: "bg-[#F3F4F6] text-[#6B7280]", dotClassName: "bg-[#9CA3AF]" },
 };
 
 function getRemainingInfo(endDate: string): { isClosed: boolean; days: number; isUrgent: boolean } {
@@ -45,12 +50,18 @@ export function OrderListCard({
 }: OrderListCardProps): React.ReactNode {
 	const t = useTranslations("OrderListCard");
 	const categoryLabels = getCategoryLabels(useTranslations("ListingCategory"));
-	const statusLabels: Record<ListingStatus, string> = {
+	const statusLabels: Record<DisplayListingStatus, string> = {
 		active: t("statusActive"),
 		closed: t("statusClosed"),
 		awarded: t("statusAwarded"),
+		failed: t("statusFailed"),
 	};
-	const status = STATUS_STYLE[listing.status];
+	const displayStatus = getDisplayListingStatus(
+		listing.status,
+		listing.endDate,
+		listing.status === "awarded",
+	);
+	const status = STATUS_STYLE[displayStatus];
 	const symbol = CURRENCY_SYMBOL[listing.currency];
 	const itemNames = listing.items
 		.map((item) => item.name)
@@ -88,7 +99,7 @@ export function OrderListCard({
 							status.className,
 						)}>
 						<span className={cn("size-1.5 rounded-full", status.dotClassName)} />
-						{statusLabels[listing.status]}
+						{statusLabels[displayStatus]}
 					</motion.span>
 					{listing.category && categoryLabels[listing.category] && (
 						<span className="rounded-full bg-[#F3F4F6] px-2.5 py-1 text-xs font-medium text-[#6B7280]">

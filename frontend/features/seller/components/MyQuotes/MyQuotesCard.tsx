@@ -4,8 +4,9 @@ import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
 import { Building2, Truck, Clock } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { getDisplayQuoteStatus, type DisplayQuoteStatus } from "@/utils/getDisplayQuoteStatus";
 import type { Currency } from "@/features/buyer/types";
-import type { MyQuote, QuoteStatus } from "@/features/seller/types";
+import type { MyQuote } from "@/features/seller/types";
 
 const CURRENCY_SYMBOL: Record<Currency, string> = {
 	USD: "$",
@@ -13,10 +14,11 @@ const CURRENCY_SYMBOL: Record<Currency, string> = {
 	KRW: "₩",
 };
 
-const STATUS_CLASS_NAME: Record<QuoteStatus, string> = {
+const STATUS_CLASS_NAME: Record<DisplayQuoteStatus, string> = {
 	pending: "bg-[#EFF6FF] text-imsg-blue",
 	awarded: "bg-[#ECFDF5] text-[#059669]",
 	rejected: "bg-[#F3F4F6] text-[#6B7280]",
+	failed: "bg-[#F3F4F6] text-[#6B7280]",
 };
 
 function formatDate(iso: string): string {
@@ -32,12 +34,14 @@ type MyQuotesCardProps = {
 
 export function MyQuotesCard({ quote, onViewListing, onGoToChat }: MyQuotesCardProps) {
 	const t = useTranslations("MyQuotesCard");
-	const statusLabels: Record<QuoteStatus, string> = {
+	const statusLabels: Record<DisplayQuoteStatus, string> = {
 		pending: t("statusPending"),
 		awarded: t("statusAwarded"),
 		rejected: t("statusRejected"),
+		failed: t("statusFailed"),
 	};
-	const statusClassName = STATUS_CLASS_NAME[quote.status];
+	const displayStatus = getDisplayQuoteStatus(quote.status, quote.listingEndDate);
+	const statusClassName = STATUS_CLASS_NAME[displayStatus];
 	const symbol = CURRENCY_SYMBOL[quote.currency];
 	const isAwarded = quote.status === "awarded";
 
@@ -46,15 +50,16 @@ export function MyQuotesCard({ quote, onViewListing, onGoToChat }: MyQuotesCardP
 			className={cn(
 				"flex flex-col rounded-2xl border bg-white p-4",
 				isAwarded ? "border-2 border-[#059669]" : "border-[#E5E7EB]",
-			)}
-		>
+			)}>
 			<div className="mb-2 flex items-start justify-between gap-2">
 				<motion.span
 					layoutId={`quote-status-${quote.id}`}
 					transition={{ type: "spring", stiffness: 300, damping: 30 }}
-					className={cn("whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium", statusClassName)}
-				>
-					{statusLabels[quote.status]}
+					className={cn(
+						"rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap",
+						statusClassName,
+					)}>
+					{statusLabels[displayStatus]}
 				</motion.span>
 				<span className="flex shrink-0 items-center gap-1 text-xs text-[#9CA3AF]">
 					<Clock size={11} />
@@ -62,7 +67,7 @@ export function MyQuotesCard({ quote, onViewListing, onGoToChat }: MyQuotesCardP
 				</span>
 			</div>
 
-			<p className="line-clamp-2 min-h-[42px] text-sm font-medium leading-snug text-[#1F2937]">
+			<p className="line-clamp-2 min-h-[42px] text-sm leading-snug font-medium text-[#1F2937]">
 				{quote.listingTitle}
 			</p>
 
@@ -92,15 +97,13 @@ export function MyQuotesCard({ quote, onViewListing, onGoToChat }: MyQuotesCardP
 			<div className="mt-3 flex gap-2">
 				<button
 					onClick={onViewListing}
-					className="flex-1 rounded-lg border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#374151] transition-colors hover:bg-gray-50"
-				>
+					className="flex-1 rounded-lg border border-[#E5E7EB] py-2.5 text-xs font-medium text-[#374151] transition-colors hover:bg-gray-50">
 					{t("viewListingButton")}
 				</button>
 				{isAwarded && (
 					<button
 						onClick={onGoToChat}
-						className="flex-1 rounded-lg bg-imsg-blue py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#2563EB]"
-					>
+						className="bg-imsg-blue flex-1 rounded-lg py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#2563EB]">
 						{t("chatButton")}
 					</button>
 				)}

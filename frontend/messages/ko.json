@@ -1352,7 +1352,8 @@
 		"deliveryLabel": "납품",
 		"daysSuffix": "{days}일",
 		"viewListingButton": "견적요청 보기",
-		"chatButton": "대화하기"
+		"chatButton": "대화하기",
+		"statusFailed": "유찰"
 	},
 	"MyQuotesFilterBar": {
 		"filterAll": "전체",
@@ -1378,7 +1379,8 @@
 		"columnDelivery": "납품",
 		"columnSubmittedAt": "제출일",
 		"daysSuffix": "{days}일",
-		"chatButton": "대화하기"
+		"chatButton": "대화하기",
+		"statusFailed": "유찰"
 	},
 	"SellerListingBrowsePage": {
 		"title": "공고 탐색",
@@ -1499,7 +1501,8 @@
 		"statusAll": "전체",
 		"statusAwarded": "계약 확정",
 		"statusClosed": "마감",
-		"bookmarkedOnlyFilter": "관심 받은 견적"
+		"bookmarkedOnlyFilter": "관심 받은 견적",
+		"statusFailed": "유찰"
 	},
 	"OrderListCard": {
 		"budgetLabel": "예산",
@@ -1511,7 +1514,8 @@
 		"registeredOn": "{date} 등록",
 		"statusActive": "진행 중",
 		"statusAwarded": "계약 확정",
-		"statusClosed": "마감"
+		"statusClosed": "마감",
+		"statusFailed": "유찰"
 	},
 	"OrderListTable": {
 		"budgetPrivate": "비공개",
@@ -1528,7 +1532,8 @@
 		"statusActive": "진행 중",
 		"statusAwarded": "계약 확정",
 		"statusClosed": "마감",
-		"columnBookmark": "관심"
+		"columnBookmark": "관심",
+		"statusFailed": "유찰"
 	},
 	"QuoteReview": {
 		"emptyDescription": "보통 2~3일 안에 첫 견적이 도착해요.",
