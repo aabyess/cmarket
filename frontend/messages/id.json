@@ -1870,6 +1870,12 @@
 		"paymentConfirmUrgentLabel": "Konfirmasi Terlambat",
 		"paymentConfirmAction": "Konfirmasi Pembayaran"
 	},
+	"DashboardCustomizeBar": {
+		"editButton": "Ubah",
+		"doneButton": "Selesai",
+		"hiddenWidgetsLabel": "Widget tersembunyi",
+		"removeWidgetAria": "Sembunyikan widget {widget}"
+	},
 	"BuyerDashboard": {
 		"welcome": "Selamat datang, {companyName}",
 		"welcomeSubcopy": "Mari mulai transaksi baik lainnya hari ini",

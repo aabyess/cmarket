@@ -1870,6 +1870,12 @@
 		"paymentConfirmUrgentLabel": "Confirmation overdue",
 		"paymentConfirmAction": "Confirm payment"
 	},
+	"DashboardCustomizeBar": {
+		"editButton": "Edit",
+		"doneButton": "Done",
+		"hiddenWidgetsLabel": "Hidden widgets",
+		"removeWidgetAria": "Hide {widget} widget"
+	},
 	"BuyerDashboard": {
 		"welcome": "Welcome, {companyName}",
 		"welcomeSubcopy": "Let's start another great deal today",

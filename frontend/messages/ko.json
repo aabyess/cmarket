@@ -1870,6 +1870,12 @@
 		"paymentConfirmUrgentLabel": "확인 지연",
 		"paymentConfirmAction": "입금 확인하기"
 	},
+	"DashboardCustomizeBar": {
+		"editButton": "편집",
+		"doneButton": "완료",
+		"hiddenWidgetsLabel": "숨긴 위젯",
+		"removeWidgetAria": "{widget} 위젯 숨기기"
+	},
 	"BuyerDashboard": {
 		"welcome": "{companyName}님, 환영합니다",
 		"welcomeSubcopy": "오늘도 좋은 거래를 시작해보세요",
