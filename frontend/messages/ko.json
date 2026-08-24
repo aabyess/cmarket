@@ -1935,6 +1935,8 @@
 		"summaryContractsAwardedLabel": "낙찰된 견적",
 		"totalCount": "{count}건",
 		"recommendedTitle": "추천 견적",
+		"aiRecommendedTitle": "AI 추천 공고",
+		"interestedListingsTitle": "관심 공고",
 		"viewAll": "모두 보기",
 		"recommendedEmptyTitle": "추천할 견적이 없어요",
 		"recommendedEmptyDescription": "거래 설정에서 취급 카테고리를 지정하면 맞춤 견적을 추천해드려요.",

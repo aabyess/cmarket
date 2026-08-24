@@ -29,16 +29,67 @@ type SellerWidgetKey =
 	| "todo"
 	| "tradeSummary"
 	| "recommendedListings"
+	| "aiRecommended"
+	| "interestedListings"
 	| "shortcuts"
 	| "companyPage"
 	| "recentActivity";
 // 사이드 컬럼 위젯만 같은 영역 안에서 드래그로 순서를 바꿀 수 있다(메인 영역인
-// banner/onboardingChecklist/todo/tradeSummary/recommendedListings는 순서 변경 대상이 아니다).
+// banner/onboardingChecklist/todo/tradeSummary/recommendedListings/aiRecommended/
+// interestedListings는 순서 변경 대상이 아니다).
 type SellerSideWidgetKey = "shortcuts" | "companyPage" | "recentActivity";
 const SELLER_SIDE_WIDGET_ORDER: SellerSideWidgetKey[] = [
 	"shortcuts",
 	"companyPage",
 	"recentActivity",
+];
+
+// AI 추천/관심 공고는 아직 실제 로직 없이 더미 데이터만 노출한다. 실제 기능은
+// 별도로 배정 예정.
+type MockListingPreview = Pick<
+	OpenListing,
+	"id" | "title" | "deliveryProvinsi" | "deliveryCity" | "endDate"
+>;
+
+const MOCK_AI_RECOMMENDED_LISTINGS: MockListingPreview[] = [
+	{
+		id: "mock-ai-1",
+		title: "산업용 밸브 200개 구매",
+		deliveryProvinsi: "DKI Jakarta",
+		deliveryCity: "Jakarta Selatan",
+		endDate: "2026-09-10",
+	},
+	{
+		id: "mock-ai-2",
+		title: "실험실용 원심분리기 5대",
+		deliveryProvinsi: "Jawa Barat",
+		deliveryCity: "Bandung",
+		endDate: "2026-09-15",
+	},
+];
+
+const MOCK_INTERESTED_LISTINGS: MockListingPreview[] = [
+	{
+		id: "mock-interested-1",
+		title: "사무용 파티션 100세트",
+		deliveryProvinsi: "DKI Jakarta",
+		deliveryCity: "Jakarta Pusat",
+		endDate: "2026-09-05",
+	},
+	{
+		id: "mock-interested-2",
+		title: "포장용 골판지 박스 5000개",
+		deliveryProvinsi: "Jawa Timur",
+		deliveryCity: "Surabaya",
+		endDate: "2026-09-20",
+	},
+	{
+		id: "mock-interested-3",
+		title: "정밀 측정기기 유지보수 부품",
+		deliveryProvinsi: "Banten",
+		deliveryCity: "Tangerang",
+		endDate: "2026-09-25",
+	},
 ];
 
 export function DashboardHome({
@@ -74,6 +125,8 @@ export function DashboardHome({
 		todo: t("todoTitle"),
 		tradeSummary: t("tradeSummaryTitle"),
 		recommendedListings: t("recommendedTitle"),
+		aiRecommended: t("aiRecommendedTitle"),
+		interestedListings: t("interestedListingsTitle"),
 		shortcuts: t("shortcutsTitle"),
 		companyPage: t("companyPageTitle"),
 		recentActivity: t("recentActivityTitle"),
@@ -344,6 +397,156 @@ export function DashboardHome({
 									))}
 								</ul>
 							)}
+						</div>
+					</div>
+				</DashboardWidgetPop>
+
+				{/* AI 추천 공고 — 더미 데이터, 실제 추천 로직은 별도 작업 예정 */}
+				<DashboardWidgetPop show={!isHidden("aiRecommended")} className="lg:col-span-2">
+					<div className="relative">
+						{isEditing && (
+							<DashboardWidgetRemoveButton
+								label={tCustomize("removeWidgetAria", { widget: widgetLabels.aiRecommended })}
+								onRemove={() => hideWidget("aiRecommended")}
+							/>
+						)}
+						<div className="rounded-2xl bg-white shadow-sm">
+							<div className="flex items-center justify-between px-5 py-4">
+								<div className="flex items-center gap-2">
+									<h2 className="text-base font-semibold text-[#0f172a]">
+										{t("aiRecommendedTitle")}
+									</h2>
+									<span className="text-imsg-blue rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold">
+										{t("totalCount", { count: MOCK_AI_RECOMMENDED_LISTINGS.length })}
+									</span>
+								</div>
+								<button
+									onClick={() => console.log("TODO: AI 추천 공고 모두 보기")}
+									className="text-imsg-blue text-sm font-medium hover:underline">
+									{t("viewAll")}
+								</button>
+							</div>
+
+							<div className="h-px bg-[#F2F2F7]" />
+
+							<ul className="p-2">
+								{MOCK_AI_RECOMMENDED_LISTINGS.map((listing, i) => (
+									<li key={listing.id}>
+										<div className="hover:bg-imsg-surface relative flex items-start gap-4 rounded-xl py-3.5 pr-3 pl-5 transition-colors duration-200">
+											<span className="bg-imsg-blue absolute top-1/2 left-1.5 h-6 w-[3px] -translate-y-1/2 rounded-full" />
+
+											<div className="min-w-0 flex-1">
+												<div className="flex items-center gap-2">
+													<h3 className="truncate text-base font-semibold text-[#0f172a]">
+														{listing.title}
+													</h3>
+													<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold">
+														{t("myCategoryBadge")}
+													</span>
+												</div>
+												<p className="text-imsg-secondary mt-0.5 text-sm">
+													{[listing.deliveryProvinsi, listing.deliveryCity]
+														.filter(Boolean)
+														.join(" ")}
+												</p>
+												<div className="text-imsg-secondary mt-1.5 flex items-center gap-1 text-sm">
+													<Clock size={11} />
+													<span>
+														{t("deadlinePrefix")}{" "}
+														{new Date(listing.endDate).toLocaleDateString(locale)}
+													</span>
+												</div>
+											</div>
+
+											<button
+												onClick={() => console.log("TODO: 견적 보내기", listing.id)}
+												className="bg-imsg-surface flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-sm font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-[#E5E7EB]">
+												{t("sendQuoteAction")}
+												<ArrowRight size={12} />
+											</button>
+										</div>
+
+										{i !== MOCK_AI_RECOMMENDED_LISTINGS.length - 1 && (
+											<div className="mx-5 h-px bg-[#F2F2F7]" />
+										)}
+									</li>
+								))}
+							</ul>
+						</div>
+					</div>
+				</DashboardWidgetPop>
+
+				{/* 관심 공고 — 더미 데이터, 실제 로직은 별도 작업 예정 */}
+				<DashboardWidgetPop show={!isHidden("interestedListings")} className="lg:col-span-2">
+					<div className="relative">
+						{isEditing && (
+							<DashboardWidgetRemoveButton
+								label={tCustomize("removeWidgetAria", { widget: widgetLabels.interestedListings })}
+								onRemove={() => hideWidget("interestedListings")}
+							/>
+						)}
+						<div className="rounded-2xl bg-white shadow-sm">
+							<div className="flex items-center justify-between px-5 py-4">
+								<div className="flex items-center gap-2">
+									<h2 className="text-base font-semibold text-[#0f172a]">
+										{t("interestedListingsTitle")}
+									</h2>
+									<span className="text-imsg-blue rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold">
+										{t("totalCount", { count: MOCK_INTERESTED_LISTINGS.length })}
+									</span>
+								</div>
+								<button
+									onClick={() => console.log("TODO: 관심 공고 모두 보기")}
+									className="text-imsg-blue text-sm font-medium hover:underline">
+									{t("viewAll")}
+								</button>
+							</div>
+
+							<div className="h-px bg-[#F2F2F7]" />
+
+							<ul className="p-2">
+								{MOCK_INTERESTED_LISTINGS.map((listing, i) => (
+									<li key={listing.id}>
+										<div className="hover:bg-imsg-surface relative flex items-start gap-4 rounded-xl py-3.5 pr-3 pl-5 transition-colors duration-200">
+											<span className="bg-imsg-blue absolute top-1/2 left-1.5 h-6 w-[3px] -translate-y-1/2 rounded-full" />
+
+											<div className="min-w-0 flex-1">
+												<div className="flex items-center gap-2">
+													<h3 className="truncate text-base font-semibold text-[#0f172a]">
+														{listing.title}
+													</h3>
+													<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold">
+														{t("myCategoryBadge")}
+													</span>
+												</div>
+												<p className="text-imsg-secondary mt-0.5 text-sm">
+													{[listing.deliveryProvinsi, listing.deliveryCity]
+														.filter(Boolean)
+														.join(" ")}
+												</p>
+												<div className="text-imsg-secondary mt-1.5 flex items-center gap-1 text-sm">
+													<Clock size={11} />
+													<span>
+														{t("deadlinePrefix")}{" "}
+														{new Date(listing.endDate).toLocaleDateString(locale)}
+													</span>
+												</div>
+											</div>
+
+											<button
+												onClick={() => console.log("TODO: 견적 보내기", listing.id)}
+												className="bg-imsg-surface flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-sm font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-[#E5E7EB]">
+												{t("sendQuoteAction")}
+												<ArrowRight size={12} />
+											</button>
+										</div>
+
+										{i !== MOCK_INTERESTED_LISTINGS.length - 1 && (
+											<div className="mx-5 h-px bg-[#F2F2F7]" />
+										)}
+									</li>
+								))}
+							</ul>
 						</div>
 					</div>
 				</DashboardWidgetPop>
