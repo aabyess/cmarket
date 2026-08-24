@@ -2,10 +2,41 @@
 "use client";
 
 import { motion } from "motion/react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Clock, Handshake, Mail, Truck, Wallet, type LucideIcon } from "lucide-react";
 import { cn } from "@/utils/cn";
 
 const SPRING_TRANSITION = { type: "spring" as const, stiffness: 300, damping: 30 };
+
+export type DashboardTodoKind =
+	"quotePending" | "awarded" | "deliveryDue" | "paymentConfirm" | "paymentPending";
+
+const KIND_ICON: Record<DashboardTodoKind, LucideIcon> = {
+	quotePending: Mail,
+	awarded: Handshake,
+	deliveryDue: Truck,
+	paymentConfirm: Wallet,
+	paymentPending: Wallet,
+};
+
+const KIND_TONE: Record<
+	Exclude<DashboardTodoKind, "deliveryDue">,
+	{ tint: string; icon: string }
+> = {
+	quotePending: { tint: "bg-blue-50", icon: "text-imsg-blue" },
+	awarded: { tint: "bg-blue-50", icon: "text-imsg-blue" },
+	paymentConfirm: { tint: "bg-amber-50", icon: "text-amber-500" },
+	paymentPending: { tint: "bg-amber-50", icon: "text-amber-500" },
+};
+
+// deliveryDue만 긴급 여부에 따라 톤이 바뀐다(임박=red, 평시=emerald) — 나머지 kind는 고정 톤.
+function getKindTone(kind: DashboardTodoKind, isUrgent: boolean): { tint: string; icon: string } {
+	if (kind === "deliveryDue") {
+		return isUrgent
+			? { tint: "bg-red-50", icon: "text-red-500" }
+			: { tint: "bg-emerald-50", icon: "text-emerald-500" };
+	}
+	return KIND_TONE[kind];
+}
 
 type DashboardTodoRowProps = {
 	id: string;
@@ -13,6 +44,8 @@ type DashboardTodoRowProps = {
 	deadlineText: string | null;
 	isUrgent: boolean;
 	isNew?: boolean;
+	kind: DashboardTodoKind;
+	kindLabel: string;
 	urgentLabel: string;
 	newLabel?: string;
 	onClick: () => void;
@@ -31,12 +64,17 @@ export function DashboardTodoRow({
 	deadlineText,
 	isUrgent,
 	isNew = false,
+	kind,
+	kindLabel,
 	urgentLabel,
 	newLabel,
 	onClick,
 	variant = "row",
 }: DashboardTodoRowProps): React.ReactNode {
 	if (variant === "card") {
+		const KindIcon = KIND_ICON[kind];
+		const tone = getKindTone(kind, isUrgent);
+
 		return (
 			<motion.li
 				layout
@@ -44,27 +82,52 @@ export function DashboardTodoRow({
 				transition={SPRING_TRANSITION}
 				onClick={onClick}
 				className={cn(
-					"hover:bg-imsg-surface flex cursor-pointer flex-col gap-1.5 rounded-xl border p-3 transition-colors",
-					isUrgent ? "border-red-200 bg-red-50/40" : "border-[#F2F2F7]",
+					"group flex cursor-pointer flex-col gap-1.5 rounded-xl border p-3.5 transition-all hover:-translate-y-0.5 hover:shadow-md",
+					isUrgent
+						? "border-red-200 bg-red-50/40"
+						: isNew
+							? "border-blue-100 bg-blue-50/30"
+							: "border-[#F2F2F7]",
 				)}>
-				<div className="flex items-center gap-1.5">
-					{isUrgent && (
+				<div className="flex items-center justify-between gap-1.5">
+					<span
+						className={cn(
+							"flex size-6 shrink-0 items-center justify-center rounded-full",
+							tone.tint,
+						)}>
+						<KindIcon size={14} className={tone.icon} />
+					</span>
+					{isUrgent ? (
 						<span className="shrink-0 rounded-full bg-red-50 px-1.5 py-0.5 text-[10px] font-semibold text-red-500">
 							{urgentLabel}
 						</span>
-					)}
-					{!isUrgent && isNew && newLabel && (
-						<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-1.5 py-0.5 text-[10px] font-semibold">
-							{newLabel}
-						</span>
+					) : (
+						isNew &&
+						newLabel && (
+							<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-1.5 py-0.5 text-[10px] font-semibold">
+								{newLabel}
+							</span>
+						)
 					)}
 				</div>
 				<p className="truncate text-sm font-medium text-[#0f172a]">{title}</p>
 				{deadlineText && (
-					<p className={cn("text-xs", isUrgent ? "text-red-500" : "text-imsg-secondary")}>
+					<p
+						className={cn(
+							"flex items-center gap-1 text-xs",
+							isUrgent ? "text-red-500" : "text-imsg-secondary",
+						)}>
+						<Clock size={11} />
 						{deadlineText}
 					</p>
 				)}
+				<div className="mt-1 flex items-center justify-between gap-1.5">
+					<span className="text-imsg-secondary truncate text-[10px]">{kindLabel}</span>
+					<ChevronRight
+						size={13}
+						className="text-[#D1D5DB] opacity-0 transition-opacity group-hover:opacity-100"
+					/>
+				</div>
 			</motion.li>
 		);
 	}
