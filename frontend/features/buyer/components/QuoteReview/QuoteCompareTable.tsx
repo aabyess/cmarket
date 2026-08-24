@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
+import { motion } from "motion/react";
 import { MessageSquare, Building2, CheckCircle2, ExternalLink } from "lucide-react";
 import { SafeImage } from "@/components/commons/SafeImage";
 import { cn } from "@/utils/cn";
@@ -161,7 +162,9 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 										)}
 									</td>
 									<td className="whitespace-nowrap px-4 py-3.5 text-right align-top">
-										<span
+										<motion.span
+											layoutId={`quote-price-${quote.id}`}
+											transition={{ type: "spring", stiffness: 300, damping: 30 }}
 											className={cn(
 												"rounded-md px-1.5 py-0.5 font-semibold",
 												isLowestPriceCell
@@ -172,7 +175,7 @@ export function QuoteCompareTable({ quotes }: QuoteCompareTableProps) {
 											)}
 										>
 											{symbol} {quote.price.toLocaleString()}
-										</span>
+										</motion.span>
 										{quote.currency !== "IDR" && quote.priceInIdr !== null && (
 											<p className="mt-0.5 text-xs text-[#9CA3AF]">
 												{t("approxPriceIdr", { amount: Math.round(quote.priceInIdr).toLocaleString() })}
