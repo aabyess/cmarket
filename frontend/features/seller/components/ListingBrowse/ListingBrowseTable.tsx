@@ -2,6 +2,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import { motion } from "motion/react";
 import { CheckCircle2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { ListingBookmarkButton } from "@/features/seller/components/ListingBookmarkButton";
@@ -97,9 +98,13 @@ export function ListingBrowseTable({
 									{new Date(listing.createdAt).toLocaleDateString(locale)}
 								</td>
 								<td className="px-4 py-3 text-[#1F2937]">
-									{listing.budgetPublic
-										? `${symbol} ${listing.totalBudget.toLocaleString()}`
-										: t("budgetPrivate")}
+									<motion.span
+										layoutId={`listing-budget-${listing.id}`}
+										transition={{ type: "spring", stiffness: 300, damping: 30 }}>
+										{listing.budgetPublic
+											? `${symbol} ${listing.totalBudget.toLocaleString()}`
+											: t("budgetPrivate")}
+									</motion.span>
 								</td>
 								<td className="px-4 py-3 text-[#1F2937]">{location || "-"}</td>
 								<td className="px-4 py-3">

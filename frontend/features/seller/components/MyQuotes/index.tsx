@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
+import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { Send } from "lucide-react";
 import { usePersistentState } from "@/hooks/usePersistentState";
 import { MyQuotesCard } from "@/features/seller/components/MyQuotes/MyQuotesCard";
@@ -121,23 +122,48 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 				<div className="rounded-2xl border border-[#E5E7EB] bg-white p-10 text-center">
 					<p className="text-sm text-[#6B7280]">{t("filteredEmpty")}</p>
 				</div>
-			) : viewMode === "grid" ? (
-				<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-					{paginatedQuotes.map((quote) => (
-						<MyQuotesCard
-							key={quote.id}
-							quote={quote}
-							onViewListing={() => router.push(`/seller/listing-browse/${quote.listingId}`)}
-							onGoToChat={() => router.push(`/seller/chat?quoteId=${quote.id}`)}
-						/>
-					))}
-				</div>
 			) : (
-				<MyQuotesTable
-					quotes={paginatedQuotes}
-					onViewListing={(listingId) => router.push(`/seller/listing-browse/${listingId}`)}
-					onGoToChat={(quoteId) => router.push(`/seller/chat?quoteId=${quoteId}`)}
-				/>
+				// 그리드↔테이블 전환 시 상태 칩이 이전 위치에서 새 위치로 이동하는 느낌을 주기
+				// 위해 MyQuotesCard/MyQuotesTable의 상태 칩이 같은 layoutId를 공유한다(#161과
+				// 동일 패턴). LayoutGroup으로 스코프하고, 컨테이너 자체엔 짧은 크로스페이드를
+				// 얹어 layoutId 전환이 완벽하지 않아도 매끄럽게 보이게 한다.
+				<LayoutGroup id="my-quotes">
+					<AnimatePresence mode="popLayout" initial={false}>
+						{viewMode === "grid" ? (
+							<motion.div
+								key="grid"
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								exit={{ opacity: 0 }}
+								transition={{ duration: 0.15 }}
+								className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3"
+							>
+								{paginatedQuotes.map((quote) => (
+									<MyQuotesCard
+										key={quote.id}
+										quote={quote}
+										onViewListing={() => router.push(`/seller/listing-browse/${quote.listingId}`)}
+										onGoToChat={() => router.push(`/seller/chat?quoteId=${quote.id}`)}
+									/>
+								))}
+							</motion.div>
+						) : (
+							<motion.div
+								key="table"
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								exit={{ opacity: 0 }}
+								transition={{ duration: 0.15 }}
+							>
+								<MyQuotesTable
+									quotes={paginatedQuotes}
+									onViewListing={(listingId) => router.push(`/seller/listing-browse/${listingId}`)}
+									onGoToChat={(quoteId) => router.push(`/seller/chat?quoteId=${quoteId}`)}
+								/>
+							</motion.div>
+						)}
+					</AnimatePresence>
+				</LayoutGroup>
 			)}
 
 			{sortedQuotes.length > 0 && (

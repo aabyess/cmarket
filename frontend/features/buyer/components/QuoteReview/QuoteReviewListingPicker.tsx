@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
+import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { Mail, Clock, CalendarDays, TrendingDown, Truck, CheckCircle2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { usePersistentState } from "@/hooks/usePersistentState";
@@ -167,11 +168,31 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 					<p className="text-sm font-medium text-[#1F2937]">{t("noResultsTitle")}</p>
 					<p className="mt-1 text-sm text-[#6B7280]">{t("noResultsDescription")}</p>
 				</div>
-			) : viewMode === "list" ? (
-				<QuoteReviewListingTable listings={paginatedListings} />
 			) : (
-				<div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-					{paginatedListings.map((listing) => {
+				// 그리드↔테이블 전환 시 상태 배지(낙찰/마감 칩)가 이전 위치에서 새 위치로
+				// 이동하는 느낌을 주기 위해 같은 layoutId를 공유한다(#161과 동일 패턴).
+				<LayoutGroup id="quote-review-listing-picker">
+					<AnimatePresence mode="popLayout" initial={false}>
+						{viewMode === "list" ? (
+							<motion.div
+								key="table"
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								exit={{ opacity: 0 }}
+								transition={{ duration: 0.15 }}
+							>
+								<QuoteReviewListingTable listings={paginatedListings} />
+							</motion.div>
+						) : (
+							<motion.div
+								key="grid"
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								exit={{ opacity: 0 }}
+								transition={{ duration: 0.15 }}
+								className="grid grid-cols-1 gap-3 md:grid-cols-2"
+							>
+								{paginatedListings.map((listing) => {
 						const remaining = getRemaining(listing.endDate);
 						const symbol = CURRENCY_SYMBOL[listing.currency];
 						const hasQuotes = listing.quoteCount > 0;
@@ -191,12 +212,18 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 								<div className="mb-2 flex items-start justify-between gap-2">
 									<div className="flex flex-wrap items-center gap-1.5">
 										{isAwarded ? (
-											<span className="flex items-center gap-1 rounded-full bg-[#ECFDF5] px-2 py-0.5 text-xs font-medium text-[#059669]">
+											<motion.span
+												layoutId={`quote-review-listing-status-${listing.id}`}
+												transition={{ type: "spring", stiffness: 300, damping: 30 }}
+												className="flex items-center gap-1 rounded-full bg-[#ECFDF5] px-2 py-0.5 text-xs font-medium text-[#059669]"
+											>
 												<CheckCircle2 size={11} />
 												{t("awardedBadge")}
-											</span>
+											</motion.span>
 										) : (
-											<span
+											<motion.span
+												layoutId={`quote-review-listing-status-${listing.id}`}
+												transition={{ type: "spring", stiffness: 300, damping: 30 }}
 												className={cn(
 													"flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium",
 													remaining.isClosed
@@ -208,7 +235,7 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 											>
 												<Clock size={11} />
 												{remaining.isClosed ? t("closed") : t("deadlineDays", { days: remaining.days })}
-											</span>
+											</motion.span>
 										)}
 										<span className="whitespace-nowrap rounded-full bg-[#F3F4F6] px-2 py-0.5 text-xs font-medium text-[#6B7280]">
 											{categoryLabels[listing.category]}
@@ -277,7 +304,10 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 							</button>
 						);
 					})}
-				</div>
+							</motion.div>
+						)}
+					</AnimatePresence>
+				</LayoutGroup>
 			)}
 
 			{filteredListings.length > 0 && (

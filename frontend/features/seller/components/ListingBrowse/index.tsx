@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
+import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { Popover, PopoverButton } from "@headlessui/react";
 import { Search, FileSearch, ArrowUpDown, Star, Columns2, Columns3, LayoutGrid, List } from "lucide-react";
 import { AnimatedPopoverPanel } from "@/components/commons/AnimatedPopoverPanel";
@@ -345,27 +346,50 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 								: t("emptyDefaultDescription")}
 					</p>
 				</div>
-			) : viewMode === "list" ? (
-				<ListingBrowseTable
-					listings={paginatedListings}
-					onRowClick={(id) => router.push(`/seller/listing-browse/${id}`)}
-					onBookmarkChange={handleBookmarkChange}
-				/>
 			) : (
-				<div
-					className={cn(
-						"grid grid-cols-1 gap-3 sm:grid-cols-2",
-						gridColumns === 3 && "xl:grid-cols-3",
-					)}>
-					{paginatedListings.map((listing) => (
-						<ListingBrowseCard
-							key={listing.id}
-							listing={listing}
-							onClick={() => router.push(`/seller/listing-browse/${listing.id}`)}
-							onBookmarkChange={handleBookmarkChange}
-						/>
-					))}
-				</div>
+				// 그리드↔테이블 전환 시 예산 텍스트가 이전 위치에서 새 위치로 이동하는 느낌을
+				// 주기 위해 ListingBrowseCard/ListingBrowseTable의 예산 요소가 같은 layoutId를
+				// 공유한다(#161과 동일 패턴).
+				<LayoutGroup id="listing-browse">
+					<AnimatePresence mode="popLayout" initial={false}>
+						{viewMode === "list" ? (
+							<motion.div
+								key="table"
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								exit={{ opacity: 0 }}
+								transition={{ duration: 0.15 }}
+							>
+								<ListingBrowseTable
+									listings={paginatedListings}
+									onRowClick={(id) => router.push(`/seller/listing-browse/${id}`)}
+									onBookmarkChange={handleBookmarkChange}
+								/>
+							</motion.div>
+						) : (
+							<motion.div
+								key="grid"
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								exit={{ opacity: 0 }}
+								transition={{ duration: 0.15 }}
+								className={cn(
+									"grid grid-cols-1 gap-3 sm:grid-cols-2",
+									gridColumns === 3 && "xl:grid-cols-3",
+								)}
+							>
+								{paginatedListings.map((listing) => (
+									<ListingBrowseCard
+										key={listing.id}
+										listing={listing}
+										onClick={() => router.push(`/seller/listing-browse/${listing.id}`)}
+										onBookmarkChange={handleBookmarkChange}
+									/>
+								))}
+							</motion.div>
+						)}
+					</AnimatePresence>
+				</LayoutGroup>
 			)}
 
 			{filteredListings.length > 0 && (

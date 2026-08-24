@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import { motion } from "motion/react";
 import { Clock, CalendarDays, Package, MapPin, CheckCircle2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { ListingBookmarkButton } from "@/features/seller/components/ListingBookmarkButton";
@@ -110,9 +111,12 @@ export function ListingBrowseCard({ listing, onClick, onBookmarkChange }: Listin
 					<p className="text-xs text-[#9CA3AF]">{t("budgetLabel")}</p>
 					{listing.budgetPublic ? (
 						<>
-							<p className="mt-0.5 truncate text-sm font-medium text-[#1F2937]">
+							<motion.p
+								layoutId={`listing-budget-${listing.id}`}
+								transition={{ type: "spring", stiffness: 300, damping: 30 }}
+								className="mt-0.5 truncate text-sm font-medium text-[#1F2937]">
 								{symbol} {listing.totalBudget.toLocaleString()}
-							</p>
+							</motion.p>
 							{listing.currency !== "KRW" && listing.budgetInKrw !== null && (
 								<p className="truncate text-xs text-[#9CA3AF]">
 									{t("aboutKrw", { value: Math.round(listing.budgetInKrw).toLocaleString() })}
@@ -120,9 +124,12 @@ export function ListingBrowseCard({ listing, onClick, onBookmarkChange }: Listin
 							)}
 						</>
 					) : (
-						<p className="mt-0.5 truncate text-sm font-medium text-[#1F2937]">
+						<motion.p
+							layoutId={`listing-budget-${listing.id}`}
+							transition={{ type: "spring", stiffness: 300, damping: 30 }}
+							className="mt-0.5 truncate text-sm font-medium text-[#1F2937]">
 							{t("budgetPrivate")}
-						</p>
+						</motion.p>
 					)}
 				</div>
 				<div className="min-w-0">
