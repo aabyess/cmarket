@@ -8,23 +8,27 @@ interface StickyActionBarProps {
 	isLoading?: boolean;
 }
 
-export default function StickyActionBar({ onSaveDraft, onPublish, isLoading }: StickyActionBarProps) {
+export default function StickyActionBar({
+	onSaveDraft,
+	onPublish,
+	isLoading,
+}: StickyActionBarProps) {
 	const t = useTranslations("StickyActionBar");
 	return (
-		<div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg px-8 py-4 z-40 lg:ml-64">
+		<div className="fixed right-0 bottom-0 left-0 z-40 border-t border-[#E5E7EB] bg-white px-8 py-4 shadow-lg lg:ml-64">
 			<div className="flex items-center justify-between">
-				<p className="text-sm text-gray-600">{t("confirmMessage")}</p>
+				<p className="text-sm text-[#6B7280]">{t("confirmMessage")}</p>
 				<div className="flex gap-3">
 					<button
 						onClick={onSaveDraft}
 						disabled={isLoading}
-						className="px-6 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors">
+						className="rounded-lg border border-[#E5E7EB] px-6 py-2 font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB] disabled:opacity-50">
 						{t("saveDraft")}
 					</button>
 					<button
 						onClick={onPublish}
 						disabled={isLoading}
-						className="px-8 py-2 bg-[#1B3A6B] text-white font-medium rounded-lg hover:bg-[#152d54] disabled:opacity-50 transition-colors">
+						className="bg-imsg-blue rounded-lg px-8 py-2 font-medium text-white transition-colors hover:bg-[#2563EB] disabled:opacity-50">
 						{isLoading ? t("publishing") : t("publish")}
 					</button>
 				</div>
