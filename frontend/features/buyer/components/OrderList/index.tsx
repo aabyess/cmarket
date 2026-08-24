@@ -6,6 +6,7 @@ import { useRouter } from "@/i18n/navigation";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { FileText } from "lucide-react";
 import { usePersistentState } from "@/hooks/usePersistentState";
+import { useFilterPresets } from "@/hooks/useFilterPresets";
 import { OrderListCard } from "@/features/buyer/components/OrderList/OrderListCard";
 import { OrderListTable } from "@/features/buyer/components/OrderList/OrderListTable";
 import { OrderListBookmarkersModal } from "@/features/buyer/components/OrderListBookmarkersModal";
@@ -14,6 +15,7 @@ import {
 	type SortOption,
 	type ViewMode,
 } from "@/features/buyer/components/OrderList/OrderListFilterBar";
+import type { OrderListFilterPresetValue } from "@/features/buyer/components/OrderList/OrderListFilterPresets";
 import {
 	getDisplayListingStatus,
 	type DisplayListingStatus,
@@ -52,6 +54,25 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 	const { sort, statusFilter, bookmarkedOnly, viewMode, pageSize } = prefs;
 	const [page, setPage] = useState(1);
 	const [bookmarksListingId, setBookmarksListingId] = useState<string | null>(null);
+	const {
+		presets: filterPresets,
+		savePreset,
+		deletePreset,
+	} = useFilterPresets<OrderListFilterPresetValue>("mitrapay:buyer-order-list-presets");
+
+	function applyFilterPreset(value: OrderListFilterPresetValue): void {
+		setSearch(value.search);
+		setPrefs((prev) => ({
+			...prev,
+			sort: value.sort,
+			statusFilter: value.statusFilter,
+			bookmarkedOnly: value.bookmarkedOnly,
+		}));
+	}
+
+	function saveFilterPreset(name: string): void {
+		savePreset(name, { search, sort, statusFilter, bookmarkedOnly });
+	}
 
 	function setSort(sort: SortOption): void {
 		setPrefs((prev) => ({ ...prev, sort }));
@@ -169,6 +190,10 @@ export function OrderList({ listings }: OrderListProps): React.ReactNode {
 				onToggleBookmarkedOnly={toggleBookmarkedOnly}
 				viewMode={viewMode}
 				onViewModeChange={setViewMode}
+				filterPresets={filterPresets}
+				onApplyFilterPreset={applyFilterPreset}
+				onSaveFilterPreset={saveFilterPreset}
+				onDeleteFilterPreset={deletePreset}
 			/>
 
 			{filteredListings.length === 0 ? (

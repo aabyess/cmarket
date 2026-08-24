@@ -1502,7 +1502,12 @@
 		"statusAwarded": "계약 확정",
 		"statusClosed": "마감",
 		"bookmarkedOnlyFilter": "관심 받은 견적",
-		"statusFailed": "유찰"
+		"statusFailed": "유찰",
+		"presetsLabel": "프리셋",
+		"presetsEmpty": "저장된 프리셋이 없어요",
+		"presetsSaveCurrent": "현재 조건 저장",
+		"presetsNamePlaceholder": "프리셋 이름",
+		"presetsDeleteAria": "{name} 프리셋 삭제"
 	},
 	"OrderListCard": {
 		"budgetLabel": "예산",
