@@ -197,7 +197,9 @@ export function LandingPageHeroChatDemo(): React.ReactNode {
 	const translatedLabel = t("heroDemoTranslatedLabel");
 
 	return (
-		<div ref={containerRef} className="flex max-h-[420px] flex-col gap-3 overflow-y-auto p-5">
+		<div
+			ref={containerRef}
+			className="flex h-[420px] flex-col justify-end gap-3 overflow-y-auto p-5">
 			{/* 1. 상대측 — 견적서 발송 오프닝 메시지 (+번역) */}
 			<ChatTurn
 				currentStep={step}
