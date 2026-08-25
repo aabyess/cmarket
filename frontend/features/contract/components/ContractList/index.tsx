@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import {
 	FileCheck,
@@ -14,6 +14,7 @@ import {
 	CheckCircle2,
 	Clock,
 	FileText,
+	RotateCcw,
 	Star,
 	Truck,
 	PackageCheck,
@@ -21,6 +22,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
+import { actionButtonVariants } from "@/components/ui/ActionButton";
 import { Pagination } from "@/components/commons/Pagination";
 import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import { useFilterPresets } from "@/hooks/useFilterPresets";
@@ -437,6 +439,19 @@ export function ContractList({ contracts, role }: ContractListProps) {
 											{t("reviewButton")}
 										</button>
 									)}
+								</div>
+							)}
+
+							{/* 다시 발주하기 — 완료된 계약의 원본 공고를 복제하는 것과 동일해서
+							    기존 공고 복제 라우트로 링크만 건다(별도 로직 없음). */}
+							{contract.status === "completed" && role === "buyer" && (
+								<div className="mb-4" onClick={(e) => e.stopPropagation()}>
+									<Link
+										href={`/buyer/listing/${contract.listingId}/duplicate`}
+										className={actionButtonVariants({ tone: "secondary", size: "md" })}>
+										<RotateCcw size={14} />
+										{t("reorderButton")}
+									</Link>
 								</div>
 							)}
 

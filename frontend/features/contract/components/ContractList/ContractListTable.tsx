@@ -2,9 +2,18 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { motion } from "motion/react";
-import { CheckCircle2, FileText, Upload, PackageCheck, Star, Trash2 } from "lucide-react";
+import {
+	CheckCircle2,
+	FileText,
+	RotateCcw,
+	Upload,
+	PackageCheck,
+	Star,
+	Trash2,
+} from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import { cn } from "@/utils/cn";
-import { ActionButton } from "@/components/ui/ActionButton";
+import { ActionButton, actionButtonVariants } from "@/components/ui/ActionButton";
 import type { Contract, ContractStatus } from "@/features/contract/types";
 import type { MyReview } from "@/features/reviews/types";
 
@@ -197,6 +206,14 @@ export function ContractListTable({
 														<Star size={14} />
 														{t("reviewButton")}
 													</ActionButton>
+												)}
+												{contract.status === "completed" && role === "buyer" && (
+													<Link
+														href={`/buyer/listing/${contract.listingId}/duplicate`}
+														className={actionButtonVariants({ tone: "secondary" })}>
+														<RotateCcw size={14} />
+														{t("reorderButton")}
+													</Link>
 												)}
 
 												{/* 위험 행동 — 계약 자체를 끝내는 조작이라 가장 눈에 덜 띄게 둔다 */}

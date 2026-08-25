@@ -1679,7 +1679,8 @@
 		"waitingForReceipt": "Menunggu bukti transfer dari pembeli",
 		"reviewButton": "Beri penilaian",
 		"reviewedBadge": "Sudah dinilai ★{rating}",
-		"reviewErrorMessage": "Gagal mengirim penilaian."
+		"reviewErrorMessage": "Gagal mengirim penilaian.",
+		"reorderButton": "Pesan lagi"
 	},
 	"ContractListTable": {
 		"cancelContract": "Batalkan Kontrak",
@@ -1704,7 +1705,8 @@
 		"uploadReceiptTitle": "Unggah Bukti Transfer",
 		"viewReceiptTitle": "Lihat Bukti Transfer",
 		"reviewButton": "Beri penilaian",
-		"reviewedBadge": "Sudah dinilai ★{rating}"
+		"reviewedBadge": "Sudah dinilai ★{rating}",
+		"reorderButton": "Pesan lagi"
 	},
 	"ContractListTabs": {
 		"searchPlaceholder": "Cari permintaan",

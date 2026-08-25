@@ -1679,7 +1679,8 @@
 		"waitingForReceipt": "바이어의 송금 영수증을 기다리는 중",
 		"reviewButton": "평가하기",
 		"reviewedBadge": "평가 완료 ★{rating}",
-		"reviewErrorMessage": "평가 등록에 실패했습니다."
+		"reviewErrorMessage": "평가 등록에 실패했습니다.",
+		"reorderButton": "다시 발주하기"
 	},
 	"ContractListTable": {
 		"cancelContract": "계약 취소",
@@ -1704,7 +1705,8 @@
 		"uploadReceiptTitle": "영수증 업로드",
 		"viewReceiptTitle": "영수증 보기",
 		"reviewButton": "평가하기",
-		"reviewedBadge": "평가 완료 ★{rating}"
+		"reviewedBadge": "평가 완료 ★{rating}",
+		"reorderButton": "다시 발주하기"
 	},
 	"ContractListTabs": {
 		"searchPlaceholder": "공고명, 거래처 검색",
