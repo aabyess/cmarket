@@ -12,10 +12,10 @@ import { OrderListTable } from "@/features/buyer/components/OrderList/OrderListT
 import { OrderListBookmarkersModal } from "@/features/buyer/components/OrderListBookmarkersModal";
 import {
 	OrderListFilterBar,
+	type OrderListFilterPresetValue,
 	type SortOption,
 	type ViewMode,
 } from "@/features/buyer/components/OrderList/OrderListFilterBar";
-import type { OrderListFilterPresetValue } from "@/features/buyer/components/OrderList/OrderListFilterPresets";
 import {
 	getDisplayListingStatus,
 	type DisplayListingStatus,

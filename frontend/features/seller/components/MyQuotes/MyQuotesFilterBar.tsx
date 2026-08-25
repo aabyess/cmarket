@@ -5,7 +5,9 @@ import { cva } from "class-variance-authority";
 import { Popover, PopoverButton } from "@headlessui/react";
 import { ArrowUpDown, LayoutGrid, List } from "lucide-react";
 import { AnimatedPopoverPanel } from "@/components/commons/AnimatedPopoverPanel";
+import { FilterPresetsDropdown } from "@/features/shared/components/FilterPresetsDropdown";
 import { cn } from "@/utils/cn";
+import type { FilterPreset } from "@/hooks/useFilterPresets";
 import type { QuoteStatus } from "@/features/seller/types";
 
 export type MyQuotesFilter = "all" | QuoteStatus;
@@ -15,6 +17,11 @@ export type MyQuotesSort = "newest" | "oldest" | "deadline";
 const FILTER_VALUES: MyQuotesFilter[] = ["all", "pending", "awarded", "rejected"];
 const SORT_VALUES: MyQuotesSort[] = ["newest", "oldest", "deadline"];
 
+export type MyQuotesFilterPresetValue = {
+	filter: MyQuotesFilter;
+	sort: MyQuotesSort;
+};
+
 type MyQuotesFilterBarProps = {
 	filter: MyQuotesFilter;
 	sort: MyQuotesSort;
@@ -22,6 +29,10 @@ type MyQuotesFilterBarProps = {
 	onFilterChange: (value: MyQuotesFilter) => void;
 	onSortChange: (value: MyQuotesSort) => void;
 	onViewModeChange: (mode: MyQuotesViewMode) => void;
+	filterPresets: FilterPreset<MyQuotesFilterPresetValue>[];
+	onApplyFilterPreset: (value: MyQuotesFilterPresetValue) => void;
+	onSaveFilterPreset: (name: string) => void;
+	onDeleteFilterPreset: (id: string) => void;
 };
 
 const viewButton = cva(
@@ -44,6 +55,10 @@ export function MyQuotesFilterBar({
 	onFilterChange,
 	onSortChange,
 	onViewModeChange,
+	filterPresets,
+	onApplyFilterPreset,
+	onSaveFilterPreset,
+	onDeleteFilterPreset,
 }: MyQuotesFilterBarProps): React.JSX.Element {
 	const t = useTranslations("MyQuotesFilterBar");
 	const filterLabels: Record<MyQuotesFilter, string> = {
@@ -115,6 +130,14 @@ export function MyQuotesFilterBar({
 					</>
 				)}
 			</Popover>
+
+			<FilterPresetsDropdown<MyQuotesFilterPresetValue>
+				presets={filterPresets}
+				currentValue={{ filter, sort }}
+				onApply={onApplyFilterPreset}
+				onSave={onSaveFilterPreset}
+				onDelete={onDeleteFilterPreset}
+			/>
 
 			<div className="border-hairline flex items-center gap-1 rounded-xl border bg-white p-1">
 				<button

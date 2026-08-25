@@ -1300,15 +1300,17 @@
 		"statusAwarded": "Contract Confirmed",
 		"statusClosed": "Closed",
 		"bookmarkedOnlyFilter": "Bookmarked by sellers",
-		"statusFailed": "Unsuccessful",
-		"presetsLabel": "Presets",
-		"presetsEmpty": "No saved presets yet",
-		"presetsSaveCurrent": "Save current filters",
-		"presetsNamePlaceholder": "Preset name",
-		"presetsDeleteAria": "Delete preset {name}",
-		"presetsDeleteConfirmTitle": "Delete preset '{name}'?",
-		"presetsDeleteConfirmDescription": "This can't be undone.",
-		"presetsSaveConfirmAria": "Save preset"
+		"statusFailed": "Unsuccessful"
+	},
+	"FilterPresetsDropdown": {
+		"label": "Presets",
+		"empty": "No saved presets yet",
+		"saveCurrent": "Save current filters",
+		"namePlaceholder": "Preset name",
+		"deleteAria": "Delete preset {name}",
+		"deleteConfirmTitle": "Delete preset '{name}'?",
+		"deleteConfirmDescription": "This can't be undone.",
+		"saveConfirmAria": "Save preset"
 	},
 	"OrderListCard": {
 		"budgetLabel": "Budget",

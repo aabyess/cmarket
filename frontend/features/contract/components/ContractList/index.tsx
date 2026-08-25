@@ -23,7 +23,11 @@ import { cn } from "@/utils/cn";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { Pagination } from "@/components/commons/Pagination";
 import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
-import { ContractListTabs } from "@/features/contract/components/ContractList/ContractListTabs";
+import { useFilterPresets } from "@/hooks/useFilterPresets";
+import {
+	ContractListTabs,
+	type ContractListFilterPresetValue,
+} from "@/features/contract/components/ContractList/ContractListTabs";
 import { ContractListTable } from "@/features/contract/components/ContractList/ContractListTable";
 import { ContractListCancelModal } from "@/features/contract/components/ContractList/ContractListCancelModal";
 import { ReviewModal } from "@/features/reviews/components/ReviewModal";
@@ -77,6 +81,20 @@ export function ContractList({ contracts, role }: ContractListProps) {
 	const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 	const [viewMode, setViewMode] = useState<ViewMode>("list");
 	const [page, setPage] = useState(1);
+	const {
+		presets: filterPresets,
+		savePreset,
+		deletePreset,
+	} = useFilterPresets<ContractListFilterPresetValue>(`mitrapay:contract-list-presets-${role}`);
+
+	function applyFilterPreset(value: ContractListFilterPresetValue): void {
+		setFilter(value.filter);
+		setSearch(value.search);
+	}
+
+	function saveFilterPreset(name: string): void {
+		savePreset(name, { filter, search });
+	}
 	const [pageSize, setPageSize] = useState(10);
 	const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
@@ -265,6 +283,10 @@ export function ContractList({ contracts, role }: ContractListProps) {
 					onChange={setFilter}
 					search={search}
 					onSearchChange={setSearch}
+					filterPresets={filterPresets}
+					onApplyFilterPreset={applyFilterPreset}
+					onSaveFilterPreset={saveFilterPreset}
+					onDeleteFilterPreset={deletePreset}
 				/>
 				<ViewModeToggle value={viewMode} onChange={setViewMode} />
 			</div>
