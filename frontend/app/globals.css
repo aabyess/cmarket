@@ -284,3 +284,44 @@
 		display: none;
 	}
 }
+
+/* ─── 최종 CTA 골드 배지 "도장 임팩트" (view-timeline 지원 브라우저에서만 애니메이션, 나머지는 정적 최종 상태) ─── */
+@keyframes landing-stamp-impact {
+	0% {
+		opacity: 0;
+		transform: scale(1.55) rotate(-34deg);
+	}
+	20% {
+		opacity: 1;
+	}
+	55% {
+		transform: scale(0.92) rotate(-8deg);
+	}
+	78% {
+		transform: scale(1.04) rotate(-14deg);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1) rotate(-12deg);
+	}
+}
+
+.landing-stamp-impact {
+	opacity: 1;
+}
+
+@supports (animation-timeline: view()) {
+	.landing-stamp-impact {
+		opacity: 0;
+		animation: landing-stamp-impact 1s linear both;
+		animation-timeline: view();
+		animation-range: entry 0% cover 35%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.landing-stamp-impact {
+		opacity: 1;
+		animation: none;
+	}
+}
