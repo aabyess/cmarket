@@ -59,7 +59,6 @@ export function LandingPageHeroChatDemo(): React.ReactNode {
 	const t = useTranslations("Landing");
 	const prefersReducedMotion = useReducedMotion();
 	const containerRef = useRef<HTMLDivElement>(null);
-	const bottomRef = useRef<HTMLDivElement>(null);
 	const isInView = useInView(containerRef, { once: true, amount: 0.4 });
 	const [step, setStep] = useState(0);
 
@@ -73,10 +72,14 @@ export function LandingPageHeroChatDemo(): React.ReactNode {
 		return () => timers.forEach(clearTimeout);
 	}, [isInView, prefersReducedMotion]);
 
-	// 실제 채팅 화면(ChatMessageList)과 같은 방식 — 새 단계가 나타날 때마다 맨 아래로.
+	// 새 단계가 나타날 때마다 맨 아래로 — scrollIntoView는 조상 스크롤 컨테이너(페이지
+	// 전체 포함)까지 건드릴 수 있어서, 이 카드 자신의 scrollTop만 직접 조작한다.
 	useEffect(() => {
 		if (step === 0) return;
-		bottomRef.current?.scrollIntoView({ behavior: prefersReducedMotion ? "instant" : "smooth" });
+		containerRef.current?.scrollTo({
+			top: containerRef.current.scrollHeight,
+			behavior: prefersReducedMotion ? "instant" : "smooth",
+		});
 	}, [step, prefersReducedMotion]);
 
 	const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.25 };
@@ -260,8 +263,6 @@ export function LandingPageHeroChatDemo(): React.ReactNode {
 					</div>
 				</motion.div>
 			)}
-
-			<div ref={bottomRef} />
 		</div>
 	);
 }
