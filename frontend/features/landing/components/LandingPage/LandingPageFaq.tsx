@@ -40,7 +40,7 @@ export async function LandingPageFaq(): Promise<React.JSX.Element> {
 					<div className="bg-landing-ink relative mt-20 overflow-hidden rounded-lg px-8 py-14 text-center">
 						<span
 							aria-hidden
-							className="font-landing-doc border-landing-gold/60 text-landing-gold/70 pointer-events-none absolute -top-7 -right-7 flex size-36 -rotate-12 flex-col items-center justify-center rounded-full border-2 text-[10px] font-semibold tracking-[0.22em] uppercase">
+							className="landing-stamp-impact font-landing-doc border-landing-gold/60 text-landing-gold/70 pointer-events-none absolute -top-7 -right-7 flex size-36 -rotate-12 flex-col items-center justify-center rounded-full border-2 text-[10px] font-semibold tracking-[0.22em] uppercase">
 							MitraPay
 							<span className="mt-1 tracking-[0.14em]">KR – ID</span>
 						</span>
