@@ -7,6 +7,7 @@ import { useRouter } from "@/i18n/navigation";
 import { CheckCircle2, CreditCard, FileText, Loader2, Receipt, Star, Upload } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { usePersistentState } from "@/hooks/usePersistentState";
+import { downloadCsv } from "@/utils/downloadCsv";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { Pagination } from "@/components/commons/Pagination";
 import { CURRENCY_SYMBOL } from "@/features/buyer/constants";
@@ -194,6 +195,33 @@ export function PaymentsList({ contracts: allContracts, role }: PaymentsListProp
 		setPage(1);
 	}, [filter, search, pageSize]);
 
+	// 현재 필터/검색이 적용된 목록만 내보낸다(페이지네이션 이전 전체, 화면에 안 보이는
+	// 나머지 페이지 항목까지 포함) — 전체 계약이 아니라 지금 조건에 맞는 결과만.
+	function handleExport(): void {
+		const headers = [
+			t("columnContractNumber"),
+			t("columnListingTitle"),
+			t("csvColumnPartner"),
+			t("columnAmount"),
+			t("csvColumnCurrency"),
+			t("columnStatus"),
+			t("csvColumnPaymentConfirmedDate"),
+		];
+		const rows = visibleContracts.map((contract) => [
+			formatContractNumber(contract.id),
+			contract.listing.title,
+			contract.partnerCompanyName,
+			String(contract.quote.price),
+			contract.quote.currency,
+			statusLabels[getPaymentStatus(contract)],
+			contract.paymentConfirmedAt
+				? new Date(contract.paymentConfirmedAt).toLocaleDateString(locale)
+				: "",
+		]);
+		const dateStr = new Date().toISOString().slice(0, 10);
+		downloadCsv(`${t("exportFilePrefix")}_${dateStr}.csv`, headers, rows);
+	}
+
 	const pageCount = Math.max(1, Math.ceil(visibleContracts.length / pageSize));
 	const paginatedContracts = visibleContracts.slice((page - 1) * pageSize, page * pageSize);
 
@@ -216,6 +244,7 @@ export function PaymentsList({ contracts: allContracts, role }: PaymentsListProp
 				onSearchChange={setSearch}
 				filter={filter}
 				onFilterChange={setFilter}
+				onExport={handleExport}
 			/>
 
 			{/* 영수증 업로드용 파일 인풋 — 셀러는 업로드할 수 없다 */}

@@ -10,6 +10,7 @@ import {
 	Building2,
 	Calendar,
 	DollarSign,
+	Download,
 	Upload,
 	CheckCircle2,
 	Clock,
@@ -21,6 +22,7 @@ import {
 	Trash2,
 } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { downloadCsv } from "@/utils/downloadCsv";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { actionButtonVariants } from "@/components/ui/ActionButton";
 import { Pagination } from "@/components/commons/Pagination";
@@ -261,6 +263,31 @@ export function ContractList({ contracts, role }: ContractListProps) {
 		setPage(1);
 	}, [filter, search, pageSize]);
 
+	// 현재 필터/검색이 적용된 목록만 내보낸다(페이지네이션 이전 전체) — 전체 계약이
+	// 아니라 지금 조건에 맞는 결과만.
+	function handleExport(): void {
+		const headers = [
+			t("csvColumnTitle"),
+			t("csvColumnPartner"),
+			t("csvColumnAmount"),
+			t("csvColumnCurrency"),
+			t("csvColumnDeliveryDays"),
+			t("csvColumnStatus"),
+			t("csvColumnCreatedAt"),
+		];
+		const rows = visibleContracts.map((contract) => [
+			contract.listing.title,
+			contract.partnerCompanyName,
+			String(contract.quote.price),
+			contract.quote.currency,
+			String(contract.quote.deliveryDays),
+			statusLabels[contract.status],
+			new Date(contract.createdAt).toLocaleDateString(locale),
+		]);
+		const dateStr = new Date().toISOString().slice(0, 10);
+		downloadCsv(`${t("exportFilePrefix")}_${dateStr}.csv`, headers, rows);
+	}
+
 	const pageCount = Math.max(1, Math.ceil(visibleContracts.length / pageSize));
 	const paginatedContracts = visibleContracts.slice((page - 1) * pageSize, page * pageSize);
 
@@ -290,7 +317,15 @@ export function ContractList({ contracts, role }: ContractListProps) {
 					onSaveFilterPreset={saveFilterPreset}
 					onDeleteFilterPreset={deletePreset}
 				/>
-				<ViewModeToggle value={viewMode} onChange={setViewMode} />
+				<div className="flex items-center gap-2">
+					<button
+						onClick={handleExport}
+						className="border-hairline flex items-center gap-1.5 rounded-xl border bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
+						<Download size={14} />
+						{t("exportButton")}
+					</button>
+					<ViewModeToggle value={viewMode} onChange={setViewMode} />
+				</div>
 			</div>
 
 			{/* 영수증 업로드용 파일 인풋. 카드/테이블 어느 뷰에서도 열 수 있도록 뷰와 무관하게 둔다. */}
