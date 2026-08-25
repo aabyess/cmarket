@@ -127,15 +127,14 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 		.map(({ row, quotes }) => {
 			const lowestPrice = Math.min(...quotes.map((q) => Number(q.price)));
 			const symbol = CURRENCY_SYMBOL[row.currency as Currency];
-			const daysLeft = Math.ceil(
-				(new Date(row.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
-			);
+			const sortTime = new Date(row.end_date).getTime();
+			const daysLeft = Math.ceil((sortTime - Date.now()) / (1000 * 60 * 60 * 24));
 			// 이미 마감된 공고에 "D-0"/"D--2" 뱃지가 붙지 않도록 남은 일수가 있을 때만 긴급 처리
 			const isUrgent = daysLeft > 0 && daysLeft <= 3;
 
 			return {
 				isUrgent,
-				sortTime: new Date(row.end_date).getTime(),
+				sortTime,
 				todo: {
 					id: row.id,
 					kind: "quotePending",
@@ -152,6 +151,7 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 						price: `${symbol}${lowestPrice.toLocaleString()}`,
 					}),
 					deadlineText: daysLeft > 0 ? t("deadlineDays", { days: daysLeft }) : t("deadlineClosed"),
+					dueTime: new Date(sortTime).toISOString(),
 					actionLabel: t("compareAction"),
 					highlights: isUrgent ? [{ label: t("urgentLabel"), value: `D-${daysLeft}` }] : [],
 				} satisfies BuyerTodo,
@@ -191,6 +191,7 @@ export async function getBuyerDashboardData(): Promise<BuyerDashboardData> {
 					elapsedDays === 0
 						? t("paymentJustConfirmed")
 						: t("paymentElapsedDays", { days: elapsedDays }),
+				dueTime: new Date(createdTime).toISOString(),
 				actionLabel: t("uploadReceiptAction"),
 				highlights: isUrgent
 					? [

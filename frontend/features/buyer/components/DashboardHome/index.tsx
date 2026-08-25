@@ -10,11 +10,15 @@ import { usePersistentState } from "@/hooks/usePersistentState";
 import { useDashboardWidgets } from "@/hooks/useDashboardWidgets";
 import { OnboardingChecklist } from "@/features/onboarding/components/OnboardingChecklist";
 import { DashboardTodoRow } from "@/features/shared/components/DashboardTodoRow";
+import { DashboardTodoAgenda } from "@/features/shared/components/DashboardTodoAgenda";
+import {
+	DashboardTodoViewToggle,
+	type DashboardTodoViewMode,
+} from "@/features/shared/components/DashboardTodoViewToggle";
 import { DashboardCustomizeBar } from "@/features/shared/components/DashboardCustomizeBar";
 import { DashboardWidgetRemoveButton } from "@/features/shared/components/DashboardWidgetRemoveButton";
 import { DashboardReorderableWidget } from "@/features/shared/components/DashboardReorderableWidget";
 import { DashboardWidgetPop } from "@/features/shared/components/DashboardWidgetPop";
-import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import type {
 	BuyerActivity,
 	BuyerDashboardData,
@@ -54,7 +58,7 @@ export function DashboardHome({
 	const tOnboarding = useTranslations("OnboardingChecklist");
 	const router = useRouter();
 	const prefersReducedMotion = useReducedMotion();
-	const [viewMode, setViewMode] = usePersistentState<ViewMode>(
+	const [viewMode, setViewMode] = usePersistentState<DashboardTodoViewMode>(
 		"mitrapay:buyer-dashboard-todo-view",
 		"list",
 	);
@@ -248,7 +252,7 @@ export function DashboardHome({
 								</div>
 								<div className="flex items-center gap-3">
 									{data.todos.length > 0 && (
-										<ViewModeToggle value={viewMode} onChange={setViewMode} />
+										<DashboardTodoViewToggle value={viewMode} onChange={setViewMode} />
 									)}
 									<button
 										onClick={() => handleNavigate("/buyer/order-list")}
@@ -290,27 +294,38 @@ export function DashboardHome({
 														: { type: "spring", stiffness: 400, damping: 34 }
 												}
 												className="overflow-hidden">
-												<ul
-													className={cn(
-														viewMode === "list"
-															? "divide-y divide-[#F2F2F7]"
-															: "grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-2 p-3",
-													)}>
-													{data.todos.map((todo) => (
-														<DashboardTodoRow
-															key={todo.id}
-															id={todo.id}
-															variant={viewMode === "list" ? "row" : "card"}
-															kind={todo.kind}
-															kindLabel={t(KIND_LABEL_KEY[todo.kind])}
-															title={todo.title}
-															deadlineText={todo.deadlineText}
-															isUrgent={todo.highlights.length > 0}
-															urgentLabel={t("urgentBadge")}
-															onClick={() => handleTodoAction(todo)}
-														/>
-													))}
-												</ul>
+												{viewMode === "agenda" ? (
+													<DashboardTodoAgenda
+														items={data.todos.map((todo) => ({
+															id: todo.id,
+															kind: todo.kind,
+															kindLabel: t(KIND_LABEL_KEY[todo.kind]),
+															title: todo.title,
+															deadlineText: todo.deadlineText,
+															dueTime: todo.dueTime,
+															isUrgent: todo.highlights.length > 0,
+															onClick: () => handleTodoAction(todo),
+														}))}
+														urgentLabel={t("urgentBadge")}
+													/>
+												) : (
+													<ul className="divide-y divide-[#F2F2F7]">
+														{data.todos.map((todo) => (
+															<DashboardTodoRow
+																key={todo.id}
+																id={todo.id}
+																variant="row"
+																kind={todo.kind}
+																kindLabel={t(KIND_LABEL_KEY[todo.kind])}
+																title={todo.title}
+																deadlineText={todo.deadlineText}
+																isUrgent={todo.highlights.length > 0}
+																urgentLabel={t("urgentBadge")}
+																onClick={() => handleTodoAction(todo)}
+															/>
+														))}
+													</ul>
+												)}
 											</motion.div>
 										)}
 									</AnimatePresence>

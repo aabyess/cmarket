@@ -2323,5 +2323,17 @@
 	"ViewModeToggle": {
 		"gridLabel": "카드형 보기",
 		"listLabel": "리스트형 보기"
+	},
+	"DashboardTodoViewToggle": {
+		"listLabel": "리스트형 보기",
+		"agendaLabel": "일정형 보기"
+	},
+	"DashboardTodoAgenda": {
+		"overdueLabel": "지남",
+		"todayLabel": "오늘",
+		"tomorrowLabel": "내일",
+		"thisWeekLabel": "이번 주",
+		"nextWeekLabel": "다음 주",
+		"laterLabel": "이후"
 	}
 }

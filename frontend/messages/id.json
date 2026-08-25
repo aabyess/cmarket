@@ -2323,5 +2323,17 @@
 	"ViewModeToggle": {
 		"gridLabel": "Tampilan kartu",
 		"listLabel": "Tampilan daftar"
+	},
+	"DashboardTodoViewToggle": {
+		"listLabel": "Tampilan daftar",
+		"agendaLabel": "Tampilan agenda"
+	},
+	"DashboardTodoAgenda": {
+		"overdueLabel": "Terlambat",
+		"todayLabel": "Hari ini",
+		"tomorrowLabel": "Besok",
+		"thisWeekLabel": "Minggu ini",
+		"nextWeekLabel": "Minggu depan",
+		"laterLabel": "Nanti"
 	}
 }

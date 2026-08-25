@@ -70,6 +70,8 @@ export type BuyerTodo = {
 	title: string;
 	description: string;
 	deadlineText: string | null;
+	/** 그룹핑(아젠다 뷰)용 관련 시점, ISO 문자열. "마감일"이 아닌 항목도 이 축으로 취급한다. */
+	dueTime: string;
 	actionLabel: string;
 	highlights: BuyerTodoHighlight[];
 };

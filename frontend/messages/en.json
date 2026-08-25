@@ -2323,5 +2323,17 @@
 	"ViewModeToggle": {
 		"gridLabel": "Card view",
 		"listLabel": "List view"
+	},
+	"DashboardTodoViewToggle": {
+		"listLabel": "List view",
+		"agendaLabel": "Agenda view"
+	},
+	"DashboardTodoAgenda": {
+		"overdueLabel": "Overdue",
+		"todayLabel": "Today",
+		"tomorrowLabel": "Tomorrow",
+		"thisWeekLabel": "This week",
+		"nextWeekLabel": "Next week",
+		"laterLabel": "Later"
 	}
 }
