@@ -609,7 +609,7 @@ export function DashboardHome({
 												onRemove={() => hideWidget("shortcuts")}
 											/>
 										)}
-										<h2 className="text-imsg-secondary mb-3 text-sm font-semibold tracking-wider uppercase">
+										<h2 className="mb-3 text-sm font-semibold tracking-wider text-[#0f172a] uppercase">
 											{t("shortcutsTitle")}
 										</h2>
 										<div className="grid grid-cols-2 gap-2">
@@ -647,7 +647,7 @@ export function DashboardHome({
 											/>
 										)}
 										<div className="flex items-center gap-2 px-4 py-3">
-											<h2 className="text-imsg-secondary text-sm font-semibold tracking-wider uppercase">
+											<h2 className="text-sm font-semibold tracking-wider text-[#0f172a] uppercase">
 												{t("recentActivityTitle")}
 											</h2>
 										</div>
