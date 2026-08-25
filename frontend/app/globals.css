@@ -325,3 +325,102 @@
 		animation: none;
 	}
 }
+
+/* ─── Journey 섹션 — 세로 장부(ledger) 타임라인 ───
+   Steps의 가로 카드그리드(문서 나열, 공간적)와 대비되게, 시간이 흐르는 느낌을 주는
+   구조. 진행률 바는 트랙 전체를 view() 타임라인으로 삼아 스크롤에 비례해 채워지고,
+   각 항목은 자기 자신의 view() 타임라인으로 뷰포트를 지나는 동안만 잠깐
+   강조됐다가 다시 가라앉는다 — "지금 이 순간"이 지나가는 느낌을 주려는 의도.
+   마지막(BAST/거래완료) 항목만 골드로 고정되어 남는다(전체 흐름의 완료 표시는
+   깜빡이지 않고 남아야 자연스럽다). view-timeline 미지원 브라우저는 진행률 바를
+   숨기고(그려지다 만 바가 더 어색함), 점/제목은 항상 기본(dim) 상태로 고정 노출한다
+   — 마지막 항목의 골드 표시는 애니메이션이 아니라 컴포넌트에서 조건부로 붙인
+   `--final` 클래스의 정적 스타일이라 지원 여부와 무관하게 항상 보인다. */
+.landing-journey-track {
+	position: relative;
+}
+
+.landing-journey-line {
+	background-image: linear-gradient(var(--color-landing-line) 50%, transparent 0%);
+	background-size: 1px 6px;
+	background-repeat: repeat-y;
+}
+
+.landing-journey-progress {
+	background-color: var(--color-landing-accent);
+	transform-origin: top;
+	transform: scaleY(0);
+	opacity: 0;
+}
+
+@keyframes landing-journey-fill {
+	to {
+		transform: scaleY(1);
+	}
+}
+
+@supports (animation-timeline: view()) {
+	.landing-journey-progress {
+		opacity: 1;
+		animation: landing-journey-fill linear both;
+		animation-timeline: view();
+		animation-range: cover 0% cover 100%;
+	}
+}
+
+@keyframes landing-journey-dot-pass {
+	0%,
+	100% {
+		background-color: var(--color-landing-paper);
+		border-color: var(--color-landing-line);
+	}
+	50% {
+		background-color: var(--color-landing-accent);
+		border-color: var(--color-landing-accent);
+	}
+}
+
+@keyframes landing-journey-title-pass {
+	0%,
+	100% {
+		color: var(--color-landing-ink);
+	}
+	50% {
+		color: var(--color-landing-accent);
+	}
+}
+
+@supports (animation-timeline: view()) {
+	.landing-journey-dot {
+		animation: landing-journey-dot-pass linear both;
+		animation-timeline: view();
+		animation-range: cover 15% cover 55%;
+	}
+
+	.landing-journey-title {
+		animation: landing-journey-title-pass linear both;
+		animation-timeline: view();
+		animation-range: cover 15% cover 55%;
+	}
+}
+
+.landing-journey-dot--final {
+	background-color: var(--color-landing-gold);
+	border-color: var(--color-landing-gold);
+	animation: none !important;
+}
+
+.landing-journey-title--final {
+	color: var(--color-landing-gold) !important;
+	animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.landing-journey-progress {
+		display: none;
+	}
+	.landing-journey-dot,
+	.landing-journey-title {
+		animation: none;
+	}
+}

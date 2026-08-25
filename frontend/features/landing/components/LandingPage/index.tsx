@@ -5,6 +5,7 @@ import { landingMono, landingSans } from "@/features/landing/fonts";
 import { LandingPageHeader } from "@/features/landing/components/LandingPage/LandingPageHeader";
 import { LandingPageHero } from "@/features/landing/components/LandingPage/LandingPageHero";
 import { LandingPageSteps } from "@/features/landing/components/LandingPage/LandingPageSteps";
+import { LandingPageJourney } from "@/features/landing/components/LandingPage/LandingPageJourney";
 import { LandingPageRoles } from "@/features/landing/components/LandingPage/LandingPageRoles";
 import { LandingPageTrust } from "@/features/landing/components/LandingPage/LandingPageTrust";
 import { LandingPageFaq } from "@/features/landing/components/LandingPage/LandingPageFaq";
@@ -38,6 +39,7 @@ export async function LandingPage(): Promise<React.JSX.Element> {
 				</div>
 
 				<LandingPageSteps />
+				<LandingPageJourney />
 				<LandingPageRoles />
 				<LandingPageTrust />
 				<LandingPageFaq />

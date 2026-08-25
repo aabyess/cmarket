@@ -41,6 +41,23 @@
 		"step4Desc": "인보이스가 자동 발행되고, 송금 영수증과 입금 확인이 기록됩니다",
 		"step5Title": "납품·수령 확인",
 		"step5Desc": "물품 수령을 확인하면 거래 기록이 완성됩니다",
+		"journeyTitle": "실제 거래는 이렇게 흘러갑니다",
+		"journeySubtitle": "공고 등록부터 납품 확인까지, 하나의 거래가 완성되는 과정입니다",
+		"journey1Day": "1일차",
+		"journey1Title": "서울의 사무기기 유통사가 자카르타행 프린터 200대를 찾습니다",
+		"journey1Detail": "공고 등록",
+		"journey2Day": "1~3일차",
+		"journey2Title": "인도네시아 공급기업 3곳이 24시간 안에 견적을 보내왔습니다",
+		"journey2Detail": "3건 도착",
+		"journey3Day": "3일차",
+		"journey3Title": "최적 조건의 공급기업을 선택하면, 계약이 그 자리에서 만들어집니다",
+		"journey3Detail": "즉시 확정",
+		"journey4Day": "4~5일차",
+		"journey4Title": "인보이스는 양쪽 언어로 자동 발행되고, 송금 확인까지 한 화면에서 끝납니다",
+		"journey4Detail": "송금 확인",
+		"journey5Day": "20~30일차",
+		"journey5Title": "물품이 도착하면 인도네시아 표준 수령확인서(BAST)까지 자동 생성됩니다",
+		"journey5Detail": "거래 완료",
 		"rolesTitle": "역할에 맞는 도구를 제공합니다",
 		"buyerTitle": "발주기업",
 		"buyerDesc": "인도네시아에서 구매하는 기업",
@@ -2214,11 +2231,7 @@
 					"note": "전자·통신기기 의무 SNI 해당 가능성 (불확실, 개별확인 필요)"
 				}
 			],
-			"requiredDocuments": [
-				"사업자등록서류",
-				"제품 사양서",
-				"공인시험기관 시험성적서(해당 시)"
-			],
+			"requiredDocuments": ["사업자등록서류", "제품 사양서", "공인시험기관 시험성적서(해당 시)"],
 			"estimatedDuration": "품목에 따라 상이 (추정)"
 		},
 		"lab": {
