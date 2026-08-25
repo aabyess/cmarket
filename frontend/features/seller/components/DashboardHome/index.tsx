@@ -143,7 +143,11 @@ export function DashboardHome({
 	// 중 하나라도 보이는 상태면 그 자리로 끌어올려 채운다(끌어올려진 경우 아래 독립 섹션에는
 	// 중복 렌더링하지 않는다). 기업 홈페이지 만들기는 이 승격 로직과 무관하게 항상 아래
 	// 섹션에 남는다.
-	const isAiOrInterestedVisible = !isHidden("aiRecommended") || !isHidden("interestedListings");
+	const visibleAiInterestedCount = [
+		!isHidden("aiRecommended"),
+		!isHidden("interestedListings"),
+	].filter(Boolean).length;
+	const isAiOrInterestedVisible = visibleAiInterestedCount > 0;
 	const promoteAiInterested = isHidden("recommendedListings") && isAiOrInterestedVisible;
 	// 승격된 경우 아래 독립 섹션에는 aiRecommended/interestedListings를 다시 넣지 않는다
 	// (기업 홈페이지 만들기는 이 승격 여부와 무관하게 아래 섹션에 그대로 남는다).
@@ -215,8 +219,17 @@ export function DashboardHome({
 		},
 	];
 
+	// 3열 그리드(Two Column/아래 독립 섹션 모두 lg:grid-cols-3) 안에서 2/3 폭(col-span-2)을
+	// md:grid-cols-2로 반씩 나눠 쓰다가, 하나만 보이면 반쪽만 채워지고 나머지 반이 빈 채로
+	// 남아 옆 컬럼(Side/기업 홈페이지 만들기)과의 사이에 공백이 생긴다. 하나만 보일 땐 1/3
+	// 폭(col-span-1) 하나만 차지하도록 줄여서 — col-span-1÷1열이나 col-span-2÷2열이나 카드
+	// 자체 폭은 3열 중 1열 분량으로 동일하다 — 옆 컬럼이 바로 붙게 한다.
 	const aiInterestedGrid = (
-		<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:col-span-2">
+		<div
+			className={cn(
+				"grid grid-cols-1 gap-4",
+				visibleAiInterestedCount >= 2 ? "md:grid-cols-2 lg:col-span-2" : "lg:col-span-1",
+			)}>
 			<DashboardWidgetPop show={!isHidden("aiRecommended")} className="h-full">
 				<div className="relative h-full">
 					{isEditing && (
