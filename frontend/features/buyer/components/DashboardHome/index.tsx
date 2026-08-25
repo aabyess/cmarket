@@ -503,83 +503,81 @@ export function DashboardHome({
 			    행 높이가 이 블록까지 포함해서 정해져 버려 사이드(바로가기/최근활동)가 할 일과 같은
 			    높이에서 정렬되지 않는다. 폭은 할 일과 같은 lg:col-span-2, 3번째 컬럼은 비워둔다.
 			    더미 데이터, 실제 북마크 연동은 별도 작업 예정. */}
-			{!isHidden("receivedInterest") && (
-				<div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
-					<DashboardWidgetPop show className="lg:col-span-2">
-						<div className="relative">
-							{isEditing && (
-								<DashboardWidgetRemoveButton
-									label={tCustomize("removeWidgetAria", { widget: widgetLabels.receivedInterest })}
-									onRemove={() => hideWidget("receivedInterest")}
-								/>
-							)}
-							<div className="rounded-2xl bg-white shadow-sm">
-								<div className="flex items-center justify-between px-5 py-4">
-									<div className="flex items-center gap-2">
-										<h2 className="text-base font-semibold text-[#0f172a]">
-											{t("receivedInterestTitle")}
-										</h2>
-										<span className="text-imsg-blue rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold">
-											{t("totalCount", { count: MOCK_RECEIVED_INTEREST_LISTINGS.length })}
-										</span>
-									</div>
-									<button
-										onClick={() => console.log("TODO: 관심 받은 견적 모두 보기")}
-										className="text-imsg-blue text-sm font-medium hover:underline">
-										{t("viewAll")}
-									</button>
+			<div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
+				<DashboardWidgetPop show={!isHidden("receivedInterest")} className="lg:col-span-2">
+					<div className="relative">
+						{isEditing && (
+							<DashboardWidgetRemoveButton
+								label={tCustomize("removeWidgetAria", { widget: widgetLabels.receivedInterest })}
+								onRemove={() => hideWidget("receivedInterest")}
+							/>
+						)}
+						<div className="rounded-2xl bg-white shadow-sm">
+							<div className="flex items-center justify-between px-5 py-4">
+								<div className="flex items-center gap-2">
+									<h2 className="text-base font-semibold text-[#0f172a]">
+										{t("receivedInterestTitle")}
+									</h2>
+									<span className="text-imsg-blue rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold">
+										{t("totalCount", { count: MOCK_RECEIVED_INTEREST_LISTINGS.length })}
+									</span>
 								</div>
+								<button
+									onClick={() => console.log("TODO: 관심 받은 견적 모두 보기")}
+									className="text-imsg-blue text-sm font-medium hover:underline">
+									{t("viewAll")}
+								</button>
+							</div>
 
-								<div className="h-px bg-[#F2F2F7]" />
+							<div className="h-px bg-[#F2F2F7]" />
 
-								<ul className="p-2">
-									{MOCK_RECEIVED_INTEREST_LISTINGS.map((listing, i) => (
-										<li key={listing.id}>
-											<div className="hover:bg-imsg-surface relative flex items-start gap-4 rounded-xl py-3.5 pr-3 pl-5 transition-colors duration-200">
-												<span className="bg-imsg-blue absolute top-1/2 left-1.5 h-6 w-[3px] -translate-y-1/2 rounded-full" />
+							<ul className="p-2">
+								{MOCK_RECEIVED_INTEREST_LISTINGS.map((listing, i) => (
+									<li key={listing.id}>
+										<div className="hover:bg-imsg-surface relative flex items-start gap-4 rounded-xl py-3.5 pr-3 pl-5 transition-colors duration-200">
+											<span className="bg-imsg-blue absolute top-1/2 left-1.5 h-6 w-[3px] -translate-y-1/2 rounded-full" />
 
-												<div className="min-w-0 flex-1">
-													<div className="flex items-center gap-2">
-														<h3 className="truncate text-base font-semibold text-[#0f172a]">
-															{listing.title}
-														</h3>
-														<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold">
-															{t("interestCountBadge", { count: listing.interestCount })}
-														</span>
-													</div>
-													<p className="text-imsg-secondary mt-0.5 text-sm">
-														{[listing.deliveryProvinsi, listing.deliveryCity]
-															.filter(Boolean)
-															.join(" ")}
-													</p>
-													<div className="text-imsg-secondary mt-1.5 flex items-center gap-1 text-sm">
-														<Clock size={11} />
-														<span>
-															{t("deadlinePrefix")}{" "}
-															{new Date(listing.endDate).toLocaleDateString(locale)}
-														</span>
-													</div>
+											<div className="min-w-0 flex-1">
+												<div className="flex items-center gap-2">
+													<h3 className="truncate text-base font-semibold text-[#0f172a]">
+														{listing.title}
+													</h3>
+													<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold">
+														{t("interestCountBadge", { count: listing.interestCount })}
+													</span>
 												</div>
-
-												<button
-													onClick={() => console.log("TODO: 공고 상세로 이동", listing.id)}
-													className="bg-imsg-surface flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-sm font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-[#E5E7EB]">
-													{t("checkQuotesAction")}
-													<ArrowRight size={12} />
-												</button>
+												<p className="text-imsg-secondary mt-0.5 text-sm">
+													{[listing.deliveryProvinsi, listing.deliveryCity]
+														.filter(Boolean)
+														.join(" ")}
+												</p>
+												<div className="text-imsg-secondary mt-1.5 flex items-center gap-1 text-sm">
+													<Clock size={11} />
+													<span>
+														{t("deadlinePrefix")}{" "}
+														{new Date(listing.endDate).toLocaleDateString(locale)}
+													</span>
+												</div>
 											</div>
 
-											{i !== MOCK_RECEIVED_INTEREST_LISTINGS.length - 1 && (
-												<div className="mx-5 h-px bg-[#F2F2F7]" />
-											)}
-										</li>
-									))}
-								</ul>
-							</div>
+											<button
+												onClick={() => console.log("TODO: 공고 상세로 이동", listing.id)}
+												className="bg-imsg-surface flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-sm font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-[#E5E7EB]">
+												{t("checkQuotesAction")}
+												<ArrowRight size={12} />
+											</button>
+										</div>
+
+										{i !== MOCK_RECEIVED_INTEREST_LISTINGS.length - 1 && (
+											<div className="mx-5 h-px bg-[#F2F2F7]" />
+										)}
+									</li>
+								))}
+							</ul>
 						</div>
-					</DashboardWidgetPop>
-				</div>
-			)}
+					</div>
+				</DashboardWidgetPop>
+			</div>
 		</div>
 	);
 }
