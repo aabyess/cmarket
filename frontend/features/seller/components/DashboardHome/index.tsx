@@ -464,7 +464,7 @@ export function DashboardHome({
 
 													<button
 														onClick={() => console.log("TODO: 견적 보내기", listing.id)}
-														className="bg-imsg-surface flex w-full items-center justify-center gap-1 rounded-full py-1.5 text-xs font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-[#E5E7EB]">
+														className="bg-imsg-surface flex shrink-0 items-center gap-1 self-end rounded-full px-4 py-1.5 text-xs font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-[#E5E7EB]">
 														{t("sendQuoteAction")}
 														<ArrowRight size={12} />
 													</button>
@@ -540,7 +540,7 @@ export function DashboardHome({
 
 													<button
 														onClick={() => console.log("TODO: 견적 보내기", listing.id)}
-														className="bg-imsg-surface flex w-full items-center justify-center gap-1 rounded-full py-1.5 text-xs font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-[#E5E7EB]">
+														className="bg-imsg-surface flex shrink-0 items-center gap-1 self-end rounded-full px-4 py-1.5 text-xs font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-[#E5E7EB]">
 														{t("sendQuoteAction")}
 														<ArrowRight size={12} />
 													</button>
