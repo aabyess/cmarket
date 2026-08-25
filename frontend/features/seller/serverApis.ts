@@ -314,7 +314,7 @@ export async function getOpenListings(): Promise<OpenListing[]> {
 		supabase
 			.from("listings")
 			.select(
-				"id, title, title_source_lang, title_translations, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, created_at, status",
+				"id, title, title_source_lang, title_translations, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, created_at, status, category",
 			)
 			.order("end_date", { ascending: true }),
 		getExchangeRates(),
@@ -362,6 +362,7 @@ export async function getOpenListings(): Promise<OpenListing[]> {
 				status: row.status ?? "active",
 				hasMyQuote: myQuoteListingIds.has(row.id),
 				isBookmarked: bookmarkedListingIds.has(row.id),
+				category: row.category,
 			};
 		})
 		.sort((a, b) => {
@@ -575,7 +576,7 @@ export async function getRecommendedListings(): Promise<OpenListing[]> {
 	let query = supabase
 		.from("listings")
 		.select(
-			"id, title, title_source_lang, title_translations, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, created_at",
+			"id, title, title_source_lang, title_translations, description, items, currency, total_budget, budget_public, end_date, delivery_provinsi, delivery_city, created_at, category",
 		)
 		.eq("status", "active")
 		.gte("end_date", today)
@@ -616,6 +617,7 @@ export async function getRecommendedListings(): Promise<OpenListing[]> {
 			hasMyQuote: false,
 			// 추천 목록은 별도 카드로 렌더링되고 북마크 토글을 노출하지 않아 항상 false로 둔다.
 			isBookmarked: false,
+			category: row.category,
 		};
 	});
 }
