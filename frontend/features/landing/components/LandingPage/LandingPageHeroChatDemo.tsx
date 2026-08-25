@@ -4,21 +4,42 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
-import { FileText, Languages, Loader2 } from "lucide-react";
+import { FileCheck2, FileText, Languages, Loader2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 
-// 실제 채팅처럼 단계가 넘어가는 시퀀스. 스크롤로 카드가 보일 때 한 번만 재생되고
-// 끝나면(step 7) 그 상태로 멈춘다 — 루프하지 않는다.
+// 대화의 시작(견적서 발송)부터 몇 턴을 주고받다 계약 완료로 끝나는 완결된 미니
+// 시나리오. 스크롤로 카드가 보일 때 한 번만 재생되고 끝나면(CONTRACT_DONE) 그
+// 상태로 멈춘다 — 루프하지 않는다.
+const STEP = {
+	OPENING_TYPING: 1,
+	OPENING_MESSAGE: 2,
+	OPENING_TRANSLATING: 3,
+	OPENING_TRANSLATED: 4,
+	QUOTE_CARD: 5,
+	QUESTION_TYPING: 6,
+	QUESTION_MESSAGE: 7,
+	REPLY_TYPING: 8,
+	REPLY_MESSAGE: 9,
+	CONFIRM_TYPING: 10,
+	CONFIRM_MESSAGE: 11,
+	CONTRACT_DONE: 12,
+} as const;
+const FINAL_STEP = STEP.CONTRACT_DONE;
+
 const SEQUENCE: { step: number; delay: number }[] = [
-	{ step: 1, delay: 0 }, // 수신 타이핑
-	{ step: 2, delay: 700 }, // 수신 메시지
-	{ step: 3, delay: 1100 }, // 번역 중
-	{ step: 4, delay: 1700 }, // 번역문
-	{ step: 5, delay: 2300 }, // 답장 타이핑
-	{ step: 6, delay: 2900 }, // 답장 메시지
-	{ step: 7, delay: 3400 }, // 견적 카드(최종 상태)
+	{ step: STEP.OPENING_TYPING, delay: 0 },
+	{ step: STEP.OPENING_MESSAGE, delay: 600 },
+	{ step: STEP.OPENING_TRANSLATING, delay: 1000 },
+	{ step: STEP.OPENING_TRANSLATED, delay: 1600 },
+	{ step: STEP.QUOTE_CARD, delay: 2200 },
+	{ step: STEP.QUESTION_TYPING, delay: 2900 },
+	{ step: STEP.QUESTION_MESSAGE, delay: 3500 },
+	{ step: STEP.REPLY_TYPING, delay: 4100 },
+	{ step: STEP.REPLY_MESSAGE, delay: 4700 },
+	{ step: STEP.CONFIRM_TYPING, delay: 5300 },
+	{ step: STEP.CONFIRM_MESSAGE, delay: 5900 },
+	{ step: STEP.CONTRACT_DONE, delay: 6500 },
 ];
-const FINAL_STEP = 7;
 
 function TypingDots({ dotClassName }: { dotClassName: string }): React.ReactNode {
 	return (
@@ -38,6 +59,7 @@ export function LandingPageHeroChatDemo(): React.ReactNode {
 	const t = useTranslations("Landing");
 	const prefersReducedMotion = useReducedMotion();
 	const containerRef = useRef<HTMLDivElement>(null);
+	const bottomRef = useRef<HTMLDivElement>(null);
 	const isInView = useInView(containerRef, { once: true, amount: 0.4 });
 	const [step, setStep] = useState(0);
 
@@ -51,16 +73,23 @@ export function LandingPageHeroChatDemo(): React.ReactNode {
 		return () => timers.forEach(clearTimeout);
 	}, [isInView, prefersReducedMotion]);
 
+	// 실제 채팅 화면(ChatMessageList)과 같은 방식 — 새 단계가 나타날 때마다 맨 아래로.
+	useEffect(() => {
+		if (step === 0) return;
+		bottomRef.current?.scrollIntoView({ behavior: prefersReducedMotion ? "instant" : "smooth" });
+	}, [step, prefersReducedMotion]);
+
 	const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.25 };
 
 	return (
-		<div ref={containerRef} className="flex flex-col gap-3 p-5">
-			{step >= 1 && (
+		<div ref={containerRef} className="flex max-h-[420px] flex-col gap-3 overflow-y-auto p-5">
+			{/* 1. 상대측 — 견적서 발송 오프닝 메시지 (+번역) */}
+			{step >= STEP.OPENING_TYPING && (
 				<div className="max-w-[85%] self-start">
 					<AnimatePresence mode="wait">
-						{step === 1 ? (
+						{step === STEP.OPENING_TYPING ? (
 							<motion.div
-								key="incoming-typing"
+								key="opening-typing"
 								initial={{ opacity: 0 }}
 								animate={{ opacity: 1 }}
 								exit={{ opacity: 0 }}
@@ -70,22 +99,22 @@ export function LandingPageHeroChatDemo(): React.ReactNode {
 							</motion.div>
 						) : (
 							<motion.div
-								key="incoming-message"
+								key="opening-message"
 								initial={{ opacity: 0 }}
 								animate={{ opacity: 1 }}
 								exit={{ opacity: 0 }}
 								transition={transition}
 								className="bg-imsg-gray rounded-[18px] px-4 py-2.5 text-sm text-black">
-								{t("heroDemoIncoming")}
+								{t("heroDemoOpening")}
 							</motion.div>
 						)}
 					</AnimatePresence>
 
-					{step >= 3 && (
+					{step >= STEP.OPENING_TRANSLATING && (
 						<AnimatePresence mode="wait">
-							{step === 3 ? (
+							{step === STEP.OPENING_TRANSLATING ? (
 								<motion.div
-									key="translating"
+									key="opening-translating"
 									initial={{ opacity: 0 }}
 									animate={{ opacity: 1 }}
 									exit={{ opacity: 0 }}
@@ -96,7 +125,7 @@ export function LandingPageHeroChatDemo(): React.ReactNode {
 								</motion.div>
 							) : (
 								<motion.div
-									key="translated"
+									key="opening-translated"
 									initial={{ opacity: 0 }}
 									animate={{ opacity: 1 }}
 									exit={{ opacity: 0 }}
@@ -106,7 +135,7 @@ export function LandingPageHeroChatDemo(): React.ReactNode {
 										{t("heroDemoTranslatedLabel")}
 									</div>
 									<div className="text-landing-dim border-landing-line mt-1 w-fit rounded-[14px] border border-dashed px-3 py-1.5 text-xs">
-										{t("heroDemoTranslated")}
+										{t("heroDemoOpeningTranslated")}
 									</div>
 								</motion.div>
 							)}
@@ -115,38 +144,13 @@ export function LandingPageHeroChatDemo(): React.ReactNode {
 				</div>
 			)}
 
-			{step >= 5 && (
-				<AnimatePresence mode="wait">
-					{step === 5 ? (
-						<motion.div
-							key="reply-typing"
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							exit={{ opacity: 0 }}
-							transition={transition}
-							className="bg-imsg-blue flex w-fit max-w-[85%] items-center self-end rounded-[18px] px-4 py-2.5">
-							<TypingDots dotClassName="bg-white/70" />
-						</motion.div>
-					) : (
-						<motion.div
-							key="reply-message"
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							exit={{ opacity: 0 }}
-							transition={transition}
-							className="bg-imsg-blue max-w-[85%] self-end rounded-[18px] px-4 py-2.5 text-sm text-white">
-							{t("heroDemoReply")}
-						</motion.div>
-					)}
-				</AnimatePresence>
-			)}
-
-			{step >= 7 && (
+			{/* 2. 상대측 — 견적서 카드 */}
+			{step >= STEP.QUOTE_CARD && (
 				<motion.div
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					transition={transition}
-					className="border-landing-line flex max-w-[85%] items-center gap-2.5 self-end rounded-[14px] border px-4 py-3">
+					className="border-landing-line flex max-w-[85%] items-center gap-2.5 self-start rounded-[14px] border px-4 py-3">
 					<span className="border-landing-ink/20 text-landing-ink flex size-8 shrink-0 items-center justify-center rounded-sm border">
 						<FileText size={14} />
 					</span>
@@ -156,6 +160,108 @@ export function LandingPageHeroChatDemo(): React.ReactNode {
 					</div>
 				</motion.div>
 			)}
+
+			{/* 3. 내 쪽 — 배송일 질문 (번역 없음, 이미 내 언어) */}
+			{step >= STEP.QUESTION_TYPING && (
+				<AnimatePresence mode="wait">
+					{step === STEP.QUESTION_TYPING ? (
+						<motion.div
+							key="question-typing"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							transition={transition}
+							className="bg-imsg-blue flex w-fit max-w-[85%] items-center self-end rounded-[18px] px-4 py-2.5">
+							<TypingDots dotClassName="bg-white/70" />
+						</motion.div>
+					) : (
+						<motion.div
+							key="question-message"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							transition={transition}
+							className="bg-imsg-blue max-w-[85%] self-end rounded-[18px] px-4 py-2.5 text-sm text-white">
+							{t("heroDemoTranslated")}
+						</motion.div>
+					)}
+				</AnimatePresence>
+			)}
+
+			{/* 4. 상대측 — 배송일 답변 */}
+			{step >= STEP.REPLY_TYPING && (
+				<AnimatePresence mode="wait">
+					{step === STEP.REPLY_TYPING ? (
+						<motion.div
+							key="reply-typing"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							transition={transition}
+							className="bg-imsg-gray flex w-fit items-center self-start rounded-[18px] px-4 py-2.5">
+							<TypingDots dotClassName="bg-black/40" />
+						</motion.div>
+					) : (
+						<motion.div
+							key="reply-message"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							transition={transition}
+							className="bg-imsg-gray max-w-[85%] self-start rounded-[18px] px-4 py-2.5 text-sm text-black">
+							{t("heroDemoReply")}
+						</motion.div>
+					)}
+				</AnimatePresence>
+			)}
+
+			{/* 5. 내 쪽 — 계약 진행 의사 */}
+			{step >= STEP.CONFIRM_TYPING && (
+				<AnimatePresence mode="wait">
+					{step === STEP.CONFIRM_TYPING ? (
+						<motion.div
+							key="confirm-typing"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							transition={transition}
+							className="bg-imsg-blue flex w-fit max-w-[85%] items-center self-end rounded-[18px] px-4 py-2.5">
+							<TypingDots dotClassName="bg-white/70" />
+						</motion.div>
+					) : (
+						<motion.div
+							key="confirm-message"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							transition={transition}
+							className="bg-imsg-blue max-w-[85%] self-end rounded-[18px] px-4 py-2.5 text-sm text-white">
+							{t("heroDemoConfirm")}
+						</motion.div>
+					)}
+				</AnimatePresence>
+			)}
+
+			{/* 6. 상대측 — 서명된 계약서(최종 상태) */}
+			{step >= STEP.CONTRACT_DONE && (
+				<motion.div
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					transition={transition}
+					className="flex max-w-[85%] items-center gap-2.5 self-start rounded-[14px] border border-[#22C55E]/30 bg-[#22C55E]/5 px-4 py-3">
+					<span className="flex size-8 shrink-0 items-center justify-center rounded-sm border border-[#22C55E]/30 text-[#22C55E]">
+						<FileCheck2 size={14} />
+					</span>
+					<div className="min-w-0">
+						<p className="font-landing-doc truncate text-xs font-medium">
+							{t("heroDemoContractDone")}
+						</p>
+						<p className="text-xs text-[#22C55E]">{t("heroDemoContractDoneHint")}</p>
+					</div>
+				</motion.div>
+			)}
+
+			<div ref={bottomRef} />
 		</div>
 	);
 }
