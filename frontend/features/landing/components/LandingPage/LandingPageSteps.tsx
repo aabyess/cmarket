@@ -47,7 +47,7 @@ export async function LandingPageSteps(): Promise<React.JSX.Element> {
 						{steps.map((step, i) => (
 							<li key={step.title}>
 								<LandingPageReveal delay={i * 0.08} className="h-full">
-									<div className="border-landing-line flex h-full flex-col rounded-lg border bg-white">
+									<div className="border-landing-line flex h-full flex-col rounded-lg border bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
 										<div className="border-landing-line flex items-center justify-between border-b border-dashed px-4 py-2.5">
 											<span className="font-landing-doc text-[11px] font-semibold tracking-[0.1em]">
 												{step.code}
