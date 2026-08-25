@@ -1925,8 +1925,6 @@
 		"recentActivityTitle": "Recent Activity",
 		"recentActivityEmpty": "No activity yet",
 		"todoCount": "{count} items",
-		"kindQuotePending": "New quote received",
-		"kindPaymentPending": "Payment pending",
 		"collapseListAria": "Collapse list",
 		"expandListAria": "Expand list"
 	},
@@ -1969,10 +1967,6 @@
 		"recentActivityTitle": "Recent Activity",
 		"recentActivityEmpty": "No activity yet",
 		"todoCount": "{count} items",
-		"kindQuotePending": "Awaiting response",
-		"kindAwarded": "Contract confirmed",
-		"kindDeliveryDue": "Delivery due",
-		"kindPaymentConfirm": "Payment confirmation needed",
 		"collapseListAria": "Collapse list",
 		"expandListAria": "Expand list"
 	},
@@ -2323,5 +2317,17 @@
 	"ViewModeToggle": {
 		"gridLabel": "Card view",
 		"listLabel": "List view"
+	},
+	"DashboardTodoViewToggle": {
+		"listLabel": "List view",
+		"agendaLabel": "Agenda view"
+	},
+	"DashboardTodoAgenda": {
+		"overdueLabel": "Overdue",
+		"todayLabel": "Today",
+		"tomorrowLabel": "Tomorrow",
+		"thisWeekLabel": "This week",
+		"nextWeekLabel": "Next week",
+		"laterLabel": "Later"
 	}
 }

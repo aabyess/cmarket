@@ -175,6 +175,7 @@ export async function getSellerTodos(): Promise<SellerTodo[]> {
 				description: t("quotePendingDescription"),
 				deadlineText:
 					daysLeft > 0 ? t("quoteDeadlineDays", { days: daysLeft }) : t("quoteDeadlineClosed"),
+				dueTime: new Date(endTime).toISOString(),
 				actionLabel: t("quoteAction"),
 				highlights: isUrgent ? [{ label: t("quoteUrgentLabel"), value: `D-${daysLeft}` }] : [],
 			},
@@ -214,6 +215,7 @@ export async function getSellerTodos(): Promise<SellerTodo[]> {
 					title,
 					description: t("awardedDescription"),
 					deadlineText: ageDays === 0 ? t("awardedToday") : t("awardedDaysAgo", { days: ageDays }),
+					dueTime: new Date(createdTime).toISOString(),
 					actionLabel: t("awardedAction"),
 					highlights: [],
 				},
@@ -243,6 +245,7 @@ export async function getSellerTodos(): Promise<SellerTodo[]> {
 							: daysLeft === 0
 								? t("deliveryDueToday")
 								: t("deliveryOverdueDays", { days: -daysLeft }),
+					dueTime: new Date(dueTime).toISOString(),
 					actionLabel: t("deliveryAction"),
 					highlights: isUrgent
 						? [
@@ -274,6 +277,7 @@ export async function getSellerTodos(): Promise<SellerTodo[]> {
 						ageDays === 0
 							? t("paymentConfirmToday")
 							: t("paymentConfirmElapsedDays", { days: ageDays }),
+					dueTime: new Date(createdTime).toISOString(),
 					actionLabel: t("paymentConfirmAction"),
 					highlights: isUrgent
 						? [

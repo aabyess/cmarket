@@ -8,23 +8,19 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ChevronDown, ChevronUp, Clock } from "lucide-react";
 import { usePersistentState } from "@/hooks/usePersistentState";
 import { DashboardTodoRow } from "@/features/shared/components/DashboardTodoRow";
+import { DashboardTodoAgenda } from "@/features/shared/components/DashboardTodoAgenda";
+import {
+	DashboardTodoViewToggle,
+	type DashboardTodoViewMode,
+} from "@/features/shared/components/DashboardTodoViewToggle";
 import { DashboardWidgetRemoveButton } from "@/features/shared/components/DashboardWidgetRemoveButton";
-import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
-import { cn } from "@/utils/cn";
-import type { SellerTodo, SellerTodoKind } from "@/features/seller/types";
+import type { SellerTodo } from "@/features/seller/types";
 
 type SellerDashboardTodoProps = {
 	todos: SellerTodo[];
 	isEditing: boolean;
 	onRemove: () => void;
 	removeAriaLabel: string;
-};
-
-const KIND_LABEL_KEY: Record<SellerTodoKind, string> = {
-	quotePending: "kindQuotePending",
-	awarded: "kindAwarded",
-	deliveryDue: "kindDeliveryDue",
-	paymentConfirm: "kindPaymentConfirm",
 };
 
 export function SellerDashboardTodo({
@@ -36,9 +32,9 @@ export function SellerDashboardTodo({
 	const t = useTranslations("SellerDashboard");
 	const router = useRouter();
 	const prefersReducedMotion = useReducedMotion();
-	const [viewMode, setViewMode] = usePersistentState<ViewMode>(
+	const [viewMode, setViewMode] = usePersistentState<DashboardTodoViewMode>(
 		"mitrapay:seller-dashboard-todo-view",
-		"grid",
+		"list",
 	);
 	// 새로고침하면 기본값(펼침)으로 돌아가야 해서 영속화하지 않는다.
 	const [isExpanded, setIsExpanded] = useState(true);
@@ -74,7 +70,7 @@ export function SellerDashboardTodo({
 						</span>
 					)}
 				</div>
-				{todos.length > 0 && <ViewModeToggle value={viewMode} onChange={setViewMode} />}
+				{todos.length > 0 && <DashboardTodoViewToggle value={viewMode} onChange={setViewMode} />}
 			</div>
 
 			<div className="h-px bg-[#F2F2F7]" />
@@ -102,30 +98,38 @@ export function SellerDashboardTodo({
 										: { type: "spring", stiffness: 400, damping: 34 }
 								}
 								className="overflow-hidden">
-								<ul
-									className={cn(
-										viewMode === "list"
-											? "divide-y divide-[#F2F2F7]"
-											: "grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-2 p-3",
-									)}>
-									{todos.map((todo) => (
-										<DashboardTodoRow
-											key={todo.id}
-											id={todo.id}
-											variant={viewMode === "list" ? "row" : "card"}
-											kind={todo.kind}
-											kindLabel={t(KIND_LABEL_KEY[todo.kind])}
-											title={todo.title}
-											deadlineText={todo.deadlineText}
-											isUrgent={todo.highlights.length > 0}
+								{viewMode === "agenda" ? (
+									<DashboardTodoAgenda
+										items={todos.map((todo) => ({
+											id: todo.id,
+											title: todo.title,
+											deadlineText: todo.deadlineText,
+											dueTime: todo.dueTime,
+											isUrgent: todo.highlights.length > 0,
 											// awarded는 조회 조건 자체가 "확정 3일 이내"라 노출되는 순간 항상 "신규"다.
-											isNew={todo.kind === "awarded"}
-											urgentLabel={t("urgentBadge")}
-											newLabel={t("newBadge")}
-											onClick={() => handleAction(todo)}
-										/>
-									))}
-								</ul>
+											isNew: todo.kind === "awarded",
+											onClick: () => handleAction(todo),
+										}))}
+										urgentLabel={t("urgentBadge")}
+										newLabel={t("newBadge")}
+									/>
+								) : (
+									<ul className="divide-y divide-[#F2F2F7]">
+										{todos.map((todo) => (
+											<DashboardTodoRow
+												key={todo.id}
+												id={todo.id}
+												title={todo.title}
+												deadlineText={todo.deadlineText}
+												isUrgent={todo.highlights.length > 0}
+												isNew={todo.kind === "awarded"}
+												urgentLabel={t("urgentBadge")}
+												newLabel={t("newBadge")}
+												onClick={() => handleAction(todo)}
+											/>
+										))}
+									</ul>
+								)}
 							</motion.div>
 						)}
 					</AnimatePresence>

@@ -1925,8 +1925,6 @@
 		"recentActivityTitle": "Aktivitas Terbaru",
 		"recentActivityEmpty": "Belum ada aktivitas",
 		"todoCount": "{count} tugas",
-		"kindQuotePending": "Penawaran baru masuk",
-		"kindPaymentPending": "Menunggu pembayaran",
 		"collapseListAria": "Tutup daftar",
 		"expandListAria": "Buka daftar"
 	},
@@ -1969,10 +1967,6 @@
 		"recentActivityTitle": "Aktivitas Terbaru",
 		"recentActivityEmpty": "Belum ada aktivitas",
 		"todoCount": "{count} tugas",
-		"kindQuotePending": "Menunggu tanggapan",
-		"kindAwarded": "Kontrak dikonfirmasi",
-		"kindDeliveryDue": "Jadwal pengiriman",
-		"kindPaymentConfirm": "Perlu konfirmasi pembayaran",
 		"collapseListAria": "Tutup daftar",
 		"expandListAria": "Buka daftar"
 	},
@@ -2323,5 +2317,17 @@
 	"ViewModeToggle": {
 		"gridLabel": "Tampilan kartu",
 		"listLabel": "Tampilan daftar"
+	},
+	"DashboardTodoViewToggle": {
+		"listLabel": "Tampilan daftar",
+		"agendaLabel": "Tampilan agenda"
+	},
+	"DashboardTodoAgenda": {
+		"overdueLabel": "Terlambat",
+		"todayLabel": "Hari ini",
+		"tomorrowLabel": "Besok",
+		"thisWeekLabel": "Minggu ini",
+		"nextWeekLabel": "Minggu depan",
+		"laterLabel": "Nanti"
 	}
 }
