@@ -6,12 +6,14 @@ import { useRouter } from "@/i18n/navigation";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { Send } from "lucide-react";
 import { usePersistentState } from "@/hooks/usePersistentState";
+import { useFilterPresets } from "@/hooks/useFilterPresets";
 import { MyQuotesCard } from "@/features/seller/components/MyQuotes/MyQuotesCard";
 import { MyQuotesFilterBar } from "@/features/seller/components/MyQuotes/MyQuotesFilterBar";
 import { MyQuotesTable } from "@/features/seller/components/MyQuotes/MyQuotesTable";
 import { Pagination } from "@/components/commons/Pagination";
 import type {
 	MyQuotesFilter,
+	MyQuotesFilterPresetValue,
 	MyQuotesSort,
 	MyQuotesViewMode,
 } from "@/features/seller/components/MyQuotes/MyQuotesFilterBar";
@@ -45,6 +47,19 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 	const [prefs, setPrefs] = usePersistentState<MyQuotesPrefs>("mitrapay:seller-my-quotes", DEFAULT_PREFS);
 	const { filter, sort, viewMode, pageSize } = prefs;
 	const [page, setPage] = useState(1);
+	const {
+		presets: filterPresets,
+		savePreset,
+		deletePreset,
+	} = useFilterPresets<MyQuotesFilterPresetValue>("mitrapay:seller-my-quotes-presets");
+
+	function applyFilterPreset(value: MyQuotesFilterPresetValue): void {
+		setPrefs((prev) => ({ ...prev, filter: value.filter, sort: value.sort }));
+	}
+
+	function saveFilterPreset(name: string): void {
+		savePreset(name, { filter, sort });
+	}
 
 	function setFilter(filter: MyQuotesFilter): void {
 		setPrefs((prev) => ({ ...prev, filter }));
@@ -116,6 +131,10 @@ export function MyQuotes({ quotes }: MyQuotesProps) {
 				onFilterChange={setFilter}
 				onSortChange={setSort}
 				onViewModeChange={setViewMode}
+				filterPresets={filterPresets}
+				onApplyFilterPreset={applyFilterPreset}
+				onSaveFilterPreset={saveFilterPreset}
+				onDeleteFilterPreset={deletePreset}
 			/>
 
 			{sortedQuotes.length === 0 ? (

@@ -4,10 +4,7 @@ import { useTranslations } from "next-intl";
 import { Popover, PopoverButton } from "@headlessui/react";
 import { ArrowUpDown, Search, Star } from "lucide-react";
 import { AnimatedPopoverPanel } from "@/components/commons/AnimatedPopoverPanel";
-import {
-	OrderListFilterPresets,
-	type OrderListFilterPresetValue,
-} from "@/features/buyer/components/OrderList/OrderListFilterPresets";
+import { FilterPresetsDropdown } from "@/features/shared/components/FilterPresetsDropdown";
 import { cn } from "@/utils/cn";
 import { ViewModeToggle, type ViewMode } from "@/components/commons/ViewModeToggle";
 import type { FilterPreset } from "@/hooks/useFilterPresets";
@@ -15,6 +12,13 @@ import type { DisplayListingStatus } from "@/utils/getDisplayListingStatus";
 
 export type SortOption = "newest" | "deadline";
 export type { ViewMode };
+
+export type OrderListFilterPresetValue = {
+	search: string;
+	sort: SortOption;
+	statusFilter: DisplayListingStatus | null;
+	bookmarkedOnly: boolean;
+};
 
 const STATUS_VALUES: DisplayListingStatus[] = ["active", "closed", "awarded", "failed"];
 
@@ -163,8 +167,9 @@ export function OrderListFilterBar({
 					{t("bookmarkedOnlyFilter")}
 				</button>
 
-				<OrderListFilterPresets
+				<FilterPresetsDropdown<OrderListFilterPresetValue>
 					presets={filterPresets}
+					currentValue={{ search, sort, statusFilter, bookmarkedOnly }}
 					onApply={onApplyFilterPreset}
 					onSave={onSaveFilterPreset}
 					onDelete={onDeleteFilterPreset}

@@ -7,10 +7,12 @@ import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { Mail, Clock, CalendarDays, TrendingDown, Truck, CheckCircle2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { usePersistentState } from "@/hooks/usePersistentState";
+import { useFilterPresets } from "@/hooks/useFilterPresets";
 import { getCategoryLabels } from "@/features/buyer/constants";
 import {
 	QuoteReviewFilterBar,
 	type QuoteHasFilter,
+	type QuoteReviewFilterPresetValue,
 	type QuoteSortOption,
 } from "@/features/buyer/components/QuoteReview/QuoteReviewFilterBar";
 import { QuoteReviewListingTable } from "@/features/buyer/components/QuoteReview/QuoteReviewListingTable";
@@ -62,6 +64,20 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 	);
 	const { sort, hasFilter, viewMode, pageSize } = prefs;
 	const [page, setPage] = useState(1);
+	const {
+		presets: filterPresets,
+		savePreset,
+		deletePreset,
+	} = useFilterPresets<QuoteReviewFilterPresetValue>("mitrapay:buyer-quote-review-presets");
+
+	function applyFilterPreset(value: QuoteReviewFilterPresetValue): void {
+		setSearch(value.search);
+		setPrefs((prev) => ({ ...prev, sort: value.sort, hasFilter: value.hasFilter }));
+	}
+
+	function saveFilterPreset(name: string): void {
+		savePreset(name, { search, sort, hasFilter });
+	}
 
 	function setSort(sort: QuoteSortOption): void {
 		setPrefs((prev) => ({ ...prev, sort }));
@@ -159,6 +175,10 @@ export function QuoteReviewListingPicker({ listings }: QuoteReviewListingPickerP
 					hasFilter={hasFilter}
 					onHasFilterChange={setHasFilter}
 					hasFilterCounts={hasFilterCounts}
+					filterPresets={filterPresets}
+					onApplyFilterPreset={applyFilterPreset}
+					onSaveFilterPreset={saveFilterPreset}
+					onDeleteFilterPreset={deletePreset}
 				/>
 				<ViewModeToggle value={viewMode} onChange={setViewMode} />
 			</div>

@@ -1503,15 +1503,17 @@
 		"statusAwarded": "Dikonfirmasi",
 		"statusClosed": "Ditutup",
 		"bookmarkedOnlyFilter": "Diminati penjual",
-		"statusFailed": "Gagal Lelang",
-		"presetsLabel": "Preset",
-		"presetsEmpty": "Belum ada preset tersimpan",
-		"presetsSaveCurrent": "Simpan filter saat ini",
-		"presetsNamePlaceholder": "Nama preset",
-		"presetsDeleteAria": "Hapus preset {name}",
-		"presetsDeleteConfirmTitle": "Hapus preset '{name}'?",
-		"presetsDeleteConfirmDescription": "Tindakan ini tidak dapat dibatalkan.",
-		"presetsSaveConfirmAria": "Simpan preset"
+		"statusFailed": "Gagal Lelang"
+	},
+	"FilterPresetsDropdown": {
+		"label": "Preset",
+		"empty": "Belum ada preset tersimpan",
+		"saveCurrent": "Simpan filter saat ini",
+		"namePlaceholder": "Nama preset",
+		"deleteAria": "Hapus preset {name}",
+		"deleteConfirmTitle": "Hapus preset '{name}'?",
+		"deleteConfirmDescription": "Tindakan ini tidak dapat dibatalkan.",
+		"saveConfirmAria": "Simpan preset"
 	},
 	"OrderListCard": {
 		"budgetLabel": "Anggaran",

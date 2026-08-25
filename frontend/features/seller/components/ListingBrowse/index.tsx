@@ -9,6 +9,8 @@ import { Search, FileSearch, ArrowUpDown, Star, Columns2, Columns3, LayoutGrid, 
 import { AnimatedPopoverPanel } from "@/components/commons/AnimatedPopoverPanel";
 import { cn } from "@/utils/cn";
 import { usePersistentState } from "@/hooks/usePersistentState";
+import { useFilterPresets } from "@/hooks/useFilterPresets";
+import { FilterPresetsDropdown } from "@/features/shared/components/FilterPresetsDropdown";
 import { ListingBrowseCard } from "@/features/seller/components/ListingBrowse/ListingBrowseCard";
 import { ListingBrowseTable } from "@/features/seller/components/ListingBrowse/ListingBrowseTable";
 import { type ViewMode } from "@/components/commons/ViewModeToggle";
@@ -49,6 +51,14 @@ function isListingClosed(listing: OpenListing): boolean {
 	return listing.status !== "active" || new Date(listing.endDate).getTime() <= Date.now();
 }
 
+export type ListingBrowseFilterPresetValue = {
+	search: string;
+	sort: SortOption;
+	statusTab: StatusTab;
+	quoteFilter: QuoteFilter;
+	bookmarkedOnly: boolean;
+};
+
 type ListingBrowseProps = {
 	listings: OpenListing[];
 };
@@ -70,6 +80,26 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 	const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(
 		() => new Set(listings.filter((listing) => listing.isBookmarked).map((listing) => listing.id)),
 	);
+	const {
+		presets: filterPresets,
+		savePreset,
+		deletePreset,
+	} = useFilterPresets<ListingBrowseFilterPresetValue>("mitrapay:seller-listing-browse-presets");
+
+	function applyFilterPreset(value: ListingBrowseFilterPresetValue): void {
+		setKeyword(value.search);
+		setPrefs((prev) => ({
+			...prev,
+			sort: value.sort,
+			statusTab: value.statusTab,
+			quoteFilter: value.quoteFilter,
+			bookmarkedOnly: value.bookmarkedOnly,
+		}));
+	}
+
+	function saveFilterPreset(name: string): void {
+		savePreset(name, { search: keyword, sort, statusTab, quoteFilter, bookmarkedOnly });
+	}
 
 	function handleBookmarkChange(listingId: string, isBookmarked: boolean): void {
 		setBookmarkedIds((prev) => {
@@ -260,6 +290,14 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 							</>
 						)}
 					</Popover>
+
+					<FilterPresetsDropdown<ListingBrowseFilterPresetValue>
+						presets={filterPresets}
+						currentValue={{ search: keyword, sort, statusTab, quoteFilter, bookmarkedOnly }}
+						onApply={applyFilterPreset}
+						onSave={saveFilterPreset}
+						onDelete={deletePreset}
+					/>
 
 					{/* 카드/게시판 토글 — 카드 버튼은 클릭 시 열 수(2/3) 드롭다운이 튀어나온다. */}
 					<div className="flex shrink-0 items-center gap-0.5 rounded-xl border border-[#E5E7EB] bg-white p-0.5">
