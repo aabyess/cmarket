@@ -1248,8 +1248,8 @@
 		"emptySearchDescription": "Coba cari dengan kata kunci lain.",
 		"emptyDefaultDescription": "Kami akan memberi tahu Anda saat ada permintaan baru.",
 		"bookmarkedOnlyFilter": "Favorit",
-		"emptyBookmarkTitle": "Belum ada permintaan favorit",
-		"emptyBookmarkDescription": "Ketuk ikon bintang untuk menyimpan permintaan yang Anda minati."
+		"emptyBookmarkTitle": "Belum ada penawaran favorit",
+		"emptyBookmarkDescription": "Ketuk ikon bintang untuk menyimpan penawaran yang Anda minati."
 	},
 	"ListingBrowseTable": {
 		"columnStatus": "Status",
@@ -1939,7 +1939,7 @@
 		"totalCount": "{count}",
 		"recommendedTitle": "Rekomendasi Permintaan",
 		"aiRecommendedTitle": "Rekomendasi AI",
-		"interestedListingsTitle": "Permintaan yang Diminati",
+		"interestedListingsTitle": "Penawaran yang Diminati",
 		"viewAll": "Lihat Semua",
 		"recommendedEmptyTitle": "Tidak ada rekomendasi permintaan",
 		"recommendedEmptyDescription": "Atur kategori bisnis Anda di pengaturan untuk mendapatkan rekomendasi yang sesuai.",
