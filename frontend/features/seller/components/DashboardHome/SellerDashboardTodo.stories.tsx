@@ -68,6 +68,7 @@ export const Default: Story = {
 		isEditing: false,
 		onRemove: () => {},
 		removeAriaLabel: "할 일 위젯 숨기기",
+		onDismissTodo: () => {},
 	},
 };
 
@@ -77,5 +78,6 @@ export const Empty: Story = {
 		isEditing: false,
 		onRemove: () => {},
 		removeAriaLabel: "할 일 위젯 숨기기",
+		onDismissTodo: () => {},
 	},
 };

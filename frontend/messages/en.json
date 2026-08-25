@@ -2337,6 +2337,7 @@
 		"tomorrowLabel": "Tomorrow",
 		"thisWeekLabel": "This week",
 		"nextWeekLabel": "Next week",
-		"laterLabel": "Later"
+		"laterLabel": "Later",
+		"dismissAria": "Hide this item from view"
 	}
 }

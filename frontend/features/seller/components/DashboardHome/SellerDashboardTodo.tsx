@@ -21,6 +21,8 @@ type SellerDashboardTodoProps = {
 	isEditing: boolean;
 	onRemove: () => void;
 	removeAriaLabel: string;
+	/** "지남" 항목을 이 화면에서만 숨기는 콜백. */
+	onDismissTodo: (id: string) => void;
 };
 
 export function SellerDashboardTodo({
@@ -28,6 +30,7 @@ export function SellerDashboardTodo({
 	isEditing,
 	onRemove,
 	removeAriaLabel,
+	onDismissTodo,
 }: SellerDashboardTodoProps): React.JSX.Element {
 	const t = useTranslations("SellerDashboard");
 	const router = useRouter();
@@ -112,6 +115,7 @@ export function SellerDashboardTodo({
 										}))}
 										urgentLabel={t("urgentBadge")}
 										newLabel={t("newBadge")}
+										onDismissItem={onDismissTodo}
 									/>
 								) : (
 									<ul className="divide-y divide-[#F2F2F7]">

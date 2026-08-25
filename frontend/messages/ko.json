@@ -2337,6 +2337,7 @@
 		"tomorrowLabel": "내일",
 		"thisWeekLabel": "이번 주",
 		"nextWeekLabel": "다음 주",
-		"laterLabel": "이후"
+		"laterLabel": "이후",
+		"dismissAria": "이 항목 화면에서 숨기기"
 	}
 }

@@ -19,6 +19,8 @@ type DashboardTodoAgendaProps = {
 	items: DashboardTodoAgendaItem[];
 	urgentLabel: string;
 	newLabel?: string;
+	/** "지남" 그룹 항목에만 적용되는 화면 숨기기 콜백. 값이 없으면 X 버튼을 노출하지 않는다. */
+	onDismissItem?: (id: string) => void;
 };
 
 type AgendaGroupKey = "overdue" | "today" | "tomorrow" | "thisWeek" | "nextWeek" | "later";
@@ -60,6 +62,7 @@ export function DashboardTodoAgenda({
 	items,
 	urgentLabel,
 	newLabel,
+	onDismissItem,
 }: DashboardTodoAgendaProps): React.ReactNode {
 	const t = useTranslations("DashboardTodoAgenda");
 	const now = new Date();
@@ -106,6 +109,10 @@ export function DashboardTodoAgenda({
 								urgentLabel={urgentLabel}
 								newLabel={newLabel}
 								onClick={item.onClick}
+								onDismiss={
+									key === "overdue" && onDismissItem ? () => onDismissItem(item.id) : undefined
+								}
+								dismissLabel={t("dismissAria")}
 							/>
 						))}
 					</ul>

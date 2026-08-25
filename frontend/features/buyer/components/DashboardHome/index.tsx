@@ -18,6 +18,7 @@ import {
 import { cn } from "@/utils/cn";
 import { usePersistentState } from "@/hooks/usePersistentState";
 import { useDashboardWidgets } from "@/hooks/useDashboardWidgets";
+import { useDismissedTodos } from "@/hooks/useDismissedTodos";
 import { OnboardingChecklist } from "@/features/onboarding/components/OnboardingChecklist";
 import { DashboardTodoRow } from "@/features/shared/components/DashboardTodoRow";
 import { DashboardTodoAgenda } from "@/features/shared/components/DashboardTodoAgenda";
@@ -131,6 +132,9 @@ export function DashboardHome({
 		"mitrapay:buyer-dashboard-hidden-widgets",
 		BUYER_SIDE_WIDGET_ORDER,
 	);
+	const { isDismissed: isTodoDismissed, dismiss: dismissTodo } = useDismissedTodos(
+		"mitrapay:buyer-dashboard-dismissed-todos",
+	);
 
 	const widgetLabels: Record<BuyerWidgetKey, string> = {
 		banner: tCustomize("bannerLabel"),
@@ -179,7 +183,8 @@ export function DashboardHome({
 		router.push(`/buyer/chat?quoteId=${activity.quoteId}`);
 	}
 
-	const urgentTodos = data.todos.filter((t) => t.highlights.length > 0);
+	const visibleTodos = data.todos.filter((todo) => !isTodoDismissed(todo.id));
+	const urgentTodos = visibleTodos.filter((t) => t.highlights.length > 0);
 
 	return (
 		<div className="mx-auto max-w-[1200px] px-2 py-6 xl:px-0.5">
@@ -295,9 +300,9 @@ export function DashboardHome({
 								<div className="flex items-center justify-between px-5 py-4">
 									<div className="flex items-center gap-2">
 										<h2 className="text-base font-semibold text-[#0f172a]">{t("todoTitle")}</h2>
-										{data.todos.length > 0 && (
+										{visibleTodos.length > 0 && (
 											<span className="text-imsg-secondary text-sm font-normal">
-												{t("todoCount", { count: data.todos.length })}
+												{t("todoCount", { count: visibleTodos.length })}
 											</span>
 										)}
 										{urgentTodos.length > 0 && (
@@ -307,7 +312,7 @@ export function DashboardHome({
 										)}
 									</div>
 									<div className="flex items-center gap-3">
-										{data.todos.length > 0 && (
+										{visibleTodos.length > 0 && (
 											<DashboardTodoViewToggle value={viewMode} onChange={setViewMode} />
 										)}
 										<button
@@ -320,7 +325,7 @@ export function DashboardHome({
 
 								<div className="h-px bg-[#F2F2F7]" />
 
-								{data.todos.length === 0 ? (
+								{visibleTodos.length === 0 ? (
 									<div className="flex flex-col items-center justify-center py-16 text-center">
 										<div className="bg-imsg-surface mb-3 flex size-12 items-center justify-center rounded-full">
 											<Clock size={20} className="text-imsg-secondary" />
@@ -352,7 +357,7 @@ export function DashboardHome({
 													className="overflow-hidden">
 													{viewMode === "agenda" ? (
 														<DashboardTodoAgenda
-															items={data.todos.map((todo) => ({
+															items={visibleTodos.map((todo) => ({
 																id: todo.id,
 																title: todo.title,
 																deadlineText: todo.deadlineText,
@@ -361,10 +366,11 @@ export function DashboardHome({
 																onClick: () => handleTodoAction(todo),
 															}))}
 															urgentLabel={t("urgentBadge")}
+															onDismissItem={dismissTodo}
 														/>
 													) : (
 														<ul className="divide-y divide-[#F2F2F7]">
-															{data.todos.map((todo) => (
+															{visibleTodos.map((todo) => (
 																<DashboardTodoRow
 																	key={todo.id}
 																	id={todo.id}
