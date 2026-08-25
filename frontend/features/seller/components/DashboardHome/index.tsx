@@ -306,15 +306,17 @@ export function DashboardHome({
 			{/* Two Column */}
 			<div className="mb-3 grid grid-cols-1 gap-4 lg:grid-cols-3">
 				{/* 추천 견적 */}
-				<DashboardWidgetPop show={!isHidden("recommendedListings")} className="lg:col-span-2">
-					<div className="relative">
+				<DashboardWidgetPop
+					show={!isHidden("recommendedListings")}
+					className="h-full lg:col-span-2">
+					<div className="relative h-full">
 						{isEditing && (
 							<DashboardWidgetRemoveButton
 								label={tCustomize("removeWidgetAria", { widget: widgetLabels.recommendedListings })}
 								onRemove={() => hideWidget("recommendedListings")}
 							/>
 						)}
-						<div className="rounded-2xl bg-white shadow-sm">
+						<div className="flex h-full flex-col rounded-2xl bg-white shadow-sm">
 							<div className="flex items-center justify-between px-5 py-4">
 								<div className="flex items-center gap-2">
 									<h2 className="text-base font-semibold text-[#0f172a]">
