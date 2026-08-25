@@ -116,7 +116,7 @@ export function NotificationBell(): React.ReactNode {
 			return;
 		}
 
-		// 관심 공고(북마크)는 listing_id를 저장하지 않아 특정 건으로 못 보내므로
+		// 관심 견적(북마크)는 listing_id를 저장하지 않아 특정 건으로 못 보내므로
 		// 발주기업 본인의 공고 목록으로 보낸다.
 		if (notification.type === "bookmark") {
 			router.push("/buyer/order-list");

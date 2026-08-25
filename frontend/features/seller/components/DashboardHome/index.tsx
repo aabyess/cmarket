@@ -44,7 +44,7 @@ const SELLER_SIDE_WIDGET_ORDER: SellerSideWidgetKey[] = [
 	"recentActivity",
 ];
 
-// AI 추천/관심 공고는 아직 실제 로직 없이 더미 데이터만 노출한다. 실제 기능은
+// AI 추천 공고/관심 견적은 아직 실제 로직 없이 더미 데이터만 노출한다. 실제 기능은
 // 별도로 배정 예정.
 type MockListingPreview = Pick<
 	OpenListing,
@@ -476,7 +476,7 @@ export function DashboardHome({
 					</div>
 				</DashboardWidgetPop>
 
-				{/* 관심 공고 — 더미 데이터, 실제 로직은 별도 작업 예정 */}
+				{/* 관심 견적 — 더미 데이터, 실제 로직은 별도 작업 예정 */}
 				<DashboardWidgetPop show={!isHidden("interestedListings")} className="lg:col-span-2">
 					<div className="relative">
 						{isEditing && (
@@ -496,7 +496,7 @@ export function DashboardHome({
 									</span>
 								</div>
 								<button
-									onClick={() => console.log("TODO: 관심 공고 모두 보기")}
+									onClick={() => console.log("TODO: 관심 견적 모두 보기")}
 									className="text-imsg-blue text-sm font-medium hover:underline">
 									{t("viewAll")}
 								</button>

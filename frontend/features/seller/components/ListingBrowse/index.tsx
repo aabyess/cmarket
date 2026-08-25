@@ -75,7 +75,7 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 	// 예전에 저장된 prefs에는 gridColumns가 없을 수 있어 기본값으로 보정한다.
 	const gridColumns: GridColumns = prefs.gridColumns === 2 ? 2 : 3;
 	const [page, setPage] = useState(1);
-	// 목록 필터링(관심 공고만 보기)에 즉시 반영되어야 해서 각 카드/행의 낙관적 토글 결과를
+	// 목록 필터링(관심 견적만 보기)에 즉시 반영되어야 해서 각 카드/행의 낙관적 토글 결과를
 	// 여기서도 별도로 추적한다. 초기값은 서버에서 내려준 listings의 isBookmarked를 따른다.
 	const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(
 		() => new Set(listings.filter((listing) => listing.isBookmarked).map((listing) => listing.id)),

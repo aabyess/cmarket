@@ -1045,8 +1045,8 @@
 		"emptySearchDescription": "Try a different keyword.",
 		"emptyDefaultDescription": "We'll let you know when new listings are posted.",
 		"bookmarkedOnlyFilter": "Bookmarked",
-		"emptyBookmarkTitle": "No bookmarked listings",
-		"emptyBookmarkDescription": "Tap the star icon to save listings you're interested in."
+		"emptyBookmarkTitle": "No bookmarked quotes",
+		"emptyBookmarkDescription": "Tap the star icon to save quotes you're interested in."
 	},
 	"ListingBrowseTable": {
 		"columnStatus": "Status",
@@ -1939,7 +1939,7 @@
 		"totalCount": "{count}",
 		"recommendedTitle": "Recommended Listings",
 		"aiRecommendedTitle": "AI Recommended Listings",
-		"interestedListingsTitle": "Listings You're Interested In",
+		"interestedListingsTitle": "Quotes You're Interested In",
 		"viewAll": "View All",
 		"recommendedEmptyTitle": "No recommended listings",
 		"recommendedEmptyDescription": "Set your business categories in settings to get tailored recommendations.",

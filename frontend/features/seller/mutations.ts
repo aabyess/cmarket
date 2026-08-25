@@ -10,7 +10,7 @@ export async function setListingBookmark(listingId: string, bookmarked: boolean)
 
 	if (!res.ok) {
 		const { error } = await res.json();
-		throw new Error(error ?? "관심 공고 처리에 실패했습니다.");
+		throw new Error(error ?? "관심 견적 처리에 실패했습니다.");
 	}
 }
 
