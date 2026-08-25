@@ -56,7 +56,7 @@ export async function getSellerDashboardData(): Promise<SellerDashboardData> {
 		supabase.from("contracts").select("*", { count: "exact", head: true }).eq("seller_id", user.id),
 		supabase
 			.from("quotes")
-			.select("status, created_at, listings(title, title_source_lang, title_translations)")
+			.select("id, status, created_at, listings(title, title_source_lang, title_translations)")
 			.eq("seller_id", user.id)
 			.order("created_at", { ascending: false })
 			.limit(5),
@@ -91,7 +91,7 @@ export async function getSellerDashboardData(): Promise<SellerDashboardData> {
 				? t("contractConfirmedActivity", { title: listingTitle })
 				: t("quoteSubmittedActivity", { title: listingTitle });
 
-		return { title, timeText: formatRelativeTime(row.created_at, tRelative) };
+		return { id: row.id, title, timeText: formatRelativeTime(row.created_at, tRelative) };
 	});
 
 	return {

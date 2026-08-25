@@ -14,7 +14,7 @@ export type SellerDashboardData = {
 	pendingQuoteCount: number;
 	awardedQuoteCount: number;
 	contractCount: number;
-	activities: { title: string; timeText: string }[];
+	activities: { id: string; title: string; timeText: string }[];
 };
 
 export type SellerTodoKind = "quotePending" | "awarded" | "deliveryDue" | "paymentConfirm";

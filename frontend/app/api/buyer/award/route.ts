@@ -91,21 +91,23 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 			(id): id is string => typeof id === "string",
 		);
 
-		for (const profileId of notificationProfileIds) {
-			const notificationRow = { ...notificationBase, profile_id: profileId };
-			const { error: notificationError } = await admin
-				.from("notifications")
-				.insert({ ...notificationRow, type: "award" });
-
-			if (notificationError) {
-				const { error: fallbackError } = await admin
+		await Promise.all(
+			notificationProfileIds.map(async (profileId) => {
+				const notificationRow = { ...notificationBase, profile_id: profileId };
+				const { error: notificationError } = await admin
 					.from("notifications")
-					.insert({ ...notificationRow, type: "message" });
-				if (fallbackError) {
-					console.error("award notificationError:", fallbackError);
+					.insert({ ...notificationRow, type: "award" });
+
+				if (notificationError) {
+					const { error: fallbackError } = await admin
+						.from("notifications")
+						.insert({ ...notificationRow, type: "message" });
+					if (fallbackError) {
+						console.error("award notificationError:", fallbackError);
+					}
 				}
-			}
-		}
+			}),
+		);
 	}
 
 	// 낙찰 확정 시 채팅에 인보이스 카드 메시지를 만든다. PDF 자체는 카드가 열릴 때 생성된다.

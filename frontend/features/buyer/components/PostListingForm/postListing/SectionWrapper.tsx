@@ -1,5 +1,3 @@
-"use client";
-
 interface SectionWrapperProps {
 	title: string;
 	subtitle?: string;
