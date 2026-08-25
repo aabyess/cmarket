@@ -8,8 +8,10 @@ import { FileCheck2, FileText, Languages, Loader2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 
 // 대화의 시작(견적서 발송)부터 몇 턴을 주고받다 계약 완료로 끝나는 완결된 미니
-// 시나리오. 스크롤로 카드가 보일 때 한 번만 재생되고 끝나면(CONTRACT_DONE) 그
-// 상태로 멈춘다 — 루프하지 않는다.
+// 시나리오. 상대측 메시지뿐 아니라 내가 보내는 메시지도 상대 언어로 자동 번역되는
+// 걸 보여줘서(양방향) "실시간 자동 번역" 컨셉이 대화 내내 일관되게 이어지도록 한다.
+// 스크롤로 카드가 보일 때 한 번만 재생되고 끝나면(CONTRACT_DONE) 그 상태로
+// 멈춘다 — 루프하지 않는다.
 const STEP = {
 	OPENING_TYPING: 1,
 	OPENING_MESSAGE: 2,
@@ -18,27 +20,39 @@ const STEP = {
 	QUOTE_CARD: 5,
 	QUESTION_TYPING: 6,
 	QUESTION_MESSAGE: 7,
-	REPLY_TYPING: 8,
-	REPLY_MESSAGE: 9,
-	CONFIRM_TYPING: 10,
-	CONFIRM_MESSAGE: 11,
-	CONTRACT_DONE: 12,
+	QUESTION_TRANSLATING: 8,
+	QUESTION_TRANSLATED: 9,
+	REPLY_TYPING: 10,
+	REPLY_MESSAGE: 11,
+	REPLY_TRANSLATING: 12,
+	REPLY_TRANSLATED: 13,
+	CONFIRM_TYPING: 14,
+	CONFIRM_MESSAGE: 15,
+	CONFIRM_TRANSLATING: 16,
+	CONFIRM_TRANSLATED: 17,
+	CONTRACT_DONE: 18,
 } as const;
 const FINAL_STEP = STEP.CONTRACT_DONE;
 
 const SEQUENCE: { step: number; delay: number }[] = [
 	{ step: STEP.OPENING_TYPING, delay: 0 },
-	{ step: STEP.OPENING_MESSAGE, delay: 600 },
-	{ step: STEP.OPENING_TRANSLATING, delay: 1000 },
-	{ step: STEP.OPENING_TRANSLATED, delay: 1600 },
-	{ step: STEP.QUOTE_CARD, delay: 2200 },
-	{ step: STEP.QUESTION_TYPING, delay: 2900 },
-	{ step: STEP.QUESTION_MESSAGE, delay: 3500 },
-	{ step: STEP.REPLY_TYPING, delay: 4100 },
-	{ step: STEP.REPLY_MESSAGE, delay: 4700 },
-	{ step: STEP.CONFIRM_TYPING, delay: 5300 },
-	{ step: STEP.CONFIRM_MESSAGE, delay: 5900 },
-	{ step: STEP.CONTRACT_DONE, delay: 6500 },
+	{ step: STEP.OPENING_MESSAGE, delay: 500 },
+	{ step: STEP.OPENING_TRANSLATING, delay: 900 },
+	{ step: STEP.OPENING_TRANSLATED, delay: 1400 },
+	{ step: STEP.QUOTE_CARD, delay: 1900 },
+	{ step: STEP.QUESTION_TYPING, delay: 2400 },
+	{ step: STEP.QUESTION_MESSAGE, delay: 2900 },
+	{ step: STEP.QUESTION_TRANSLATING, delay: 3300 },
+	{ step: STEP.QUESTION_TRANSLATED, delay: 3800 },
+	{ step: STEP.REPLY_TYPING, delay: 4300 },
+	{ step: STEP.REPLY_MESSAGE, delay: 4800 },
+	{ step: STEP.REPLY_TRANSLATING, delay: 5200 },
+	{ step: STEP.REPLY_TRANSLATED, delay: 5700 },
+	{ step: STEP.CONFIRM_TYPING, delay: 6200 },
+	{ step: STEP.CONFIRM_MESSAGE, delay: 6700 },
+	{ step: STEP.CONFIRM_TRANSLATING, delay: 7100 },
+	{ step: STEP.CONFIRM_TRANSLATED, delay: 7600 },
+	{ step: STEP.CONTRACT_DONE, delay: 8200 },
 ];
 
 function TypingDots({ dotClassName }: { dotClassName: string }): React.ReactNode {
@@ -52,6 +66,103 @@ function TypingDots({ dotClassName }: { dotClassName: string }): React.ReactNode
 				/>
 			))}
 		</span>
+	);
+}
+
+type ChatTurnProps = {
+	currentStep: number;
+	typingStep: number;
+	translatingStep: number;
+	isMine: boolean;
+	message: string;
+	translated: string;
+	translatedLabel: string;
+	transition: { duration: number };
+};
+
+// 한 턴(타이핑→메시지→번역 중→번역됨)의 시각 언어를 상대측/내 쪽 공용으로 재사용한다.
+// isMine이면 파란 말풍선+우측 정렬, 아니면 회색 말풍선+좌측 정렬만 다르고 나머지
+// 시퀀스는 동일하다 — 이게 "양방향 자동 번역"을 일관되게 보여주는 핵심이다.
+function ChatTurn({
+	currentStep,
+	typingStep,
+	translatingStep,
+	isMine,
+	message,
+	translated,
+	translatedLabel,
+	transition,
+}: ChatTurnProps): React.ReactNode {
+	if (currentStep < typingStep) return null;
+
+	return (
+		<div className={cn("max-w-[85%]", isMine ? "self-end" : "self-start")}>
+			<AnimatePresence mode="wait">
+				{currentStep === typingStep ? (
+					<motion.div
+						key="typing"
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						transition={transition}
+						className={cn(
+							"flex w-fit items-center rounded-[18px] px-4 py-2.5",
+							isMine ? "bg-imsg-blue" : "bg-imsg-gray",
+						)}>
+						<TypingDots dotClassName={isMine ? "bg-white/70" : "bg-black/40"} />
+					</motion.div>
+				) : (
+					<motion.div
+						key="message"
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						transition={transition}
+						className={cn(
+							"rounded-[18px] px-4 py-2.5 text-sm",
+							isMine ? "bg-imsg-blue text-white" : "bg-imsg-gray text-black",
+						)}>
+						{message}
+					</motion.div>
+				)}
+			</AnimatePresence>
+
+			{currentStep >= translatingStep && (
+				<AnimatePresence mode="wait">
+					{currentStep === translatingStep ? (
+						<motion.div
+							key="translating"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							transition={transition}
+							className={cn(
+								"font-landing-doc text-landing-dim mt-1.5 flex items-center gap-1 text-[11px]",
+								isMine && "justify-end",
+							)}>
+							<Loader2 size={11} className="animate-spin" />
+							{translatedLabel}
+						</motion.div>
+					) : (
+						<motion.div
+							key="translated"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							transition={transition}
+							className={cn("flex flex-col", isMine ? "items-end" : "items-start")}>
+							<div className="font-landing-doc text-landing-dim mt-1.5 flex items-center gap-1 text-[11px]">
+								<Languages size={11} />
+								{translatedLabel}
+							</div>
+							<div className="text-landing-dim border-landing-line mt-1 w-fit rounded-[14px] border border-dashed px-3 py-1.5 text-xs">
+								{translated}
+							</div>
+						</motion.div>
+					)}
+				</AnimatePresence>
+			)}
+		</div>
 	);
 }
 
@@ -83,69 +194,21 @@ export function LandingPageHeroChatDemo(): React.ReactNode {
 	}, [step, prefersReducedMotion]);
 
 	const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.25 };
+	const translatedLabel = t("heroDemoTranslatedLabel");
 
 	return (
 		<div ref={containerRef} className="flex max-h-[420px] flex-col gap-3 overflow-y-auto p-5">
 			{/* 1. 상대측 — 견적서 발송 오프닝 메시지 (+번역) */}
-			{step >= STEP.OPENING_TYPING && (
-				<div className="max-w-[85%] self-start">
-					<AnimatePresence mode="wait">
-						{step === STEP.OPENING_TYPING ? (
-							<motion.div
-								key="opening-typing"
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
-								exit={{ opacity: 0 }}
-								transition={transition}
-								className="bg-imsg-gray flex w-fit items-center rounded-[18px] px-4 py-2.5">
-								<TypingDots dotClassName="bg-black/40" />
-							</motion.div>
-						) : (
-							<motion.div
-								key="opening-message"
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
-								exit={{ opacity: 0 }}
-								transition={transition}
-								className="bg-imsg-gray rounded-[18px] px-4 py-2.5 text-sm text-black">
-								{t("heroDemoOpening")}
-							</motion.div>
-						)}
-					</AnimatePresence>
-
-					{step >= STEP.OPENING_TRANSLATING && (
-						<AnimatePresence mode="wait">
-							{step === STEP.OPENING_TRANSLATING ? (
-								<motion.div
-									key="opening-translating"
-									initial={{ opacity: 0 }}
-									animate={{ opacity: 1 }}
-									exit={{ opacity: 0 }}
-									transition={transition}
-									className="font-landing-doc text-landing-dim mt-1.5 flex items-center gap-1 text-[11px]">
-									<Loader2 size={11} className="animate-spin" />
-									{t("heroDemoTranslatedLabel")}
-								</motion.div>
-							) : (
-								<motion.div
-									key="opening-translated"
-									initial={{ opacity: 0 }}
-									animate={{ opacity: 1 }}
-									exit={{ opacity: 0 }}
-									transition={transition}>
-									<div className="font-landing-doc text-landing-dim mt-1.5 flex items-center gap-1 text-[11px]">
-										<Languages size={11} />
-										{t("heroDemoTranslatedLabel")}
-									</div>
-									<div className="text-landing-dim border-landing-line mt-1 w-fit rounded-[14px] border border-dashed px-3 py-1.5 text-xs">
-										{t("heroDemoOpeningTranslated")}
-									</div>
-								</motion.div>
-							)}
-						</AnimatePresence>
-					)}
-				</div>
-			)}
+			<ChatTurn
+				currentStep={step}
+				typingStep={STEP.OPENING_TYPING}
+				translatingStep={STEP.OPENING_TRANSLATING}
+				isMine={false}
+				message={t("heroDemoOpening")}
+				translated={t("heroDemoOpeningTranslated")}
+				translatedLabel={translatedLabel}
+				transition={transition}
+			/>
 
 			{/* 2. 상대측 — 견적서 카드 */}
 			{step >= STEP.QUOTE_CARD && (
@@ -164,86 +227,41 @@ export function LandingPageHeroChatDemo(): React.ReactNode {
 				</motion.div>
 			)}
 
-			{/* 3. 내 쪽 — 배송일 질문 (번역 없음, 이미 내 언어) */}
-			{step >= STEP.QUESTION_TYPING && (
-				<AnimatePresence mode="wait">
-					{step === STEP.QUESTION_TYPING ? (
-						<motion.div
-							key="question-typing"
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							exit={{ opacity: 0 }}
-							transition={transition}
-							className="bg-imsg-blue flex w-fit max-w-[85%] items-center self-end rounded-[18px] px-4 py-2.5">
-							<TypingDots dotClassName="bg-white/70" />
-						</motion.div>
-					) : (
-						<motion.div
-							key="question-message"
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							exit={{ opacity: 0 }}
-							transition={transition}
-							className="bg-imsg-blue max-w-[85%] self-end rounded-[18px] px-4 py-2.5 text-sm text-white">
-							{t("heroDemoTranslated")}
-						</motion.div>
-					)}
-				</AnimatePresence>
-			)}
+			{/* 3. 내 쪽 — 배송일 질문 (+상대 언어로 번역) */}
+			<ChatTurn
+				currentStep={step}
+				typingStep={STEP.QUESTION_TYPING}
+				translatingStep={STEP.QUESTION_TRANSLATING}
+				isMine={true}
+				message={t("heroDemoTranslated")}
+				translated={t("heroDemoQuestionTranslated")}
+				translatedLabel={translatedLabel}
+				transition={transition}
+			/>
 
-			{/* 4. 상대측 — 배송일 답변 */}
-			{step >= STEP.REPLY_TYPING && (
-				<AnimatePresence mode="wait">
-					{step === STEP.REPLY_TYPING ? (
-						<motion.div
-							key="reply-typing"
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							exit={{ opacity: 0 }}
-							transition={transition}
-							className="bg-imsg-gray flex w-fit items-center self-start rounded-[18px] px-4 py-2.5">
-							<TypingDots dotClassName="bg-black/40" />
-						</motion.div>
-					) : (
-						<motion.div
-							key="reply-message"
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							exit={{ opacity: 0 }}
-							transition={transition}
-							className="bg-imsg-gray max-w-[85%] self-start rounded-[18px] px-4 py-2.5 text-sm text-black">
-							{t("heroDemoReply")}
-						</motion.div>
-					)}
-				</AnimatePresence>
-			)}
+			{/* 4. 상대측 — 배송일 답변 (+번역) */}
+			<ChatTurn
+				currentStep={step}
+				typingStep={STEP.REPLY_TYPING}
+				translatingStep={STEP.REPLY_TRANSLATING}
+				isMine={false}
+				message={t("heroDemoReply")}
+				translated={t("heroDemoReplyTranslated")}
+				translatedLabel={translatedLabel}
+				transition={transition}
+			/>
 
-			{/* 5. 내 쪽 — 계약 진행 의사 */}
-			{step >= STEP.CONFIRM_TYPING && (
-				<AnimatePresence mode="wait">
-					{step === STEP.CONFIRM_TYPING ? (
-						<motion.div
-							key="confirm-typing"
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							exit={{ opacity: 0 }}
-							transition={transition}
-							className="bg-imsg-blue flex w-fit max-w-[85%] items-center self-end rounded-[18px] px-4 py-2.5">
-							<TypingDots dotClassName="bg-white/70" />
-						</motion.div>
-					) : (
-						<motion.div
-							key="confirm-message"
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							exit={{ opacity: 0 }}
-							transition={transition}
-							className="bg-imsg-blue max-w-[85%] self-end rounded-[18px] px-4 py-2.5 text-sm text-white">
-							{t("heroDemoConfirm")}
-						</motion.div>
-					)}
-				</AnimatePresence>
-			)}
+			{/* 5. 내 쪽 — 계약 진행 의사 (+상대 언어로 번역) */}
+			<ChatTurn
+				currentStep={step}
+				typingStep={STEP.CONFIRM_TYPING}
+				translatingStep={STEP.CONFIRM_TRANSLATING}
+				isMine={true}
+				message={t("heroDemoConfirm")}
+				translated={t("heroDemoConfirmTranslated")}
+				translatedLabel={translatedLabel}
+				transition={transition}
+			/>
 
 			{/* 6. 상대측 — 서명된 계약서(최종 상태) */}
 			{step >= STEP.CONTRACT_DONE && (
