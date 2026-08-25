@@ -53,10 +53,10 @@ export type OpenListing = {
 	hasMyQuote: boolean;
 	isBookmarked: boolean;
 	status: "active" | "closed" | "awarded";
+	category: ListingCategory;
 };
 export type ListingDetail = Omit<OpenListing, "items"> & {
 	items: ListingItem[];
-	category: ListingCategory;
 	deliveryAddress: string;
 	deliveryAddressDetail: string;
 	deliveryDays: number;

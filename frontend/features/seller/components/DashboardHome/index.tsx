@@ -5,6 +5,7 @@ import { useRouter } from "@/i18n/navigation";
 import { AnimatePresence, Reorder } from "motion/react";
 import { ArrowRight, Bell, Building2, Clock, MessageSquare, Search } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { getCategoryLabels } from "@/features/buyer/constants";
 import { useDashboardWidgets } from "@/hooks/useDashboardWidgets";
 import { SellerDashboardTodo } from "@/features/seller/components/DashboardHome/SellerDashboardTodo";
 import { OnboardingChecklist } from "@/features/onboarding/components/OnboardingChecklist";
@@ -45,7 +46,7 @@ const SELLER_SIDE_WIDGET_ORDER: SellerSideWidgetKey[] = ["shortcuts", "recentAct
 // 별도로 배정 예정.
 type MockListingPreview = Pick<
 	OpenListing,
-	"id" | "title" | "deliveryProvinsi" | "deliveryCity" | "endDate"
+	"id" | "title" | "deliveryProvinsi" | "deliveryCity" | "endDate" | "category"
 >;
 
 const MOCK_AI_RECOMMENDED_LISTINGS: MockListingPreview[] = [
@@ -55,6 +56,7 @@ const MOCK_AI_RECOMMENDED_LISTINGS: MockListingPreview[] = [
 		deliveryProvinsi: "DKI Jakarta",
 		deliveryCity: "Jakarta Selatan",
 		endDate: "2026-09-10",
+		category: "machinery",
 	},
 	{
 		id: "mock-ai-2",
@@ -62,6 +64,7 @@ const MOCK_AI_RECOMMENDED_LISTINGS: MockListingPreview[] = [
 		deliveryProvinsi: "Jawa Barat",
 		deliveryCity: "Bandung",
 		endDate: "2026-09-15",
+		category: "lab",
 	},
 ];
 
@@ -72,6 +75,7 @@ const MOCK_INTERESTED_LISTINGS: MockListingPreview[] = [
 		deliveryProvinsi: "DKI Jakarta",
 		deliveryCity: "Jakarta Pusat",
 		endDate: "2026-09-05",
+		category: "office",
 	},
 	{
 		id: "mock-interested-2",
@@ -79,6 +83,7 @@ const MOCK_INTERESTED_LISTINGS: MockListingPreview[] = [
 		deliveryProvinsi: "Jawa Timur",
 		deliveryCity: "Surabaya",
 		endDate: "2026-09-20",
+		category: "other",
 	},
 	{
 		id: "mock-interested-3",
@@ -86,6 +91,7 @@ const MOCK_INTERESTED_LISTINGS: MockListingPreview[] = [
 		deliveryProvinsi: "Banten",
 		deliveryCity: "Tangerang",
 		endDate: "2026-09-25",
+		category: "lab",
 	},
 ];
 
@@ -99,8 +105,10 @@ export function DashboardHome({
 	const t = useTranslations("SellerDashboard");
 	const tCustomize = useTranslations("DashboardCustomizeBar");
 	const tOnboarding = useTranslations("OnboardingChecklist");
+	const tCategory = useTranslations("ListingCategory");
 	const locale = useLocale();
 	const router = useRouter();
+	const categoryLabels = getCategoryLabels(tCategory);
 	const {
 		isEditing,
 		toggleEditing,
@@ -364,7 +372,7 @@ export function DashboardHome({
 															{listing.title}
 														</h3>
 														<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold">
-															{t("myCategoryBadge")}
+															{categoryLabels[listing.category]}
 														</span>
 													</div>
 													<p className="text-imsg-secondary mt-0.5 text-sm">
@@ -548,7 +556,7 @@ export function DashboardHome({
 																	{listing.title}
 																</h3>
 																<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold">
-																	{t("myCategoryBadge")}
+																	{categoryLabels[listing.category]}
 																</span>
 															</div>
 															<p className="text-imsg-secondary mt-0.5 truncate text-xs">
@@ -624,7 +632,7 @@ export function DashboardHome({
 																	{listing.title}
 																</h3>
 																<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold">
-																	{t("myCategoryBadge")}
+																	{categoryLabels[listing.category]}
 																</span>
 															</div>
 															<p className="text-imsg-secondary mt-0.5 truncate text-xs">

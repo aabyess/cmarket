@@ -29,6 +29,7 @@ export const MOCK_RECOMMENDED_LISTINGS: OpenListing[] = [
 		hasMyQuote: false,
 		isBookmarked: false,
 		status: "active",
+		category: "lab",
 	},
 	{
 		id: "listing-2",
@@ -46,5 +47,6 @@ export const MOCK_RECOMMENDED_LISTINGS: OpenListing[] = [
 		hasMyQuote: false,
 		isBookmarked: false,
 		status: "active",
+		category: "office",
 	},
 ];
