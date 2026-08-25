@@ -15,6 +15,7 @@ import {
 	ChevronUp,
 } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { useToastStore } from "@/store/useToastStore";
 import { postQuote, updateQuote } from "@/features/seller/mutations";
 import { getMessages } from "@/features/chat/apis";
 import { resendQuotePdf } from "@/features/chat/mutations";
@@ -70,6 +71,7 @@ export function ListingDetailQuoteForm({
 }: ListingDetailQuoteFormProps) {
 	const t = useTranslations("ListingDetailQuoteForm");
 	const router = useRouter();
+	const showToast = useToastStore((state) => state.showToast);
 	const [isEditing, setIsEditing] = useState(false);
 	const [showItemsBreakdown, setShowItemsBreakdown] = useState(false);
 	const [form, setForm] = useState<QuoteFormData>({
@@ -179,6 +181,7 @@ export function ListingDetailQuoteForm({
 		setIsLoading(true);
 		try {
 			await postQuote(listingId, { ...form, price: total });
+			showToast(t("submitSuccessToast"));
 			router.refresh();
 		} catch (err) {
 			console.error(err);
@@ -195,6 +198,7 @@ export function ListingDetailQuoteForm({
 		try {
 			await updateQuote(myQuote.id, { ...form, price: total });
 			setIsEditing(false);
+			showToast(t("updateSuccessToast"));
 
 			// 이미 채팅이 시작된 견적이면 수정된 견적서를 자동으로 재전송한다.
 			// 채팅이 아직 없으면(메시지 없음) 조용히 건너뛴다.

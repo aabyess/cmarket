@@ -16,6 +16,7 @@ import AiDraftModal from "@/features/buyer/components/PostListingForm/postListin
 import LoadTemplateModal from "@/features/buyer/components/PostListingForm/postListing/LoadTemplateModal";
 import SaveTemplateModal from "@/features/buyer/components/PostListingForm/postListing/SaveTemplateModal";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
+import { useToastStore } from "@/store/useToastStore";
 import { postListing, updateListing } from "@/features/buyer/mutations";
 import type { Currency, ListingFormData, ListingDraft } from "@/features/buyer/types";
 import type { ListingTemplate } from "@/features/listingTemplates/types";
@@ -53,6 +54,7 @@ type PostListingFormProps = {
 export function PostListingForm({ listingId, initialData, contactInfo }: PostListingFormProps): React.ReactNode {
 	const t = useTranslations("PostListingForm");
 	const router = useRouter();
+	const showToast = useToastStore((state) => state.showToast);
 	const isEdit = Boolean(listingId);
 
 	const [form, setForm] = useState<ListingFormData>(() => ({
@@ -186,6 +188,7 @@ export function PostListingForm({ listingId, initialData, contactInfo }: PostLis
 			} else {
 				await postListing(form);
 				localStorage.removeItem("listing_draft");
+				showToast(t("publishSuccessToast"));
 				router.push("/buyer/dashboard");
 			}
 		} catch (err) {

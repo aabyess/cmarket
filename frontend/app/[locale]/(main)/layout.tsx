@@ -1,4 +1,5 @@
 import { AppShell } from "@/components/layout/AppShell";
+import { Toast } from "@/components/commons/Toast";
 import { getUserSummary } from "@/features/auth/serverApis";
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
@@ -12,6 +13,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
 	return (
 		<AppShell role={role} companyName={companyName} name={name}>
 			{children}
+			<Toast />
 		</AppShell>
 	);
 }
