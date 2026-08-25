@@ -1476,7 +1476,8 @@
 		"waitingForReceipt": "Waiting for the buyer's payment receipt",
 		"reviewButton": "Leave a review",
 		"reviewedBadge": "Reviewed ★{rating}",
-		"reviewErrorMessage": "Failed to submit the review."
+		"reviewErrorMessage": "Failed to submit the review.",
+		"reorderButton": "Reorder"
 	},
 	"ContractListTable": {
 		"cancelContract": "Cancel Contract",
@@ -1501,7 +1502,8 @@
 		"uploadReceiptTitle": "Upload Receipt",
 		"viewReceiptTitle": "View Receipt",
 		"reviewButton": "Leave a review",
-		"reviewedBadge": "Reviewed ★{rating}"
+		"reviewedBadge": "Reviewed ★{rating}",
+		"reorderButton": "Reorder"
 	},
 	"ContractListTabs": {
 		"searchPlaceholder": "Search listing, partner",

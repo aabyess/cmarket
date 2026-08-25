@@ -5,7 +5,7 @@ import { cn } from "@/utils/cn";
 // 행 안 액션 버튼의 위계 — 주요(굵은 색상) → 보조(옅은 테두리) → 위험(텍스트만 남겨
 // 시각적으로 가장 약하게). ContractListTable/PaymentsListTable이 이 규칙을 공유해
 // 같은 의미의 버튼이 화면마다 다른 색으로 어긋나지 않게 한다.
-const actionButtonVariants = cva(
+export const actionButtonVariants = cva(
 	"flex w-full items-center justify-center gap-1.5 rounded-lg font-medium whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-60",
 	{
 		variants: {
