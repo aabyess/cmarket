@@ -21,7 +21,10 @@ import { useDashboardWidgets } from "@/hooks/useDashboardWidgets";
 import { useDismissedTodos } from "@/hooks/useDismissedTodos";
 import { OnboardingChecklist } from "@/features/onboarding/components/OnboardingChecklist";
 import { DashboardTodoRow } from "@/features/shared/components/DashboardTodoRow";
-import { DashboardTodoAgenda } from "@/features/shared/components/DashboardTodoAgenda";
+import {
+	DashboardTodoAgenda,
+	isTodoOverdue,
+} from "@/features/shared/components/DashboardTodoAgenda";
 import {
 	DashboardTodoViewToggle,
 	type DashboardTodoViewMode,
@@ -109,6 +112,7 @@ export function DashboardHome({
 	const t = useTranslations("BuyerDashboard");
 	const tCustomize = useTranslations("DashboardCustomizeBar");
 	const tOnboarding = useTranslations("OnboardingChecklist");
+	const tTodoAgenda = useTranslations("DashboardTodoAgenda");
 	const locale = useLocale();
 	const router = useRouter();
 	const prefersReducedMotion = useReducedMotion();
@@ -370,17 +374,22 @@ export function DashboardHome({
 														/>
 													) : (
 														<ul className="divide-y divide-[#F2F2F7]">
-															{visibleTodos.map((todo) => (
-																<DashboardTodoRow
-																	key={todo.id}
-																	id={todo.id}
-																	title={todo.title}
-																	deadlineText={todo.deadlineText}
-																	isUrgent={todo.highlights.length > 0}
-																	urgentLabel={t("urgentBadge")}
-																	onClick={() => handleTodoAction(todo)}
-																/>
-															))}
+															{visibleTodos.map((todo) => {
+																const overdue = isTodoOverdue(todo.dueTime, new Date());
+																return (
+																	<DashboardTodoRow
+																		key={todo.id}
+																		id={todo.id}
+																		title={todo.title}
+																		deadlineText={todo.deadlineText}
+																		isUrgent={todo.highlights.length > 0}
+																		urgentLabel={t("urgentBadge")}
+																		onClick={() => handleTodoAction(todo)}
+																		onDismiss={overdue ? () => dismissTodo(todo.id) : undefined}
+																		dismissLabel={tTodoAgenda("dismissAria")}
+																	/>
+																);
+															})}
 														</ul>
 													)}
 												</motion.div>
