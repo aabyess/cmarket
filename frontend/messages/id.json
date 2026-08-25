@@ -1757,6 +1757,7 @@
 	},
 	"ListingDetailActions": {
 		"edit": "Ubah",
+		"duplicate": "Duplikat",
 		"delete": "Hapus",
 		"deleteFailedAlert": "Gagal menghapus permintaan.",
 		"deleteConfirmTitle": "Hapus permintaan ini?",

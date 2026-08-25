@@ -1554,6 +1554,7 @@
 	},
 	"ListingDetailActions": {
 		"edit": "Edit",
+		"duplicate": "Duplicate",
 		"delete": "Delete",
 		"deleteFailedAlert": "Failed to delete the listing.",
 		"deleteConfirmTitle": "Delete this listing?",
