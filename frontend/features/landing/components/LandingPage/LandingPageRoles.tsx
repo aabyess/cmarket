@@ -35,7 +35,7 @@ export async function LandingPageRoles(): Promise<React.JSX.Element> {
 				<div className="mt-12 grid gap-4 lg:grid-cols-2">
 					{roles.map((role, i) => (
 						<LandingPageReveal key={role.title} delay={i * 0.1} className="h-full">
-							<div className="border-landing-line bg-landing-paper flex h-full flex-col rounded-lg border p-7">
+							<div className="border-landing-line bg-landing-paper flex h-full flex-col rounded-lg border p-7 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
 								<div className="flex items-center gap-3.5">
 									<span className="font-landing-doc border-landing-ink/20 flex size-10 shrink-0 items-center justify-center rounded-sm border text-xs font-semibold">
 										{role.countryCode}
