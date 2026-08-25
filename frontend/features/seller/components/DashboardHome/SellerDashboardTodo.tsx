@@ -8,7 +8,10 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ChevronDown, ChevronUp, Clock } from "lucide-react";
 import { usePersistentState } from "@/hooks/usePersistentState";
 import { DashboardTodoRow } from "@/features/shared/components/DashboardTodoRow";
-import { DashboardTodoAgenda } from "@/features/shared/components/DashboardTodoAgenda";
+import {
+	DashboardTodoAgenda,
+	isTodoOverdue,
+} from "@/features/shared/components/DashboardTodoAgenda";
 import {
 	DashboardTodoViewToggle,
 	type DashboardTodoViewMode,
@@ -33,6 +36,7 @@ export function SellerDashboardTodo({
 	onDismissTodo,
 }: SellerDashboardTodoProps): React.JSX.Element {
 	const t = useTranslations("SellerDashboard");
+	const tTodoAgenda = useTranslations("DashboardTodoAgenda");
 	const router = useRouter();
 	const prefersReducedMotion = useReducedMotion();
 	const [viewMode, setViewMode] = usePersistentState<DashboardTodoViewMode>(
@@ -119,19 +123,24 @@ export function SellerDashboardTodo({
 									/>
 								) : (
 									<ul className="divide-y divide-[#F2F2F7]">
-										{todos.map((todo) => (
-											<DashboardTodoRow
-												key={todo.id}
-												id={todo.id}
-												title={todo.title}
-												deadlineText={todo.deadlineText}
-												isUrgent={todo.highlights.length > 0}
-												isNew={todo.kind === "awarded"}
-												urgentLabel={t("urgentBadge")}
-												newLabel={t("newBadge")}
-												onClick={() => handleAction(todo)}
-											/>
-										))}
+										{todos.map((todo) => {
+											const overdue = isTodoOverdue(todo.dueTime, new Date());
+											return (
+												<DashboardTodoRow
+													key={todo.id}
+													id={todo.id}
+													title={todo.title}
+													deadlineText={todo.deadlineText}
+													isUrgent={todo.highlights.length > 0}
+													isNew={todo.kind === "awarded"}
+													urgentLabel={t("urgentBadge")}
+													newLabel={t("newBadge")}
+													onClick={() => handleAction(todo)}
+													onDismiss={overdue ? () => onDismissTodo(todo.id) : undefined}
+													dismissLabel={tTodoAgenda("dismissAria")}
+												/>
+											);
+										})}
 									</ul>
 								)}
 							</motion.div>

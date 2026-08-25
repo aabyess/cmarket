@@ -36,19 +36,29 @@ const GROUP_ORDER: AgendaGroupKey[] = [
 
 const DAY_MS = 1000 * 60 * 60 * 24;
 
-// 오늘/내일 이후는 "이번 주(월~일) 안"과 "다음 주 안"으로 나눈다 — 캘린더 주 경계(월요일 시작)
-// 기준으로 계산해서, 예를 들어 오늘이 토요일이면 "이번 주"가 하루(일요일)뿐이어도 그렇게 보여준다.
-function resolveGroupKey(dueTimeIso: string, now: Date): AgendaGroupKey {
+function dayDiffFromToday(dueTimeIso: string, now: Date): number {
 	const due = new Date(dueTimeIso);
 	const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 	const startOfDue = new Date(due.getFullYear(), due.getMonth(), due.getDate());
-	const dayDiff = Math.round((startOfDue.getTime() - startOfToday.getTime()) / DAY_MS);
+	return Math.round((startOfDue.getTime() - startOfToday.getTime()) / DAY_MS);
+}
+
+// 아젠다뷰의 "지남" 그룹 판정과 리스트뷰의 개별 항목 overdue 판정이 같은 기준을 쓰도록
+// resolveGroupKey에서도 재사용한다.
+export function isTodoOverdue(dueTimeIso: string, now: Date): boolean {
+	return dayDiffFromToday(dueTimeIso, now) < 0;
+}
+
+// 오늘/내일 이후는 "이번 주(월~일) 안"과 "다음 주 안"으로 나눈다 — 캘린더 주 경계(월요일 시작)
+// 기준으로 계산해서, 예를 들어 오늘이 토요일이면 "이번 주"가 하루(일요일)뿐이어도 그렇게 보여준다.
+function resolveGroupKey(dueTimeIso: string, now: Date): AgendaGroupKey {
+	const dayDiff = dayDiffFromToday(dueTimeIso, now);
 
 	if (dayDiff < 0) return "overdue";
 	if (dayDiff === 0) return "today";
 	if (dayDiff === 1) return "tomorrow";
 
-	const mondayIndex = (startOfToday.getDay() + 6) % 7; // 월=0 ... 일=6
+	const mondayIndex = (now.getDay() + 6) % 7; // 월=0 ... 일=6
 	const daysUntilEndOfThisWeek = 6 - mondayIndex;
 	if (dayDiff <= daysUntilEndOfThisWeek) return "thisWeek";
 	if (dayDiff <= daysUntilEndOfThisWeek + 7) return "nextWeek";
