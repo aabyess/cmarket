@@ -304,7 +304,7 @@ export function DashboardHome({
 			</DashboardWidgetPop>
 
 			{/* Two Column */}
-			<div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
+			<div className="mb-3 grid grid-cols-1 gap-4 lg:grid-cols-3">
 				{/* 추천 견적 */}
 				<DashboardWidgetPop show={!isHidden("recommendedListings")} className="lg:col-span-2">
 					<div className="relative">
