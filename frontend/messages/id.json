@@ -1931,6 +1931,9 @@
 		"shortcutChatSub": "{count} belum dibaca",
 		"recentActivityTitle": "Aktivitas Terbaru",
 		"recentActivityEmpty": "Belum ada aktivitas",
+		"companyPageTitle": "Buat Halaman Perusahaan",
+		"companyPageDescription": "Langkah pertama untuk membangun kepercayaan pemasok",
+		"companyPageAction": "Edit halaman perusahaan",
 		"todoCount": "{count} tugas",
 		"collapseListAria": "Tutup daftar",
 		"expandListAria": "Buka daftar"

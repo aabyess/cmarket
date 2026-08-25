@@ -1931,6 +1931,9 @@
 		"shortcutChatSub": "{count}건 읽지 않음",
 		"recentActivityTitle": "최근 활동",
 		"recentActivityEmpty": "아직 활동이 없어요",
+		"companyPageTitle": "기업 홈페이지 만들기",
+		"companyPageDescription": "공급사에게 신뢰를 주는 첫걸음이에요",
+		"companyPageAction": "홈페이지 편집하기",
 		"todoCount": "{count}건",
 		"collapseListAria": "목록 접기",
 		"expandListAria": "목록 펼치기"
