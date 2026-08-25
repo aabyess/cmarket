@@ -1,10 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { AnimatePresence, motion, Reorder, useReducedMotion } from "motion/react";
-import { Mail, Clock, ChevronDown, ChevronUp, Bell, MessageSquare, Handshake } from "lucide-react";
+import {
+	Mail,
+	Clock,
+	ChevronDown,
+	ChevronUp,
+	Bell,
+	MessageSquare,
+	Handshake,
+	ArrowRight,
+} from "lucide-react";
 import { cn } from "@/utils/cn";
 import { usePersistentState } from "@/hooks/usePersistentState";
 import { useDashboardWidgets } from "@/hooks/useDashboardWidgets";
@@ -35,11 +44,54 @@ type DashboardHomeProps = {
 };
 
 type BuyerWidgetKey =
-	"banner" | "onboardingChecklist" | "todo" | "tradeSummary" | "shortcuts" | "recentActivity";
+	| "banner"
+	| "onboardingChecklist"
+	| "todo"
+	| "tradeSummary"
+	| "receivedInterest"
+	| "shortcuts"
+	| "recentActivity";
 // 사이드 컬럼 위젯만 같은 영역 안에서 드래그로 순서를 바꿀 수 있다(메인 영역인
-// banner/onboardingChecklist/todo/tradeSummary는 순서 변경 대상이 아니다).
+// banner/onboardingChecklist/todo/tradeSummary/receivedInterest는 순서 변경 대상이 아니다).
 type BuyerSideWidgetKey = "shortcuts" | "recentActivity";
 const BUYER_SIDE_WIDGET_ORDER: BuyerSideWidgetKey[] = ["shortcuts", "recentActivity"];
+
+// 관심 받은 견적은 아직 실제 로직 없이 더미 데이터만 노출한다(북마크 연동은 별도 작업 예정).
+type MockReceivedInterestListing = {
+	id: string;
+	title: string;
+	deliveryProvinsi: string;
+	deliveryCity: string;
+	endDate: string;
+	interestCount: number;
+};
+
+const MOCK_RECEIVED_INTEREST_LISTINGS: MockReceivedInterestListing[] = [
+	{
+		id: "mock-interest-1",
+		title: "사무용 프린터 20대 구매",
+		deliveryProvinsi: "DKI Jakarta",
+		deliveryCity: "Jakarta Selatan",
+		endDate: "2026-09-12",
+		interestCount: 5,
+	},
+	{
+		id: "mock-interest-2",
+		title: "실험실용 안전 캐비닛 8개",
+		deliveryProvinsi: "Jawa Barat",
+		deliveryCity: "Bandung",
+		endDate: "2026-09-18",
+		interestCount: 3,
+	},
+	{
+		id: "mock-interest-3",
+		title: "산업용 컨베이어 벨트 부품",
+		deliveryProvinsi: "Banten",
+		deliveryCity: "Tangerang",
+		endDate: "2026-09-22",
+		interestCount: 2,
+	},
+];
 
 export function DashboardHome({
 	companyName,
@@ -50,6 +102,7 @@ export function DashboardHome({
 	const t = useTranslations("BuyerDashboard");
 	const tCustomize = useTranslations("DashboardCustomizeBar");
 	const tOnboarding = useTranslations("OnboardingChecklist");
+	const locale = useLocale();
 	const router = useRouter();
 	const prefersReducedMotion = useReducedMotion();
 	const [viewMode, setViewMode] = usePersistentState<DashboardTodoViewMode>(
@@ -78,6 +131,7 @@ export function DashboardHome({
 		onboardingChecklist: tOnboarding("title"),
 		todo: t("todoTitle"),
 		tradeSummary: t("tradeSummaryTitle"),
+		receivedInterest: t("receivedInterestTitle"),
 		shortcuts: t("shortcutsTitle"),
 		recentActivity: t("recentActivityTitle"),
 	};
@@ -443,6 +497,86 @@ export function DashboardHome({
 						))}
 					</AnimatePresence>
 				</Reorder.Group>
+			</div>
+
+			{/* 관심 받은 견적 — Two Column grid 밖의 독립된 섹션(할 일 바로 아래). 안에 두면 grid
+			    행 높이가 이 블록까지 포함해서 정해져 버려 사이드(바로가기/최근활동)가 할 일과 같은
+			    높이에서 정렬되지 않는다. 폭은 할 일과 같은 lg:col-span-2, 3번째 컬럼은 비워둔다.
+			    더미 데이터, 실제 북마크 연동은 별도 작업 예정. */}
+			<div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
+				<DashboardWidgetPop show={!isHidden("receivedInterest")} className="lg:col-span-2">
+					<div className="relative">
+						{isEditing && (
+							<DashboardWidgetRemoveButton
+								label={tCustomize("removeWidgetAria", { widget: widgetLabels.receivedInterest })}
+								onRemove={() => hideWidget("receivedInterest")}
+							/>
+						)}
+						<div className="rounded-2xl bg-white shadow-sm">
+							<div className="flex items-center justify-between px-5 py-4">
+								<div className="flex items-center gap-2">
+									<h2 className="text-base font-semibold text-[#0f172a]">
+										{t("receivedInterestTitle")}
+									</h2>
+									<span className="text-imsg-blue rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold">
+										{t("totalCount", { count: MOCK_RECEIVED_INTEREST_LISTINGS.length })}
+									</span>
+								</div>
+								<button
+									onClick={() => console.log("TODO: 관심 받은 견적 모두 보기")}
+									className="text-imsg-blue text-sm font-medium hover:underline">
+									{t("viewAll")}
+								</button>
+							</div>
+
+							<div className="h-px bg-[#F2F2F7]" />
+
+							<ul className="p-2">
+								{MOCK_RECEIVED_INTEREST_LISTINGS.map((listing, i) => (
+									<li key={listing.id}>
+										<div className="hover:bg-imsg-surface relative flex items-start gap-4 rounded-xl py-3.5 pr-3 pl-5 transition-colors duration-200">
+											<span className="bg-imsg-blue absolute top-1/2 left-1.5 h-6 w-[3px] -translate-y-1/2 rounded-full" />
+
+											<div className="min-w-0 flex-1">
+												<div className="flex items-center gap-2">
+													<h3 className="truncate text-base font-semibold text-[#0f172a]">
+														{listing.title}
+													</h3>
+													<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold">
+														{t("interestCountBadge", { count: listing.interestCount })}
+													</span>
+												</div>
+												<p className="text-imsg-secondary mt-0.5 text-sm">
+													{[listing.deliveryProvinsi, listing.deliveryCity]
+														.filter(Boolean)
+														.join(" ")}
+												</p>
+												<div className="text-imsg-secondary mt-1.5 flex items-center gap-1 text-sm">
+													<Clock size={11} />
+													<span>
+														{t("deadlinePrefix")}{" "}
+														{new Date(listing.endDate).toLocaleDateString(locale)}
+													</span>
+												</div>
+											</div>
+
+											<button
+												onClick={() => console.log("TODO: 공고 상세로 이동", listing.id)}
+												className="bg-imsg-surface flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-sm font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-[#E5E7EB]">
+												{t("checkQuotesAction")}
+												<ArrowRight size={12} />
+											</button>
+										</div>
+
+										{i !== MOCK_RECEIVED_INTEREST_LISTINGS.length - 1 && (
+											<div className="mx-5 h-px bg-[#F2F2F7]" />
+										)}
+									</li>
+								))}
+							</ul>
+						</div>
+					</div>
+				</DashboardWidgetPop>
 			</div>
 		</div>
 	);
