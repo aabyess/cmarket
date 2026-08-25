@@ -503,7 +503,7 @@ export function DashboardHome({
 			    행 높이가 이 블록까지 포함해서 정해져 버려 사이드(바로가기/최근활동)가 할 일과 같은
 			    높이에서 정렬되지 않는다. 폭은 할 일과 같은 lg:col-span-2, 3번째 컬럼은 비워둔다.
 			    더미 데이터, 실제 북마크 연동은 별도 작업 예정. */}
-			<div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
+			<div className="mt-2 grid grid-cols-1 gap-4 lg:grid-cols-3">
 				<DashboardWidgetPop show={!isHidden("receivedInterest")} className="lg:col-span-2">
 					<div className="relative">
 						{isEditing && (
