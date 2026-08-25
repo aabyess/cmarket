@@ -1931,6 +1931,9 @@
 		"shortcutChatSub": "{count} unread",
 		"recentActivityTitle": "Recent Activity",
 		"recentActivityEmpty": "No activity yet",
+		"companyPageTitle": "Create a Company Page",
+		"companyPageDescription": "The first step to earning supplier trust",
+		"companyPageAction": "Edit company page",
 		"todoCount": "{count} items",
 		"collapseListAria": "Collapse list",
 		"expandListAria": "Expand list"

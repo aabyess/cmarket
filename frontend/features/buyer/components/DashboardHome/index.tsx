@@ -13,6 +13,7 @@ import {
 	MessageSquare,
 	Handshake,
 	ArrowRight,
+	Building2,
 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { usePersistentState } from "@/hooks/usePersistentState";
@@ -50,11 +51,16 @@ type BuyerWidgetKey =
 	| "tradeSummary"
 	| "receivedInterest"
 	| "shortcuts"
-	| "recentActivity";
+	| "recentActivity"
+	| "companyPage";
 // 사이드 컬럼 위젯만 같은 영역 안에서 드래그로 순서를 바꿀 수 있다(메인 영역인
 // banner/onboardingChecklist/todo/tradeSummary/receivedInterest는 순서 변경 대상이 아니다).
-type BuyerSideWidgetKey = "shortcuts" | "recentActivity";
-const BUYER_SIDE_WIDGET_ORDER: BuyerSideWidgetKey[] = ["shortcuts", "recentActivity"];
+type BuyerSideWidgetKey = "shortcuts" | "recentActivity" | "companyPage";
+const BUYER_SIDE_WIDGET_ORDER: BuyerSideWidgetKey[] = [
+	"shortcuts",
+	"recentActivity",
+	"companyPage",
+];
 
 // 관심 받은 견적은 아직 실제 로직 없이 더미 데이터만 노출한다(북마크 연동은 별도 작업 예정).
 type MockReceivedInterestListing = {
@@ -134,6 +140,7 @@ export function DashboardHome({
 		receivedInterest: t("receivedInterestTitle"),
 		shortcuts: t("shortcutsTitle"),
 		recentActivity: t("recentActivityTitle"),
+		companyPage: t("companyPageTitle"),
 	};
 
 	const visibleSideOrder = sideOrder.filter((key) => !isHidden(key));
@@ -527,7 +534,7 @@ export function DashboardHome({
 											))}
 										</div>
 									</div>
-								) : (
+								) : key === "recentActivity" ? (
 									<div className="relative rounded-2xl bg-white shadow-sm">
 										{isEditing && (
 											<DashboardWidgetRemoveButton
@@ -568,6 +575,34 @@ export function DashboardHome({
 												))
 											)}
 										</ul>
+									</div>
+								) : (
+									<div className="relative rounded-2xl bg-white p-4 shadow-sm">
+										{isEditing && (
+											<DashboardWidgetRemoveButton
+												label={tCustomize("removeWidgetAria", { widget: widgetLabels.companyPage })}
+												onRemove={() => hideWidget("companyPage")}
+											/>
+										)}
+										<div className="flex items-start gap-3">
+											<span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-blue-50">
+												<Building2 size={16} className="text-imsg-blue" />
+											</span>
+											<div className="min-w-0 flex-1">
+												<p className="text-sm font-semibold text-[#0f172a]">
+													{t("companyPageTitle")}
+												</p>
+												<p className="text-imsg-secondary mt-0.5 text-sm">
+													{t("companyPageDescription")}
+												</p>
+												<button
+													onClick={() => handleNavigate("/buyer/profile/edit")}
+													className="text-imsg-blue mt-2 flex items-center gap-1 text-sm font-semibold hover:underline">
+													{t("companyPageAction")}
+													<ArrowRight size={11} />
+												</button>
+											</div>
+										</div>
 									</div>
 								)}
 							</DashboardReorderableWidget>
