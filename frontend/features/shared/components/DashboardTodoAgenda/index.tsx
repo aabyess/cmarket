@@ -2,15 +2,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import {
-	DashboardTodoRow,
-	type DashboardTodoKind,
-} from "@/features/shared/components/DashboardTodoRow";
+import { DashboardTodoRow } from "@/features/shared/components/DashboardTodoRow";
 
 export type DashboardTodoAgendaItem = {
 	id: string;
-	kind: DashboardTodoKind;
-	kindLabel: string;
 	title: string;
 	deadlineText: string | null;
 	/** 그룹핑 기준 시점, ISO 문자열(BuyerTodo/SellerTodo의 dueTime). */
@@ -104,9 +99,6 @@ export function DashboardTodoAgenda({
 							<DashboardTodoRow
 								key={item.id}
 								id={item.id}
-								variant="row"
-								kind={item.kind}
-								kindLabel={item.kindLabel}
 								title={item.title}
 								deadlineText={item.deadlineText}
 								isUrgent={item.isUrgent}

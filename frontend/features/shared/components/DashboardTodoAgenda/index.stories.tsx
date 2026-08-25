@@ -13,8 +13,6 @@ function daysFromNow(days: number): string {
 const MOCK_ITEMS: DashboardTodoAgendaItem[] = [
 	{
 		id: "1",
-		kind: "quotePending",
-		kindLabel: "견적 검토",
 		title: "실험실용 원심분리기 12대 견적 검토 필요",
 		deadlineText: "마감 지남",
 		dueTime: daysFromNow(-1),
@@ -23,8 +21,6 @@ const MOCK_ITEMS: DashboardTodoAgendaItem[] = [
 	},
 	{
 		id: "2",
-		kind: "awarded",
-		kindLabel: "계약 확정",
 		title: "사무용 복합기 30대 계약 확정",
 		deadlineText: "오늘",
 		dueTime: daysFromNow(0),
@@ -34,8 +30,6 @@ const MOCK_ITEMS: DashboardTodoAgendaItem[] = [
 	},
 	{
 		id: "3",
-		kind: "paymentConfirm",
-		kindLabel: "입금 확인",
 		title: "산업용 펌프 5대 입금 확인 필요",
 		deadlineText: "내일",
 		dueTime: daysFromNow(1),
@@ -44,8 +38,6 @@ const MOCK_ITEMS: DashboardTodoAgendaItem[] = [
 	},
 	{
 		id: "4",
-		kind: "deliveryDue",
-		kindLabel: "납품 예정",
 		title: "화학약품 보관 캐비닛 8개 납품 준비",
 		deadlineText: "D-4",
 		dueTime: daysFromNow(4),
@@ -54,8 +46,6 @@ const MOCK_ITEMS: DashboardTodoAgendaItem[] = [
 	},
 	{
 		id: "5",
-		kind: "quotePending",
-		kindLabel: "견적 검토",
 		title: "산업용 밸브 200개 견적 검토",
 		deadlineText: "D-12",
 		dueTime: daysFromNow(12),

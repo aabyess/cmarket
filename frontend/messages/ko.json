@@ -1925,8 +1925,6 @@
 		"recentActivityTitle": "최근 활동",
 		"recentActivityEmpty": "아직 활동이 없어요",
 		"todoCount": "{count}건",
-		"kindQuotePending": "새 견적 도착",
-		"kindPaymentPending": "결제 대기",
 		"collapseListAria": "목록 접기",
 		"expandListAria": "목록 펼치기"
 	},
@@ -1969,10 +1967,6 @@
 		"recentActivityTitle": "최근 활동",
 		"recentActivityEmpty": "아직 활동이 없어요",
 		"todoCount": "{count}건",
-		"kindQuotePending": "견적 응답 대기",
-		"kindAwarded": "계약 확정",
-		"kindDeliveryDue": "납품 예정",
-		"kindPaymentConfirm": "입금 확인 필요",
 		"collapseListAria": "목록 접기",
 		"expandListAria": "목록 펼치기"
 	},

@@ -14,20 +14,13 @@ import {
 	type DashboardTodoViewMode,
 } from "@/features/shared/components/DashboardTodoViewToggle";
 import { DashboardWidgetRemoveButton } from "@/features/shared/components/DashboardWidgetRemoveButton";
-import type { SellerTodo, SellerTodoKind } from "@/features/seller/types";
+import type { SellerTodo } from "@/features/seller/types";
 
 type SellerDashboardTodoProps = {
 	todos: SellerTodo[];
 	isEditing: boolean;
 	onRemove: () => void;
 	removeAriaLabel: string;
-};
-
-const KIND_LABEL_KEY: Record<SellerTodoKind, string> = {
-	quotePending: "kindQuotePending",
-	awarded: "kindAwarded",
-	deliveryDue: "kindDeliveryDue",
-	paymentConfirm: "kindPaymentConfirm",
 };
 
 export function SellerDashboardTodo({
@@ -109,8 +102,6 @@ export function SellerDashboardTodo({
 									<DashboardTodoAgenda
 										items={todos.map((todo) => ({
 											id: todo.id,
-											kind: todo.kind,
-											kindLabel: t(KIND_LABEL_KEY[todo.kind]),
 											title: todo.title,
 											deadlineText: todo.deadlineText,
 											dueTime: todo.dueTime,
@@ -128,9 +119,6 @@ export function SellerDashboardTodo({
 											<DashboardTodoRow
 												key={todo.id}
 												id={todo.id}
-												variant="row"
-												kind={todo.kind}
-												kindLabel={t(KIND_LABEL_KEY[todo.kind])}
 												title={todo.title}
 												deadlineText={todo.deadlineText}
 												isUrgent={todo.highlights.length > 0}
