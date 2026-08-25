@@ -326,66 +326,6 @@
 	}
 }
 
-/* ─── Journey 섹션 — 겹친 두 언어가 정리되며 하나로 또렷해지는 번역 모먼트 ───
-   점+선 타임라인은 어떤 제품에도 붙일 수 있는 범용 위젯이라 폐기하고, 이 제품의
-   실제 차별점(실시간 이중언어 번역)을 구조 자체로 보여주는 쪽으로 바꿨다 — 상대
-   언어 문장이 흐릿하게 겹쳐 있다가, 스크롤이 그 항목을 지나며 정리되고 사라지면서
-   보고 있는 언어의 문장만 또렷해진다. 기본(미지원/reduced-motion)은 항상 정리된
-   최종 상태로 렌더한다 — 겹친 채 멈춰있는 텍스트는 그 자체로 가독성을 해치므로,
-   애니메이션 없이는 절대 겹친 모습을 보여주면 안 된다. */
-.landing-journey-primary {
-	opacity: 1;
-	filter: blur(0);
-	transform: translateY(0);
-}
-
-.landing-journey-partner {
-	opacity: 0;
-}
-
-@keyframes landing-journey-primary-settle {
-	0% {
-		opacity: 0.55;
-		filter: blur(3px);
-		transform: translateY(3px);
-	}
-	100% {
-		opacity: 1;
-		filter: blur(0);
-		transform: translateY(0);
-	}
-}
-
-@keyframes landing-journey-partner-fade {
-	0% {
-		opacity: 0.5;
-		filter: blur(0.5px);
-		transform: translate(10px, 6px);
-	}
-	100% {
-		opacity: 0;
-		filter: blur(2px);
-		transform: translate(18px, 10px);
-	}
-}
-
-@supports (animation-timeline: view()) {
-	.landing-journey-primary {
-		animation: landing-journey-primary-settle linear both;
-		animation-timeline: view();
-		animation-range: entry 0% cover 40%;
-	}
-
-	.landing-journey-partner {
-		animation: landing-journey-partner-fade linear both;
-		animation-timeline: view();
-		animation-range: entry 0% cover 40%;
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.landing-journey-primary,
-	.landing-journey-partner {
-		animation: none;
-	}
-}
+/* Journey 섹션은 더 이상 별도 스크롤 애니메이션 메커니즘을 쓰지 않는다 — 실제
+   화면 컴포넌트를 축소 재현한 정적 목업이라, 다른 섹션과 같은 landing-reveal
+   페이드업 정도면 충분하다(landing-reveal은 위에서 이미 정의됨). */
