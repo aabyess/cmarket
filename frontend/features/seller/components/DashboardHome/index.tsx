@@ -139,6 +139,17 @@ export function DashboardHome({
 
 	const visibleSideOrder = sideOrder.filter((key) => !isHidden(key));
 
+	// 추천 견적을 숨기면 Two Column의 lg:col-span-2 자리가 비어버리므로, AI추천/관심견적
+	// 중 하나라도 보이는 상태면 그 자리로 끌어올려 채운다(끌어올려진 경우 아래 독립 섹션에는
+	// 중복 렌더링하지 않는다). 기업 홈페이지 만들기는 이 승격 로직과 무관하게 항상 아래
+	// 섹션에 남는다.
+	const isAiOrInterestedVisible = !isHidden("aiRecommended") || !isHidden("interestedListings");
+	const promoteAiInterested = isHidden("recommendedListings") && isAiOrInterestedVisible;
+	// 승격된 경우 아래 독립 섹션에는 aiRecommended/interestedListings를 다시 넣지 않는다
+	// (기업 홈페이지 만들기는 이 승격 여부와 무관하게 아래 섹션에 그대로 남는다).
+	const belowSectionHasAiInterested = !promoteAiInterested && isAiOrInterestedVisible;
+	const showBelowSection = belowSectionHasAiInterested || !isHidden("companyPage");
+
 	function handleReorderSide(newVisibleOrder: SellerSideWidgetKey[]): void {
 		let i = 0;
 		reorderSide(sideOrder.map((key) => (isHidden(key) ? key : newVisibleOrder[i++])));
@@ -203,6 +214,156 @@ export function DashboardHome({
 			href: "/seller/chat",
 		},
 	];
+
+	const aiInterestedGrid = (
+		<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:col-span-2">
+			<DashboardWidgetPop show={!isHidden("aiRecommended")} className="h-full">
+				<div className="relative h-full">
+					{isEditing && (
+						<DashboardWidgetRemoveButton
+							label={tCustomize("removeWidgetAria", { widget: widgetLabels.aiRecommended })}
+							onRemove={() => hideWidget("aiRecommended")}
+						/>
+					)}
+					<div className="flex h-full flex-col rounded-2xl bg-white shadow-sm">
+						<div className="flex items-center justify-between px-4 py-3.5">
+							<div className="flex min-w-0 items-center gap-2">
+								<h2 className="truncate text-sm font-semibold text-[#0f172a]">
+									{t("aiRecommendedTitle")}
+								</h2>
+								<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold">
+									{t("totalCount", { count: MOCK_AI_RECOMMENDED_LISTINGS.length })}
+								</span>
+							</div>
+							<button
+								onClick={() => console.log("TODO: AI 추천 공고 모두 보기")}
+								className="text-imsg-blue shrink-0 text-xs font-medium hover:underline">
+								{t("viewAll")}
+							</button>
+						</div>
+
+						<div className="h-px bg-[#F2F2F7]" />
+
+						<ul className="flex-1 p-2">
+							{MOCK_AI_RECOMMENDED_LISTINGS.map((listing, i) => (
+								<li key={listing.id}>
+									<div className="hover:bg-imsg-surface relative flex flex-col gap-2 rounded-xl px-3.5 py-3 transition-colors duration-200">
+										<span className="bg-imsg-blue absolute top-1/2 left-1.5 h-6 w-[3px] -translate-y-1/2 rounded-full" />
+
+										<div className="min-w-0 pl-2.5">
+											<div className="flex items-center gap-2">
+												<h3 className="truncate text-sm font-semibold text-[#0f172a]">
+													{listing.title}
+												</h3>
+												<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold">
+													{categoryLabels[listing.category]}
+												</span>
+											</div>
+											<p className="text-imsg-secondary mt-0.5 truncate text-xs">
+												{[listing.deliveryProvinsi, listing.deliveryCity].filter(Boolean).join(" ")}
+											</p>
+											<div className="text-imsg-secondary mt-1 flex items-center gap-1 text-xs">
+												<Clock size={11} />
+												<span>
+													{t("deadlinePrefix")}{" "}
+													{new Date(listing.endDate).toLocaleDateString(locale)}
+												</span>
+											</div>
+										</div>
+
+										<button
+											onClick={() => console.log("TODO: 견적 보내기", listing.id)}
+											className="bg-imsg-surface flex shrink-0 items-center gap-1 self-end rounded-full px-4 py-1.5 text-xs font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-[#E5E7EB]">
+											{t("sendQuoteAction")}
+											<ArrowRight size={12} />
+										</button>
+									</div>
+
+									{i !== MOCK_AI_RECOMMENDED_LISTINGS.length - 1 && (
+										<div className="mx-5 h-px bg-[#F2F2F7]" />
+									)}
+								</li>
+							))}
+						</ul>
+					</div>
+				</div>
+			</DashboardWidgetPop>
+
+			<DashboardWidgetPop show={!isHidden("interestedListings")} className="h-full">
+				<div className="relative h-full">
+					{isEditing && (
+						<DashboardWidgetRemoveButton
+							label={tCustomize("removeWidgetAria", {
+								widget: widgetLabels.interestedListings,
+							})}
+							onRemove={() => hideWidget("interestedListings")}
+						/>
+					)}
+					<div className="flex h-full flex-col rounded-2xl bg-white shadow-sm">
+						<div className="flex items-center justify-between px-4 py-3.5">
+							<div className="flex min-w-0 items-center gap-2">
+								<h2 className="truncate text-sm font-semibold text-[#0f172a]">
+									{t("interestedListingsTitle")}
+								</h2>
+								<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold">
+									{t("totalCount", { count: MOCK_INTERESTED_LISTINGS.length })}
+								</span>
+							</div>
+							<button
+								onClick={() => console.log("TODO: 관심 견적 모두 보기")}
+								className="text-imsg-blue shrink-0 text-xs font-medium hover:underline">
+								{t("viewAll")}
+							</button>
+						</div>
+
+						<div className="h-px bg-[#F2F2F7]" />
+
+						<ul className="flex-1 p-2">
+							{MOCK_INTERESTED_LISTINGS.map((listing, i) => (
+								<li key={listing.id}>
+									<div className="hover:bg-imsg-surface relative flex flex-col gap-2 rounded-xl px-3.5 py-3 transition-colors duration-200">
+										<span className="bg-imsg-blue absolute top-1/2 left-1.5 h-6 w-[3px] -translate-y-1/2 rounded-full" />
+
+										<div className="min-w-0 pl-2.5">
+											<div className="flex items-center gap-2">
+												<h3 className="truncate text-sm font-semibold text-[#0f172a]">
+													{listing.title}
+												</h3>
+												<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold">
+													{categoryLabels[listing.category]}
+												</span>
+											</div>
+											<p className="text-imsg-secondary mt-0.5 truncate text-xs">
+												{[listing.deliveryProvinsi, listing.deliveryCity].filter(Boolean).join(" ")}
+											</p>
+											<div className="text-imsg-secondary mt-1 flex items-center gap-1 text-xs">
+												<Clock size={11} />
+												<span>
+													{t("deadlinePrefix")}{" "}
+													{new Date(listing.endDate).toLocaleDateString(locale)}
+												</span>
+											</div>
+										</div>
+
+										<button
+											onClick={() => console.log("TODO: 견적 보내기", listing.id)}
+											className="bg-imsg-surface flex shrink-0 items-center gap-1 self-end rounded-full px-4 py-1.5 text-xs font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-[#E5E7EB]">
+											{t("sendQuoteAction")}
+											<ArrowRight size={12} />
+										</button>
+									</div>
+
+									{i !== MOCK_INTERESTED_LISTINGS.length - 1 && (
+										<div className="mx-5 h-px bg-[#F2F2F7]" />
+									)}
+								</li>
+							))}
+						</ul>
+					</div>
+				</div>
+			</DashboardWidgetPop>
+		</div>
+	);
 
 	return (
 		<div className="mx-auto max-w-[1200px] px-6 py-6 lg:px-8 xl:px-10">
@@ -310,103 +471,108 @@ export function DashboardHome({
 
 			{/* Two Column */}
 			<div className="mb-3 grid grid-cols-1 gap-4 lg:grid-cols-3">
-				{/* 추천 견적 */}
-				<DashboardWidgetPop
-					show={!isHidden("recommendedListings")}
-					className="h-full lg:col-span-2">
-					<div className="relative h-full">
-						{isEditing && (
-							<DashboardWidgetRemoveButton
-								label={tCustomize("removeWidgetAria", { widget: widgetLabels.recommendedListings })}
-								onRemove={() => hideWidget("recommendedListings")}
-							/>
-						)}
-						<div className="flex h-full flex-col rounded-2xl bg-white shadow-sm">
-							<div className="flex items-center justify-between px-5 py-4">
-								<div className="flex items-center gap-2">
-									<h2 className="text-base font-semibold text-[#0f172a]">
-										{t("recommendedTitle")}
-									</h2>
-									{recommendedListings.length > 0 && (
-										<span className="text-imsg-blue rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold">
-											{t("totalCount", { count: recommendedListings.length })}
-										</span>
-									)}
-								</div>
-								<button
-									onClick={() => handleNavigate("/seller/listing-browse")}
-									className="text-imsg-blue text-sm font-medium hover:underline">
-									{t("viewAll")}
-								</button>
-							</div>
-
-							<div className="h-px bg-[#F2F2F7]" />
-
-							{recommendedListings.length === 0 ? (
-								<div className="flex flex-col items-center justify-center py-16 text-center">
-									<div className="bg-imsg-surface mb-3 flex size-12 items-center justify-center rounded-full">
-										<Search size={20} className="text-imsg-secondary" />
+				{promoteAiInterested ? (
+					aiInterestedGrid
+				) : (
+					<DashboardWidgetPop
+						show={!isHidden("recommendedListings")}
+						className="h-full lg:col-span-2">
+						<div className="relative h-full">
+							{isEditing && (
+								<DashboardWidgetRemoveButton
+									label={tCustomize("removeWidgetAria", {
+										widget: widgetLabels.recommendedListings,
+									})}
+									onRemove={() => hideWidget("recommendedListings")}
+								/>
+							)}
+							<div className="flex h-full flex-col rounded-2xl bg-white shadow-sm">
+								<div className="flex items-center justify-between px-5 py-4">
+									<div className="flex items-center gap-2">
+										<h2 className="text-base font-semibold text-[#0f172a]">
+											{t("recommendedTitle")}
+										</h2>
+										{recommendedListings.length > 0 && (
+											<span className="text-imsg-blue rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold">
+												{t("totalCount", { count: recommendedListings.length })}
+											</span>
+										)}
 									</div>
-									<p className="text-base font-medium text-[#0f172a]">
-										{t("recommendedEmptyTitle")}
-									</p>
-									<p className="text-imsg-secondary mt-1 text-sm">
-										{t("recommendedEmptyDescription")}
-									</p>
 									<button
-										onClick={() => handleNavigate("/seller/profile/edit?tab=settings")}
-										className="hover:bg-imsg-surface border-hairline mt-4 rounded-full border px-4 py-2 text-sm font-medium text-[#0f172a] transition-colors duration-200">
-										{t("recommendedEmptyAction")}
+										onClick={() => handleNavigate("/seller/listing-browse")}
+										className="text-imsg-blue text-sm font-medium hover:underline">
+										{t("viewAll")}
 									</button>
 								</div>
-							) : (
-								<ul className="p-2">
-									{recommendedListings.map((listing, i) => (
-										<li key={listing.id}>
-											<div className="hover:bg-imsg-surface relative flex items-start gap-4 rounded-xl py-3.5 pr-3 pl-5 transition-colors duration-200">
-												<span className="bg-imsg-blue absolute top-1/2 left-1.5 h-6 w-[3px] -translate-y-1/2 rounded-full" />
 
-												<div className="min-w-0 flex-1">
-													<div className="flex items-center gap-2">
-														<h3 className="truncate text-base font-semibold text-[#0f172a]">
-															{listing.title}
-														</h3>
-														<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold">
-															{categoryLabels[listing.category]}
-														</span>
+								<div className="h-px bg-[#F2F2F7]" />
+
+								{recommendedListings.length === 0 ? (
+									<div className="flex flex-col items-center justify-center py-16 text-center">
+										<div className="bg-imsg-surface mb-3 flex size-12 items-center justify-center rounded-full">
+											<Search size={20} className="text-imsg-secondary" />
+										</div>
+										<p className="text-base font-medium text-[#0f172a]">
+											{t("recommendedEmptyTitle")}
+										</p>
+										<p className="text-imsg-secondary mt-1 text-sm">
+											{t("recommendedEmptyDescription")}
+										</p>
+										<button
+											onClick={() => handleNavigate("/seller/profile/edit?tab=settings")}
+											className="hover:bg-imsg-surface border-hairline mt-4 rounded-full border px-4 py-2 text-sm font-medium text-[#0f172a] transition-colors duration-200">
+											{t("recommendedEmptyAction")}
+										</button>
+									</div>
+								) : (
+									<ul className="p-2">
+										{recommendedListings.map((listing, i) => (
+											<li key={listing.id}>
+												<div className="hover:bg-imsg-surface relative flex items-start gap-4 rounded-xl py-3.5 pr-3 pl-5 transition-colors duration-200">
+													<span className="bg-imsg-blue absolute top-1/2 left-1.5 h-6 w-[3px] -translate-y-1/2 rounded-full" />
+
+													<div className="min-w-0 flex-1">
+														<div className="flex items-center gap-2">
+															<h3 className="truncate text-base font-semibold text-[#0f172a]">
+																{listing.title}
+															</h3>
+															<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-sm font-semibold">
+																{categoryLabels[listing.category]}
+															</span>
+														</div>
+														<p className="text-imsg-secondary mt-0.5 text-sm">
+															{[listing.deliveryProvinsi, listing.deliveryCity]
+																.filter(Boolean)
+																.join(" ")}
+														</p>
+														<div className="text-imsg-secondary mt-1.5 flex items-center gap-1 text-sm">
+															<Clock size={11} />
+															<span>
+																{t("deadlinePrefix")}{" "}
+																{new Date(listing.endDate).toLocaleDateString(locale)}
+															</span>
+														</div>
 													</div>
-													<p className="text-imsg-secondary mt-0.5 text-sm">
-														{[listing.deliveryProvinsi, listing.deliveryCity]
-															.filter(Boolean)
-															.join(" ")}
-													</p>
-													<div className="text-imsg-secondary mt-1.5 flex items-center gap-1 text-sm">
-														<Clock size={11} />
-														<span>
-															{t("deadlinePrefix")}{" "}
-															{new Date(listing.endDate).toLocaleDateString(locale)}
-														</span>
-													</div>
+
+													<button
+														onClick={() => handleNavigate(`/seller/listing-browse/${listing.id}`)}
+														className="bg-imsg-surface hover:bg-hairline flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-sm font-semibold text-[#0f172a] transition-colors duration-200">
+														{t("sendQuoteAction")}
+														<ArrowRight size={12} />
+													</button>
 												</div>
 
-												<button
-													onClick={() => handleNavigate(`/seller/listing-browse/${listing.id}`)}
-													className="bg-imsg-surface hover:bg-hairline flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-sm font-semibold text-[#0f172a] transition-colors duration-200">
-													{t("sendQuoteAction")}
-													<ArrowRight size={12} />
-												</button>
-											</div>
-
-											{i !== recommendedListings.length - 1 && (
-												<div className="mx-5 h-px bg-[#F2F2F7]" />
-											)}
-										</li>
-									))}
-								</ul>
-							)}
+												{i !== recommendedListings.length - 1 && (
+													<div className="mx-5 h-px bg-[#F2F2F7]" />
+												)}
+											</li>
+										))}
+									</ul>
+								)}
+							</div>
 						</div>
-					</div>
-				</DashboardWidgetPop>
+					</DashboardWidgetPop>
+				)}
 
 				{/* Side */}
 				<Reorder.Group
@@ -510,164 +676,12 @@ export function DashboardHome({
 			    스택 레이아웃을 쓴다. 위젯이 모두 숨겨졌을 때 빈 섹션이 margin만큼 자리를 차지하지
 			    않도록 감싼다. AI추천/관심견적은 더미 데이터, 실제 로직은 별도 작업 예정.
 			    기업 홈페이지 만들기는 드래그 순서변경 대상에서 빠져 이 섹션의 3번째 컬럼으로
-			    독립 렌더링된다(숨기기/다시보이기만 가능) */}
-			{(!isHidden("aiRecommended") ||
-				!isHidden("interestedListings") ||
-				!isHidden("companyPage")) && (
+			    독립 렌더링된다(숨기기/다시보이기만 가능). 추천 견적이 숨겨져 있고 AI추천/관심견적 중
+			    하나라도 보이면 promoteAiInterested가 참이 되어 Two Column의 lg:col-span-2 자리로
+			    끌어올려지고(aiInterestedGrid), 이 아래 섹션에는 다시 렌더링하지 않는다. */}
+			{showBelowSection && (
 				<div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-					{(!isHidden("aiRecommended") || !isHidden("interestedListings")) && (
-						<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:col-span-2">
-							<DashboardWidgetPop show={!isHidden("aiRecommended")} className="h-full">
-								<div className="relative h-full">
-									{isEditing && (
-										<DashboardWidgetRemoveButton
-											label={tCustomize("removeWidgetAria", { widget: widgetLabels.aiRecommended })}
-											onRemove={() => hideWidget("aiRecommended")}
-										/>
-									)}
-									<div className="flex h-full flex-col rounded-2xl bg-white shadow-sm">
-										<div className="flex items-center justify-between px-4 py-3.5">
-											<div className="flex min-w-0 items-center gap-2">
-												<h2 className="truncate text-sm font-semibold text-[#0f172a]">
-													{t("aiRecommendedTitle")}
-												</h2>
-												<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold">
-													{t("totalCount", { count: MOCK_AI_RECOMMENDED_LISTINGS.length })}
-												</span>
-											</div>
-											<button
-												onClick={() => console.log("TODO: AI 추천 공고 모두 보기")}
-												className="text-imsg-blue shrink-0 text-xs font-medium hover:underline">
-												{t("viewAll")}
-											</button>
-										</div>
-
-										<div className="h-px bg-[#F2F2F7]" />
-
-										<ul className="flex-1 p-2">
-											{MOCK_AI_RECOMMENDED_LISTINGS.map((listing, i) => (
-												<li key={listing.id}>
-													<div className="hover:bg-imsg-surface relative flex flex-col gap-2 rounded-xl px-3.5 py-3 transition-colors duration-200">
-														<span className="bg-imsg-blue absolute top-1/2 left-1.5 h-6 w-[3px] -translate-y-1/2 rounded-full" />
-
-														<div className="min-w-0 pl-2.5">
-															<div className="flex items-center gap-2">
-																<h3 className="truncate text-sm font-semibold text-[#0f172a]">
-																	{listing.title}
-																</h3>
-																<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold">
-																	{categoryLabels[listing.category]}
-																</span>
-															</div>
-															<p className="text-imsg-secondary mt-0.5 truncate text-xs">
-																{[listing.deliveryProvinsi, listing.deliveryCity]
-																	.filter(Boolean)
-																	.join(" ")}
-															</p>
-															<div className="text-imsg-secondary mt-1 flex items-center gap-1 text-xs">
-																<Clock size={11} />
-																<span>
-																	{t("deadlinePrefix")}{" "}
-																	{new Date(listing.endDate).toLocaleDateString(locale)}
-																</span>
-															</div>
-														</div>
-
-														<button
-															onClick={() => console.log("TODO: 견적 보내기", listing.id)}
-															className="bg-imsg-surface flex shrink-0 items-center gap-1 self-end rounded-full px-4 py-1.5 text-xs font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-[#E5E7EB]">
-															{t("sendQuoteAction")}
-															<ArrowRight size={12} />
-														</button>
-													</div>
-
-													{i !== MOCK_AI_RECOMMENDED_LISTINGS.length - 1 && (
-														<div className="mx-5 h-px bg-[#F2F2F7]" />
-													)}
-												</li>
-											))}
-										</ul>
-									</div>
-								</div>
-							</DashboardWidgetPop>
-
-							<DashboardWidgetPop show={!isHidden("interestedListings")} className="h-full">
-								<div className="relative h-full">
-									{isEditing && (
-										<DashboardWidgetRemoveButton
-											label={tCustomize("removeWidgetAria", {
-												widget: widgetLabels.interestedListings,
-											})}
-											onRemove={() => hideWidget("interestedListings")}
-										/>
-									)}
-									<div className="flex h-full flex-col rounded-2xl bg-white shadow-sm">
-										<div className="flex items-center justify-between px-4 py-3.5">
-											<div className="flex min-w-0 items-center gap-2">
-												<h2 className="truncate text-sm font-semibold text-[#0f172a]">
-													{t("interestedListingsTitle")}
-												</h2>
-												<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold">
-													{t("totalCount", { count: MOCK_INTERESTED_LISTINGS.length })}
-												</span>
-											</div>
-											<button
-												onClick={() => console.log("TODO: 관심 견적 모두 보기")}
-												className="text-imsg-blue shrink-0 text-xs font-medium hover:underline">
-												{t("viewAll")}
-											</button>
-										</div>
-
-										<div className="h-px bg-[#F2F2F7]" />
-
-										<ul className="flex-1 p-2">
-											{MOCK_INTERESTED_LISTINGS.map((listing, i) => (
-												<li key={listing.id}>
-													<div className="hover:bg-imsg-surface relative flex flex-col gap-2 rounded-xl px-3.5 py-3 transition-colors duration-200">
-														<span className="bg-imsg-blue absolute top-1/2 left-1.5 h-6 w-[3px] -translate-y-1/2 rounded-full" />
-
-														<div className="min-w-0 pl-2.5">
-															<div className="flex items-center gap-2">
-																<h3 className="truncate text-sm font-semibold text-[#0f172a]">
-																	{listing.title}
-																</h3>
-																<span className="text-imsg-blue shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold">
-																	{categoryLabels[listing.category]}
-																</span>
-															</div>
-															<p className="text-imsg-secondary mt-0.5 truncate text-xs">
-																{[listing.deliveryProvinsi, listing.deliveryCity]
-																	.filter(Boolean)
-																	.join(" ")}
-															</p>
-															<div className="text-imsg-secondary mt-1 flex items-center gap-1 text-xs">
-																<Clock size={11} />
-																<span>
-																	{t("deadlinePrefix")}{" "}
-																	{new Date(listing.endDate).toLocaleDateString(locale)}
-																</span>
-															</div>
-														</div>
-
-														<button
-															onClick={() => console.log("TODO: 견적 보내기", listing.id)}
-															className="bg-imsg-surface flex shrink-0 items-center gap-1 self-end rounded-full px-4 py-1.5 text-xs font-semibold text-[#0f172a] transition-colors duration-200 hover:bg-[#E5E7EB]">
-															{t("sendQuoteAction")}
-															<ArrowRight size={12} />
-														</button>
-													</div>
-
-													{i !== MOCK_INTERESTED_LISTINGS.length - 1 && (
-														<div className="mx-5 h-px bg-[#F2F2F7]" />
-													)}
-												</li>
-											))}
-										</ul>
-									</div>
-								</div>
-							</DashboardWidgetPop>
-						</div>
-					)}
+					{belowSectionHasAiInterested && aiInterestedGrid}
 
 					<DashboardWidgetPop show={!isHidden("companyPage")}>
 						<div className="relative rounded-2xl bg-white p-4 shadow-sm">
