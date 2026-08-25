@@ -1514,7 +1514,7 @@
 		"saveCurrent": "현재 조건 저장",
 		"namePlaceholder": "프리셋 이름",
 		"deleteAria": "{name} 프리셋 삭제",
-		"deleteConfirmTitle": "'{name}' 프리셋을 삭제할까요?",
+		"deleteConfirmTitle": "\"{name}\" 프리셋을 삭제할까요?",
 		"deleteConfirmDescription": "삭제하면 되돌릴 수 없어요.",
 		"saveConfirmAria": "프리셋 저장"
 	},

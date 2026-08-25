@@ -1311,7 +1311,7 @@
 		"saveCurrent": "Save current filters",
 		"namePlaceholder": "Preset name",
 		"deleteAria": "Delete preset {name}",
-		"deleteConfirmTitle": "Delete preset '{name}'?",
+		"deleteConfirmTitle": "Delete preset \"{name}\"?",
 		"deleteConfirmDescription": "This can't be undone.",
 		"saveConfirmAria": "Save preset"
 	},
