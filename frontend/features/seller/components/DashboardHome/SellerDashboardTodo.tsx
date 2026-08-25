@@ -106,7 +106,7 @@ export function SellerDashboardTodo({
 									className={cn(
 										viewMode === "list"
 											? "divide-y divide-[#F2F2F7]"
-											: "grid grid-cols-2 gap-2 p-3",
+											: "grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-2 p-3",
 									)}>
 									{todos.map((todo) => (
 										<DashboardTodoRow
