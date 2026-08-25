@@ -297,6 +297,7 @@ export function ListingBrowse({ listings }: ListingBrowseProps): React.ReactNode
 						onApply={applyFilterPreset}
 						onSave={saveFilterPreset}
 						onDelete={deletePreset}
+						align="right"
 					/>
 
 					{/* 카드/게시판 토글 — 카드 버튼은 클릭 시 열 수(2/3) 드롭다운이 튀어나온다. */}

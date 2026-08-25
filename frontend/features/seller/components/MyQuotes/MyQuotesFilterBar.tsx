@@ -137,6 +137,7 @@ export function MyQuotesFilterBar({
 				onApply={onApplyFilterPreset}
 				onSave={onSaveFilterPreset}
 				onDelete={onDeleteFilterPreset}
+				align="right"
 			/>
 
 			<div className="border-hairline flex items-center gap-1 rounded-xl border bg-white p-1">

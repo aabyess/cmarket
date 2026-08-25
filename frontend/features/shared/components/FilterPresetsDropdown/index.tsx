@@ -17,6 +17,9 @@ type FilterPresetsDropdownProps<T> = {
 	onApply: (value: T) => void;
 	onSave: (name: string) => void;
 	onDelete: (id: string) => void;
+	/** 패널이 트리거 버튼의 왼쪽/오른쪽 끝 중 어디를 기준으로 펼쳐질지. 트리거가 화면
+	 * 우측 끝에 붙어 있어 패널이 뷰포트 밖으로 넘어가는 화면에서는 "right"를 쓴다. */
+	align?: "left" | "right";
 };
 
 // "현재 조건 저장" 폼을 별도 컴포넌트로 분리해서, AnimatedPopoverPanel이 닫힐 때
@@ -85,6 +88,7 @@ export function FilterPresetsDropdown<T>({
 	onApply,
 	onSave,
 	onDelete,
+	align = "left",
 }: FilterPresetsDropdownProps<T>): React.ReactNode {
 	const t = useTranslations("FilterPresetsDropdown");
 	const [deletingPreset, setDeletingPreset] = useState<FilterPreset<T> | null>(null);
@@ -103,7 +107,10 @@ export function FilterPresetsDropdown<T>({
 
 						<AnimatedPopoverPanel
 							open={open}
-							className="border-hairline absolute left-0 z-20 mt-2 w-56 rounded-2xl border bg-white p-1.5 shadow-lg">
+							className={cn(
+								"border-hairline absolute z-20 mt-2 w-56 rounded-2xl border bg-white p-1.5 shadow-lg",
+								align === "right" ? "right-0" : "left-0",
+							)}>
 							{presets.length === 0 ? (
 								<p className="text-subtle px-3 py-2 text-xs">{t("empty")}</p>
 							) : (
