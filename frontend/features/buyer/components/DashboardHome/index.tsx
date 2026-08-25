@@ -562,8 +562,8 @@ export function DashboardHome({
 													{t("recentActivityEmpty")}
 												</li>
 											) : (
-												data.activities.map((activity, i) => (
-													<li key={i}>
+												data.activities.map((activity) => (
+													<li key={activity.id}>
 														<button
 															onClick={() => handleActivityClick(activity)}
 															className="hover:bg-imsg-surface flex w-full items-start gap-3 rounded-xl px-2 py-2.5 text-left transition-colors">

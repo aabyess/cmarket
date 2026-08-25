@@ -7,8 +7,8 @@ export const MOCK_SELLER_DASHBOARD_DATA: SellerDashboardData = {
 	awardedQuoteCount: 6,
 	contractCount: 6,
 	activities: [
-		{ title: "PT. Mitra Teknologi 가 견적을 열람했어요", timeText: "2시간 전" },
-		{ title: "사무용 복합기 견적요청이 마감됐어요", timeText: "어제" },
+		{ id: "activity-1", title: "PT. Mitra Teknologi 가 견적을 열람했어요", timeText: "2시간 전" },
+		{ id: "activity-2", title: "사무용 복합기 견적요청이 마감됐어요", timeText: "어제" },
 	],
 };
 

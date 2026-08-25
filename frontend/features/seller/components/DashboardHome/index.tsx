@@ -664,9 +664,9 @@ export function DashboardHome({
 													{t("recentActivityEmpty")}
 												</li>
 											) : (
-												data.activities.map((activity, i) => (
+												data.activities.map((activity) => (
 													<li
-														key={i}
+														key={activity.id}
 														className="hover:bg-imsg-surface flex items-start gap-3 rounded-xl px-2 py-2.5 transition-colors duration-200">
 														<span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-blue-50">
 															<Bell size={12} className="text-imsg-blue" />

@@ -134,21 +134,21 @@ export async function getSiteEditorData(): Promise<SiteEditorData | null> {
 
 	if (!company?.site_tenant_id) return null;
 
-	const { data: profile } = await supabase
-		.from("company_profiles")
-		.select(
-			"logo_url, categories, description, established_year, employee_count, certifications, website_url",
-		)
-		.eq("profile_id", user.id)
-		.maybeSingle();
-
-	const { data: contact } = await supabase
-		.from("contacts")
-		.select("name, title, department, email, phone, mobile")
-		.eq("profile_id", user.id)
-		.maybeSingle();
-
-	const bankAccount = await getPrimaryBankAccount(supabase, user.id);
+	const [{ data: profile }, { data: contact }, bankAccount] = await Promise.all([
+		supabase
+			.from("company_profiles")
+			.select(
+				"logo_url, categories, description, established_year, employee_count, certifications, website_url",
+			)
+			.eq("profile_id", user.id)
+			.maybeSingle(),
+		supabase
+			.from("contacts")
+			.select("name, title, department, email, phone, mobile")
+			.eq("profile_id", user.id)
+			.maybeSingle(),
+		getPrimaryBankAccount(supabase, user.id),
+	]);
 
 	const demo = await createServerSupabaseClient("demo");
 
@@ -250,19 +250,16 @@ export async function getPublicSite(profileId: string): Promise<PublicSite | nul
 	const admin = await createServerAdminClient();
 	const locale = await getLocale();
 
-	const { data: company } = await admin
-		.from("companies")
-		.select(COMPANY_COLUMNS)
-		.eq("profile_id", profileId)
-		.single<CompanyRow>();
+	const [{ data: company }, { data: profile }] = await Promise.all([
+		admin
+			.from("companies")
+			.select(COMPANY_COLUMNS)
+			.eq("profile_id", profileId)
+			.single<CompanyRow>(),
+		admin.from("company_profiles").select("logo_url").eq("profile_id", profileId).maybeSingle(),
+	]);
 
 	if (!company) return null;
-
-	const { data: profile } = await admin
-		.from("company_profiles")
-		.select("logo_url")
-		.eq("profile_id", profileId)
-		.maybeSingle();
 
 	const base: PublicSite = {
 		company: toPublicCompanyInfo(company, locale),
