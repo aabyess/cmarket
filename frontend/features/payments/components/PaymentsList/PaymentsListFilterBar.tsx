@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Search } from "lucide-react";
+import { Download, Search } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { PAYMENT_FILTER_VALUES } from "@/features/payments/constants";
 import type { PaymentFilter } from "@/features/payments/types";
@@ -11,6 +11,7 @@ type PaymentsListFilterBarProps = {
 	onSearchChange: (value: string) => void;
 	filter: PaymentFilter;
 	onFilterChange: (value: PaymentFilter) => void;
+	onExport: () => void;
 };
 
 export function PaymentsListFilterBar({
@@ -18,6 +19,7 @@ export function PaymentsListFilterBar({
 	onSearchChange,
 	filter,
 	onFilterChange,
+	onExport,
 }: PaymentsListFilterBarProps): React.ReactNode {
 	const t = useTranslations("PaymentsList");
 	const filterLabels: Record<PaymentFilter, string> = {
@@ -54,6 +56,13 @@ export function PaymentsListFilterBar({
 					/>
 				</div>
 			</div>
+
+			<button
+				onClick={onExport}
+				className="border-hairline flex items-center gap-1.5 rounded-xl border bg-white px-3 py-2 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]">
+				<Download size={14} />
+				{t("exportButton")}
+			</button>
 		</div>
 	);
 }

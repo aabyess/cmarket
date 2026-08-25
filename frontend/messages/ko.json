@@ -1680,7 +1680,16 @@
 		"reviewButton": "평가하기",
 		"reviewedBadge": "평가 완료 ★{rating}",
 		"reviewErrorMessage": "평가 등록에 실패했습니다.",
-		"reorderButton": "다시 발주하기"
+		"reorderButton": "다시 발주하기",
+		"exportButton": "내보내기",
+		"exportFilePrefix": "계약목록",
+		"csvColumnTitle": "공고명",
+		"csvColumnPartner": "거래상대",
+		"csvColumnAmount": "금액",
+		"csvColumnCurrency": "통화",
+		"csvColumnDeliveryDays": "납품일수",
+		"csvColumnStatus": "상태",
+		"csvColumnCreatedAt": "생성일"
 	},
 	"ContractListTable": {
 		"cancelContract": "계약 취소",
@@ -2160,7 +2169,12 @@
 		"noResults": "해당하는 결제 내역이 없어요.",
 		"reviewButton": "평가하기",
 		"reviewedBadge": "평가 완료 ★{rating}",
-		"reviewErrorMessage": "평가 등록에 실패했습니다."
+		"reviewErrorMessage": "평가 등록에 실패했습니다.",
+		"exportButton": "내보내기",
+		"exportFilePrefix": "결제내역",
+		"csvColumnPartner": "거래상대",
+		"csvColumnCurrency": "통화",
+		"csvColumnPaymentConfirmedDate": "결제확인일"
 	},
 	"ReviewModal": {
 		"title": "거래는 어떠셨나요?",

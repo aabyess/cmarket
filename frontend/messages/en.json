@@ -1477,7 +1477,16 @@
 		"reviewButton": "Leave a review",
 		"reviewedBadge": "Reviewed ★{rating}",
 		"reviewErrorMessage": "Failed to submit the review.",
-		"reorderButton": "Reorder"
+		"reorderButton": "Reorder",
+		"exportButton": "Export",
+		"exportFilePrefix": "Contracts",
+		"csvColumnTitle": "Listing Title",
+		"csvColumnPartner": "Partner",
+		"csvColumnAmount": "Amount",
+		"csvColumnCurrency": "Currency",
+		"csvColumnDeliveryDays": "Delivery Days",
+		"csvColumnStatus": "Status",
+		"csvColumnCreatedAt": "Created At"
 	},
 	"ContractListTable": {
 		"cancelContract": "Cancel Contract",
@@ -2160,7 +2169,12 @@
 		"noResults": "No matching payments.",
 		"reviewButton": "Leave a review",
 		"reviewedBadge": "Reviewed ★{rating}",
-		"reviewErrorMessage": "Failed to submit the review."
+		"reviewErrorMessage": "Failed to submit the review.",
+		"exportButton": "Export",
+		"exportFilePrefix": "Payments",
+		"csvColumnPartner": "Partner",
+		"csvColumnCurrency": "Currency",
+		"csvColumnPaymentConfirmedDate": "Payment Confirmed"
 	},
 	"ReviewModal": {
 		"title": "How was the deal?",

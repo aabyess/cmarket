@@ -1680,7 +1680,16 @@
 		"reviewButton": "Beri penilaian",
 		"reviewedBadge": "Sudah dinilai ★{rating}",
 		"reviewErrorMessage": "Gagal mengirim penilaian.",
-		"reorderButton": "Pesan lagi"
+		"reorderButton": "Pesan lagi",
+		"exportButton": "Ekspor",
+		"exportFilePrefix": "DaftarKontrak",
+		"csvColumnTitle": "Judul Permintaan",
+		"csvColumnPartner": "Mitra",
+		"csvColumnAmount": "Jumlah",
+		"csvColumnCurrency": "Mata Uang",
+		"csvColumnDeliveryDays": "Hari Pengiriman",
+		"csvColumnStatus": "Status",
+		"csvColumnCreatedAt": "Tanggal Dibuat"
 	},
 	"ContractListTable": {
 		"cancelContract": "Batalkan Kontrak",
@@ -2160,7 +2169,12 @@
 		"noResults": "Tidak ada pembayaran yang cocok.",
 		"reviewButton": "Beri penilaian",
 		"reviewedBadge": "Sudah dinilai ★{rating}",
-		"reviewErrorMessage": "Gagal mengirim penilaian."
+		"reviewErrorMessage": "Gagal mengirim penilaian.",
+		"exportButton": "Ekspor",
+		"exportFilePrefix": "RiwayatPembayaran",
+		"csvColumnPartner": "Mitra",
+		"csvColumnCurrency": "Mata Uang",
+		"csvColumnPaymentConfirmedDate": "Tanggal Konfirmasi Pembayaran"
 	},
 	"ReviewModal": {
 		"title": "Bagaimana transaksinya?",
