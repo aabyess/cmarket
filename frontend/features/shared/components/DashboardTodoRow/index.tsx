@@ -2,7 +2,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, X } from "lucide-react";
 import { cn } from "@/utils/cn";
 
 const SPRING_TRANSITION = { type: "spring" as const, stiffness: 300, damping: 30 };
@@ -16,6 +16,9 @@ type DashboardTodoRowProps = {
 	urgentLabel: string;
 	newLabel?: string;
 	onClick: () => void;
+	/** 값이 있으면 항목 우측에 X 버튼을 노출해 이 화면에서만 항목을 숨길 수 있게 한다. */
+	onDismiss?: () => void;
+	dismissLabel?: string;
 };
 
 // 바이어/셀러 대시보드의 할 일 위젯(리스트뷰/아젠다뷰)이 같은 시각 언어를 쓰도록 항목
@@ -30,6 +33,8 @@ export function DashboardTodoRow({
 	urgentLabel,
 	newLabel,
 	onClick,
+	onDismiss,
+	dismissLabel,
 }: DashboardTodoRowProps): React.ReactNode {
 	return (
 		<motion.li
@@ -57,6 +62,18 @@ export function DashboardTodoRow({
 					className={cn("shrink-0 text-xs", isUrgent ? "text-[#DC2626]" : "text-imsg-secondary")}>
 					{deadlineText}
 				</span>
+			)}
+			{onDismiss && (
+				<button
+					type="button"
+					onClick={(e) => {
+						e.stopPropagation();
+						onDismiss();
+					}}
+					aria-label={dismissLabel}
+					className="hover:bg-hairline flex shrink-0 items-center justify-center rounded-full p-1 text-[#9CA3AF] transition-colors hover:text-[#374151]">
+					<X size={13} />
+				</button>
 			)}
 			<ChevronRight size={14} className="shrink-0 text-[#D1D5DB]" />
 		</motion.li>

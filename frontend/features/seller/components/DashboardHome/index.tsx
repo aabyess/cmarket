@@ -7,6 +7,7 @@ import { ArrowRight, Bell, Building2, Clock, MessageSquare, Search } from "lucid
 import { cn } from "@/utils/cn";
 import { getCategoryLabels } from "@/features/buyer/constants";
 import { useDashboardWidgets } from "@/hooks/useDashboardWidgets";
+import { useDismissedTodos } from "@/hooks/useDismissedTodos";
 import { SellerDashboardTodo } from "@/features/seller/components/DashboardHome/SellerDashboardTodo";
 import { OnboardingChecklist } from "@/features/onboarding/components/OnboardingChecklist";
 import { DashboardCustomizeBar } from "@/features/shared/components/DashboardCustomizeBar";
@@ -123,6 +124,10 @@ export function DashboardHome({
 		"mitrapay:seller-dashboard-hidden-widgets",
 		SELLER_SIDE_WIDGET_ORDER,
 	);
+	const { isDismissed: isTodoDismissed, dismiss: dismissTodo } = useDismissedTodos(
+		"mitrapay:seller-dashboard-dismissed-todos",
+	);
+	const visibleTodos = todos.filter((todo) => !isTodoDismissed(todo.id));
 
 	const widgetLabels: Record<SellerWidgetKey, string> = {
 		banner: tCustomize("bannerLabel"),
@@ -436,10 +441,11 @@ export function DashboardHome({
 			{/* 할 일 */}
 			<DashboardWidgetPop show={!isHidden("todo")}>
 				<SellerDashboardTodo
-					todos={todos}
+					todos={visibleTodos}
 					isEditing={isEditing}
 					onRemove={() => hideWidget("todo")}
 					removeAriaLabel={tCustomize("removeWidgetAria", { widget: widgetLabels.todo })}
+					onDismissTodo={dismissTodo}
 				/>
 			</DashboardWidgetPop>
 
