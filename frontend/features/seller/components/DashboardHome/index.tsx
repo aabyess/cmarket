@@ -40,8 +40,8 @@ type SellerWidgetKey =
 type SellerSideWidgetKey = "shortcuts" | "companyPage" | "recentActivity";
 const SELLER_SIDE_WIDGET_ORDER: SellerSideWidgetKey[] = [
 	"shortcuts",
-	"companyPage",
 	"recentActivity",
+	"companyPage",
 ];
 
 // AI 추천 공고/관심 견적은 아직 실제 로직 없이 더미 데이터만 노출한다. 실제 기능은
