@@ -31,6 +31,7 @@
 | 파일 | Supabase Storage | latest |
 | 다국어 | next-intl | v4 |
 | 번역 | DeepL API | (외부 REST API, SDK 없음) |
+| AI 초안 생성 | Gemini API | (외부 REST API, SDK 없음) |
 | PDF 생성 | @react-pdf/renderer | v4 |
 | PDF 미리보기 | pdfjs-dist | v6 |
 | 서버 상태 | TanStack Query | v5 |
@@ -44,36 +45,22 @@
 
 ## 🏗 시스템 아키텍처
 
-```
-┌─────────────────────────────────────────────────────┐
-│                   Client Browser                     │
-│         (인도네시아 Buyer / 한국 Seller)               │
-└───────────────────────┬─────────────────────────────┘
-                        │ HTTPS
-┌───────────────────────▼─────────────────────────────┐
-│              Next.js 15 (Vercel)                     │
-│                                                      │
-│  ┌─────────────────┐    ┌──────────────────────┐    │
-│  │  App Router     │    │   API Routes          │    │
-│  │  (페이지 렌더링) │    │  (서버사이드 로직)    │    │
-│  │  app/[locale]/**│    │  app/api/**           │    │
-│  │                 │    │                      │    │
-│  │  Server Component│   │  - 인증 처리          │    │
-│  │  Client Component│   │  - 비즈니스 로직      │    │
-│  │  Middleware      │   │  - PDF/번역 등 외부 API 연동│
-│  └─────────────────┘    └──────────────────────┘    │
-└───────────────────────┬─────────────────────────────┘
-                        │
-        ┌───────────────┼───────────────┐
-        │               │               │
-┌───────▼───────┐ ┌─────▼──────┐ ┌──────▼──────┐
-│   Supabase    │ │  DeepL API │ │   Vercel    │
-│               │ │  (번역)     │ │  (배포/CDN)  │
-│ PostgreSQL    │ └────────────┘ └─────────────┘
-│ Auth          │
-│ Realtime      │
-│ Storage       │
-└───────────────┘
+```mermaid
+flowchart TD
+    Client["Client Browser<br/>(인도네시아 Buyer / 한국 Seller)"]
+
+    subgraph NextJS["Next.js 15 (Vercel)"]
+        direction LR
+        AppRouter["App Router (페이지 렌더링)<br/>app/[locale]/**<br/>Server/Client Component · Middleware"]
+        ApiRoutes["API Routes (서버사이드 로직)<br/>app/api/**<br/>인증 처리 · 비즈니스 로직 · PDF/번역/AI 등 외부 API 연동"]
+    end
+
+    Client -->|HTTPS| NextJS
+
+    NextJS --> Supabase["Supabase<br/>PostgreSQL · Auth · Realtime · Storage"]
+    NextJS --> DeepL["DeepL API<br/>(번역)"]
+    NextJS --> Gemini["Gemini API<br/>(AI 초안 생성)"]
+    NextJS --> Vercel["Vercel<br/>(배포/CDN)"]
 ```
 
 ---
@@ -84,6 +71,8 @@
 frontend/
 ├── app/
 │   ├── [locale]/                     # next-intl 동적 로케일 세그먼트 (ko / id / en)
+│   │   ├── page.tsx                  # 랜딩 페이지 (features/landing) — 로그인 시 역할별 대시보드로 리다이렉트
+│   │   ├── privacy/  terms/          # 약관/정책 (features/legal)
 │   │   ├── (auth)/
 │   │   │   ├── login/
 │   │   │   └── signup/               # 국적 선택 → 약관 → 기업정보 → 완료
@@ -91,30 +80,38 @@ frontend/
 │   │   │   ├── buyer/
 │   │   │   │   ├── dashboard/  post-listing/  order-list/
 │   │   │   │   ├── quote-review/  listing/[id]/  contract/
-│   │   │   │   ├── chat/  profile/
+│   │   │   │   ├── chat/  profile/  payments/  settings/  listing-templates/
 │   │   │   ├── seller/
 │   │   │   │   ├── dashboard/  listing-browse/  quote-submit/
 │   │   │   │   ├── contract/  chat/  profile/edit/  # 기업 홈페이지 빌더
-│   │   │   │   └── ...
+│   │   │   │   └── payments/  settings/
 │   │   │   ├── companies/[id]/       # 기업 공개 프로필 페이지
+│   │   │   ├── plans/                # 요금제 안내/선택
 │   │   │   └── support/              # faq / inquiries / notices / resources
-│   │   ├── admin/                    # 운영자: 공지/자료실/문의 관리
-│   │   └── test-demo/
+│   │   └── admin/                    # 운영자: 공지/자료실/문의/계약/회원/기업인증 관리
 │   │
 │   └── api/                          # API Routes — 세부 목록은 아래 참고
 │       ├── auth/login
-│       ├── buyer/{attachment-url, award, upload-*}
+│       ├── buyer/{attachment-url, award, listing-bookmarks, upload-*}
+│       ├── listing/{bookmark}
 │       ├── quote/
-│       ├── contract/{receipt, receipt-url, status}
-│       ├── chat/{generate-quote-pdf, generate-invoice-pdf}
+│       ├── contract/{receipt, receipt-url, status, confirm-delivery}
+│       ├── chat/{generate-quote-pdf, generate-invoice-pdf, message, upload-*, ...}
+│       ├── payments/receipt-pdf
+│       ├── reviews/
 │       ├── site/{publish, settings}         # 기업 홈페이지 빌더
+│       ├── seller/{quote-attachment-url, upload-quote-attachment}
+│       ├── settings/bank-account
+│       ├── verification/{document-url, verify-document, verify-kr}
 │       ├── support/{inquiry, resource-url}
-│       ├── admin/{notice, resource}
+│       ├── admin/{notice, resource, contract, user-*, verification-review}
+│       ├── ai/draft-listing                 # Gemini 공고 초안 생성
 │       ├── translate/                       # DeepL 프록시
 │       └── wilayah/{provinces, regencies}   # 인도네시아 행정구역 API
 │
-├── features/                         # 도메인별 비즈니스 로직 (auth, buyer, seller, chat,
-│                                      # contract, notifications, siteBuilder, support, shared)
+├── features/                         # 도메인별 비즈니스 로직 (auth, buyer, seller, landing, chat,
+│                                      # contract, payments, siteBuilder, verification, notifications,
+│                                      # support, admin, shared 등)
 │   └── <domain>/
 │       ├── apis.ts / serverApis.ts   # 데이터 조회 (Server Component용)
 │       ├── mutations.ts              # 쓰기 (client)
@@ -128,15 +125,17 @@ frontend/
 │   └── layout/                       # Sidebar, Header
 │
 ├── i18n/                             # routing.ts, navigation.ts, request.ts (next-intl 설정)
-├── messages/                         # ko.json / id.json / en.json — 정적 UI 문구 (약 125개 네임스페이스)
-├── libs/                             # supabase(Server) 클라이언트, exchangeRate, translateFieldServer 등
+├── messages/                         # ko.json / id.json / en.json — 정적 UI 문구 (약 160개 네임스페이스)
+├── libs/                             # supabase(Server) 클라이언트, exchangeRate, translateFieldServer, geminiServer 등
 ├── utils/                            # cn, formatRelativeTime, translateField, resolveTranslatedField 등
 ├── constants/                        # 전역 상수 (breadcrumb, images)
+├── hooks/                            # 전역 커스텀 훅 (useDashboardWidgets, useFilterPresets, useDismissedTodos, usePersistentState 등)
+├── store/                            # Zustand 전역 상태 (useToastStore — 토스트 알림)
 ├── middleware.ts                     # next-intl 로케일 라우팅 미들웨어
 └── supabase/                         # Supabase CLI 프로젝트 (config.toml, migrations/)
 ```
 
-> `store/`, `hooks/`, `types/` 최상위 폴더는 아직 실제로 만들어지지 않았습니다. 전역 상태는 필요해지면 `store/`에 Zustand로 추가할 예정이며, 현재는 서버 상태(TanStack Query) 위주로 충분히 커버되고 있습니다.
+> `types/` 최상위 폴더는 아직 만들어지지 않았습니다. 타입은 각 `features/<domain>/types.ts`에 도메인별로 두고 있습니다.
 
 ---
 
@@ -173,17 +172,20 @@ profiles ─────────────── companies ─────
 
 | 테이블 | 설명 |
 |--------|------|
-| `profiles` | 유저 역할/국가 (buyer/seller) |
-| `companies` | 기업 사업자 정보 |
+| `profiles` | 유저 역할/국가 (buyer/seller/admin) |
+| `companies` | 기업 사업자 정보, 인증 상태(`verification_status`) |
 | `contacts` | 담당자 정보 |
 | `company_profiles` | 기업 소개, 로고, 인증 이력, 카테고리 |
 | `products` | 제품/서비스 정보 및 사진 |
 | `listings` | Buyer가 등록한 공고 |
+| `listing_bookmarks` | Buyer가 관심 등록(북마크)한 공고 |
+| `listing_templates` | Buyer의 공고 등록 폼 저장/불러오기 템플릿 |
 | `quotes` | Seller가 제출한 견적 |
 | `contracts` | 낙찰 후 생성된 계약 (`award_quote()` DB 함수로 원자적 처리) |
 | `messages` | 계약 당사자 간 채팅, PDF/영수증 첨부 메시지 포함 |
+| `reviews` | 거래(계약) 완료 후 Buyer/Seller 상호 리뷰 |
 | `notifications` | 견적 도착 등 인앱 알림 |
-| `bank_accounts` | Seller 정산 계좌 (인보이스 발행에 사용) |
+| `bank_accounts` | 정산 계좌 정보 (인보이스 발행/결제 확인에 사용) |
 | `exchange_rates` | 통화 환율 캐시 |
 | `notices` / `resources` | 지원센터 공지사항 / 자료실 |
 | `support_inquiries` / `support_inquiry_replies` | 지원센터 1:1 문의 |
@@ -231,10 +233,13 @@ products         → 전체 조회 가능, 본인만 등록/수정/삭제
   → profiles에서 role 확인
   → buyer  →  /buyer/dashboard
   → seller →  /seller/dashboard
+  → admin  →  /admin
 
 미들웨어 (middleware.ts)
   로케일 감지/리다이렉트 (next-intl)
   미인증       → /login 리다이렉트
+  buyer/seller → /admin/* 접근 차단
+  admin        → /buyer/*, /seller/* 접근 차단, /admin으로 리다이렉트
   buyer        → /seller/* 접근 차단
   seller       → /buyer/* 접근 차단
 ```
@@ -300,10 +305,13 @@ Supabase Realtime (PostgreSQL CDC) 활용
 | 버킷 | 용도 |
 |------|------|
 | `quote-documents` | 견적서/인보이스 PDF, 결제 영수증 |
+| `quote-attachments` | 견적 첨부파일(카탈로그·스펙시트 등) |
 | `product-images` | 기업 홈페이지 제품 사진 |
 | `company-logos` | 기업/홈페이지 로고 |
 | `listing-attachments` | 공고 첨부파일 |
-| `resources` | 지원센터 자료실 |
+| `chat-images` / `chat-files` | 채팅 이미지/파일 첨부 |
+| `verification-documents` | 기업 인증 제출 서류 |
+| `support-resources` | 지원센터 자료실 |
 
 ---
 
@@ -318,6 +326,7 @@ pnpm install
 # NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 # SUPABASE_SERVICE_ROLE_KEY=...
 # DEEPL_API_KEY=...
+# GEMINI_API_KEY=...
 
 # 개발 서버 실행
 pnpm dev
@@ -356,25 +365,62 @@ POST /api/auth/login                        로그인
 # 바이어
 GET  /api/buyer/attachment-url               공고 첨부파일 서명 URL
 POST /api/buyer/award                        견적 확정 → 계약 생성 (award_quote RPC)
+GET  /api/buyer/listing-bookmarks            공고에 관심 등록한 셀러 목록 조회
 POST /api/buyer/upload-description-image     공고 설명 이미지 업로드
 POST /api/buyer/upload-listing-attachment    공고 첨부파일 업로드
 
+# 공고
+POST /api/listing                            공고 등록 (+ 관심 카테고리 등록 셀러들에게 알림)
+POST /api/listing/bookmark                   공고 북마크 등록/해제 (+ 최초 등록 시 발주기업에 알림)
+
+# AI
+POST /api/ai/draft-listing                   Gemini로 공고 초안 생성 (텍스트/첨부파일에서 제목·카테고리·품목 추출)
+
 # 견적
-POST /api/quote                              견적 제출 (+ 알림 생성, 자유 텍스트 번역)
+POST  /api/quote                             견적 제출 (+ 알림 생성, 자유 텍스트 번역)
+PATCH /api/quote                             견적 수정 (가격 이력 기록 + 캐시된 견적/인보이스 PDF 무효화)
 
 # 계약
-POST /api/contract/receipt                   결제 영수증 업로드
-GET  /api/contract/receipt-url                영수증 서명 URL
-PATCH /api/contract/status                    계약 상태 변경
+POST   /api/contract/receipt                 결제 영수증 업로드
+DELETE /api/contract/receipt                 결제 영수증 삭제
+GET    /api/contract/receipt-url             영수증 서명 URL
+PATCH  /api/contract/status                  계약 상태 변경
+POST   /api/contract/confirm-delivery        Buyer가 물품 수령 확인 처리
 
 # 채팅 / 문서
+POST /api/chat/message                       채팅 메시지 전송 (+ 양측 언어 다르면 DeepL 번역, 무료 플랜 월간 한도 체크)
+POST /api/chat/send-info                     채팅으로 정산계좌/납품지 주소 카드 전송
+POST /api/chat/upload-image                  채팅 이미지 첨부 업로드
+POST /api/chat/upload-file                   채팅 파일 첨부 업로드
+GET  /api/chat/image-url                     채팅 첨부이미지 서명 URL
+GET  /api/chat/file-url                      채팅 첨부파일 서명 URL
+POST /api/chat/hide-room                     채팅방을 본인 화면에서만 숨김
 POST /api/chat/generate-quote-pdf            견적서 PDF 생성 (로케일별 캐싱)
 POST /api/chat/generate-invoice-pdf          인보이스 PDF 생성 (로케일별 캐싱)
+
+# 셀러
+GET  /api/seller/quote-attachment-url        견적 첨부파일 서명 URL
+POST /api/seller/upload-quote-attachment     견적 첨부(카탈로그·스펙시트 등) 업로드
+
+# 리뷰
+GET  /api/reviews                            계약별 내가 남긴 리뷰 조회
+POST /api/reviews                            거래 완료 후 상대방 리뷰 등록 (평점+코멘트, 자유 텍스트 번역)
+
+# 결제
+POST /api/payments/receipt-pdf               결제 영수증 PDF 생성 (로케일별)
+
+# 설정
+POST /api/settings/bank-account              정산 계좌(은행명/계좌번호/예금주 등) 등록/수정
 
 # 기업 홈페이지 (Site Builder)
 POST /api/site                               초안 블록 저장
 POST /api/site/publish                       초안 → 발행
 POST /api/site/settings                      회사/담당자/계좌 정보 수정 (자유 텍스트 번역 포함)
+
+# 기업 인증
+GET  /api/verification/document-url          인증 제출 서류 서명 URL
+POST /api/verification/verify-document       인증 서류(사업자등록증 등) 업로드 (심사 대기 상태로 전환)
+POST /api/verification/verify-kr             한국 기업 국세청 사업자등록 진위확인 API 연동 인증
 
 # 지원센터
 POST /api/support/inquiry                    1:1 문의 등록
@@ -382,8 +428,13 @@ POST /api/support/inquiry/reply              문의 답변
 GET  /api/support/resource-url                자료실 파일 서명 URL
 
 # 운영자
+PATCH /api/admin/contract/status             계약 취소(cancel_contract RPC) 또는 결제완료 처리
 POST/DELETE /api/admin/notice                공지사항 관리
 POST/DELETE /api/admin/resource              자료실 관리
+POST /api/admin/user-delete                  회원 계정+연관 데이터 전부 삭제 (Auth 계정 포함)
+POST /api/admin/user-plan                    회원 요금제 변경
+POST /api/admin/user-update                  회원 아이디/비밀번호/기업정보 수정
+POST /api/admin/verification-review          기업 인증 신청 승인/반려 (+ 알림 발송)
 
 # 번역
 POST /api/translate                          DeepL 프록시 ({text, targetLang} → {translatedText, detectedLang})
