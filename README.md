@@ -47,21 +47,45 @@
 
 ```mermaid
 flowchart TD
-    Client["Client Browser<br/>(인도네시아 Buyer / 한국 Seller)"]
+    Client["Client Browser<br/>(인도네시아 Buyer · 한국 Seller)"]
 
-    subgraph NextJS["Next.js 15 (Vercel)"]
-        direction LR
-        AppRouter["App Router (페이지 렌더링)<br/>app/[locale]/**<br/>Server/Client Component · Middleware"]
-        ApiRoutes["API Routes (서버사이드 로직)<br/>app/api/**<br/>인증 처리 · 비즈니스 로직 · PDF/번역/AI 등 외부 API 연동"]
+    subgraph NextJS["Next.js 15 — Vercel 배포"]
+        direction TB
+        Middleware["Middleware<br/>로케일 라우팅 · 인증 세션 갱신<br/>(app/api/** 는 대상 아님)"]
+        subgraph AppRouter["App Router (페이지 렌더링)"]
+            ServerComp["Server Component<br/>app/[locale]/**<br/>SSR · 초기 데이터"]
+        end
+        ApiRoutes["API Routes — app/api/**<br/>인증 처리 · 비즈니스 로직 · 외부 API 연동"]
+        Middleware --> AppRouter
     end
 
-    Client -->|HTTPS| NextJS
+    subgraph SupabaseGroup["Supabase"]
+        direction LR
+        Postgres["PostgreSQL<br/>(RLS)"]
+        Auth["Auth"]
+        Realtime["Realtime<br/>채팅 · 알림"]
+        Storage["Storage"]
+    end
 
-    NextJS --> Supabase["Supabase<br/>PostgreSQL · Auth · Realtime · Storage"]
-    NextJS --> DeepL["DeepL API<br/>(번역)"]
-    NextJS --> Gemini["Gemini API<br/>(AI 초안 생성)"]
-    NextJS --> Vercel["Vercel<br/>(배포/CDN)"]
+    DeepL["DeepL API<br/>번역"]
+    Gemini["Gemini API<br/>AI 공고 초안"]
+
+    Client -->|"HTTPS · 페이지 로드"| Middleware
+    Client -->|"HTTPS · TanStack Query"| ApiRoutes
+    Client -->|"단순 RLS 조회/쓰기는 직접"| Postgres
+    Client -.->|"WebSocket · 실시간 구독"| Realtime
+
+    ServerComp -->|서버 클라이언트| Postgres
+    ServerComp --> Auth
+
+    ApiRoutes -->|admin 클라이언트| Postgres
+    ApiRoutes --> Auth
+    ApiRoutes --> Storage
+    ApiRoutes --> DeepL
+    ApiRoutes --> Gemini
 ```
+
+Client Component(TanStack Query)는 App Router 안에서 하이드레이션되지만, 실제 요청은 브라우저에서 직접 나간다 — 비즈니스 로직(번역·PDF 생성 등)이 필요하면 API Routes를, 인증된 사용자의 단순 CRUD(예: 채팅 메시지 페이지네이션, 읽음 처리)는 RLS로 보호된 Supabase를 직접 호출한다. DeepL·Gemini는 API 키를 서버 밖으로 노출하지 않기 위해 API Routes에서만 호출되고, 브라우저에서 직접 호출하지 않는다.
 
 ---
 
