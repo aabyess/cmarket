@@ -26,7 +26,7 @@ export async function LandingPageJourney(): Promise<React.JSX.Element> {
 
 				<div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
 					{/* 1. 공고 등록 — 실제 공고 리스트 카드의 상태뱃지+제목 문법 축소판 */}
-					<LandingPageReveal delay={0}>
+					<LandingPageReveal delay={0} className="landing-journey-reveal">
 						<JourneyMoment day={items[0].day}>
 							<div className="border-hairline rounded-xl border bg-white p-3 shadow-sm">
 								<span className="text-imsg-blue inline-flex items-center gap-1.5 rounded-full bg-[#EFF6FF] px-2 py-0.5 text-[10px] font-medium">
@@ -42,7 +42,7 @@ export async function LandingPageJourney(): Promise<React.JSX.Element> {
 					</LandingPageReveal>
 
 					{/* 2. 견적 도착 — 히어로 채팅 데모와 동일한 말풍선+견적카드 문법 */}
-					<LandingPageReveal delay={0.06}>
+					<LandingPageReveal delay={0.15} className="landing-journey-reveal">
 						<JourneyMoment day={items[1].day}>
 							<div className="bg-imsg-gray rounded-[14px] px-3 py-2 text-[11px] text-black">
 								{items[1].title}
@@ -57,7 +57,7 @@ export async function LandingPageJourney(): Promise<React.JSX.Element> {
 					</LandingPageReveal>
 
 					{/* 3. 계약 확정 — 문서 카드 문법(견적카드와 같은 아이콘 사각형 스타일) */}
-					<LandingPageReveal delay={0.12}>
+					<LandingPageReveal delay={0.3} className="landing-journey-reveal">
 						<JourneyMoment day={items[2].day}>
 							<div className="border-hairline flex items-center gap-2.5 rounded-xl border bg-white p-3 shadow-sm">
 								<span className="text-imsg-blue border-imsg-blue/25 flex size-8 shrink-0 items-center justify-center rounded-sm border">
@@ -72,7 +72,7 @@ export async function LandingPageJourney(): Promise<React.JSX.Element> {
 					</LandingPageReveal>
 
 					{/* 4. 인보이스·송금 — 문서 카드 + 결제확인 뱃지(실제 상태뱃지 색 재사용) */}
-					<LandingPageReveal delay={0.18}>
+					<LandingPageReveal delay={0.45} className="landing-journey-reveal">
 						<JourneyMoment day={items[3].day}>
 							<div className="border-hairline flex items-center gap-2.5 rounded-xl border bg-white p-3 shadow-sm">
 								<span className="text-imsg-blue border-imsg-blue/25 flex size-8 shrink-0 items-center justify-center rounded-sm border">
@@ -89,7 +89,7 @@ export async function LandingPageJourney(): Promise<React.JSX.Element> {
 					</LandingPageReveal>
 
 					{/* 5. 납품 확인(BAST) — 히어로 마지막 계약완료 카드와 동일한 초록 체크 문법 */}
-					<LandingPageReveal delay={0.24}>
+					<LandingPageReveal delay={0.6} className="landing-journey-reveal">
 						<JourneyMoment day={items[4].day}>
 							<div className="flex items-center gap-2.5 rounded-xl border border-[#22C55E]/30 bg-[#22C55E]/5 p-3">
 								<span className="flex size-8 shrink-0 items-center justify-center rounded-sm border border-[#22C55E]/30 text-[#22C55E]">

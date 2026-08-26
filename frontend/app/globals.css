@@ -207,6 +207,16 @@
 	}
 }
 
+/* ─── Journey 섹션 카드 5개가 한 줄(lg:grid-cols-5)에 나란히 있어 각자의 view() 타임라인이
+   거의 동시에 시작돼, 공용 animation-range(cover 30%)만으로는 delay 스태거가 잘 안 보인다 —
+   이 섹션 카드에만 적용하는 변형으로 activation 구간을 넓혀 스태거가 드러날 여지를 늘린다.
+   공용 .landing-reveal 자체(다른 섹션들이 쓰는 기본값)는 그대로 둔다. ─── */
+@supports (animation-timeline: view()) {
+	.landing-reveal.landing-journey-reveal {
+		animation-range: entry 0% cover 55%;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.landing-reveal {
 		opacity: 1;
